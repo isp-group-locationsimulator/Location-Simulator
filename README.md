@@ -1,4 +1,4 @@
-# Thema VI Bergungssimulator THW
+# Thema VI Ortungssimulator THW
 
 
 ## Getting started
