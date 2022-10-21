@@ -1,12 +1,14 @@
-# Thema VI Ortungssimulator THW
+# Thema V Ortungssimulator THW
 
 
 ## Getting started
 
-In diesem Git-Lab sollt ihr eure Projektdokumentation ablegen. Die eigentliche Dokumentation soll am Ende in diser README erfolgen.
+In diesem Git-Lab sollt ihr eure Codes sowie Projektdokumentation ablegen. Die eigentliche Dokumentation soll am Ende in dieser README erfolgen.
 Ihr könnt in diesem Projekt beliebig eure Arbeiten ablegen, managen und sharen. Orientiert euch gerne an der vorhandenen Ordnerstruktur oder erstellt euch eine eigene. Am Ende sollte nur alles hier in diesem Projekt zu finden sein!
 
-Bei Fragen wendet euch gerne an eueren Mentor Juljan Bouchagiar (juljan.bouchagiar@isp.uni-luebeck.de).
+Hier sind ein paar Tipps wie man eine gute Softwaredokumentation in Form einer Readme erstellt: [LINK](https://www.makeareadme.com/)
+
+Bei Fragen wendet euch gerne an euren Mentor Juljan Bouchagiar (juljan.bouchagiar@isp.uni-luebeck.de).
 
 ## Add your files
 
@@ -51,3 +53,6 @@ In Absprache mit dem Kunden soll hier eine Dokumentation der gelösten Aufgabe e
 
 ## Abgabetermin Dokumentation
 Abgabetermin ist zur Abschlusspräsentation bei Herr Prof. M. Leucker in KW 10-11 (6.-19.März 2023).
+
+## License
+[MIT](https://choosealicense.com/licenses/mit/)
