@@ -3,7 +3,7 @@
 
 ## Getting started
 
-In diesem Git-Lab sollt ihr eure Codes sowie Projektdokumentation ablegen. Die eigentliche Dokumentation soll am Ende in dieser README erfolgen.
+In diesem Git-Lab sollt ihr eure Codes sowie Projektdokumentation ablegen. Die vom Kunden gewünschte Dokumentation soll am Ende in dieser README erfolgen. Dokumentationen die mit dem Projektmanagement zu tun haben (Lastenheft, Pflichtenheft, Praktikumsbericht, Ganttchart) sollen alle in dem directory "Projektmanagement" abgelegt bzw. die dortigen Vorlagen verwendet werden.
 Ihr könnt in diesem Projekt beliebig eure Arbeiten ablegen, managen und sharen. Orientiert euch gerne an der vorhandenen Ordnerstruktur oder erstellt euch eine eigene. Am Ende sollte nur alles hier in diesem Projekt zu finden sein!
 
 Hier sind ein paar Tipps wie man eine gute Softwaredokumentation in Form einer Readme erstellt: [LINK](https://www.makeareadme.com/)
