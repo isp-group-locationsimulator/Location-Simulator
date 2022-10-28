@@ -6,9 +6,9 @@ In diesem Ordner sollen alle Projektmanagementarbeiten abgelegt werden. Dazu geh
 1. Lastenheft
 2. Pflichtenheft
 3. Projektplan (Vorlage siehe Moodle)
-4. Parktikumsbericht (siehe unten)
+4. Praktikumsbericht (siehe unten)
 
-_Die Beschreibungen unten in den Kapiteln dienen als Hilfstellungen und können zu Projektende gelöscht werden._
+_Die Beschreibungen unten in den Kapiteln dienen als Hilfestellungen und können zu Projektende gelöscht werden._
 
 # Deadlines
 
