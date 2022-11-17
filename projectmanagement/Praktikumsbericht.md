@@ -18,8 +18,8 @@ Siehe im [Moodlekurs](https://moodle.uni-luebeck.de/mod/forum/discuss.php?d=6074
 ## Kunden
 | Name | E-Mailadresse |
 | ------ | ------ |
-| Max Mustermann | Mustermann@uni-luebeck.de |
-| Maxi Mustermine | Mustermine@uni-luebeck.de |
+| Joshua Wiedenkopf | j.wiedekopf@uni-luebeck.de |
+| Jan Matyssek | jan.matyssek@rwth-aachen.de |
 
 ## Mentor
 | Name | E-Mailadresse |
@@ -31,9 +31,12 @@ Tabellarische Auflistung aller Gruppenmitglieder inklusive des angestrebten Modu
 
 | Name | Modul |
 | ------ | ------ |
-| Max Mustermann | Bachelor Projekt |
-| Maxine Musterfrau | Erweitertes Bachelorprojekt |
-| Manuel Müller | Projektpraktikum SSE |
+| Felix Winkler | Erweitertes Bachelorprojekt |
+| Florian Vierkant | Erweitertes Bachelorprojekt |
+| Marie Biethahn | Erweitertes Bachelorprojekt |
+| Max Henning Junghans | Projektpraktikum SSE |
+| Sebastian Guhl | Erweitertes Bachelorprojekt |
+| Steffen Marbach | Erweitertes Bachelorprojekt |
 
 ## Beschreibung
 Hier soll das Projekt kurz in einem Fließtext beschreiben werden.
