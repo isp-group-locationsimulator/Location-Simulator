@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/endless-vibration.iml" filepath="$PROJECT_DIR$/.idea/modules/endless-vibration.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/endless-vibration.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/endless-vibration.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/MyNewEndlessService.iml" filepath="$PROJECT_DIR$/.idea/modules/MyNewEndlessService.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/MyNewEndlessService.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/MyNewEndlessService.app.iml" />
     </modules>
   </component>
 </project>

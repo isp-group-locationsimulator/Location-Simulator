@@ -1,73 +1,47 @@
-package com.example.endless_vibration
+package com.example.mynewendlessservice
 
 import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.*
+import android.util.Log
 import android.widget.Toast
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
+class InfinityService:Service() {
 
-class EndlessService : Service() {
+    val TAG = "debug"
 
-    private var wakeLock: PowerManager.WakeLock? = null
     private var isServiceStarted = false
+    private var wakeLock: PowerManager.WakeLock? = null
 
-    override fun onBind(intent: Intent): IBinder? {
-        log("Some component want to bind with the service")
-        // We don't provide binding, so return null
-        return null
-    }
-
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        log("onStartCommand executed with startId: $startId")
-        if (intent != null) {
-            val action = intent.action
-            log("using an intent with action $action")
-            when (action) {
-                Actions.START.name -> startService()
-                Actions.STOP.name -> stopService()
-                else -> log("This should never happen. No action in the received intent")
-            }
-        } else {
-            log(
-                "with a null intent. It has been probably restarted by the system."
-            )
-        }
-        // by returning this we make sure the service is restarted if the system kills the service
-        return START_STICKY
-    }
+    override fun onBind(p0: Intent?): IBinder? = null;
 
     override fun onCreate() {
         super.onCreate()
-        log("The service has been created".toUpperCase())
         val notification = createNotification()
         startForeground(1, notification)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        log("The service has been destroyed".toUpperCase())
-        Toast.makeText(this, "Service destroyed", Toast.LENGTH_SHORT).show()
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        if(intent != null){
+            if(intent.action == "START"){
+                startService()
+            }else if(intent.action == "STOP"){
+                stopService()
+            }
+        }
+        return START_STICKY
     }
 
-    override fun onTaskRemoved(rootIntent: Intent) {
-        val restartServiceIntent = Intent(applicationContext, EndlessService::class.java).also {
-            it.setPackage(packageName)
-        };
-        val restartServicePendingIntent: PendingIntent = PendingIntent.getService(this, 1, restartServiceIntent, PendingIntent.FLAG_ONE_SHOT);
-        applicationContext.getSystemService(Context.ALARM_SERVICE);
-        val alarmService: AlarmManager = applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager;
-        alarmService.set(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + 1000, restartServicePendingIntent);
-    }
-    
     private fun startService() {
         if (isServiceStarted) return
-        log("Starting the foreground service task")
         Toast.makeText(this, "Service starting its task", Toast.LENGTH_SHORT).show()
         isServiceStarted = true
-        setServiceState(this, ServiceState.STARTED)
 
         // we need this lock so our service gets not affected by Doze Mode
         wakeLock =
@@ -77,22 +51,33 @@ class EndlessService : Service() {
                 }
             }
 
+        val vibrator = getSystemService(VIBRATOR_SERVICE) as Vibrator
+        val pattern = longArrayOf(1000, 500)
         // we're starting a loop in a coroutine
-        GlobalScope.launch(Dispatchers.IO) {
+        GlobalScope.launch(Dispatchers.Default) {
             while (isServiceStarted) {
                 launch(Dispatchers.IO) {
-                    pingFakeServer()
+                    if (Build.VERSION.SDK_INT >= 26) {
+                        vibrator.vibrate(VibrationEffect.createWaveform(pattern, VibrationEffect.DEFAULT_AMPLITUDE))
+                    } else {
+                        vibrator.vibrate(pattern,0)
+                    }
                 }
-
-                delay(1 * 3 * 1000)
+                delay(1500)
             }
-            pingFakeServer() // To stop vibrate after service
-            log("End of the loop for the service")
+        }
+        GlobalScope.launch(Dispatchers.Default) {
+            var stop = false;
+            while (!stop){
+                if(!isServiceStarted){
+                    vibrator.cancel();
+                    stop = true;
+                }
+            }
         }
     }
 
     private fun stopService() {
-        log("Stopping the foreground service")
         Toast.makeText(this, "Service stopping", Toast.LENGTH_SHORT).show()
         try {
             wakeLock?.let {
@@ -103,27 +88,15 @@ class EndlessService : Service() {
             stopForeground(true)
             stopSelf()
         } catch (e: Exception) {
-            log("Service stopped without being started: ${e.message}")
+            Log.d("debug","Service stopped without being started: ${e.message}")
         }
         isServiceStarted = false
-        setServiceState(this, ServiceState.STOPPED)
     }
 
-    private fun pingFakeServer() {
-        /* val v = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
 
 
-        while (isServiceStarted){
-            if (Build.VERSION.SDK_INT >= 26) {
-                v.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE))
-            } else {
-                v.vibrate(500)
-            }
-            Thread.sleep(1_000)
-        }
-        val v = getSystemService(VIBRATOR_SERVICE) as Vibrator
-        val pattern = longArrayOf(1000, 500)
-        v.vibrate(pattern, 0);*/
+
+    private fun vibrate() {
         val v = getSystemService(VIBRATOR_SERVICE) as Vibrator
         if(isServiceStarted){
             val pattern = longArrayOf(1000, 500)
@@ -131,7 +104,6 @@ class EndlessService : Service() {
         }else{
             v.cancel();
         }
-
     }
 
     private fun createNotification(): Notification {
@@ -166,8 +138,8 @@ class EndlessService : Service() {
         ) else Notification.Builder(this)
 
         return builder
-            .setContentTitle("Endless Service")
-            .setContentText("This is your favorite endless service working")
+            .setContentTitle("Endless Vibration")
+            .setContentText("I hope this will vibrate forever!")
             .setContentIntent(pendingIntent)
             .setSmallIcon(R.mipmap.ic_launcher)
             .setTicker("Ticker text")

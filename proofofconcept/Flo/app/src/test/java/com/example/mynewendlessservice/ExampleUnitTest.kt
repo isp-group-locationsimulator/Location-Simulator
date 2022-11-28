@@ -1,4 +1,4 @@
-package com.example.endless_vibration
+package com.example.mynewendlessservice
 
 import org.junit.Test
 
