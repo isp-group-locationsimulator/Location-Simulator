@@ -1,36 +1,52 @@
 package com.example.mvvmtest.view.mainScreen
 
-import android.widget.Toast
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
-import com.example.mvvmtest.viewModel.MainViewModel
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import com.example.mvvmtest.view.composeElements.NavigateButton
+import com.example.mvvmtest.viewModel.SelectScreenViewModel
 
-@Composable
-fun toastMessage(message:String) {
-    val context = LocalContext.current
-    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
 
-}
-
+/**
+ * This Composable creates the Select Screen
+ */
 @Composable
 fun SelectScreen(
-    mainViewModel: MainViewModel
+    selectScreenViewModel: SelectScreenViewModel,
+    navController:NavHostController
 ) {
-    Column() {
+    Column(
+        Modifier
+            .padding(15.dp)
+            .fillMaxSize()
+    ) {
         MyNumberField(
+            //The Text shown over the NumberField
             description = "Duration Vibration",
-            number = mainViewModel.currentConfiguration.durationVibrateInSec,
-            onValueChanges = mainViewModel::onDurationVibrationChanges
+            //The number shown in the NumberField
+            number = selectScreenViewModel.currentConfiguration.durationVibrateInSec,
+            //The function from the viewModel to react on changes
+            onValueChanges = selectScreenViewModel::onDurationVibrationChanges
         )
         MyNumberField(
-            description = "Duration Vibration",
-            number = mainViewModel.currentConfiguration.durationVibrateInSec,
-            onValueChanges = mainViewModel::onDurationVibrationChanges
+            //The Text shown over the NumberField
+            description = "Duration Pause Vibration",
+            //The number shown in the NumberField
+            number = selectScreenViewModel.currentConfiguration.durationPauseVibrateInSec,
+            //The function from the viewModel to react on changes
+            onValueChanges = selectScreenViewModel::onDurationPauseVibrationChanges
         )
+        //space between content above an button
+        Spacer(modifier = Modifier.height(15.dp))
+        //new column for only centering the Button
+        Column(
+            Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            NavigateButton("START", selectScreenViewModel::onStartPressed, navController)
+        }
     }
 }
-
-
-
-
