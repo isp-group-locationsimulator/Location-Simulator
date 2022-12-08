@@ -1,14 +1,15 @@
-package com.example.mvvmtest.view.mainScreen
+package com.example.mvvmtest.view.startScreen
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.mvvmtest.model.Configuration
+import com.example.mvvmtest.view.selectScreen.selectScreenState
 
 
 /**
@@ -17,7 +18,7 @@ import com.example.mvvmtest.model.Configuration
  */
 @Composable
 fun StartScreen(
-    currentConfiguration: Configuration
+    currentConfiguration: State<selectScreenState>
 ) {
     Column(
         Modifier
@@ -26,8 +27,8 @@ fun StartScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(text = "Duration Vibration")
-        Text(text = currentConfiguration.durationVibrateInSec.value.toString())
+        Text(text = currentConfiguration.value.configuration.durationVibrateInSec.toString())
         Text(text = "Duration Pause Vibration")
-        Text(text = currentConfiguration.durationPauseVibrateInSec.value.toString())
+        Text(text = currentConfiguration.value.configuration.durationPauseVibrateInSec.toString())
     }
 }

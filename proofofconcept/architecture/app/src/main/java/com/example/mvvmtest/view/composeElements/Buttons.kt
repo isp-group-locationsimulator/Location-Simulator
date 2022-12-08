@@ -19,3 +19,18 @@ fun NavigateButton(
         Text(text = text)
     }
 }
+
+@Composable
+fun NavigateConfigurationButton(
+    text: String,
+    onClickButton: (Int) -> Unit,
+    direction:Int
+) {
+    Button(
+        onClick = {
+            onClickButton(direction)
+        }
+    ) {
+        Text(text = text)
+    }
+}
