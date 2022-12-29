@@ -1,8 +1,9 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
-    id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
+    //kotlin-kapt should be the last plugin in list for no warning with dagger plugin
+    id 'kotlin-kapt'
 }
 
 android {
@@ -34,6 +35,10 @@ android {
     }
     kotlinOptions {
         jvmTarget = '1.8'
+        //for OptIn ExperimentalAnimationApi
+        freeCompilerArgs += [
+                "-Xopt-in=kotlin.RequiresOptIn"
+        ]
     }
     buildFeatures {
         compose true

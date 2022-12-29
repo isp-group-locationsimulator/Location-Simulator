@@ -10,6 +10,7 @@ import androidx.room.PrimaryKey
 data class Configuration(
     val duration: Int,
     val pause: Int,
+    val name : String,
     @PrimaryKey val id: Int? = null
 )
 
