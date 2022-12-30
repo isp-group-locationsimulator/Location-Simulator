@@ -1,13 +1,19 @@
 package com.ispgr5.locationsimulator.presentation.select.components
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import com.ispgr5.locationsimulator.domain.model.Configuration
+import com.ispgr5.locationsimulator.R
 
 /**
  * Shows one Configuration as Button in max width
@@ -15,16 +21,36 @@ import com.ispgr5.locationsimulator.domain.model.Configuration
 @Composable
 fun SelectConfigurationButton(
     configuration: Configuration,
-    onClick: () -> Unit
+    toggledConfiguration: Configuration?,
+    onToggleClicked: () -> Unit
 ) {
-    Button(
-        onClick = onClick
+    Box(
+        Modifier
+            .background(Color.LightGray)
+            .padding(4.dp)
     ) {
-        ConfigurationBox(
-            duration = configuration.duration.toString(),
-            pause = configuration.pause.toString(),
-            name = configuration.name
-        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Button(
+                onClick = onToggleClicked,
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color.LightGray),
+            ) {
+                Icon(
+                    painter = if (toggledConfiguration?.id == configuration.id) {
+                        painterResource(id = R.drawable.ic_baseline_keyboard_arrow_up_24)
+                    } else {
+                        painterResource(id = R.drawable.ic_baseline_keyboard_arrow_down_24)
+                    },
+                    contentDescription = null
+                )
+            }
+            ConfigurationBox(
+                name = configuration.name,
+                description = configuration.description,
+                isToggled = toggledConfiguration?.id == configuration.id
+            )
+        }
     }
 }
 
@@ -34,21 +60,17 @@ fun SelectConfigurationButton(
  */
 @Composable
 fun ConfigurationBox(
-    duration: String,
-    pause: String,
-    name: String
+    name: String,
+    description: String,
+    isToggled: Boolean
 ) {
-    Column(modifier = Modifier.fillMaxWidth()) {
-        Column(Modifier.fillMaxWidth()) {
-            Text(text = name)
-            Row {
-                Text(text = "duration:")
-                Text(text = duration)
-            }
-            Row {
-                Text(text = "pause:")
-                Text(text = pause)
-            }
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Text(text = name)
+        if (isToggled) {
+            Spacer(modifier = Modifier.height(3.dp))
+            Text(text = description)
         }
     }
 }

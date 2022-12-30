@@ -39,6 +39,19 @@ class SelectViewModel @Inject constructor(
      */
     fun onEvent(event: SelectEvent) {
         when (event) {
+            is SelectEvent.ToggledConfiguration -> {
+                viewModelScope.launch {
+                    if (_state.value.toggledConfiguration?.id == event.configuration.id){
+                        _state.value = _state.value.copy(
+                            toggledConfiguration = null
+                        )
+                    }else{
+                        _state.value = _state.value.copy(
+                            toggledConfiguration = event.configuration
+                        )
+                    }
+                }
+            }
             is SelectEvent.SelectedConfiguration -> {
                 //do nothing the View will navigate
                 return
