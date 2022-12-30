@@ -8,9 +8,10 @@ import androidx.room.PrimaryKey
  */
 @Entity
 data class Configuration(
+    val name : String,
+    val description : String,
     val duration: Int,
     val pause: Int,
-    val name : String,
     @PrimaryKey val id: Int? = null
 )
 

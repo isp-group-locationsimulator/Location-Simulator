@@ -31,7 +31,9 @@ object AppModule {
             app,
             ConfigurationDatabase::class.java,
             ConfigurationDatabase.DATABASE_NAME
-        ).build()
+        )
+            .fallbackToDestructiveMigration()
+            .build()
     }
 
     /**

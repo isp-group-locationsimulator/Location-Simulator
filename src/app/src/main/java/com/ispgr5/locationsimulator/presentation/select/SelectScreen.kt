@@ -46,7 +46,7 @@ fun SelectScreen(
         Spacer(modifier = Modifier.height(20.dp))
         Button(
             onClick = {
-                //TODO navController.navigate(route = "editScreen")
+                navController.navigate(route = "editScreen")
             }
         ) {
             Text(text = "Add")

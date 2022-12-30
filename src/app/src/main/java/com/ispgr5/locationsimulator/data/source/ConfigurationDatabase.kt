@@ -9,7 +9,7 @@ import com.ispgr5.locationsimulator.domain.model.Configuration
  */
 @Database(
     entities = [Configuration::class],
-    version = 1
+    version = 2
 )
 abstract class ConfigurationDatabase : RoomDatabase() {
     abstract val configurationDao: ConfigurationDao

@@ -1,0 +1,66 @@
+package com.ispgr5.locationsimulator.presentation.edit
+
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.Button
+import androidx.compose.material.Text
+import androidx.compose.material.TextField
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import com.ispgr5.locationsimulator.presentation.edit.components.MyNumberField
+
+/**
+ * The Edit Screen.
+ * Shows a Configuration that can be edited
+ */
+@ExperimentalAnimationApi
+@Composable
+fun EditScreen(
+    navController: NavController,
+    viewModel: EditViewModel = hiltViewModel()
+) {
+    //The state from viewmodel
+    val state = viewModel.state.value
+
+    Column(
+        Modifier
+            .padding(15.dp)
+            .fillMaxSize()
+    ) {
+        //The name Input Field
+        Text(text = "Name")
+        TextField(
+            value = state.name,
+            onValueChange = { viewModel.onEvent(EditEvent.EnteredName(it)) },
+            modifier = Modifier.fillMaxWidth()
+        )
+        //The description Input Field
+        Text(text = "Description")
+        TextField(
+            value = state.description,
+            onValueChange = { viewModel.onEvent(EditEvent.EnteredDescription(it)) },
+            modifier = Modifier.fillMaxWidth()
+        )
+        //The description Input Field
+        MyNumberField(description = "duration",
+            number = state.duration,
+            onValueChanges = { viewModel.onEvent(EditEvent.EnteredDuration(it)) }
+        )
+        //The pause Input Field
+        MyNumberField(description = "pause",
+            number = state.pause,
+            onValueChanges = { viewModel.onEvent(EditEvent.EnteredPause(it)) }
+        )
+        //The save Configuration Button
+        Button(onClick = {
+            viewModel.onEvent(EditEvent.SaveConfiguration)
+            //navigate back to the Select Screen
+            navController.navigate("selectScreen")
+        }) {
+            Text(text = "Save")
+        }
+    }
+}
