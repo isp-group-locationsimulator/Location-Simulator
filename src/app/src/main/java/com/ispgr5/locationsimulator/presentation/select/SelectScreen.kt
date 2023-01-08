@@ -16,7 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.ispgr5.locationsimulator.presentation.select.components.SelectConfigurationButton
+import com.ispgr5.locationsimulator.presentation.select.components.OneConfigurationListMember
 
 /**
  * The Select Screen.
@@ -54,10 +54,11 @@ fun SelectScreen(
             LazyColumn(modifier = Modifier.fillMaxWidth()) {
                 //for all configurations in state we create a SelectConfigurationButton
                 items(state.configurations) { configuration ->
-                    SelectConfigurationButton(
+                    OneConfigurationListMember(
                         configuration = configuration,
                         toggledConfiguration = state.toggledConfiguration,
-                        onToggleClicked = {viewModel.onEvent(SelectEvent.ToggledConfiguration(configuration))}
+                        onToggleClicked = {viewModel.onEvent(SelectEvent.ToggledConfiguration(configuration))},
+                        onEditClicked = {navController.navigate("editScreen?configurationId=${configuration.id}")}
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                 }

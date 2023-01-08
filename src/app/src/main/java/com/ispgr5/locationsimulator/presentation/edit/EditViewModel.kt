@@ -2,6 +2,7 @@ package com.ispgr5.locationsimulator.presentation.edit
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ispgr5.locationsimulator.domain.model.Configuration
@@ -17,12 +18,35 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class EditViewModel @Inject constructor(
-    private val configurationUseCases: ConfigurationUseCases
+    private val configurationUseCases: ConfigurationUseCases,
+    //saveStateHandle is required to get the navigation Arguments like configurationId
+    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     //The provided state for the View
     private val _state = mutableStateOf(EditScreenState())
     val state: State<EditScreenState> = _state
+
+    //The current Configuration Id to override the Configuration with same id in Database
+    private var currentConfigurationId: Int? = null
+
+    init {
+        savedStateHandle.get<Int>("configurationId")?.let { configurationId ->
+            if (configurationId != -1) {
+                viewModelScope.launch {
+                    configurationUseCases.getConfiguration(configurationId)?.also { configuration ->
+                        currentConfigurationId = configuration.id
+                        _state.value = _state.value.copy(
+                            name = configuration.name,
+                            description = configuration.description,
+                            duration = configuration.vibrations[0].duration,
+                            pause = configuration.vibrations[0].pause
+                        )
+                    }
+                }
+            }
+        }
+    }
 
     /**
      * handles ui Events
@@ -62,12 +86,15 @@ class EditViewModel @Inject constructor(
                     try {
                         configurationUseCases.addConfiguration(
                             Configuration(
+                                id = currentConfigurationId,
                                 name = _state.value.name,
                                 description = _state.value.description,
-                                vibrations = listOf(Vibration(
-                                    duration = _state.value.duration,
-                                    pause = _state.value.pause
-                                )),
+                                vibrations = listOf(
+                                    Vibration(
+                                        duration = _state.value.duration,
+                                        pause = _state.value.pause
+                                    )
+                                ),
                             )
                         )
                     } catch (e: InvalidConfigurationException) {

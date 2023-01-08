@@ -19,25 +19,32 @@ import com.ispgr5.locationsimulator.R
  * Shows one Configuration as Button in max width
  */
 @Composable
-fun SelectConfigurationButton(
+fun OneConfigurationListMember(
     configuration: Configuration,
     toggledConfiguration: Configuration?,
-    onToggleClicked: () -> Unit
+    onToggleClicked: () -> Unit,
+    onEditClicked: () -> Unit
 ) {
+    val rowBackgroundColor: Color = Color.LightGray
+    val isToggled: Boolean = toggledConfiguration?.id == configuration.id
+
     Box(
         Modifier
-            .background(Color.LightGray)
+            .background(rowBackgroundColor)
             .padding(4.dp)
+            .fillMaxWidth()
     ) {
         Row(
-            verticalAlignment = Alignment.CenterVertically
+            Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Button(
                 onClick = onToggleClicked,
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color.LightGray),
+                colors = ButtonDefaults.buttonColors(backgroundColor = rowBackgroundColor)
             ) {
                 Icon(
-                    painter = if (toggledConfiguration?.id == configuration.id) {
+                    painter = if (isToggled) {
                         painterResource(id = R.drawable.ic_baseline_keyboard_arrow_up_24)
                     } else {
                         painterResource(id = R.drawable.ic_baseline_keyboard_arrow_down_24)
@@ -45,11 +52,20 @@ fun SelectConfigurationButton(
                     contentDescription = null
                 )
             }
-            ConfigurationBox(
+            ConfigurationBody(
                 name = configuration.name,
                 description = configuration.description,
-                isToggled = toggledConfiguration?.id == configuration.id
+                isToggled = isToggled
             )
+            Button(
+                colors = ButtonDefaults.buttonColors(backgroundColor = rowBackgroundColor),
+                onClick = onEditClicked
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_baseline_edit_24),
+                    contentDescription = null
+                )
+            }
         }
     }
 }
@@ -59,14 +75,12 @@ fun SelectConfigurationButton(
  * Shows the inside of the Configuration Button
  */
 @Composable
-fun ConfigurationBox(
+fun ConfigurationBody(
     name: String,
     description: String,
     isToggled: Boolean
 ) {
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-    ) {
+    Column {
         Text(text = name)
         if (isToggled) {
             Spacer(modifier = Modifier.height(3.dp))
