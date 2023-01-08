@@ -34,37 +34,55 @@ fun OneConfigurationListMember(
             .padding(4.dp)
             .fillMaxWidth()
     ) {
-        Row(
-            Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Button(
-                onClick = onToggleClicked,
-                colors = ButtonDefaults.buttonColors(backgroundColor = rowBackgroundColor)
+        Column() {
+            Row(
+                Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                Icon(
-                    painter = if (isToggled) {
-                        painterResource(id = R.drawable.ic_baseline_keyboard_arrow_up_24)
-                    } else {
-                        painterResource(id = R.drawable.ic_baseline_keyboard_arrow_down_24)
-                    },
-                    contentDescription = null
-                )
+                Button(
+                    onClick = onToggleClicked,
+                    colors = ButtonDefaults.buttonColors(backgroundColor = rowBackgroundColor)
+                ) {
+                    Icon(
+                        painter = if (isToggled) {
+                            painterResource(id = R.drawable.ic_baseline_keyboard_arrow_up_24)
+                        } else {
+                            painterResource(id = R.drawable.ic_baseline_keyboard_arrow_down_24)
+                        },
+                        contentDescription = null
+                    )
+                }
+                Row(
+                    Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    ConfigurationBody(
+                        name = configuration.name,
+                        description = configuration.description,
+                        isToggled = isToggled
+                    )
+                }
             }
-            ConfigurationBody(
-                name = configuration.name,
-                description = configuration.description,
-                isToggled = isToggled
-            )
-            Button(
-                colors = ButtonDefaults.buttonColors(backgroundColor = rowBackgroundColor),
-                onClick = onEditClicked
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_baseline_edit_24),
-                    contentDescription = null
-                )
+            if (isToggled){
+                Row(
+                    Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceAround
+                ) {
+                    Button(onClick = { /*TODO*/ }) {
+                        Text(text = "SELECT")
+                    }
+                    Button(
+                        colors = ButtonDefaults.buttonColors(backgroundColor = rowBackgroundColor),
+                        onClick = onEditClicked
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_baseline_edit_24),
+                            contentDescription = null
+                        )
+                    }
+                }
             }
         }
     }

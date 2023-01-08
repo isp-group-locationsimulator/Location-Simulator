@@ -29,6 +29,7 @@ fun SelectScreen(
     viewModel: SelectViewModel = hiltViewModel()
 ) {
     val state = viewModel.state.value
+
      Column(
         modifier = Modifier.fillMaxSize()
     ) {
