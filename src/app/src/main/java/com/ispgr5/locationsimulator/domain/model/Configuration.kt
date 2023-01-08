@@ -10,8 +10,7 @@ import androidx.room.PrimaryKey
 data class Configuration(
     val name : String,
     val description : String,
-    val duration: Int,
-    val pause: Int,
+    val vibrations: List<Vibration>,
     @PrimaryKey val id: Int? = null
 )
 

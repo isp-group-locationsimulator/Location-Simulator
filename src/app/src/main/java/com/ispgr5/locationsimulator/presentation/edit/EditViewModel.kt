@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ispgr5.locationsimulator.domain.model.Configuration
 import com.ispgr5.locationsimulator.domain.model.InvalidConfigurationException
+import com.ispgr5.locationsimulator.domain.model.Vibration
 import com.ispgr5.locationsimulator.domain.useCase.ConfigurationUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -63,8 +64,10 @@ class EditViewModel @Inject constructor(
                             Configuration(
                                 name = _state.value.name,
                                 description = _state.value.description,
-                                duration = _state.value.duration,
-                                pause = _state.value.pause
+                                vibrations = listOf(Vibration(
+                                    duration = _state.value.duration,
+                                    pause = _state.value.pause
+                                )),
                             )
                         )
                     } catch (e: InvalidConfigurationException) {

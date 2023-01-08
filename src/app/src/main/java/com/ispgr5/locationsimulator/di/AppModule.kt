@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.room.Room
 import com.ispgr5.locationsimulator.data.repository.ConfigurationRepositoryImpl
 import com.ispgr5.locationsimulator.data.source.ConfigurationDatabase
+import com.ispgr5.locationsimulator.domain.model.VibrationConverter
 import com.ispgr5.locationsimulator.domain.repository.ConfigurationRepository
 import com.ispgr5.locationsimulator.domain.useCase.*
 import dagger.Module
@@ -33,6 +34,7 @@ object AppModule {
             ConfigurationDatabase.DATABASE_NAME
         )
             .fallbackToDestructiveMigration()
+            .addTypeConverter(VibrationConverter())
             .build()
     }
 
