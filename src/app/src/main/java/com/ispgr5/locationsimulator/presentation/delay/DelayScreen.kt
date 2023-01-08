@@ -3,6 +3,7 @@ package com.ispgr5.locationsimulator.presentation.delay
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -34,6 +35,15 @@ fun DelayScreen(
         } else {
             Text(text = state.configuration.name)
             Text(text = state.configuration.description)
+        }
+        Button(onClick = {
+            if (state.configuration == null){
+                //Don't start
+            }else{
+                navController.navigate("runScreen")
+            }
+        }) {
+            Text(text = "START")
         }
     }
 }
