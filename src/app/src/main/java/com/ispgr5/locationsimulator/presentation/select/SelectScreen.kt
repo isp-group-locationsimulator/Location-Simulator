@@ -59,7 +59,8 @@ fun SelectScreen(
                         configuration = configuration,
                         toggledConfiguration = state.toggledConfiguration,
                         onToggleClicked = {viewModel.onEvent(SelectEvent.ToggledConfiguration(configuration))},
-                        onEditClicked = {navController.navigate("editScreen?configurationId=${configuration.id}")}
+                        onEditClicked = {navController.navigate("editScreen?configurationId=${configuration.id}")},
+                        onSelectClicked = {navController.navigate("delayScreen?configurationId=${configuration.id}")}
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                 }

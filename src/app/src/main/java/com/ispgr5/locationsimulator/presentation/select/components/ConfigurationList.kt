@@ -23,7 +23,8 @@ fun OneConfigurationListMember(
     configuration: Configuration,
     toggledConfiguration: Configuration?,
     onToggleClicked: () -> Unit,
-    onEditClicked: () -> Unit
+    onEditClicked: () -> Unit,
+    onSelectClicked: () -> Unit
 ) {
     val rowBackgroundColor: Color = Color.LightGray
     val isToggled: Boolean = toggledConfiguration?.id == configuration.id
@@ -34,7 +35,7 @@ fun OneConfigurationListMember(
             .padding(4.dp)
             .fillMaxWidth()
     ) {
-        Column() {
+        Column {
             Row(
                 Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -64,13 +65,13 @@ fun OneConfigurationListMember(
                     )
                 }
             }
-            if (isToggled){
+            if (isToggled) {
                 Row(
                     Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceAround
                 ) {
-                    Button(onClick = { /*TODO*/ }) {
+                    Button(onClick = onSelectClicked) {
                         Text(text = "SELECT")
                     }
                     Button(

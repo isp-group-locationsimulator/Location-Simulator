@@ -13,6 +13,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.ispgr5.locationsimulator.presentation.delay.DelayScreen
 import com.ispgr5.locationsimulator.presentation.edit.EditScreen
 import com.ispgr5.locationsimulator.presentation.select.SelectScreen
 import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
@@ -45,6 +46,17 @@ class MainActivity : ComponentActivity() {
                             )
                         ) {
                             EditScreen(navController = navController)
+                        }
+                        composable(route = "delayScreen?configurationId={configurationId}",
+                            arguments = listOf(navArgument(
+                                name = "configurationId"
+                            ) {
+                                type = NavType.IntType
+                                defaultValue = -1
+                            }
+                            )
+                        ) {
+                            DelayScreen(navController = navController)
                         }
                     }
                 }
