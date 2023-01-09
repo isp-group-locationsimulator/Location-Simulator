@@ -4,6 +4,7 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 
 /**
@@ -12,9 +13,14 @@ import androidx.navigation.NavController
 @ExperimentalAnimationApi
 @Composable
 fun RunScreen(
-    navController: NavController
+    navController: NavController,
+    stopServiceFunction : () -> Unit,
+    viewModel: RunViewModel = hiltViewModel()
 ) {
-    Button(onClick = {navController.navigate("stopService")}) {
+    Button(onClick = {
+        viewModel.onEvent(RunEvent.StopClicked(stopServiceFunction))
+        navController.navigateUp()
+    }) {
         Text(text = "STOP")
     }
 }

@@ -20,7 +20,8 @@ import androidx.navigation.NavController
 @Composable
 fun DelayScreen(
     navController: NavController,
-    viewModel: DelayViewModel = hiltViewModel()
+    viewModel: DelayViewModel = hiltViewModel(),
+    startServiceFunction : () -> Unit
 ) {
     //The state from viewmodel
     val state = viewModel.state.value
@@ -40,6 +41,7 @@ fun DelayScreen(
             if (state.configuration == null){
                 //Don't start
             }else{
+                viewModel.onEvent(DelayEvent.StartClicked(startServiceFunction))
                 navController.navigate("runScreen")
             }
         }) {

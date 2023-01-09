@@ -61,14 +61,12 @@ class MainActivity : ComponentActivity() {
                             }
                             )
                         ) {
-                            DelayScreen(navController = navController)
+                            DelayScreen(navController = navController, startServiceFunction = { startService() })
                         }
                         composable("runScreen"){
-                            startService()
-                            RunScreen(navController)
+                            RunScreen(navController, stopServiceFunction = {stopService()})
                         }
                         composable("stopService"){
-                            stopService()
                             navController.navigateUp()
                         }
                     }

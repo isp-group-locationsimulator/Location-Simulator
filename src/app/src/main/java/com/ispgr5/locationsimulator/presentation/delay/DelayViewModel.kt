@@ -6,7 +6,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ispgr5.locationsimulator.domain.useCase.ConfigurationUseCases
-import com.ispgr5.locationsimulator.presentation.edit.EditEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -42,7 +41,11 @@ class DelayViewModel @Inject constructor(
     /**
      * handles ui Events
      */
-    fun onEvent(event: EditEvent) {
-
+    fun onEvent(event: DelayEvent) {
+        when (event){
+            is DelayEvent.StartClicked -> {
+                event.startServiceFunction()
+            }
+        }
     }
 }
