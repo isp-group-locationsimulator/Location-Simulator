@@ -8,4 +8,5 @@ import com.ispgr5.locationsimulator.domain.model.Configuration
 sealed class SelectEvent {
     data class DeleteConfiguration(val configuration: Configuration) : SelectEvent()
     data class SelectedConfiguration(val configuration: Configuration) : SelectEvent()
+    data class ToggledConfiguration(val configuration: Configuration) : SelectEvent()
 }
