@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.ispgr5.locationsimulator.presentation.edit.EditScreen
 import com.ispgr5.locationsimulator.presentation.select.SelectScreen
 import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -31,6 +32,9 @@ class MainActivity : ComponentActivity() {
                     NavHost(navController = navController, startDestination = "selectScreen") {
                         composable("selectScreen") {
                             SelectScreen(navController = navController)
+                        }
+                        composable("editScreen"){
+                            EditScreen(navController = navController)
                         }
                     }
                 }
