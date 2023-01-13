@@ -31,6 +31,6 @@ fun NavigateConfigurationButton(
             onClickButton(direction)
         }
     ) {
-        Text(text = text)
+        Text(text = text )
     }
 }
