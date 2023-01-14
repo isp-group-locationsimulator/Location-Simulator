@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'kotlinx-serialization'
     id 'dagger.hilt.android.plugin'
     //kotlin-kapt should be the last plugin in list for no warning with dagger plugin
     id 'kotlin-kapt'
@@ -78,7 +79,8 @@ dependencies {
     implementation "androidx.room:room-runtime:2.4.3"
     kapt "androidx.room:room-compiler:2.4.3"
     implementation "androidx.room:room-ktx:2.4.3"
-    implementation 'com.google.code.gson:gson:2.9.0'
+    // serialization to store subclasses in database
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.2"
 
     //Dagger - Hilt
     implementation "com.google.dagger:hilt-android:2.44"

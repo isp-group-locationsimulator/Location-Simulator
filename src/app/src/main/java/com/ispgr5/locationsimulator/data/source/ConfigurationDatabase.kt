@@ -4,17 +4,17 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.ispgr5.locationsimulator.domain.model.Configuration
-import com.ispgr5.locationsimulator.domain.model.VibrationConverter
+import com.ispgr5.locationsimulator.domain.model.ConfigurationComponentConverter
 
 /**
  * The Room Database, that stores Configurations
  */
 @Database(
     entities = [Configuration::class],
-    version = 3,
+    version = 4,
     exportSchema = false
 )
-@TypeConverters(VibrationConverter::class)
+@TypeConverters(ConfigurationComponentConverter::class)
 abstract class ConfigurationDatabase : RoomDatabase() {
     abstract val configurationDao: ConfigurationDao
 

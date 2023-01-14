@@ -8,9 +8,9 @@ import androidx.room.PrimaryKey
  */
 @Entity
 data class Configuration(
-    val name : String,
-    val description : String,
-    val vibrations: List<Vibration>,
+    val name: String,
+    val description: String,
+    val components: List<ConfigComponent>,
     @PrimaryKey val id: Int? = null
 )
 

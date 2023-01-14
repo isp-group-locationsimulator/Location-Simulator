@@ -6,7 +6,5 @@ package com.ispgr5.locationsimulator.presentation.edit
 sealed class EditEvent {
     data class EnteredName(val name: String) : EditEvent()
     data class EnteredDescription(val description: String) : EditEvent()
-    data class EnteredDuration(val duration: String) : EditEvent()
-    data class EnteredPause(val pause: String) : EditEvent()
     object SaveConfiguration : EditEvent()
 }

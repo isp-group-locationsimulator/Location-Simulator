@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ispgr5.locationsimulator.domain.model.Configuration
 import com.ispgr5.locationsimulator.domain.model.InvalidConfigurationException
+import com.ispgr5.locationsimulator.domain.model.Sound
 import com.ispgr5.locationsimulator.domain.model.Vibration
 import com.ispgr5.locationsimulator.domain.useCase.ConfigurationUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -39,8 +40,7 @@ class EditViewModel @Inject constructor(
                         _state.value = _state.value.copy(
                             name = configuration.name,
                             description = configuration.description,
-                            duration = configuration.vibrations[0].duration,
-                            pause = configuration.vibrations[0].pause
+                            components = configuration.components
                         )
                     }
                 }
@@ -67,20 +67,6 @@ class EditViewModel @Inject constructor(
                     )
                 }
             }
-            is EditEvent.EnteredDuration -> {
-                viewModelScope.launch {
-                    _state.value = _state.value.copy(
-                        duration = stringInputToInt(event.duration, state.value.duration)
-                    )
-                }
-            }
-            is EditEvent.EnteredPause -> {
-                viewModelScope.launch {
-                    _state.value = _state.value.copy(
-                        pause = stringInputToInt(event.pause, state.value.pause)
-                    )
-                }
-            }
             is EditEvent.SaveConfiguration -> {
                 viewModelScope.launch {
                     try {
@@ -89,12 +75,23 @@ class EditViewModel @Inject constructor(
                                 id = currentConfigurationId,
                                 name = _state.value.name,
                                 description = _state.value.description,
-                                vibrations = listOf(
+                                //TODO This is just an example for testing. Enter the user input here
+                                components = listOf(
                                     Vibration(
-                                        duration = _state.value.duration,
-                                        pause = _state.value.pause
+                                        minStrength = 2,
+                                        maxStrength = 5,
+                                        minPause = 3,
+                                        maxPause = 8,
+                                    ),
+                                    Sound(
+                                        source = "soundSource",
+                                        minVolume = 3,
+                                        maxVolume = 7,
+                                        minPause = 1,
+                                        maxPause = 9,
+                                        isRandom = true
                                     )
-                                ),
+                                )
                             )
                         )
                     } catch (e: InvalidConfigurationException) {
