@@ -8,6 +8,7 @@ import android.os.*
 import android.util.Log
 import android.widget.Toast
 import com.ispgr5.locationsimulator.R
+import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 import com.ispgr5.locationsimulator.presentation.MainActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -20,6 +21,7 @@ class InfinityService:Service() {
 
     private var isServiceStarted = false
     private var wakeLock: PowerManager.WakeLock? = null
+    private var config: List<ConfigComponent>? = null
 
     override fun onBind(p0: Intent?): IBinder? = null
 
@@ -32,12 +34,17 @@ class InfinityService:Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if(intent != null){
             if(intent.action == "START"){
+                changeConfig(intent.getStringExtra("config"))
                 startService()
             }else if(intent.action == "STOP"){
                 stopService()
             }
         }
         return START_STICKY
+    }
+
+    private fun changeConfig(config: String?) {
+        Log.d("config111", config!!)
     }
 
     private fun startService() {

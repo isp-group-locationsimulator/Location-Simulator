@@ -16,6 +16,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.google.gson.Gson
+import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 import com.ispgr5.locationsimulator.presentation.delay.DelayScreen
 import com.ispgr5.locationsimulator.presentation.edit.EditScreen
 import com.ispgr5.locationsimulator.presentation.run.InfinityService
@@ -61,7 +63,7 @@ class MainActivity : ComponentActivity() {
                             }
                             )
                         ) {
-                            DelayScreen(navController = navController, startServiceFunction = { startService() })
+                            DelayScreen(navController = navController, startServiceFunction = startService)
                         }
                         composable("runScreen"){
                             RunScreen(navController, stopServiceFunction = {stopService()})
@@ -75,10 +77,11 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun startService(){
+    val startService : (List<ConfigComponent>) -> Unit = fun (config : List<ConfigComponent>){
         Intent(this, InfinityService::class.java).also {
-            Log.d("debug","itAction: ${it.action}")
             it.action = "START"
+            val gson = Gson()
+            it.putExtra("config", gson.toJson(config))
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 startForegroundService(it)
             }else{
