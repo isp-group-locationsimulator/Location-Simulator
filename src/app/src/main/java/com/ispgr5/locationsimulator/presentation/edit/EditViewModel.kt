@@ -82,6 +82,8 @@ class EditViewModel @Inject constructor(
                                         maxStrength = 5,
                                         minPause = 3,
                                         maxPause = 8,
+                                        minDuration = 2,
+                                        maxDuration = 4
                                     ),
                                     Sound(
                                         source = "soundSource",
