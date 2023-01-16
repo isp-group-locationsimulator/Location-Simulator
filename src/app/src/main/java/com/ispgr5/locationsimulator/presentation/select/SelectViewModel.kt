@@ -61,6 +61,21 @@ class SelectViewModel @Inject constructor(
                     configurationUseCases.deleteConfiguration(event.configuration)
                 }
             }
+            is SelectEvent.SelectDeleteMode -> {
+                viewModelScope.launch {
+                    _state.value = _state.value.copy(
+                        isInDeleteMode = !_state.value.isInDeleteMode,
+                        selectedConfigurationForDeletion = null
+                    )
+                }
+            }
+            is SelectEvent.SelectConfigurationForDeletion -> {
+                viewModelScope.launch {
+                    _state.value = _state.value.copy(
+                        selectedConfigurationForDeletion = event.configuration
+                    )
+                }
+            }
         }
     }
 
