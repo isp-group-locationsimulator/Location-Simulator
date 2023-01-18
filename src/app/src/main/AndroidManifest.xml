@@ -35,7 +35,9 @@
         <service
             android:enabled="true"
             android:exported="false"
-            android:name=".presentation.run.InfinityService">
+            android:name=".presentation.run.InfinityService"
+            android:stopWithTask="true"
+            >
         </service>
 
     </application>

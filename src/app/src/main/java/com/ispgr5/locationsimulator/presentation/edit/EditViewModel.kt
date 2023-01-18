@@ -7,7 +7,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ispgr5.locationsimulator.domain.model.Configuration
 import com.ispgr5.locationsimulator.domain.model.InvalidConfigurationException
-import com.ispgr5.locationsimulator.domain.model.Sound
 import com.ispgr5.locationsimulator.domain.model.Vibration
 import com.ispgr5.locationsimulator.domain.useCase.ConfigurationUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -78,21 +77,21 @@ class EditViewModel @Inject constructor(
                                 //TODO This is just an example for testing. Enter the user input here
                                 components = listOf(
                                     Vibration(
-                                        minStrength = 2,
-                                        maxStrength = 5,
+                                        minStrength = 1,
+                                        maxStrength = 255,
                                         minPause = 3,
                                         maxPause = 8,
-                                        minDuration = 2,
+                                        minDuration = 1,
+                                        maxDuration = 2
+                                    ),
+                                    Vibration(
+                                        minStrength = 1,
+                                        maxStrength = 255,
+                                        minPause = 3,
+                                        maxPause = 8,
+                                        minDuration = 3,
                                         maxDuration = 4
                                     ),
-                                    Sound(
-                                        source = "soundSource",
-                                        minVolume = 3,
-                                        maxVolume = 7,
-                                        minPause = 1,
-                                        maxPause = 9,
-                                        isRandom = true
-                                    )
                                 )
                             )
                         )
