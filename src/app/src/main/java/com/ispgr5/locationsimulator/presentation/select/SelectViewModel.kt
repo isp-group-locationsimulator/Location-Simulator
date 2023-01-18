@@ -92,6 +92,8 @@ class SelectViewModel @Inject constructor(
                 _state.value = _state.value.copy(
                     configurations = configuration
                 )
+                //TODO this line will clear the whole Database. Delete this line after use
+                //configurationUseCases.deleteConfiguration(configuration[0])
             }
             //have to be in View model scope because Database request have to be called by Coroutine
             .launchIn(viewModelScope)
