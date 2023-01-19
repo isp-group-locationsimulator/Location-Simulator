@@ -125,4 +125,9 @@ fun SelectScreen(
             }
         }
     }
+    Button(onClick = {
+        viewModel.onEvent(SelectEvent.TestSound())
+    }) {
+        Text(text = "Sound Test")
+    }
 }

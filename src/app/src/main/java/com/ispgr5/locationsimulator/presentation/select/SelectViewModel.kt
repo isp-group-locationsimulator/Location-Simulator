@@ -76,6 +76,9 @@ class SelectViewModel @Inject constructor(
                     )
                 }
             }
+            is SelectEvent.TestSound -> {
+                // TODO: Not needed anymore? 
+            }
         }
     }
 
