@@ -72,16 +72,21 @@ Wir haben uns das erste Mal mit unserem Betreuer getroffen und Fragen geklärt.
 Wir haben uns mit den Kunden getroffen und die Anforderungen an das Projekt geklärt.
 
 ### Projektwoche 4 (11.11 – 17.11)
-
+Wir haben angefangen, Lastenheft und Pflichtenheft zu erstellen.
+Außerdem gab es ein Mentorentreffen, bei dem wir Feedback zu der Version bekommen haben.
 
 ### Projektwoche 5 (18.11 – 24.11)
-
+Wir haben angefangen, Arbeitspakete zu definieren und einen Proof of Concept zu entwickeln.
 
 ### Projektwoche 6 (25.11 – 01.12)
-
+Wir haben angefangen, den UI-Prototypen zu entwickeln.
+Außerdem sind das Lastenheft und das Pflichtenheft fertig.
+Der Proof of Concept schreitet gut voran.
 
 ### Projektwoche 7 (02.12 – 08.12)
-
+Wir haben angefangen die Zwischenpräsentation vorzubereiten.
+Hierfür haben wir ein Folienset erstellt.
+Außerdem haben wir angefangen eine Architektur zu entwickeln, die auf MVVM basiert.
 
 ### Projektwoche 8 (09.12 – 15.12)
 
