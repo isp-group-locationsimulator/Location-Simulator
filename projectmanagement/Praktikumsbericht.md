@@ -89,13 +89,39 @@ Hierfür haben wir ein Folienset erstellt.
 Außerdem haben wir angefangen eine Architektur zu entwickeln, die auf MVVM basiert.
 
 ### Projektwoche 8 (09.12 – 15.12)
-
+Wir haben die Folien verbessert.
+Außerdem haben wir angefangen, den UI-Prototypen zu entwickeln.
 
 ### Projektwoche 9 (16.12 – 22.12)
-
+Wir haben bei Prof. Leucker die Zwischenpräsentation für das Projekt abgelegt.
+Außerdem haben wir uns mit den Kunden getroffen um den UI-Prototypen zu besprechen.
 
 ### Projektwoche 10 (23.12 – 29.12)
+Wir haben den UI-Prototypen mit den Wünschen der Kunden finalisiert und besprochen.
+Außerdem haben wir mit der Implementierung der App begonnen.
 
+### Projektwoche 11 (30.12 – 05.01)
+Wir haben das Grundgerüst für die App fertiggestellt, sodass wir nun anfangen können, parallel an dieser zu arbeiten.
+
+### Projektwoche 12 (06.01 – 12.01)
+Wir haben angefangen, die ersten Views zu erstellen und die Vibrationen zu verbesern.
+
+### Projektwoche 13 (12.01 – 19.01)
+Wir haben angefangen, den Sound zu implementieren und Pattern für die Vibrationen einzubauen.
+
+### Projektwoche 14 (20.01 – 26.01)
+
+
+### Projektwoche 15 (27.01 – 02.02)
+
+
+### Projektwoche 16 (03.02 – 09.02)
+
+
+### Projektwoche 17 (10.02 – 16.02)
+
+
+### Projektwoche 18 (17.02 – 23.02)
 
 
 ## Abgabetermin Dokumentation
