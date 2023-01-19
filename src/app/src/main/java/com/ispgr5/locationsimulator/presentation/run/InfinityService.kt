@@ -8,18 +8,20 @@ import android.os.*
 import android.util.Log
 import android.widget.Toast
 import com.ispgr5.locationsimulator.R
+import com.ispgr5.locationsimulator.domain.model.ConfigComponent
+import com.ispgr5.locationsimulator.domain.model.ConfigurationComponentConverter
+import com.ispgr5.locationsimulator.domain.model.Vibration
 import com.ispgr5.locationsimulator.presentation.MainActivity
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import kotlinx.serialization.ExperimentalSerializationApi
+
 
 class InfinityService:Service() {
 
-    val TAG = "debug"
 
     private var isServiceStarted = false
     private var wakeLock: PowerManager.WakeLock? = null
+    private var config: List<ConfigComponent>? = null
 
     override fun onBind(p0: Intent?): IBinder? = null
 
@@ -32,7 +34,10 @@ class InfinityService:Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if(intent != null){
             if(intent.action == "START"){
-                startService()
+                changeConfig(intent.getStringExtra("config"))
+                if(config !=null){
+                    startService()
+                }
             }else if(intent.action == "STOP"){
                 stopService()
             }
@@ -40,6 +45,14 @@ class InfinityService:Service() {
         return START_STICKY
     }
 
+    @OptIn(ExperimentalSerializationApi::class)
+    private fun changeConfig(config: String?) {
+        if(config != null){
+            this.config = ConfigurationComponentConverter().componentStrToComponentList(config)
+        }
+    }
+
+    @OptIn(DelicateCoroutinesApi::class)
     private fun startService() {
         if (isServiceStarted) return
         Toast.makeText(this, "Service starting its task", Toast.LENGTH_SHORT).show()
@@ -53,21 +66,39 @@ class InfinityService:Service() {
                 }
             }
 
-        val vibrator = getSystemService(VIBRATOR_SERVICE) as Vibrator
-        val pattern = longArrayOf(1000, 500)
-        // we're starting a loop in a coroutine
+        val vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val vibratorManager =
+                getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
+            vibratorManager.defaultVibrator
+        } else {
+            @Suppress("DEPRECATION")
+            getSystemService(VIBRATOR_SERVICE) as Vibrator
+        }
+
         GlobalScope.launch(Dispatchers.Default) {
             while (isServiceStarted) {
-                launch(Dispatchers.IO) {
-                    if (Build.VERSION.SDK_INT >= 26) {
-                        vibrator.vibrate(VibrationEffect.createWaveform(pattern, VibrationEffect.DEFAULT_AMPLITUDE))
-                    } else {
-                        vibrator.vibrate(pattern,0)
+                for(item in config!!){
+                    if(item is Vibration){
+                        val duration = (Math.random() * (item.maxDuration*1000 - item.minDuration*1000 + 1) + item.minDuration*1000).toLong()
+                        val strength = (Math.random() * (item.maxStrength - item.minStrength + 1) + item.minStrength).toInt()
+                        val pause = (Math.random() * (item.maxPause*1000 - item.minPause*1000 + 1) + item.minPause*1000).toLong()
+                        if (Build.VERSION.SDK_INT >= 26) {
+                            Log.d("vib666", "Creating Vibration... Duration:$duration , Strength:$strength")
+                            vibrator.vibrate(VibrationEffect.createOneShot(duration,strength))
+                        } else {
+                            Log.d("vib666","Creating Vibration... Duration:$duration")
+                            vibrator.vibrate(duration)
+                        }
+                        Log.d("vib666","Starting sleep...Pause:$pause")
+                        Thread.sleep(duration+pause)
+                    }
+                    if(!isServiceStarted){
+                        break
                     }
                 }
-                delay(1500)
             }
         }
+        // TODO: Could possibly be overworked
         GlobalScope.launch(Dispatchers.Default) {
             var stop = false
             while (!stop){
@@ -95,18 +126,10 @@ class InfinityService:Service() {
         isServiceStarted = false
     }
 
-
-
-
-    private fun vibrate() {
-        val v = getSystemService(VIBRATOR_SERVICE) as Vibrator
-        if(isServiceStarted){
-            val pattern = longArrayOf(1000, 500)
-            v.vibrate(pattern, 0)
-        }else{
-            v.cancel()
-        }
+    override fun onDestroy(){
+        isServiceStarted = false
     }
+
 
     private fun createNotification(): Notification {
         val notificationChannelId = "ENDLESS SERVICE CHANNEL"
@@ -124,7 +147,7 @@ class InfinityService:Service() {
                 it.enableLights(true)
                 it.lightColor = Color.RED
                 it.enableVibration(true)
-                it.vibrationPattern = longArrayOf(100, 200, 300, 400, 500, 400, 300, 200, 400)
+                it.vibrationPattern = longArrayOf(0)
                 it
             }
             notificationManager.createNotificationChannel(channel)

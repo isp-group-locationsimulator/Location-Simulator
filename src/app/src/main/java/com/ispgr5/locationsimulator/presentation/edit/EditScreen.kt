@@ -10,7 +10,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.ispgr5.locationsimulator.presentation.edit.components.MyNumberField
 
 /**
  * The Edit Screen.
@@ -43,16 +42,6 @@ fun EditScreen(
             value = state.description,
             onValueChange = { viewModel.onEvent(EditEvent.EnteredDescription(it)) },
             modifier = Modifier.fillMaxWidth()
-        )
-        //The description Input Field
-        MyNumberField(description = "duration",
-            number = state.duration,
-            onValueChanges = { viewModel.onEvent(EditEvent.EnteredDuration(it)) }
-        )
-        //The pause Input Field
-        MyNumberField(description = "pause",
-            number = state.pause,
-            onValueChanges = { viewModel.onEvent(EditEvent.EnteredPause(it)) }
         )
         //The save Configuration Button
         Button(onClick = {

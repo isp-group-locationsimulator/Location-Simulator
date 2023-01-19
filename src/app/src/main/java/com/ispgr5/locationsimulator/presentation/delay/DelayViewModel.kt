@@ -44,7 +44,8 @@ class DelayViewModel @Inject constructor(
     fun onEvent(event: DelayEvent) {
         when (event){
             is DelayEvent.StartClicked -> {
-                event.startServiceFunction()
+                if(state.value.configuration != null)
+                    event.startServiceFunction(state.value.configuration!!.components)
             }
         }
     }

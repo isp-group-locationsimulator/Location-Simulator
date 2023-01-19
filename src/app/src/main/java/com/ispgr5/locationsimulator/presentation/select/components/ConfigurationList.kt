@@ -21,13 +21,12 @@ import com.ispgr5.locationsimulator.R
 @Composable
 fun OneConfigurationListMember(
     configuration: Configuration,
-    toggledConfiguration: Configuration?,
+    isToggled: Boolean,
     onToggleClicked: () -> Unit,
     onEditClicked: () -> Unit,
-    onSelectClicked: () -> Unit
+    onSelectClicked: () -> Unit,
 ) {
     val rowBackgroundColor: Color = Color.LightGray
-    val isToggled: Boolean = toggledConfiguration?.id == configuration.id
 
     Box(
         Modifier
@@ -35,11 +34,14 @@ fun OneConfigurationListMember(
             .padding(4.dp)
             .fillMaxWidth()
     ) {
+        //Column is needed for toggling so the Toggled Information is shown under the Configuration name
         Column {
             Row(
                 Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
             ) {
+                //The Toggle Button (Arrow up and down when toggled)
                 Button(
                     onClick = onToggleClicked,
                     colors = ButtonDefaults.buttonColors(backgroundColor = rowBackgroundColor)
@@ -53,27 +55,33 @@ fun OneConfigurationListMember(
                         contentDescription = null
                     )
                 }
+                //new row so the Configuration name is centered
                 Row(
                     Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    ConfigurationBody(
-                        name = configuration.name,
-                        description = configuration.description,
-                        isToggled = isToggled
-                    )
+                    Column {
+                        Text(text = configuration.name)
+                        if (isToggled) {
+                            Spacer(modifier = Modifier.height(3.dp))
+                            Text(text = configuration.description)
+                        }
+                    }
                 }
             }
+            //The Information which is shown when toggle is active
             if (isToggled) {
                 Row(
                     Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceAround
                 ) {
+                    //The Select Button
                     Button(onClick = onSelectClicked) {
                         Text(text = "SELECT")
                     }
+                    //The Edit Button
                     Button(
                         colors = ButtonDefaults.buttonColors(backgroundColor = rowBackgroundColor),
                         onClick = onEditClicked
@@ -85,25 +93,6 @@ fun OneConfigurationListMember(
                     }
                 }
             }
-        }
-    }
-}
-
-/**
- * Helper component for the Configuration Box
- * Shows the inside of the Configuration Button
- */
-@Composable
-fun ConfigurationBody(
-    name: String,
-    description: String,
-    isToggled: Boolean
-) {
-    Column {
-        Text(text = name)
-        if (isToggled) {
-            Spacer(modifier = Modifier.height(3.dp))
-            Text(text = description)
         }
     }
 }

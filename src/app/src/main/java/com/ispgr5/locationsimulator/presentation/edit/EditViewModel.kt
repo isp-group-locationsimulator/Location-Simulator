@@ -39,8 +39,7 @@ class EditViewModel @Inject constructor(
                         _state.value = _state.value.copy(
                             name = configuration.name,
                             description = configuration.description,
-                            duration = configuration.vibrations[0].duration,
-                            pause = configuration.vibrations[0].pause
+                            components = configuration.components
                         )
                     }
                 }
@@ -67,20 +66,6 @@ class EditViewModel @Inject constructor(
                     )
                 }
             }
-            is EditEvent.EnteredDuration -> {
-                viewModelScope.launch {
-                    _state.value = _state.value.copy(
-                        duration = stringInputToInt(event.duration, state.value.duration)
-                    )
-                }
-            }
-            is EditEvent.EnteredPause -> {
-                viewModelScope.launch {
-                    _state.value = _state.value.copy(
-                        pause = stringInputToInt(event.pause, state.value.pause)
-                    )
-                }
-            }
             is EditEvent.SaveConfiguration -> {
                 viewModelScope.launch {
                     try {
@@ -89,12 +74,25 @@ class EditViewModel @Inject constructor(
                                 id = currentConfigurationId,
                                 name = _state.value.name,
                                 description = _state.value.description,
-                                vibrations = listOf(
+                                //TODO This is just an example for testing. Enter the user input here
+                                components = listOf(
                                     Vibration(
-                                        duration = _state.value.duration,
-                                        pause = _state.value.pause
-                                    )
-                                ),
+                                        minStrength = 1,
+                                        maxStrength = 255,
+                                        minPause = 3,
+                                        maxPause = 8,
+                                        minDuration = 1,
+                                        maxDuration = 2
+                                    ),
+                                    Vibration(
+                                        minStrength = 1,
+                                        maxStrength = 255,
+                                        minPause = 3,
+                                        maxPause = 8,
+                                        minDuration = 3,
+                                        maxDuration = 4
+                                    ),
+                                )
                             )
                         )
                     } catch (e: InvalidConfigurationException) {

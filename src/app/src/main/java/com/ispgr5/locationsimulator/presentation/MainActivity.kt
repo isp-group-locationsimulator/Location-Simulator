@@ -16,6 +16,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.ispgr5.locationsimulator.domain.model.ConfigComponent
+import com.ispgr5.locationsimulator.domain.model.ConfigurationComponentConverter
 import com.ispgr5.locationsimulator.presentation.delay.DelayScreen
 import com.ispgr5.locationsimulator.presentation.edit.EditScreen
 import com.ispgr5.locationsimulator.presentation.run.InfinityService
@@ -23,6 +25,7 @@ import com.ispgr5.locationsimulator.presentation.run.RunScreen
 import com.ispgr5.locationsimulator.presentation.select.SelectScreen
 import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.serialization.ExperimentalSerializationApi
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -61,7 +64,7 @@ class MainActivity : ComponentActivity() {
                             }
                             )
                         ) {
-                            DelayScreen(navController = navController, startServiceFunction = { startService() })
+                            DelayScreen(navController = navController, startServiceFunction = startService)
                         }
                         composable("runScreen"){
                             RunScreen(navController, stopServiceFunction = {stopService()})
@@ -75,10 +78,11 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun startService(){
+    @OptIn(ExperimentalSerializationApi::class)
+    val startService : (List<ConfigComponent>) -> Unit = fun (config : List<ConfigComponent>){
         Intent(this, InfinityService::class.java).also {
-            Log.d("debug","itAction: ${it.action}")
             it.action = "START"
+            it.putExtra("config", ConfigurationComponentConverter().componentListToString(config))
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 startForegroundService(it)
             }else{

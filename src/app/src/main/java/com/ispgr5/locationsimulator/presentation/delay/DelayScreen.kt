@@ -10,6 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 
 /**
  * The Delay Screen.
@@ -21,7 +22,7 @@ import androidx.navigation.NavController
 fun DelayScreen(
     navController: NavController,
     viewModel: DelayViewModel = hiltViewModel(),
-    startServiceFunction : () -> Unit
+    startServiceFunction : (List<ConfigComponent>) -> Unit,
 ) {
     //The state from viewmodel
     val state = viewModel.state.value

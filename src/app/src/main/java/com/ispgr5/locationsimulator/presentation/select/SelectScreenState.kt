@@ -8,5 +8,7 @@ import com.ispgr5.locationsimulator.domain.model.Configuration
  */
 data class SelectScreenState(
     val configurations: List<Configuration> = emptyList(),
-    val toggledConfiguration : Configuration? = null
+    val toggledConfiguration : Configuration? = null,
+    val isInDeleteMode: Boolean = false,
+    val selectedConfigurationForDeletion: Configuration? = null
 )
