@@ -23,7 +23,7 @@ import javax.inject.Singleton
 object AppModule {
 
     /**
-     * creates the Database
+     * Creates the Database
      */
     @Provides
     @Singleton
@@ -39,7 +39,7 @@ object AppModule {
     }
 
     /**
-     * creates the Database Repository
+     * Creates the Database Repository
      */
     @Provides
     @Singleton
@@ -48,7 +48,7 @@ object AppModule {
     }
 
     /**
-     * creates the Database Interface (UseCases)
+     * Creates the Database Interface (UseCases)
      */
     @Provides
     @Singleton

@@ -15,7 +15,7 @@ import com.ispgr5.locationsimulator.presentation.MainActivity
 import kotlinx.coroutines.*
 import kotlinx.serialization.ExperimentalSerializationApi
 
-
+// TODO: We need to add KDoc to this file!
 class InfinityService:Service() {
 
     private var isServiceStarted = false
@@ -62,7 +62,7 @@ class InfinityService:Service() {
         wakeLock =
             (getSystemService(Context.POWER_SERVICE) as PowerManager).run {
                 newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "EndlessService::lock").apply {
-                    acquire()
+                    acquire() // Should we set a timeout for this wakelock?
                 }
             }
 
@@ -157,6 +157,7 @@ class InfinityService:Service() {
             notificationManager.createNotificationChannel(channel)
         }
 
+        // TODO: PendingIntent.FLAG_MUTABLE requires API-Level 31? Should be checked and updated if necessary
         val pendingIntent: PendingIntent = Intent(this, MainActivity::class.java).let { notificationIntent ->
             PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_MUTABLE)
         }

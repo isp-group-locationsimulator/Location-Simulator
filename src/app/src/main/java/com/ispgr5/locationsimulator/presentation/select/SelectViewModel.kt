@@ -35,7 +35,7 @@ class SelectViewModel @Inject constructor(
     }
 
     /**
-     * handles ui Events
+     * Handles UI Events
      */
     fun onEvent(event: SelectEvent) {
         when (event) {

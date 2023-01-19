@@ -39,7 +39,7 @@ class DelayViewModel @Inject constructor(
     }
 
     /**
-     * handles ui Events
+     * Handles UI Events
      */
     fun onEvent(event: DelayEvent) {
         when (event){

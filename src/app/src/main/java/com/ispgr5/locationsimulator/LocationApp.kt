@@ -14,8 +14,10 @@ class LocationApp : Application() {
         context = this
     }
 
-
-    // TODO: Is this a acceptable solution?
+    /**
+     * This companion object enables the rest of the project to access context.
+     * TODO: I am not sure that this is a good solution. Should be checked and changed eventually. Memory leak?
+     */
     companion object {
         var context: Context? = null
             internal set

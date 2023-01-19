@@ -3,7 +3,7 @@ package com.ispgr5.locationsimulator.presentation.select
 import com.ispgr5.locationsimulator.domain.model.Configuration
 
 /**
- * the UI Events the View can call
+ * The UI Events the View can call
  */
 sealed class SelectEvent {
     data class DeleteConfiguration(val configuration: Configuration) : SelectEvent()
@@ -13,5 +13,5 @@ sealed class SelectEvent {
     object SelectDeleteMode: SelectEvent()
 
     // TODO:  Is this correctly used?
-    class TestSound() : SelectEvent()
+    object TestSound : SelectEvent()
 }

@@ -48,7 +48,7 @@ class EditViewModel @Inject constructor(
     }
 
     /**
-     * handles ui Events
+     * Handles UI Events
      */
     fun onEvent(event: EditEvent) {
         when (event) {
@@ -106,7 +106,7 @@ class EditViewModel @Inject constructor(
     }
 
     /**
-     * cast user input String to Int from Number Fields
+     * Cast user input String to Int from Number Fields
      */
     private fun stringInputToInt(number: String, currentValue: Int): Int {
         var newNumber = currentValue
@@ -116,11 +116,11 @@ class EditViewModel @Inject constructor(
                 0
                 //if current Value is 0 we want that the new Number don't start with 0 like 05
             } else if (currentValue == 0) {
-                val newNumbertmp = number.replace("0", "")
-                if (newNumbertmp == "")
+                val newNumberTmp = number.replace("0", "")
+                if (newNumberTmp == "")
                     0
                 else
-                    newNumbertmp.toInt()
+                    newNumberTmp.toInt()
                 //default
             } else {
                 number.toInt()

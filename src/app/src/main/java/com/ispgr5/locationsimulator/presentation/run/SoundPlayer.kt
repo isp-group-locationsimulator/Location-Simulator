@@ -17,7 +17,7 @@ class SoundPlayer {
             @Override
             fun onCompletion(mediaPlayer: MediaPlayer) {
                 println("Sound off")
-                mediaPlayer.release();
+                mediaPlayer.release()
             }
         }
         mediaPlayer.setDataSource(uriAsString)
