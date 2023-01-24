@@ -14,13 +14,7 @@ import java.io.FileOutputStream
  * TODO: Put the class into a better fitting dir?
  * @param mainActivity This class needs context to access the ActivityResultContracts and the file system.
  */
-class FilePicker(mainActivity: MainActivity) {
-    /**
-     * This variable points to the private dir that we use to save our sound files.
-     * I can't seem to access files dir with mainActivity.filesDir directly where needed.
-     * If that is possible, this variable can be removed.
-     */
-    private val filesDir: File = mainActivity.filesDir
+class FilePicker(private val mainActivity: MainActivity) {
 
     /**
      * This variable lets us select a file and get its Uri.
@@ -66,12 +60,30 @@ class FilePicker(mainActivity: MainActivity) {
 
     /**
      * This function returns a File in our private dir with the name it is given.
-     * TODO: Maybe we should test for duplicate file names here and resolve them if necessary.
+     * In case of a naming conflict, the new file gets a "_new" attached before the file extension.
      * @param fileName The name the file should have
      * @return The File
      */
     private fun getFileInPrivateDir(fileName: String): File {
-        return File(filesDir, fileName)
+        val dir = File(mainActivity.filesDir, "")
+        val files = dir.listFiles()
+        return if (files == null) {
+            File(mainActivity.filesDir, fileName)
+        } else {
+            val fileNames = files.map { it.name }
+            var fileNameReturnValue = fileName
+            var areThereCopies = true
+            while (areThereCopies) {
+                if (fileNames.contains(fileNameReturnValue)) {
+                    // This should put a _new before the file-extension of a filename
+                    fileNameReturnValue = fileNameReturnValue.substring(0, fileNameReturnValue.lastIndexOf(".")) +
+                            "_new" + fileNameReturnValue.substring(fileNameReturnValue.lastIndexOf("."))
+                } else {
+                    areThereCopies = false
+                }
+            }
+            File(mainActivity.filesDir, fileNameReturnValue)
+        }
     }
 
 
