@@ -4,7 +4,10 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.*
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Icon
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.runtime.Composable
@@ -15,6 +18,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.ispgr5.locationsimulator.FilePicker
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.presentation.select.components.OneConfigurationListMember
 
@@ -26,6 +30,7 @@ import com.ispgr5.locationsimulator.presentation.select.components.OneConfigurat
 @Composable
 fun SelectScreen(
     navController: NavController,
+    filePicker: FilePicker,
     viewModel: SelectViewModel = hiltViewModel()
 ) {
     val state = viewModel.state.value
@@ -126,8 +131,8 @@ fun SelectScreen(
         }
     }
     Button(onClick = {
-        viewModel.onEvent(SelectEvent.TestSound)
+        viewModel.onEvent(SelectEvent.ImportFile(filePicker))
     }) {
-        Text(text = "Sound Test")
+        Text(text = "Import file")
     }
 }
