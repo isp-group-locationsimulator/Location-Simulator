@@ -7,6 +7,7 @@ import androidx.compose.material.Card
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -27,8 +28,8 @@ fun TimelineItem(
 
     if(viewModel.state.value.current == configItem){
         //draw selected timeline item
-        Card( elevation = 4.dp, backgroundColor = Color.Gray, modifier = Modifier.padding(5.dp).border(2.dp, Color.Red), shape = RoundedCornerShape(20) ) {
-            Row() {
+        Card( elevation = 15.dp, backgroundColor = Color.White, modifier = Modifier.padding(6.dp).border(1.dp, Color.Red, RoundedCornerShape(10))) {
+            Row(verticalAlignment = Alignment.CenterVertically,  modifier = Modifier.padding(4.dp)) {
                 Icon(
                     painter = painterResource(id = R.drawable.audionouse2),
                     contentDescription = null
@@ -38,14 +39,14 @@ fun TimelineItem(
         }
     }else{
         //draw not selected timeline item
-        Card( elevation = 4.dp, backgroundColor = Color.Gray, modifier = Modifier.padding(5.dp)
+        Card( elevation = 10.dp, backgroundColor = Color.White, modifier = Modifier.padding(6.dp)
             .clickable { viewModel.onEvent(EditTimelineEvent.SelectedTimelineItem(configItem))} ) {
-            Row() {
+            Row( verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(4.dp) ) {
                 Icon(
                     painter = painterResource(id = R.drawable.audionouse2),
                     contentDescription = null
                 )
-                Text(text = "SoundTest")
+                Text(text = configItem.javaClass.simpleName)
             }
         }
     }

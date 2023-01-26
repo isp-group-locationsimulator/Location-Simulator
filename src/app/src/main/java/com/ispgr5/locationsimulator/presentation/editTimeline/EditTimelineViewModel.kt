@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 import com.ispgr5.locationsimulator.domain.model.Configuration
 import com.ispgr5.locationsimulator.domain.model.Sound
+import com.ispgr5.locationsimulator.domain.model.Vibration
 import com.ispgr5.locationsimulator.domain.useCase.ConfigurationUseCases
 import com.ispgr5.locationsimulator.presentation.edit.EditEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -49,9 +50,15 @@ class EditTimelineViewModel @Inject constructor(
         val sound1 = Sound("Schrei", 4, 80, 3, 5, true);
         val sound2 = Sound("Klopfen", 4, 5, 3, 5, true);
         val sound3 = Sound("Singen", 4, 5, 3, 5, true);
+        val vib1 = Vibration(3,90,3,33,23,42)
+        val vib2 = Vibration(34,90,3,23,23,42)
+        val vib3 = Vibration(3,23,3,23,23,42)
         val components = ArrayList<ConfigComponent>()
         components.add(sound1);
+        components.add(vib1)
+        components.add(vib2)
         components.add(sound2);
+        components.add(vib3)
         components.add(sound3);
         val configuration = Configuration("config1", "beschreibung", components);
 
@@ -84,6 +91,22 @@ class EditTimelineViewModel @Inject constructor(
                     )
                 }
             }
+            is EditTimelineEvent.ChangedVibStrength -> {
+                viewModelScope.launch {
+                    _state.value = _state.value.copy(
+                        strengthMax = event.range.endInclusive,
+                        strengthMin = event.range.start
+                    )
+                }
+            }
+            is EditTimelineEvent.ChangedVibDuration -> {
+                viewModelScope.launch {
+                    _state.value = _state.value.copy(
+                        durationMax = event.range.endInclusive,
+                        durationMin = event.range.start
+                    )
+                }
+            }
             is EditTimelineEvent.SelectedTimelineItem -> {
 
                 val selectedConfigComp = event.selectConfigComp
@@ -96,6 +119,20 @@ class EditTimelineViewModel @Inject constructor(
                                 pauseMin = selectedConfigComp.minPause.toFloat(),
                                 volumeMax = selectedConfigComp.maxVolume.toFloat(),
                                 volumeMin = selectedConfigComp.minVolume.toFloat(),
+                                current = selectedConfigComp
+                            )
+                        }
+                    }
+                    is Vibration -> {
+                        viewModelScope.launch {
+                            _state.value = _state.value.copy(
+                                pauseMax = selectedConfigComp.maxPause.toFloat(),
+                                pauseMin = selectedConfigComp.minPause.toFloat(),
+                                strengthMin = selectedConfigComp.minStrength.toFloat(),
+                                strengthMax = selectedConfigComp.maxStrength.toFloat(),
+                                durationMin = selectedConfigComp.minDuration.toFloat(),
+                                durationMax = selectedConfigComp.maxDuration.toFloat(),
+
                                 current = selectedConfigComp
                             )
                         }
@@ -115,6 +152,14 @@ class EditTimelineViewModel @Inject constructor(
                 current.minPause = _state.value.pauseMin.toInt()
                 current.maxPause = _state.value.pauseMax.toInt()
                 //TODO
+            }
+            is Vibration -> {
+                current.minStrength =  _state.value.strengthMin.toInt()
+                current.maxStrength =  _state.value.strengthMax.toInt()
+                current.minDuration = _state.value.durationMin.toInt()
+                current.maxDuration = _state.value.durationMax.toInt()
+                current.minPause = _state.value.pauseMin.toInt()
+                current.maxPause = _state.value.pauseMax.toInt()
             }
         }
 
