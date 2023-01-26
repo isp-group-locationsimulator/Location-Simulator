@@ -6,8 +6,7 @@ import android.net.Uri
 import android.provider.OpenableColumns
 import androidx.activity.result.contract.ActivityResultContracts
 import com.ispgr5.locationsimulator.presentation.MainActivity
-import java.io.File
-import java.io.FileOutputStream
+import java.io.*
 
 /**
  * This class uses the ActivityResultContracts to access the files we need.
@@ -39,6 +38,40 @@ class FilePicker(private val mainActivity: MainActivity) {
             inputStream?.copyTo(outputStream)
             outputStream.flush()
             outputStream.close()
+        }
+    }
+
+    /**
+     * This function opens a file picker and reads the file
+     * //TODO return the read String
+     */
+    fun pickAndReadFile() {
+        readFile.launch("text/*")
+    }
+
+    /**
+     * This variable lets us read a file that we choose.
+     */
+    private val readFile = mainActivity.registerForActivityResult(ActivityResultContracts.GetContent()) { result: Uri? ->
+        result?.let { fileUri ->
+            println(fileUri)
+            val stringBuilder = StringBuilder()
+            try {
+                mainActivity.contentResolver.openInputStream(fileUri)?.use { inputStream ->
+                    BufferedReader(InputStreamReader(inputStream)).use { reader ->
+                        var line: String? = reader.readLine()
+                        while (line != null) {
+                            stringBuilder.append(line)
+                            line = reader.readLine()
+                        }
+                    }
+                }
+            } catch (exception : Exception){
+                println("fehler beim lesen")
+            }
+            //TODO let the above function "pickAndReadFile()" return this String
+            //return stringBuilder.toString()
+            println(stringBuilder.toString())
         }
     }
 

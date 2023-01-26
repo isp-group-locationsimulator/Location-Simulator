@@ -38,32 +38,42 @@ fun SelectScreen(
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-            //Add and Delete Buttons should be on the right
-            horizontalArrangement = Arrangement.End
-        ) {
-            //The Delete Button
-            Button(
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
-                onClick = {
-                    viewModel.onEvent(SelectEvent.SelectDeleteMode)
-                }
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_baseline_delete_outline_24),
-                    contentDescription = null
-                )
+        Row {
+            Button(onClick = {
+                viewModel.onEvent(SelectEvent.ImportFile(filePicker))
+            }) {
+                Text(text = "Import Audio")
             }
-            //The Add Button
-            Button(
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
-                onClick = {
-                    navController.navigate(route = "editScreen")
-                }
+            Button(onClick = { viewModel.onEvent(SelectEvent.SelectedImportConfiguration(filePicker = filePicker)) }) {
+                Text(text = "Import Conf")
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                //Add and Delete Buttons should be on the right
+                horizontalArrangement = Arrangement.End
             ) {
-                Icon(Icons.Outlined.Add, "")
+                //The Delete Button
+                Button(
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
+                    onClick = {
+                        viewModel.onEvent(SelectEvent.SelectDeleteMode)
+                    }
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_baseline_delete_outline_24),
+                        contentDescription = null
+                    )
+                }
+                //The Add Button
+                Button(
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
+                    onClick = {
+                        navController.navigate(route = "editScreen")
+                    }
+                ) {
+                    Icon(Icons.Outlined.Add, "")
+                }
             }
         }
         //The whole Column where all Configurations are in
@@ -129,10 +139,5 @@ fun SelectScreen(
                 Spacer(modifier = Modifier.height(4.dp))
             }
         }
-    }
-    Button(onClick = {
-        viewModel.onEvent(SelectEvent.ImportFile(filePicker))
-    }) {
-        Text(text = "Import file")
     }
 }

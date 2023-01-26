@@ -79,6 +79,10 @@ class SelectViewModel @Inject constructor(
             is SelectEvent.ImportFile -> {
                 event.filePicker.moveFileToPrivateFolder()
             }
+            is SelectEvent.SelectedImportConfiguration -> {
+                event.filePicker.pickAndReadFile()
+                //TODO cast the String from File with json and safe to Database
+            }
         }
     }
 

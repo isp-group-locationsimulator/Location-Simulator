@@ -12,5 +12,6 @@ sealed class SelectEvent {
     data class ToggledConfiguration(val configuration: Configuration) : SelectEvent()
     data class SelectConfigurationForDeletion(val configuration: Configuration) : SelectEvent()
     object SelectDeleteMode: SelectEvent()
+    data class SelectedImportConfiguration(val filePicker: FilePicker) : SelectEvent()
     class ImportFile(val filePicker: FilePicker) : SelectEvent()
 }
