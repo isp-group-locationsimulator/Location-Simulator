@@ -1,5 +1,6 @@
 package com.ispgr5.locationsimulator.presentation
 
+import EditTimelineScreen
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -40,7 +41,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colors.background
                 ) {
                     val navController = rememberNavController()
-                    NavHost(navController = navController, startDestination = "selectScreen") {
+                    NavHost(navController = navController, startDestination = "timeline") {
                         composable(route = "selectScreen") {
                             SelectScreen(navController = navController)
                         }
@@ -71,6 +72,9 @@ class MainActivity : ComponentActivity() {
                         }
                         composable("stopService"){
                             navController.navigateUp()
+                        }
+                        composable("timeline"){
+                            EditTimelineScreen(navController = navController)
                         }
                     }
                 }

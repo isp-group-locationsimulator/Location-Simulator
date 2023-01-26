@@ -11,9 +11,9 @@ import kotlinx.serialization.Serializable
 @SerialName("Sound")
 data class Sound(
     val source: String,
-    val minVolume: Int,
-    val maxVolume: Int,
-    val minPause: Int,
-    val maxPause: Int,
+    var minVolume: Int,
+    var maxVolume: Int,
+    var minPause: Int,
+    var maxPause: Int,
     val isRandom: Boolean
 ) : ConfigComponent()
