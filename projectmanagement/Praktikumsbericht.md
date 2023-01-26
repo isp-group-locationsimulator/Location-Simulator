@@ -110,7 +110,9 @@ Wir haben angefangen, die ersten Views zu erstellen und die Vibrationen zu verbe
 Wir haben angefangen, den Sound zu implementieren und Pattern für die Vibrationen einzubauen.
 
 ### Projektwoche 14 (20.01 – 26.01)
-
+Wir haben den Import von Dateien zum Teil implementiert.
+Außerdem haben wir angefangen, die Timeline zu entwickeln.
+Und wir haben angefangen, den Import und Export von Configurations zu implementieren.
 
 ### Projektwoche 15 (27.01 – 02.02)
 
