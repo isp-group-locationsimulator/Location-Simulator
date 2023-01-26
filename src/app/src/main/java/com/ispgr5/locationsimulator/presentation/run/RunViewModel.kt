@@ -11,7 +11,7 @@ import javax.inject.Inject
 class RunViewModel @Inject constructor() : ViewModel() {
 
     /**
-     * handles ui Events
+     * Handles UI Events
      */
     fun onEvent(event: RunEvent) {
         when (event) {

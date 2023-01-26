@@ -15,13 +15,13 @@ import com.ispgr5.locationsimulator.presentation.MainActivity
 import kotlinx.coroutines.*
 import kotlinx.serialization.ExperimentalSerializationApi
 
-
+// TODO: We need to add KDoc to this file!
 class InfinityService:Service() {
-
 
     private var isServiceStarted = false
     private var wakeLock: PowerManager.WakeLock? = null
     private var config: List<ConfigComponent>? = null
+    private var soundPlayer: SoundPlayer = SoundPlayer()
 
     override fun onBind(p0: Intent?): IBinder? = null
 
@@ -62,7 +62,7 @@ class InfinityService:Service() {
         wakeLock =
             (getSystemService(Context.POWER_SERVICE) as PowerManager).run {
                 newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "EndlessService::lock").apply {
-                    acquire()
+                    acquire() // Should we set a timeout for this wakelock?
                 }
             }
 
@@ -78,6 +78,10 @@ class InfinityService:Service() {
         GlobalScope.launch(Dispatchers.Default) {
             while (isServiceStarted) {
                 for(item in config!!){
+                    // This path is only an example. The correct path has to be saved in the configuration.
+                    // val testURI = "file:///data/user/0/com.ispgr5.locationsimulator/files/Hannah.mp3"
+                    // Commented out as you don't have this exact path and file. This is just an example to view
+                    // soundPlayer.startSound(testURI)
                     if(item is Vibration){
                         val duration = (Math.random() * (item.maxDuration*1000 - item.minDuration*1000 + 1) + item.minDuration*1000).toLong()
                         val strength = (Math.random() * (item.maxStrength - item.minStrength + 1) + item.minStrength).toInt()
@@ -153,6 +157,7 @@ class InfinityService:Service() {
             notificationManager.createNotificationChannel(channel)
         }
 
+        // TODO: PendingIntent.FLAG_MUTABLE requires API-Level 31? Should be checked and updated if necessary
         val pendingIntent: PendingIntent = Intent(this, MainActivity::class.java).let { notificationIntent ->
             PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_MUTABLE)
         }

@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 
 
 /**
- * data class to Store one Vibration of the Pattern
+ * Data class to Store one Vibration of the Pattern
  */
 @Serializable
 //The name for json. for example{"comp_type":"Vibration","minStrength":"4"}

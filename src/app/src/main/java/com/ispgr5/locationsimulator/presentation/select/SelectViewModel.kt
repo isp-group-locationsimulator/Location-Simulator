@@ -35,7 +35,7 @@ class SelectViewModel @Inject constructor(
     }
 
     /**
-     * handles ui Events
+     * Handles UI Events
      */
     fun onEvent(event: SelectEvent) {
         when (event) {
@@ -75,6 +75,9 @@ class SelectViewModel @Inject constructor(
                         selectedConfigurationForDeletion = event.configuration
                     )
                 }
+            }
+            is SelectEvent.TestSound -> {
+                // TODO: Not needed anymore? 
             }
         }
     }
