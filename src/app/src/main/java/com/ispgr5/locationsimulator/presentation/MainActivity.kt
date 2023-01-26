@@ -16,6 +16,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.ispgr5.locationsimulator.FilePicker
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 import com.ispgr5.locationsimulator.domain.model.ConfigurationComponentConverter
 import com.ispgr5.locationsimulator.presentation.delay.DelayScreen
@@ -30,8 +31,13 @@ import kotlinx.serialization.ExperimentalSerializationApi
 // TODO: Add KDoc to this class and methods.
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    // With this filePicker we can access the filesystem wherever we want
+    lateinit var filePicker: FilePicker
+
     @OptIn(ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
+        filePicker = FilePicker(this)
         super.onCreate(savedInstanceState)
         setContent {
             LocationSimulatorTheme {
@@ -43,7 +49,7 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
                     NavHost(navController = navController, startDestination = "selectScreen") {
                         composable(route = "selectScreen") {
-                            SelectScreen(navController = navController)
+                            SelectScreen(navController = navController, filePicker = filePicker)
                         }
                         composable("editScreen?configurationId={configurationId}",
                             arguments = listOf(navArgument(
