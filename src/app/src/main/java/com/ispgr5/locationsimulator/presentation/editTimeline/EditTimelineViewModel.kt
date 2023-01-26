@@ -5,10 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ispgr5.locationsimulator.domain.model.ConfigComponent
-import com.ispgr5.locationsimulator.domain.model.Configuration
-import com.ispgr5.locationsimulator.domain.model.Sound
-import com.ispgr5.locationsimulator.domain.model.Vibration
+import com.ispgr5.locationsimulator.domain.model.*
 import com.ispgr5.locationsimulator.domain.useCase.ConfigurationUseCases
 import com.ispgr5.locationsimulator.presentation.edit.EditEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -30,7 +27,7 @@ class EditTimelineViewModel @Inject constructor(
     private var currentConfigurationId: Int? = null
 
     init {
-        /*
+
         savedStateHandle.get<Int>("configurationId")?.let { configurationId ->
             if (configurationId != -1) {
                 viewModelScope.launch {
@@ -44,8 +41,9 @@ class EditTimelineViewModel @Inject constructor(
                     }
                 }
             }
-        }*/
+        }
 
+        /*
         //create Configuration
         val sound1 = Sound("Schrei", 4, 80, 3, 5, true);
         val sound2 = Sound("Klopfen", 4, 5, 3, 5, true);
@@ -62,18 +60,20 @@ class EditTimelineViewModel @Inject constructor(
         components.add(sound3);
         val configuration = Configuration("config1", "beschreibung", components);
 
+
         _state.value = _state.value.copy(
             name = configuration.name,
             description = configuration.description,
             components = configuration.components,
             current = sound1
-        )
+        ) */
     }
 
     /**
      * handles ui Events
      */
     fun onEvent(event: EditTimelineEvent) {
+
         when (event) {
             is EditTimelineEvent.ChangedSoundVolume -> {
                 viewModelScope.launch {
@@ -141,11 +141,14 @@ class EditTimelineViewModel @Inject constructor(
 
             }
         }
+        //TODO always save?
+        saveCurrentConfigComp()
+        saveConfiguration()
     }
 
-    private fun saveCurrentConfigComp(){
+    private fun saveCurrentConfigComp() {
         val current = _state.value.current
-        when (current){
+        when (current) {
             is Sound -> {
                 current.minVolume = _state.value.volumeMin.toInt()
                 current.maxVolume = _state.value.volumeMax.toInt()
@@ -154,8 +157,8 @@ class EditTimelineViewModel @Inject constructor(
                 //TODO
             }
             is Vibration -> {
-                current.minStrength =  _state.value.strengthMin.toInt()
-                current.maxStrength =  _state.value.strengthMax.toInt()
+                current.minStrength = _state.value.strengthMin.toInt()
+                current.maxStrength = _state.value.strengthMax.toInt()
                 current.minDuration = _state.value.durationMin.toInt()
                 current.maxDuration = _state.value.durationMax.toInt()
                 current.minPause = _state.value.pauseMin.toInt()
@@ -163,5 +166,24 @@ class EditTimelineViewModel @Inject constructor(
             }
         }
 
+    }
+
+    private fun saveConfiguration() {
+        viewModelScope.launch {
+            try {
+                configurationUseCases.addConfiguration(
+                    Configuration(
+                        id = currentConfigurationId,
+                        name = _state.value.name,
+                        description = _state.value.description,
+                        components = _state.value.components
+                    )
+                )
+            } catch (e: InvalidConfigurationException) {
+                print("Configuration Input is wrong")
+                //TODO say User that Configuration is has errors
+                //TODO configuration will be deleted if configuration is wrong
+            }
+        }
     }
 }

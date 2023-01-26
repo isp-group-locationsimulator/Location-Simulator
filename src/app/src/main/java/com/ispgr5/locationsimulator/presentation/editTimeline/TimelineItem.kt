@@ -34,7 +34,7 @@ fun TimelineItem(
                     painter = painterResource(id = R.drawable.audionouse2),
                     contentDescription = null
                 )
-                Text(text = "Current")
+                Text(text = configItem.javaClass.simpleName)
             }
         }
     }else{

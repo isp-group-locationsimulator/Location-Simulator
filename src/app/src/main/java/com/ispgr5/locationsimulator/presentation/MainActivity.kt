@@ -42,7 +42,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colors.background
                 ) {
                     val navController = rememberNavController()
-                    NavHost(navController = navController, startDestination = "timeline") {
+                    NavHost(navController = navController, startDestination = "selectScreen") {
                         composable(route = "selectScreen") {
                             SelectScreen(navController = navController)
                         }
@@ -74,7 +74,15 @@ class MainActivity : ComponentActivity() {
                         composable("stopService"){
                             navController.navigateUp()
                         }
-                        composable("timeline"){
+                        composable("editTimeline?configurationId={configurationId}",
+                            arguments = listOf(navArgument(
+                                name = "configurationId"
+                            ) {
+                                type = NavType.IntType
+                                defaultValue = -1
+                            }
+                            )
+                        ) {
                             EditTimelineScreen(navController = navController)
                         }
                     }

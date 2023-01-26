@@ -117,7 +117,7 @@ fun SelectScreen(
                                 )
                             )
                         },
-                        onEditClicked = { navController.navigate("editScreen?configurationId=${configuration.id}") },
+                        onEditClicked = { navController.navigate("editTimeline?configurationId=${configuration.id}") },
                         onSelectClicked = { navController.navigate("delayScreen?configurationId=${configuration.id}") },
                     )
                 }
