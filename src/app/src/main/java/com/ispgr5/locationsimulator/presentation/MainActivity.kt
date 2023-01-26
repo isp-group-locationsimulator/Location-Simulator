@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -87,6 +88,7 @@ class MainActivity : ComponentActivity() {
 
     @OptIn(ExperimentalSerializationApi::class)
     val startService : (List<ConfigComponent>) -> Unit = fun (config : List<ConfigComponent>){
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         Intent(this, InfinityService::class.java).also {
             it.action = "START"
             it.putExtra("config", ConfigurationComponentConverter().componentListToString(config))
@@ -99,6 +101,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun stopService(){
+        window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         Intent(this, InfinityService::class.java).also {
             Log.d("debug","itAction: ${it.action}")
             it.action = "STOP"
