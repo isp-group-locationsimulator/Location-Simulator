@@ -7,7 +7,6 @@ import androidx.compose.material.RangeSlider
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -16,9 +15,6 @@ import com.ispgr5.locationsimulator.domain.model.Sound
 import com.ispgr5.locationsimulator.domain.model.Vibration
 import com.ispgr5.locationsimulator.presentation.editTimeline.EditTimelineEvent
 import com.ispgr5.locationsimulator.presentation.editTimeline.EditTimelineViewModel
-import com.ispgr5.locationsimulator.presentation.select.SelectEvent
-import com.ispgr5.locationsimulator.presentation.select.SelectViewModel
-
 
 
 @Composable
@@ -28,6 +24,7 @@ fun EditTimelineScreen(
 ) {
     val state = viewModel.state.value
 
+    var showCustomDialogWithResult by remember { mutableStateOf(false) }
 
         Column() {
             Column( modifier = Modifier.padding(12.dp)){
@@ -37,14 +34,35 @@ fun EditTimelineScreen(
             LazyRow(){
                 items(state.components) { configComponent -> TimelineItem(configComponent, viewModel) }
             }
-            Button( onClick = { viewModel.onEvent(EditTimelineEvent.AddSound)}){
-                Text(text = "Add Sound")
+            Button( onClick = { showCustomDialogWithResult = true }){
+                Text(text = "Add")
             }
             Column( modifier = Modifier.padding(12.dp)){
                 EditConfigComponent( viewModel)
             }
 
         }
+
+    if (showCustomDialogWithResult) {
+        AddConfigComponentDialog(
+            onDismiss = {
+                showCustomDialogWithResult = !showCustomDialogWithResult
+            },
+            onNegativeClick = {
+                showCustomDialogWithResult = !showCustomDialogWithResult
+            },
+            onSoundClicked = {
+                showCustomDialogWithResult = !showCustomDialogWithResult
+                viewModel.onEvent(EditTimelineEvent.AddSound)
+            },
+            onVibrationClicked = {
+                showCustomDialogWithResult = !showCustomDialogWithResult
+                viewModel.onEvent(EditTimelineEvent.AddVibration)
+            }
+        )
+    }
+
+
 }
 
 

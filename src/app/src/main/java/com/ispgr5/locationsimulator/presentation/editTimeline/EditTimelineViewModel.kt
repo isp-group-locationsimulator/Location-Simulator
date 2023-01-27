@@ -42,31 +42,6 @@ class EditTimelineViewModel @Inject constructor(
                 }
             }
         }
-
-        /*
-        //create Configuration
-        val sound1 = Sound("Schrei", 4, 80, 3, 5, true);
-        val sound2 = Sound("Klopfen", 4, 5, 3, 5, true);
-        val sound3 = Sound("Singen", 4, 5, 3, 5, true);
-        val vib1 = Vibration(3,90,3,33,23,42)
-        val vib2 = Vibration(34,90,3,23,23,42)
-        val vib3 = Vibration(3,23,3,23,23,42)
-        val components = ArrayList<ConfigComponent>()
-        components.add(sound1);
-        components.add(vib1)
-        components.add(vib2)
-        components.add(sound2);
-        components.add(vib3)
-        components.add(sound3);
-        val configuration = Configuration("config1", "beschreibung", components);
-
-
-        _state.value = _state.value.copy(
-            name = configuration.name,
-            description = configuration.description,
-            components = configuration.components,
-            current = sound1
-        ) */
     }
 
     /**
@@ -152,6 +127,16 @@ class EditTimelineViewModel @Inject constructor(
                     val sound = Sound("test",3,4,3, 7,false)
                     val listC = state.value.components.toMutableList()
                     listC.add(sound)
+                    _state.value = _state.value.copy(
+                        components = listC
+                    )
+                }
+            }
+            is EditTimelineEvent.AddVibration -> {
+                viewModelScope.launch {
+                    val vibration = Vibration(3,4,3, 7,6,8)
+                    val listC = state.value.components.toMutableList()
+                    listC.add(vibration)
                     _state.value = _state.value.copy(
                         components = listC
                     )
