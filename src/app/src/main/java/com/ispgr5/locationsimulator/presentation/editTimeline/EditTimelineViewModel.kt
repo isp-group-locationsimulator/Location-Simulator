@@ -107,6 +107,16 @@ class EditTimelineViewModel @Inject constructor(
                     )
                 }
             }
+            is EditTimelineEvent.AddSound -> {
+                viewModelScope.launch {
+                    val sound = Sound("test",3,4,3, 7,false)
+                    val listC = state.value.components.toMutableList()
+                    listC.add(sound)
+                    _state.value = _state.value.copy(
+                        components = listC
+                    )
+                }
+            }
             is EditTimelineEvent.SelectedTimelineItem -> {
 
                 val selectedConfigComp = event.selectConfigComp

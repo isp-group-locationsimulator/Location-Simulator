@@ -1,6 +1,7 @@
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.Button
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.RangeSlider
 import androidx.compose.material.Text
@@ -35,6 +36,9 @@ fun EditTimelineScreen(
             }
             LazyRow(){
                 items(state.components) { configComponent -> TimelineItem(configComponent, viewModel) }
+            }
+            Button( onClick = { viewModel.onEvent(EditTimelineEvent.AddSound)}){
+                Text(text = "Add Sound")
             }
             Column( modifier = Modifier.padding(12.dp)){
                 EditConfigComponent( viewModel)

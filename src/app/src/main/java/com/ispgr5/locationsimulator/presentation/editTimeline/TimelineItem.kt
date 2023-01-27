@@ -26,7 +26,7 @@ fun TimelineItem(
     viewModel: EditTimelineViewModel
 ){
 
-    if(viewModel.state.value.current == configItem){
+    if(viewModel.state.value.current === configItem){
         //draw selected timeline item
         Card( elevation = 15.dp, backgroundColor = Color.White, modifier = Modifier.padding(6.dp).border(1.dp, Color.Red, RoundedCornerShape(10))) {
             Row(verticalAlignment = Alignment.CenterVertically,  modifier = Modifier.padding(4.dp)) {

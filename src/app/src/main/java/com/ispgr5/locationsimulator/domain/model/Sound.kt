@@ -15,5 +15,5 @@ data class Sound(
     var maxVolume: Int,
     var minPause: Int,
     var maxPause: Int,
-    val isRandom: Boolean
+    val isRandom: Boolean,
 ) : ConfigComponent()
