@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -17,6 +18,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.ispgr5.locationsimulator.FilePicker
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 import com.ispgr5.locationsimulator.domain.model.ConfigurationComponentConverter
 import com.ispgr5.locationsimulator.presentation.delay.DelayScreen
@@ -31,8 +33,13 @@ import kotlinx.serialization.ExperimentalSerializationApi
 // TODO: Add KDoc to this class and methods.
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    // With this filePicker we can access the filesystem wherever we want
+    lateinit var filePicker: FilePicker
+
     @OptIn(ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
+        filePicker = FilePicker(this)
         super.onCreate(savedInstanceState)
         setContent {
             LocationSimulatorTheme {
@@ -44,7 +51,7 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
                     NavHost(navController = navController, startDestination = "selectScreen") {
                         composable(route = "selectScreen") {
-                            SelectScreen(navController = navController)
+                            SelectScreen(navController = navController, filePicker = filePicker)
                         }
                         composable("editScreen?configurationId={configurationId}",
                             arguments = listOf(navArgument(
@@ -93,6 +100,7 @@ class MainActivity : ComponentActivity() {
 
     @OptIn(ExperimentalSerializationApi::class)
     val startService : (List<ConfigComponent>) -> Unit = fun (config : List<ConfigComponent>){
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         Intent(this, InfinityService::class.java).also {
             it.action = "START"
             it.putExtra("config", ConfigurationComponentConverter().componentListToString(config))
@@ -105,6 +113,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun stopService(){
+        window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         Intent(this, InfinityService::class.java).also {
             Log.d("debug","itAction: ${it.action}")
             it.action = "STOP"
