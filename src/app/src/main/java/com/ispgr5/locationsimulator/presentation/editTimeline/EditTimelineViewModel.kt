@@ -77,33 +77,73 @@ class EditTimelineViewModel @Inject constructor(
         when (event) {
             is EditTimelineEvent.ChangedSoundVolume -> {
                 viewModelScope.launch {
+                    val compsCopy = state.value.components.toMutableList()
+                    val component = compsCopy.get(state.value.currentTimelineIndex).copy()
+                    when(component) {
+                        is Sound -> {
+                            component.minVolume = event.range.start.toInt()
+                            component.maxVolume = event.range.endInclusive.toInt()
+                        }
+                    }
+                    compsCopy.set(state.value.currentTimelineIndex, component)
                     _state.value = _state.value.copy(
-                        volumeMax = event.range.endInclusive,
-                        volumeMin = event.range.start
+                        components = compsCopy,
+                        current = component
                     )
                 }
             }
             is EditTimelineEvent.ChangedPause -> {
                 viewModelScope.launch {
+                    val compsCopy = state.value.components.toMutableList()
+                    val component = compsCopy.get(state.value.currentTimelineIndex).copy()
+                    when(component) {
+                        is Sound -> {
+                            component.minPause = event.range.start.toInt()
+                            component.maxPause = event.range.endInclusive.toInt()
+                        }
+                        is Vibration -> {
+                            component.minPause = event.range.start.toInt()
+                            component.maxPause = event.range.endInclusive.toInt()
+                        }
+                    }
+                    compsCopy.set(state.value.currentTimelineIndex, component)
                     _state.value = _state.value.copy(
-                        pauseMax = event.range.endInclusive,
-                        pauseMin = event.range.start
+                        components = compsCopy,
+                        current = component
                     )
                 }
             }
             is EditTimelineEvent.ChangedVibStrength -> {
                 viewModelScope.launch {
+                    val compsCopy = state.value.components.toMutableList()
+                    val component = compsCopy.get(state.value.currentTimelineIndex).copy()
+                    when(component) {
+                        is Vibration -> {
+                            component.minStrength = event.range.start.toInt()
+                            component.maxStrength = event.range.endInclusive.toInt()
+                        }
+                    }
+                    compsCopy.set(state.value.currentTimelineIndex, component)
                     _state.value = _state.value.copy(
-                        strengthMax = event.range.endInclusive,
-                        strengthMin = event.range.start
+                        components = compsCopy,
+                        current = component
                     )
                 }
             }
             is EditTimelineEvent.ChangedVibDuration -> {
                 viewModelScope.launch {
+                    val compsCopy = state.value.components.toMutableList()
+                    val component = compsCopy.get(state.value.currentTimelineIndex).copy()
+                    when(component) {
+                        is Vibration -> {
+                            component.minDuration = event.range.start.toInt()
+                            component.maxDuration = event.range.endInclusive.toInt()
+                        }
+                    }
+                    compsCopy.set(state.value.currentTimelineIndex, component)
                     _state.value = _state.value.copy(
-                        durationMax = event.range.endInclusive,
-                        durationMin = event.range.start
+                        components = compsCopy,
+                        current = component
                     )
                 }
             }
@@ -118,65 +158,26 @@ class EditTimelineViewModel @Inject constructor(
                 }
             }
             is EditTimelineEvent.SelectedTimelineItem -> {
-
-                val selectedConfigComp = event.selectConfigComp
-                saveCurrentConfigComp()
-                when (selectedConfigComp) {
-                    is Sound -> {
-                        viewModelScope.launch {
-                            _state.value = _state.value.copy(
-                                pauseMax = selectedConfigComp.maxPause.toFloat(),
-                                pauseMin = selectedConfigComp.minPause.toFloat(),
-                                volumeMax = selectedConfigComp.maxVolume.toFloat(),
-                                volumeMin = selectedConfigComp.minVolume.toFloat(),
-                                current = selectedConfigComp
-                            )
-                        }
-                    }
-                    is Vibration -> {
-                        viewModelScope.launch {
-                            _state.value = _state.value.copy(
-                                pauseMax = selectedConfigComp.maxPause.toFloat(),
-                                pauseMin = selectedConfigComp.minPause.toFloat(),
-                                strengthMin = selectedConfigComp.minStrength.toFloat(),
-                                strengthMax = selectedConfigComp.maxStrength.toFloat(),
-                                durationMin = selectedConfigComp.minDuration.toFloat(),
-                                durationMax = selectedConfigComp.maxDuration.toFloat(),
-
-                                current = selectedConfigComp
-                            )
-                        }
+                //find index
+                val compsCopy = state.value.components.toMutableList()
+                var index = 0;
+                for(i in compsCopy.indices){
+                    if(compsCopy[i] == event.selectConfigComp){
+                        index = i
+                        break
                     }
                 }
-
+                _state.value = _state.value.copy(
+                    current =  event.selectConfigComp,
+                    currentTimelineIndex = index
+                )
             }
         }
         //TODO always save?
-        saveCurrentConfigComp()
         saveConfiguration()
     }
 
-    private fun saveCurrentConfigComp() {
-        val current = _state.value.current
-        when (current) {
-            is Sound -> {
-                current.minVolume = _state.value.volumeMin.toInt()
-                current.maxVolume = _state.value.volumeMax.toInt()
-                current.minPause = _state.value.pauseMin.toInt()
-                current.maxPause = _state.value.pauseMax.toInt()
-                //TODO
-            }
-            is Vibration -> {
-                current.minStrength = _state.value.strengthMin.toInt()
-                current.maxStrength = _state.value.strengthMax.toInt()
-                current.minDuration = _state.value.durationMin.toInt()
-                current.maxDuration = _state.value.durationMax.toInt()
-                current.minPause = _state.value.pauseMin.toInt()
-                current.maxPause = _state.value.pauseMax.toInt()
-            }
-        }
 
-    }
 
     private fun saveConfiguration() {
         viewModelScope.launch {

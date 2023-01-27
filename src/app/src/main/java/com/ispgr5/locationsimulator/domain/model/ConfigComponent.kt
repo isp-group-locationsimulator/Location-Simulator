@@ -7,4 +7,6 @@ import kotlinx.serialization.Serializable
  * just here to create List<ConfigComponent>
  */
 @Serializable
-abstract class ConfigComponent
+abstract class ConfigComponent{
+    abstract fun copy() : ConfigComponent
+}

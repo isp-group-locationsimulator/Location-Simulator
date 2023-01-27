@@ -16,4 +16,9 @@ data class Sound(
     var minPause: Int,
     var maxPause: Int,
     val isRandom: Boolean,
-) : ConfigComponent()
+) : ConfigComponent(){
+
+    override fun copy() : Sound {
+        return Sound(source,minVolume,maxVolume,minPause,maxPause,isRandom)
+    }
+}

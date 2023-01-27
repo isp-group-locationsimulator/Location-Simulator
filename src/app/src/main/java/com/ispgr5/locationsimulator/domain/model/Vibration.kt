@@ -17,4 +17,8 @@ data class Vibration(
     var maxPause: Int,
     var minDuration: Int,
     var maxDuration: Int
-) : ConfigComponent()
+) : ConfigComponent(){
+    override fun copy() :Vibration{
+        return Vibration(minStrength,maxStrength,minPause,maxPause,minDuration,maxDuration)
+    }
+}

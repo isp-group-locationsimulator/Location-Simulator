@@ -51,34 +51,37 @@ fun EditTimelineScreen(
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun EditConfigComponent(viewModel: EditTimelineViewModel){
-
-    when(viewModel.state.value.current){
+    if(viewModel.state.value.components.isEmpty()){
+        return
+    }
+    val current = viewModel.state.value.current
+    when(current){
         is Sound ->{
             Text("Volume:")
             SliderForRange(
-                value = viewModel.state.value.volumeMin..viewModel.state.value.volumeMax,
+                value = current.minVolume.toFloat()..current.maxVolume.toFloat(),
                 func =  {value : ClosedFloatingPointRange<Float> -> viewModel.onEvent(EditTimelineEvent.ChangedSoundVolume(value))}
             )
             Text("Pause:")
             SliderForRange(
-                value = viewModel.state.value.pauseMin..viewModel.state.value.pauseMax,
+                value = current.minPause.toFloat()..current.maxPause.toFloat(),
                 func =  {value : ClosedFloatingPointRange<Float> -> viewModel.onEvent(EditTimelineEvent.ChangedPause(value))}
             )
         }
         is Vibration -> {
             Text("Strength:")
             SliderForRange(
-                value = viewModel.state.value.strengthMin..viewModel.state.value.strengthMax,
+                value = current.minStrength.toFloat()..current.maxStrength.toFloat(),
                 func =  {value : ClosedFloatingPointRange<Float> -> viewModel.onEvent(EditTimelineEvent.ChangedVibStrength(value))}
             )
             Text("Duration:")
             SliderForRange(
-                value = viewModel.state.value.durationMin..viewModel.state.value.durationMax,
+                value = current.minDuration.toFloat()..current.maxDuration.toFloat(),
                 func =  {value : ClosedFloatingPointRange<Float> -> viewModel.onEvent(EditTimelineEvent.ChangedVibDuration(value))}
             )
             Text("Pause:")
             SliderForRange(
-                value = viewModel.state.value.pauseMin..viewModel.state.value.pauseMax,
+                value = current.minPause.toFloat()..current.maxPause.toFloat(),
                 func =  {value : ClosedFloatingPointRange<Float> -> viewModel.onEvent(EditTimelineEvent.ChangedPause(value))}
             )
         }
