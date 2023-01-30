@@ -19,6 +19,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.ispgr5.locationsimulator.FilePicker
+import com.ispgr5.locationsimulator.StorageConfigInterface
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 import com.ispgr5.locationsimulator.domain.model.ConfigurationComponentConverter
 import com.ispgr5.locationsimulator.presentation.delay.DelayScreen
@@ -36,10 +37,12 @@ class MainActivity : ComponentActivity() {
 
     // With this filePicker we can access the filesystem wherever we want
     lateinit var filePicker: FilePicker
+    lateinit var storageConfigInterface: StorageConfigInterface
 
     @OptIn(ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         filePicker = FilePicker(this)
+        storageConfigInterface = StorageConfigInterface(this)
         super.onCreate(savedInstanceState)
         setContent {
             LocationSimulatorTheme {
@@ -51,7 +54,11 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
                     NavHost(navController = navController, startDestination = "selectScreen") {
                         composable(route = "selectScreen") {
-                            SelectScreen(navController = navController, filePicker = filePicker)
+                            SelectScreen(
+                                navController = navController,
+                                filePicker = filePicker,
+                                storageConfigInterface = storageConfigInterface
+                            )
                         }
                         composable("editScreen?configurationId={configurationId}",
                             arguments = listOf(navArgument(
@@ -62,7 +69,10 @@ class MainActivity : ComponentActivity() {
                             }
                             )
                         ) {
-                            EditScreen(navController = navController)
+                            EditScreen(
+                                navController = navController,
+                                storageConfigInterface = storageConfigInterface
+                            )
                         }
                         composable(route = "delayScreen?configurationId={configurationId}",
                             arguments = listOf(navArgument(
