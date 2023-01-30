@@ -41,11 +41,11 @@ class SelectViewModel @Inject constructor(
         when (event) {
             is SelectEvent.ToggledConfiguration -> {
                 viewModelScope.launch {
-                    if (_state.value.toggledConfiguration?.id == event.configuration.id){
+                    if (_state.value.toggledConfiguration?.id == event.configuration.id) {
                         _state.value = _state.value.copy(
                             toggledConfiguration = null
                         )
-                    }else{
+                    } else {
                         _state.value = _state.value.copy(
                             toggledConfiguration = event.configuration
                         )
@@ -79,9 +79,8 @@ class SelectViewModel @Inject constructor(
             is SelectEvent.ImportFile -> {
                 event.filePicker.moveFileToPrivateFolder()
             }
-            is SelectEvent.SelectedImportConfiguration -> {
-                event.filePicker.pickAndReadFile()
-                //TODO cast the String from File with json and safe to Database
+            is SelectEvent.SelectedExportConfiguration -> {
+                event.storageConfigInterface.safeConfigurationToStorage(event.configuration)
             }
         }
     }

@@ -20,6 +20,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ispgr5.locationsimulator.FilePicker
 import com.ispgr5.locationsimulator.R
+import com.ispgr5.locationsimulator.StorageConfigInterface
 import com.ispgr5.locationsimulator.presentation.select.components.OneConfigurationListMember
 
 /**
@@ -31,7 +32,8 @@ import com.ispgr5.locationsimulator.presentation.select.components.OneConfigurat
 fun SelectScreen(
     navController: NavController,
     filePicker: FilePicker,
-    viewModel: SelectViewModel = hiltViewModel()
+    viewModel: SelectViewModel = hiltViewModel(),
+    storageConfigInterface: StorageConfigInterface
 ) {
     val state = viewModel.state.value
 
@@ -43,9 +45,6 @@ fun SelectScreen(
                 viewModel.onEvent(SelectEvent.ImportFile(filePicker))
             }) {
                 Text(text = "Import Audio")
-            }
-            Button(onClick = { viewModel.onEvent(SelectEvent.SelectedImportConfiguration(filePicker = filePicker)) }) {
-                Text(text = "Import Conf")
             }
             Row(
                 modifier = Modifier
@@ -134,6 +133,14 @@ fun SelectScreen(
                         },
                         onEditClicked = { navController.navigate("editScreen?configurationId=${configuration.id}") },
                         onSelectClicked = { navController.navigate("delayScreen?configurationId=${configuration.id}") },
+                        onExportClicked = {
+                            viewModel.onEvent(
+                                SelectEvent.SelectedExportConfiguration(
+                                    configuration = configuration,
+                                    storageConfigInterface = storageConfigInterface
+                                )
+                            )
+                        }
                     )
                 }
                 Spacer(modifier = Modifier.height(4.dp))

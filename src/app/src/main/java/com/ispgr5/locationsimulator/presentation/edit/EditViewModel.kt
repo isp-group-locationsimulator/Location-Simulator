@@ -102,6 +102,9 @@ class EditViewModel @Inject constructor(
                     }
                 }
             }
+            is EditEvent.SelectedImportConfiguration -> {
+                event.storageConfigInterface.pickFileAndSafeToDatabase(configurationUseCases = configurationUseCases)
+            }
         }
     }
 

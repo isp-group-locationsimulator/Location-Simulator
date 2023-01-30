@@ -25,6 +25,7 @@ fun OneConfigurationListMember(
     onToggleClicked: () -> Unit,
     onEditClicked: () -> Unit,
     onSelectClicked: () -> Unit,
+    onExportClicked: () -> Unit
 ) {
     val rowBackgroundColor: Color = Color.LightGray
 
@@ -77,6 +78,9 @@ fun OneConfigurationListMember(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceAround
                 ) {
+                    Button(onClick = onExportClicked) {
+                        Text(text = "EXPORT")
+                    }
                     //The Select Button
                     Button(onClick = onSelectClicked) {
                         Text(text = "SELECT")
