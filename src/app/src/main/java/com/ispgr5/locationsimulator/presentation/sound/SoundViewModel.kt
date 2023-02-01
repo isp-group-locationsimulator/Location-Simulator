@@ -5,11 +5,17 @@ import androidx.compose.runtime.mutableStateOf
 import com.ispgr5.locationsimulator.FilePicker
 import com.ispgr5.locationsimulator.presentation.run.SoundPlayer
 
+/**
+ * The ViewModel for the Sound
+ */
 class SoundViewModel(private val filePicker: FilePicker) {
     // The provided state for the View
     private val _state = mutableStateOf(SoundState(filePicker.getSoundFileNames()))
     val state: State<SoundState> = _state
 
+    /**
+     * Handles UI Events
+     */
     fun onEvent(event: SoundEvent) {
         when(event) {
             is SoundEvent.RefreshPage -> {

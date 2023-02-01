@@ -120,6 +120,10 @@ class FilePicker(private val mainActivity: MainActivity) {
     }
 
 
+    /**
+     * This function gets the names of the Sound Files from the private dir.
+     * @return The List of Strings that hold the Filenames (incl. File Extension, exl. path) to the Sound Files in the private dir.
+     */
     fun getSoundFileNames(): List<String> {
         val dir = File(mainActivity.filesDir, "")
         val files = dir.listFiles()

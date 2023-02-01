@@ -18,6 +18,9 @@ import com.ispgr5.locationsimulator.FilePicker
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.presentation.MainActivity
 
+/**
+ * Shows a list of Audio Files to be selected.
+ */
 @Composable
 fun SoundScreen(
     filePicker: FilePicker,

@@ -11,6 +11,9 @@ import androidx.compose.ui.res.painterResource
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.presentation.MainActivity
 
+/**
+ * Shows a single Audio File and a button to play it.
+ */
 @Composable
 fun SingleSound(soundName: String, viewModel: SoundViewModel, mainActivity: MainActivity) {
     Row() {
