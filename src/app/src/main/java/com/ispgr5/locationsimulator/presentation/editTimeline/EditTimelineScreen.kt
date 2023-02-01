@@ -15,6 +15,7 @@ import com.ispgr5.locationsimulator.domain.model.Sound
 import com.ispgr5.locationsimulator.domain.model.Vibration
 import com.ispgr5.locationsimulator.presentation.editTimeline.EditTimelineEvent
 import com.ispgr5.locationsimulator.presentation.editTimeline.EditTimelineViewModel
+import com.ispgr5.locationsimulator.presentation.editTimeline.RangeConverter
 
 
 @Composable
@@ -69,38 +70,54 @@ fun EditTimelineScreen(
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun EditConfigComponent(viewModel: EditTimelineViewModel){
+    /*TODO Bug doesnt get printed in the beginning*/
     if(viewModel.state.value.components.isEmpty()){
+        System.out.println("isEmpty")
         return
     }
     val current = viewModel.state.value.current
     when(current){
         is Sound ->{
             Text("Volume:")
+            Text( RangeConverter.EightBitIntToPercentageFloat(current.minVolume).toInt().toString() + "%"
+                    + " to " + RangeConverter.EightBitIntToPercentageFloat(current.maxVolume).toInt().toString() + "%"
+            )
             SliderForRange(
-                value = current.minVolume.toFloat()..current.maxVolume.toFloat(),
-                func =  {value : ClosedFloatingPointRange<Float> -> viewModel.onEvent(EditTimelineEvent.ChangedSoundVolume(value))}
+                value = RangeConverter.EightBitIntToPercentageFloat(current.minVolume)..RangeConverter.EightBitIntToPercentageFloat(current.maxVolume),
+                func =  {value : ClosedFloatingPointRange<Float> -> viewModel.onEvent(EditTimelineEvent.ChangedSoundVolume(value))},
+                range = 0f..100f
             )
             Text("Pause:")
+            SecText(min = RangeConverter.MsToS(current.minPause), max = RangeConverter.MsToS(current.maxPause))
             SliderForRange(
-                value = current.minPause.toFloat()..current.maxPause.toFloat(),
-                func =  {value : ClosedFloatingPointRange<Float> -> viewModel.onEvent(EditTimelineEvent.ChangedPause(value))}
+                value = RangeConverter.MsToS(current.minPause)..RangeConverter.MsToS(current.maxPause),
+                func =  {value : ClosedFloatingPointRange<Float> -> viewModel.onEvent(EditTimelineEvent.ChangedPause(value)) } ,
+                range = 0f..30f
             )
         }
         is Vibration -> {
             Text("Strength:")
+            Text( RangeConverter.EightBitIntToPercentageFloat(current.minStrength).toInt().toString() + "%"
+            + " to " + RangeConverter.EightBitIntToPercentageFloat(current.maxStrength).toInt().toString() + "%"
+            )
             SliderForRange(
-                value = current.minStrength.toFloat()..current.maxStrength.toFloat(),
-                func =  {value : ClosedFloatingPointRange<Float> -> viewModel.onEvent(EditTimelineEvent.ChangedVibStrength(value))}
+                value = RangeConverter.EightBitIntToPercentageFloat(current.minStrength)..RangeConverter.EightBitIntToPercentageFloat(current.maxStrength),
+                func =  {value : ClosedFloatingPointRange<Float> -> viewModel.onEvent(EditTimelineEvent.ChangedVibStrength(value))},
+                range = 0f..100f
             )
             Text("Duration:")
+            SecText(min = RangeConverter.MsToS(current.minDuration), max = RangeConverter.MsToS(current.maxDuration))
             SliderForRange(
-                value = current.minDuration.toFloat()..current.maxDuration.toFloat(),
-                func =  {value : ClosedFloatingPointRange<Float> -> viewModel.onEvent(EditTimelineEvent.ChangedVibDuration(value))}
+                value = RangeConverter.MsToS(current.minDuration)..RangeConverter.MsToS(current.maxDuration),
+                func =  {value : ClosedFloatingPointRange<Float> -> viewModel.onEvent(EditTimelineEvent.ChangedVibDuration(value))},
+                range = 0f..30f
             )
             Text("Pause:")
+            SecText(min = RangeConverter.MsToS(current.minPause), max = RangeConverter.MsToS(current.maxPause))
             SliderForRange(
-                value = current.minPause.toFloat()..current.maxPause.toFloat(),
-                func =  {value : ClosedFloatingPointRange<Float> -> viewModel.onEvent(EditTimelineEvent.ChangedPause(value))}
+                value = RangeConverter.MsToS(current.minPause)..RangeConverter.MsToS(current.maxPause),
+                func =  {value : ClosedFloatingPointRange<Float> -> viewModel.onEvent(EditTimelineEvent.ChangedPause(value))},
+                range = 0f..30f
             )
         }
     }
@@ -109,12 +126,19 @@ fun EditConfigComponent(viewModel: EditTimelineViewModel){
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun SliderForRange(func: (ClosedFloatingPointRange<Float>) -> Unit, value: ClosedFloatingPointRange<Float>){
-    Text(value.toString())
+fun SliderForRange(func: (ClosedFloatingPointRange<Float>) -> Unit,
+                   value: ClosedFloatingPointRange<Float>,
+                   range: ClosedFloatingPointRange<Float>)
+{
     RangeSlider(
         value = (value),
         onValueChange = func,
-        valueRange = 0f..100f,
+        valueRange = range,
         onValueChangeFinished = {},
     )
+}
+
+@Composable
+fun SecText(min : Float, max : Float){
+    Text( String.format("%.1f", min) + "s to " + String.format("%.1f", max) +"s" )
 }

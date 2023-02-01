@@ -29,7 +29,7 @@ fun TimelineItem(
     val current = viewModel.state.value.components[ viewModel.state.value.currentTimelineIndex]
     if(current === configItem){
         //draw selected timeline item
-        Card( elevation = 15.dp, backgroundColor = Color.White, modifier = Modifier.padding(6.dp).border(2.dp, MaterialTheme.colors.primary, RoundedCornerShape(10))) {
+        Card( elevation = 15.dp, backgroundColor = MaterialTheme.colors.surface, modifier = Modifier.padding(6.dp).border(2.dp, MaterialTheme.colors.primary, RoundedCornerShape(10))) {
             Row(verticalAlignment = Alignment.CenterVertically,  modifier = Modifier.padding(4.dp)) {
                 Icon(
                     painter = painterResource(id = R.drawable.audionouse2),
@@ -40,7 +40,7 @@ fun TimelineItem(
         }
     }else{
         //draw not selected timeline item
-        Card( elevation = 10.dp, backgroundColor = Color.White, modifier = Modifier.padding(6.dp)
+        Card( elevation = 10.dp, backgroundColor = MaterialTheme.colors.surface, modifier = Modifier.padding(6.dp)
             .clickable { viewModel.onEvent(EditTimelineEvent.SelectedTimelineItem(configItem))} ) {
             Row( verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(4.dp) ) {
                 Icon(
