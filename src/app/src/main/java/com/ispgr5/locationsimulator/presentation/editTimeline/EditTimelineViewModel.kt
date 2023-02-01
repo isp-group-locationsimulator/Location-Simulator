@@ -147,7 +147,7 @@ class EditTimelineViewModel @Inject constructor(
                 val compsCopy = state.value.components.toMutableList()
                 var index = 0;
                 for(i in compsCopy.indices){
-                    if(compsCopy[i] == event.selectConfigComp){
+                    if(compsCopy[i] === event.selectConfigComp){
                         index = i
                         break
                     }
