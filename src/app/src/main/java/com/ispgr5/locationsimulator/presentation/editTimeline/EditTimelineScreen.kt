@@ -1,13 +1,12 @@
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Button
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.RangeSlider
-import androidx.compose.material.Text
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -29,12 +28,33 @@ fun EditTimelineScreen(
 
         Column() {
             Column( modifier = Modifier.padding(12.dp)){
-                Text(text = state.name , fontWeight = FontWeight.Bold)
-                Text(text = state.description)
+                val textState = remember { mutableStateOf(TextFieldValue()) }
+                Text(text = "Name:" , fontWeight = FontWeight.Bold )
+                BasicTextField(
+                    value = state.name,
+                    singleLine = true,
+                    onValueChange = { name -> viewModel.onEvent(EditTimelineEvent.ChangedName(name)) }
+                )
+                Text("Description:")
+                Spacer(modifier = Modifier.size(4.dp))
+                BasicTextField(
+                    value = state.description,
+                    onValueChange = { description -> viewModel.onEvent(EditTimelineEvent.ChangedDescription(description)) }
+                )
             }
-            LazyRow(){
-                items(state.components) { configComponent -> TimelineItem(configComponent, viewModel) }
+            Spacer(modifier = Modifier.size(4.dp))
+            Divider(color = MaterialTheme.colors.primary, thickness = 1.dp )
+            Spacer(modifier = Modifier.size(4.dp))
+            
+            Row{
+                LazyRow(){
+                    items(state.components) {
+                            configComponent -> TimelineItem(configComponent, viewModel)
+                    }
+                }
+
             }
+
             Button( onClick = { showCustomDialogWithResult = true }){
                 Text(text = "Add")
             }

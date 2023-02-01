@@ -165,6 +165,20 @@ class EditTimelineViewModel @Inject constructor(
                     currentTimelineIndex = index
                 )
             }
+
+            is EditTimelineEvent.ChangedName -> {
+                //TODO limit
+                _state.value = _state.value.copy(
+                    name = event.name
+                )
+            }
+
+            is EditTimelineEvent.ChangedDescription -> {
+                //TODO limit
+                _state.value = _state.value.copy(
+                    description = event.description
+                )
+            }
         }
         //TODO always save?
         saveConfiguration()
