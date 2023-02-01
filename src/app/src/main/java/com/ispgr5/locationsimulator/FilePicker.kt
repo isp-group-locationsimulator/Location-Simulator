@@ -120,6 +120,19 @@ class FilePicker(private val mainActivity: MainActivity) {
     }
 
 
+    fun getSoundFileNames(): List<String> {
+        val dir = File(mainActivity.filesDir, "")
+        val files = dir.listFiles()
+        val names = mutableListOf<String>()
+        if (files != null) {
+            for (i in files.indices) {
+                names += files[i].path.substringAfter(mainActivity.filesDir.toString() + "/")
+            }
+        }
+        return names
+    }
+
+
     /**
      * This function was taken from: https://stackoverflow.com/a/70795638
      * TODO: Remove the SuppressLint

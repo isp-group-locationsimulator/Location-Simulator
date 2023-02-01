@@ -38,7 +38,7 @@ fun EditTimelineScreen(
                 Text(text = "Add")
             }
             Column( modifier = Modifier.padding(12.dp)){
-                EditConfigComponent( viewModel)
+                EditConfigComponent( viewModel, navController)
             }
 
         }
@@ -68,7 +68,7 @@ fun EditTimelineScreen(
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun EditConfigComponent(viewModel: EditTimelineViewModel){
+fun EditConfigComponent(viewModel: EditTimelineViewModel, navController: NavController){
     if(viewModel.state.value.components.isEmpty()){
         return
     }
@@ -85,6 +85,9 @@ fun EditConfigComponent(viewModel: EditTimelineViewModel){
                 value = current.minPause.toFloat()..current.maxPause.toFloat(),
                 func =  {value : ClosedFloatingPointRange<Float> -> viewModel.onEvent(EditTimelineEvent.ChangedPause(value))}
             )
+            Button(onClick = { navController.navigate("sound") }) {
+                Text(text = "Select Sound")
+            }
         }
         is Vibration -> {
             Text("Strength:")
