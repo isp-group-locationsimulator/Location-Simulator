@@ -8,6 +8,8 @@ sealed class EditTimelineEvent {
     data class ChangedVibStrength(val range: ClosedFloatingPointRange<Float>) : EditTimelineEvent()
     data class ChangedVibDuration(val range: ClosedFloatingPointRange<Float>) : EditTimelineEvent()
     data class SelectedTimelineItem(val selectConfigComp: ConfigComponent) : EditTimelineEvent()
+    data class ChangedName(val name: String) : EditTimelineEvent()
+    data class ChangedDescription(val description: String) : EditTimelineEvent()
     object AddSound : EditTimelineEvent()
     object AddVibration : EditTimelineEvent()
 }

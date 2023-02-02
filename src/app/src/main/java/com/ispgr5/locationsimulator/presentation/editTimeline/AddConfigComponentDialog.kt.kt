@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -32,7 +33,7 @@ fun AddConfigComponentDialog(
             Column(modifier = Modifier.padding(8.dp)) {
 
                 Text(
-                    text = "What do you want to add?",
+                    text = stringResource(id = R.string.editTimeline_AddConfigComponentDialog_Question),
                     fontSize = 16.sp,
                     modifier = Modifier.padding(8.dp)
                 )
@@ -44,7 +45,7 @@ fun AddConfigComponentDialog(
                         contentDescription = null
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text(text = "Add Vibration" , fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Color.Black )
+                    Text(text = stringResource(id = R.string.editTimeline_AddConfigComponentDialog_addVibration) , fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Color.Black )
                 }
                 TextButton(onClick = onSoundClicked) {
                     Icon(
@@ -52,7 +53,7 @@ fun AddConfigComponentDialog(
                         contentDescription = null,
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text(text = "Add Sound",  fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Color.Black )
+                    Text(text = stringResource(id = R.string.editTimeline_addConfigComponentDialog_AddSound),  fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Color.Black )
                 }
 
 
@@ -62,7 +63,7 @@ fun AddConfigComponentDialog(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     TextButton(onClick = onNegativeClick) {
-                        Text(text = "CANCEL")
+                        Text(text = stringResource(id = R.string.editTimeline_AddConfigComponentDialog_Cancel))
                     }
                 }
             }

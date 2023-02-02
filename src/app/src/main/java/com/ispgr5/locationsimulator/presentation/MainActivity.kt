@@ -24,6 +24,8 @@ import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 import com.ispgr5.locationsimulator.domain.model.ConfigurationComponentConverter
 import com.ispgr5.locationsimulator.presentation.delay.DelayScreen
 import com.ispgr5.locationsimulator.presentation.edit.EditScreen
+import com.ispgr5.locationsimulator.presentation.homescreen.HomeScreenScreen
+import com.ispgr5.locationsimulator.presentation.homescreen.InfoScreen
 import com.ispgr5.locationsimulator.presentation.run.InfinityService
 import com.ispgr5.locationsimulator.presentation.run.RunScreen
 import com.ispgr5.locationsimulator.presentation.select.SelectScreen
@@ -53,7 +55,13 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colors.background
                 ) {
                     val navController = rememberNavController()
-                    NavHost(navController = navController, startDestination = "selectScreen") {
+                    NavHost(navController = navController, startDestination = "homeScreen") {
+                        composable("homeScreen") {
+                            HomeScreenScreen(navController = navController)
+                        }
+                        composable("infoScreen") {
+                            InfoScreen()
+                        }
                         composable(route = "selectScreen") {
                             SelectScreen(
                                 navController = navController,
@@ -84,12 +92,15 @@ class MainActivity : ComponentActivity() {
                             }
                             )
                         ) {
-                            DelayScreen(navController = navController, startServiceFunction = startService)
+                            DelayScreen(
+                                navController = navController,
+                                startServiceFunction = startService
+                            )
                         }
-                        composable("runScreen"){
-                            RunScreen(navController, stopServiceFunction = {stopService()})
+                        composable("runScreen") {
+                            RunScreen(navController, stopServiceFunction = { stopService() })
                         }
-                        composable("stopService"){
+                        composable("stopService") {
                             navController.navigateUp()
                         }
                         composable("editTimeline?configurationId={configurationId}",
@@ -122,27 +133,27 @@ class MainActivity : ComponentActivity() {
     }
 
     @OptIn(ExperimentalSerializationApi::class)
-    val startService : (List<ConfigComponent>) -> Unit = fun (config : List<ConfigComponent>){
+    val startService: (List<ConfigComponent>) -> Unit = fun(config: List<ConfigComponent>) {
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         Intent(this, InfinityService::class.java).also {
             it.action = "START"
             it.putExtra("config", ConfigurationComponentConverter().componentListToString(config))
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 startForegroundService(it)
-            }else{
+            } else {
                 startService(it)
             }
         }
     }
 
-    private fun stopService(){
+    private fun stopService() {
         window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         Intent(this, InfinityService::class.java).also {
-            Log.d("debug","itAction: ${it.action}")
+            Log.d("debug", "itAction: ${it.action}")
             it.action = "STOP"
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 startForegroundService(it)
-            }else{
+            } else {
                 startService(it)
             }
         }

@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.ispgr5.locationsimulator.domain.model.Configuration
 import com.ispgr5.locationsimulator.R
@@ -79,11 +80,11 @@ fun OneConfigurationListMember(
                     horizontalArrangement = Arrangement.SpaceAround
                 ) {
                     Button(onClick = onExportClicked) {
-                        Text(text = "EXPORT")
+                        Text(text = stringResource(id = R.string.select_btn_profile_export))
                     }
                     //The Select Button
                     Button(onClick = onSelectClicked) {
-                        Text(text = "SELECT")
+                        Text(text = stringResource(id = R.string.select_btn_profile_select))
                     }
                     //The Edit Button
                     Button(

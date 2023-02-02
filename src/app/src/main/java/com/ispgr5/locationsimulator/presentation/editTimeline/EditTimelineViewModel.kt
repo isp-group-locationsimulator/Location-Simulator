@@ -42,6 +42,14 @@ class EditTimelineViewModel @Inject constructor(
                 }
             }
         }
+
+        //reset current selected to first
+        if(!state.value.components.isEmpty()){
+            _state.value = _state.value.copy(
+                current = state.value.components.get(0),
+                currentTimelineIndex = 0
+            )
+        }
     }
 
     /**
@@ -56,8 +64,8 @@ class EditTimelineViewModel @Inject constructor(
                     val component = compsCopy.get(state.value.currentTimelineIndex).copy()
                     when(component) {
                         is Sound -> {
-                            component.minVolume = event.range.start.toInt()
-                            component.maxVolume = event.range.endInclusive.toInt()
+                            component.minVolume = RangeConverter.floatTo8BitInt(event.range.start)
+                            component.maxVolume = RangeConverter.floatTo8BitInt(event.range.endInclusive)
                         }
                     }
                     compsCopy.set(state.value.currentTimelineIndex, component)
@@ -73,12 +81,12 @@ class EditTimelineViewModel @Inject constructor(
                     val component = compsCopy.get(state.value.currentTimelineIndex).copy()
                     when(component) {
                         is Sound -> {
-                            component.minPause = event.range.start.toInt()
-                            component.maxPause = event.range.endInclusive.toInt()
+                            component.minPause = RangeConverter.SToMs(event.range.start)
+                            component.maxPause = RangeConverter.SToMs(event.range.endInclusive)
                         }
                         is Vibration -> {
-                            component.minPause = event.range.start.toInt()
-                            component.maxPause = event.range.endInclusive.toInt()
+                            component.minPause = RangeConverter.SToMs(event.range.start)
+                            component.maxPause = RangeConverter.SToMs(event.range.endInclusive)
                         }
                     }
                     compsCopy.set(state.value.currentTimelineIndex, component)
@@ -94,8 +102,8 @@ class EditTimelineViewModel @Inject constructor(
                     val component = compsCopy.get(state.value.currentTimelineIndex).copy()
                     when(component) {
                         is Vibration -> {
-                            component.minStrength = event.range.start.toInt()
-                            component.maxStrength = event.range.endInclusive.toInt()
+                            component.minStrength = RangeConverter.floatTo8BitInt(event.range.start)
+                            component.maxStrength = RangeConverter.floatTo8BitInt(event.range.endInclusive)
                         }
                     }
                     compsCopy.set(state.value.currentTimelineIndex, component)
@@ -111,8 +119,8 @@ class EditTimelineViewModel @Inject constructor(
                     val component = compsCopy.get(state.value.currentTimelineIndex).copy()
                     when(component) {
                         is Vibration -> {
-                            component.minDuration = event.range.start.toInt()
-                            component.maxDuration = event.range.endInclusive.toInt()
+                            component.minDuration = RangeConverter.SToMs(event.range.start)
+                            component.maxDuration = RangeConverter.SToMs(event.range.endInclusive)
                         }
                     }
                     compsCopy.set(state.value.currentTimelineIndex, component)
@@ -147,7 +155,7 @@ class EditTimelineViewModel @Inject constructor(
                 val compsCopy = state.value.components.toMutableList()
                 var index = 0;
                 for(i in compsCopy.indices){
-                    if(compsCopy[i] == event.selectConfigComp){
+                    if(compsCopy[i] === event.selectConfigComp){
                         index = i
                         break
                     }
@@ -155,6 +163,20 @@ class EditTimelineViewModel @Inject constructor(
                 _state.value = _state.value.copy(
                     current =  event.selectConfigComp,
                     currentTimelineIndex = index
+                )
+            }
+
+            is EditTimelineEvent.ChangedName -> {
+                //TODO limit
+                _state.value = _state.value.copy(
+                    name = event.name
+                )
+            }
+
+            is EditTimelineEvent.ChangedDescription -> {
+                //TODO limit
+                _state.value = _state.value.copy(
+                    description = event.description
                 )
             }
         }

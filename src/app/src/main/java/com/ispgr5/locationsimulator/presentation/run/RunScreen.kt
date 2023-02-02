@@ -4,8 +4,10 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.ispgr5.locationsimulator.R
 
 /**
  * The Run Screen.
@@ -21,6 +23,6 @@ fun RunScreen(
         viewModel.onEvent(RunEvent.StopClicked(stopServiceFunction))
         navController.navigateUp()
     }) {
-        Text(text = "STOP")
+        Text(text = stringResource(id = R.string.run_stop))
     }
 }

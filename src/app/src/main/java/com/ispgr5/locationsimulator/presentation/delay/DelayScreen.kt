@@ -8,8 +8,11 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 
 /**
@@ -46,7 +49,7 @@ fun DelayScreen(
                 navController.navigate("runScreen")
             }
         }) {
-            Text(text = "START")
+            Text(text = stringResource(id = R.string.delay_btn_start))
         }
     }
 }
