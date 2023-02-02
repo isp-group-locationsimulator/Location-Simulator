@@ -23,6 +23,7 @@ import com.ispgr5.locationsimulator.StorageConfigInterface
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 import com.ispgr5.locationsimulator.domain.model.ConfigurationComponentConverter
 import com.ispgr5.locationsimulator.presentation.delay.DelayScreen
+import com.ispgr5.locationsimulator.presentation.homescreen.HomeScreenScreen
 import com.ispgr5.locationsimulator.presentation.edit.EditScreen
 import com.ispgr5.locationsimulator.presentation.run.InfinityService
 import com.ispgr5.locationsimulator.presentation.run.RunScreen
@@ -52,8 +53,11 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colors.background
                 ) {
                     val navController = rememberNavController()
-                    NavHost(navController = navController, startDestination = "selectScreen") {
-                        composable(route = "selectScreen") {
+                    NavHost(navController = navController, startDestination = "homeScreen") {
+                        composable("homeScreen"){
+                            HomeScreenScreen(navController = navController)
+                        }
+                    composable(route = "selectScreen") {
                             SelectScreen(
                                 navController = navController,
                                 filePicker = filePicker,

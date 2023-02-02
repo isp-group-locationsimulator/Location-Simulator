@@ -1,15 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Location Simulator</string>
-    <string name="homescreen_btn_quickstart">quickstart</string>
+    <string name="homescreen_btn_quickstart">Quickstart</string>
     <string name="homescreen_btn_select_profile">Select Profile</string>
     <string name="select_btn_import_audio">Import Audio</string>
     <string name="select_btn_profile_export">EXPORT</string>
     <string name="select_btn_profile_select">SELECT</string>
     <string name="select_btn_profile_delete">Delete</string>
     <string name="editTimeline_AddConfigComponentDialog_Question">What do you want to add?</string>
-    <string name="editTimeline_addConfigComponentDialog_AddSound">Add Sound</string>
-    <string name="editTimeline_AddConfigComponentDialog_Cancel">CANCEL</string>
     <string name="editTimeline_AddConfigComponentDialog_addVibration">Add Vibration</string>
+    <string name="editTimeline_AddConfigComponentDialog_Cancel">CANCEL</string>
+    <string name="editTimeline_addConfigComponentDialog_AddSound">Add Sound</string>
     <string name="delay_btn_start">START</string>
     <string name="editTimeline_name">Name</string>
     <string name="editTimeline_description">Description</string>
@@ -24,5 +25,4 @@
     <string name="edit_Save">Save</string>
     <string name="edit_Import">Import</string>
     <string name="run_stop">STOP</string>
-
 </resources>

@@ -5,11 +5,13 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.domain.model.Sound
 import com.ispgr5.locationsimulator.domain.model.Vibration
 import com.ispgr5.locationsimulator.presentation.editTimeline.EditTimelineEvent
@@ -29,13 +31,13 @@ fun EditTimelineScreen(
         Column() {
             Column( modifier = Modifier.padding(12.dp)){
                 val textState = remember { mutableStateOf(TextFieldValue()) }
-                Text(text = "Name:" , fontWeight = FontWeight.Bold )
+                Text(text = stringResource(id = R.string.editTimeline_name) + ":" , fontWeight = FontWeight.Bold )
                 BasicTextField(
                     value = state.name,
                     singleLine = true,
                     onValueChange = { name -> viewModel.onEvent(EditTimelineEvent.ChangedName(name)) }
                 )
-                Text("Description:")
+                Text(text = stringResource(id = R.string.editTimeline_description) + ":")
                 Spacer(modifier = Modifier.size(4.dp))
                 BasicTextField(
                     value = state.description,
@@ -56,7 +58,7 @@ fun EditTimelineScreen(
             }
 
             Button( onClick = { showCustomDialogWithResult = true }){
-                Text(text = "Add")
+                Text(text = stringResource(id = R.string.editTimeline_add))
             }
             Column( modifier = Modifier.padding(12.dp)){
                 EditConfigComponent( viewModel)
@@ -98,16 +100,16 @@ fun EditConfigComponent(viewModel: EditTimelineViewModel){
     val current = viewModel.state.value.current
     when(current){
         is Sound ->{
-            Text("Volume:")
+            Text(text = stringResource(id = R.string.editTimeline_SoundVolume) + ":")
             Text( RangeConverter.EightBitIntToPercentageFloat(current.minVolume).toInt().toString() + "%"
-                    + " to " + RangeConverter.EightBitIntToPercentageFloat(current.maxVolume).toInt().toString() + "%"
+                    + stringResource(id = R.string.editTimeline_range) + RangeConverter.EightBitIntToPercentageFloat(current.maxVolume).toInt().toString() + "% "
             )
             SliderForRange(
                 value = RangeConverter.EightBitIntToPercentageFloat(current.minVolume)..RangeConverter.EightBitIntToPercentageFloat(current.maxVolume),
                 func =  {value : ClosedFloatingPointRange<Float> -> viewModel.onEvent(EditTimelineEvent.ChangedSoundVolume(value))},
                 range = 0f..100f
             )
-            Text("Pause:")
+            Text(text = stringResource(id = R.string.editTimeline_Pause))
             SecText(min = RangeConverter.MsToS(current.minPause), max = RangeConverter.MsToS(current.maxPause))
             SliderForRange(
                 value = RangeConverter.MsToS(current.minPause)..RangeConverter.MsToS(current.maxPause),
@@ -116,23 +118,23 @@ fun EditConfigComponent(viewModel: EditTimelineViewModel){
             )
         }
         is Vibration -> {
-            Text("Strength:")
-            Text( RangeConverter.EightBitIntToPercentageFloat(current.minStrength).toInt().toString() + "%"
-            + " to " + RangeConverter.EightBitIntToPercentageFloat(current.maxStrength).toInt().toString() + "%"
+            Text(text = stringResource(id = R.string.editTimeline_Vibration_Strength))
+            Text( RangeConverter.EightBitIntToPercentageFloat(current.minStrength).toInt().toString() + "% "
+            + stringResource(id = R.string.editTimeline_range) + RangeConverter.EightBitIntToPercentageFloat(current.maxStrength).toInt().toString() + "%"
             )
             SliderForRange(
                 value = RangeConverter.EightBitIntToPercentageFloat(current.minStrength)..RangeConverter.EightBitIntToPercentageFloat(current.maxStrength),
                 func =  {value : ClosedFloatingPointRange<Float> -> viewModel.onEvent(EditTimelineEvent.ChangedVibStrength(value))},
                 range = 0f..100f
             )
-            Text("Duration:")
+            Text(text = stringResource(id = R.string.editTimeline_Vibration_duration))
             SecText(min = RangeConverter.MsToS(current.minDuration), max = RangeConverter.MsToS(current.maxDuration))
             SliderForRange(
                 value = RangeConverter.MsToS(current.minDuration)..RangeConverter.MsToS(current.maxDuration),
                 func =  {value : ClosedFloatingPointRange<Float> -> viewModel.onEvent(EditTimelineEvent.ChangedVibDuration(value))},
                 range = 0f..30f
             )
-            Text("Pause:")
+            Text(text = stringResource(id = R.string.editTimeline_Pause))
             SecText(min = RangeConverter.MsToS(current.minPause), max = RangeConverter.MsToS(current.maxPause))
             SliderForRange(
                 value = RangeConverter.MsToS(current.minPause)..RangeConverter.MsToS(current.maxPause),
@@ -160,5 +162,5 @@ fun SliderForRange(func: (ClosedFloatingPointRange<Float>) -> Unit,
 
 @Composable
 fun SecText(min : Float, max : Float){
-    Text( String.format("%.1f", min) + "s to " + String.format("%.1f", max) +"s" )
+    Text( String.format("%.1f", min) + "s " + stringResource(id = R.string.editTimeline_range) + String.format("%.1f", max) +"s " )
 }

@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -44,7 +45,7 @@ fun SelectScreen(
             Button(onClick = {
                 viewModel.onEvent(SelectEvent.ImportFile(filePicker))
             }) {
-                Text(text = "Import Audio")
+                Text(text = stringResource(id = R.string.select_btn_import_audio))
             }
             Row(
                 modifier = Modifier
@@ -100,7 +101,7 @@ fun SelectScreen(
                                     )
                                 }
                             ) {
-                                Text(text = "Delete")
+                                Text(text = stringResource(id = R.string.select_btn_profile_delete))
                             }
                         } else {
                             Button(

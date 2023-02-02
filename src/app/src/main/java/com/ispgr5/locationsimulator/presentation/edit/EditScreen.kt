@@ -7,9 +7,11 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.StorageConfigInterface
 
 /**
@@ -32,14 +34,14 @@ fun EditScreen(
             .fillMaxSize()
     ) {
         //The name Input Field
-        Text(text = "Name")
+        Text(text = stringResource(id = R.string.edit_name))
         TextField(
             value = state.name,
             onValueChange = { viewModel.onEvent(EditEvent.EnteredName(it)) },
             modifier = Modifier.fillMaxWidth()
         )
         //The description Input Field
-        Text(text = "Description")
+        Text(text = stringResource(id = R.string.edit_Description))
         TextField(
             value = state.description,
             onValueChange = { viewModel.onEvent(EditEvent.EnteredDescription(it)) },
@@ -51,13 +53,13 @@ fun EditScreen(
             //navigate back to the Select Screen
             navController.navigate("selectScreen")
         }) {
-            Text(text = "Save")
+            Text(text = stringResource(id = R.string.edit_Save))
         }
         Button(onClick = {
             viewModel.onEvent(EditEvent.SelectedImportConfiguration(storageConfigInterface = storageConfigInterface))
             navController.navigateUp()
         }) {
-            Text(text = "Import")
+            Text(text = stringResource(id = R.string.edit_Import))
         }
     }
 }
