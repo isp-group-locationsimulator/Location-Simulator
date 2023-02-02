@@ -121,6 +121,23 @@ class FilePicker(private val mainActivity: MainActivity) {
 
 
     /**
+     * This function gets the names of the Sound Files from the private dir.
+     * @return The List of Strings that hold the Filenames (incl. File Extension, exl. path) to the Sound Files in the private dir.
+     */
+    fun getSoundFileNames(): List<String> {
+        val dir = File(mainActivity.filesDir, "")
+        val files = dir.listFiles()
+        val names = mutableListOf<String>()
+        if (files != null) {
+            for (i in files.indices) {
+                names += files[i].path.substringAfter(mainActivity.filesDir.toString() + "/")
+            }
+        }
+        return names
+    }
+
+
+    /**
      * This function was taken from: https://stackoverflow.com/a/70795638
      * TODO: Remove the SuppressLint
      */

@@ -47,7 +47,7 @@ fun EditTimelineScreen(
             Spacer(modifier = Modifier.size(4.dp))
             Divider(color = MaterialTheme.colors.primary, thickness = 1.dp )
             Spacer(modifier = Modifier.size(4.dp))
-            
+
             Row{
                 LazyRow(){
                     items(state.components) {
@@ -61,7 +61,7 @@ fun EditTimelineScreen(
                 Text(text = stringResource(id = R.string.editTimeline_add))
             }
             Column( modifier = Modifier.padding(12.dp)){
-                EditConfigComponent( viewModel)
+                EditConfigComponent( viewModel, navController)
             }
 
         }
@@ -91,10 +91,10 @@ fun EditTimelineScreen(
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun EditConfigComponent(viewModel: EditTimelineViewModel){
+fun EditConfigComponent(viewModel: EditTimelineViewModel, navController: NavController){
     /*TODO Bug doesnt get printed in the beginning*/
     if(viewModel.state.value.components.isEmpty()){
-        System.out.println("isEmpty")
+        println("isEmpty")
         return
     }
     val current = viewModel.state.value.current
@@ -116,6 +116,9 @@ fun EditConfigComponent(viewModel: EditTimelineViewModel){
                 func =  {value : ClosedFloatingPointRange<Float> -> viewModel.onEvent(EditTimelineEvent.ChangedPause(value)) } ,
                 range = 0f..30f
             )
+            Button(onClick = { navController.navigate("sound") }) {
+                Text(text = stringResource(id = R.string.editTimeline_addSound))
+            }
         }
         is Vibration -> {
             Text(text = stringResource(id = R.string.editTimeline_Vibration_Strength))

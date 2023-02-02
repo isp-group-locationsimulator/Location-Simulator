@@ -28,5 +28,8 @@
     <string name="university">University of Luebeck</string>
     <string name="isp">Institute for Software Engineering and Programming Languages</string>
     <string name="infoscreen_support">Supported By</string>
+    <string name="editTimeline_addSound">Add Sound</string>
+    <string name="soundscreen_soundselection">Sound Selection</string>
+    <string name="soundscreen_import">Import</string>
 
 </resources>

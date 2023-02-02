@@ -29,6 +29,7 @@ import com.ispgr5.locationsimulator.presentation.homescreen.InfoScreen
 import com.ispgr5.locationsimulator.presentation.run.InfinityService
 import com.ispgr5.locationsimulator.presentation.run.RunScreen
 import com.ispgr5.locationsimulator.presentation.select.SelectScreen
+import com.ispgr5.locationsimulator.presentation.sound.SoundScreen
 import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -112,6 +113,18 @@ class MainActivity : ComponentActivity() {
                             )
                         ) {
                             EditTimelineScreen(navController = navController)
+                        }
+                        // TODO: Is this the correct way to setup the navigation?
+                        composable("sound?configurationId={configurationId}",
+                            arguments = listOf(navArgument(
+                                name = "configurationId"
+                            ) {
+                                type = NavType.IntType
+                                defaultValue = -1
+                            }
+                            )
+                        ) {
+                            SoundScreen(filePicker = filePicker, mainActivity = this@MainActivity)
                         }
                     }
                 }
