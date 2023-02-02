@@ -112,10 +112,11 @@ Wir haben angefangen, den Sound zu implementieren und Pattern für die Vibration
 ### Projektwoche 14 (20.01 – 26.01)
 Wir haben den Import von Dateien zum Teil implementiert.
 Außerdem haben wir angefangen, die Timeline zu entwickeln.
-Und wir haben angefangen, den Import und Export von Configurations zu implementieren.
+Und wir haben angefangen, den Import und Export von Konfigurationen zu implementieren.
 
 ### Projektwoche 15 (27.01 – 02.02)
-
+Wir haben den weitere Screens hinzugefügt: Den Homescreen, Infoscreen und die Seite zur Auswahl der Sounds.
+Außerdem haben wir beim Import und Export von Konfigurationen einen großen Schritt nach vorne gemacht.
 
 ### Projektwoche 16 (03.02 – 09.02)
 
