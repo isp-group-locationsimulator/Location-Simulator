@@ -24,5 +24,9 @@
     <string name="edit_Save">Save</string>
     <string name="edit_Import">Import</string>
     <string name="run_stop">STOP</string>
+    <string name="infoscreen_developer">Developers</string>
+    <string name="university">University of Luebeck</string>
+    <string name="isp">Institute for Software Engineering and Programming Languages</string>
+    <string name="infoscreen_support">Supported By</string>
 
 </resources>

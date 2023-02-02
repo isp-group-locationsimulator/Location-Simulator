@@ -25,4 +25,8 @@
     <string name="edit_Save">Speichern</string>
     <string name="edit_Import">Importieren</string>
     <string name="run_stop">STOP</string>
+    <string name="infoscreen_developer">Entwickler</string>
+    <string name="university">Universität zu Lübeck</string>
+    <string name="isp">Institut für Softwaretechnik und Programmiersprachen</string>
+    <string name="infoscreen_support">Unterstützt von</string>
 </resources>
