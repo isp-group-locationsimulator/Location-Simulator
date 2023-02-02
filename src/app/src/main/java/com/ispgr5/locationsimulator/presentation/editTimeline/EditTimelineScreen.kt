@@ -94,7 +94,7 @@ fun EditTimelineScreen(
 fun EditConfigComponent(viewModel: EditTimelineViewModel, navController: NavController){
     /*TODO Bug doesnt get printed in the beginning*/
     if(viewModel.state.value.components.isEmpty()){
-        System.out.println("isEmpty")
+        println("isEmpty")
         return
     }
     val current = viewModel.state.value.current
@@ -117,7 +117,7 @@ fun EditConfigComponent(viewModel: EditTimelineViewModel, navController: NavCont
                 range = 0f..30f
             )
             Button(onClick = { navController.navigate("sound") }) {
-                Text(text = "Select Sound")
+                Text(text = stringResource(id = R.string.editTimeline_addSound))
             }
         }
         is Vibration -> {

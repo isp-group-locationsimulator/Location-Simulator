@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
 import com.ispgr5.locationsimulator.FilePicker
 import com.ispgr5.locationsimulator.R
@@ -43,14 +44,14 @@ fun SoundScreen(
                 contentDescription = null
             )
         }
-        Text(text = "Sound Selection", fontSize = 30.sp)
+        Text(text = stringResource(id = R.string.soundscreen_soundselection), fontSize = 30.sp)
         Button(
             colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
             onClick = {
                 viewModel.onEvent(SoundEvent.ImportSound)
             }
         ) {
-            Text(text = "Import")
+            Text(text = stringResource(id = R.string.soundscreen_import))
         }
         LazyColumn() {
             items(state.value.soundNames) { soundName ->

@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">Ortungssimulator</string>
     <string name="homescreen_btn_quickstart">Schnellstart</string>
-    <string name="homescreen_btn_select_profile">Auswahl Muster</string>
+    <string name="homescreen_btn_select_profile">Musterauswahl</string>
     <string name="select_btn_import_audio">Audio Importieren</string>
     <string name="select_btn_profile_export">EXPORTIEREN</string>
     <string name="select_btn_profile_select">WÄHLEN</string>
@@ -29,4 +29,7 @@
     <string name="university">Universität zu Lübeck</string>
     <string name="isp">Institut für Softwaretechnik und Programmiersprachen</string>
     <string name="infoscreen_support">Unterstützt von</string>
+    <string name="editTimeline_addSound">Sound hinzufügen</string>
+    <string name="soundscreen_soundselection">Sound Auswählen</string>
+    <string name="soundscreen_import">Import</string>
 </resources>
