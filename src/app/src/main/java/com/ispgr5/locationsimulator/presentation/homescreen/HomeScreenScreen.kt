@@ -44,13 +44,13 @@ fun HomeScreenScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Button(onClick = {
-            viewModel.onEvent(HomeScreenEvent.MusterAuswahl)
+            viewModel.onEvent(HomeScreenEvent.SelectConfiguration)
             navController.navigate("selectScreen")
         }) {
             Text(text = stringResource(id = R.string.homescreen_btn_select_profile))
         }
         Button(onClick = {
-            viewModel.onEvent(HomeScreenEvent.MusterAuswahl)
+            viewModel.onEvent(HomeScreenEvent.SelectConfiguration)
             navController.navigate("selectScreen")
         }) {
             Text(text = stringResource(id = R.string.homescreen_btn_quickstart))

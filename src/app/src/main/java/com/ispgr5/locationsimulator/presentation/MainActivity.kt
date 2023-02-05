@@ -1,6 +1,6 @@
 package com.ispgr5.locationsimulator.presentation
 
-import EditTimelineScreen
+import com.ispgr5.locationsimulator.presentation.editTimeline.EditTimelineScreen
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -65,7 +65,6 @@ class MainActivity : ComponentActivity() {
                         composable(route = "selectScreen") {
                             SelectScreen(
                                 navController = navController,
-                                filePicker = filePicker,
                                 storageConfigInterface = storageConfigInterface
                             )
                         }

@@ -19,7 +19,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.ispgr5.locationsimulator.FilePicker
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.StorageConfigInterface
 import com.ispgr5.locationsimulator.presentation.select.components.OneConfigurationListMember
@@ -32,7 +31,6 @@ import com.ispgr5.locationsimulator.presentation.select.components.OneConfigurat
 @Composable
 fun SelectScreen(
     navController: NavController,
-    filePicker: FilePicker,
     viewModel: SelectViewModel = hiltViewModel(),
     storageConfigInterface: StorageConfigInterface
 ) {
@@ -41,39 +39,32 @@ fun SelectScreen(
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        Row {
-            Button(onClick = {
-                viewModel.onEvent(SelectEvent.ImportFile(filePicker))
-            }) {
-                Text(text = stringResource(id = R.string.select_btn_import_audio))
-            }
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                //Add and Delete Buttons should be on the right
-                horizontalArrangement = Arrangement.End
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            //Add and Delete Buttons should be on the right
+            horizontalArrangement = Arrangement.End
+        ) {
+            //The Delete Button
+            Button(
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
+                onClick = {
+                    viewModel.onEvent(SelectEvent.SelectDeleteMode)
+                }
             ) {
-                //The Delete Button
-                Button(
-                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
-                    onClick = {
-                        viewModel.onEvent(SelectEvent.SelectDeleteMode)
-                    }
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_baseline_delete_outline_24),
-                        contentDescription = null
-                    )
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_baseline_delete_outline_24),
+                    contentDescription = null
+                )
+            }
+            //The Add Button
+            Button(
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
+                onClick = {
+                    navController.navigate(route = "editScreen")
                 }
-                //The Add Button
-                Button(
-                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
-                    onClick = {
-                        navController.navigate(route = "editScreen")
-                    }
-                ) {
-                    Icon(Icons.Outlined.Add, "")
-                }
+            ) {
+                Icon(Icons.Outlined.Add, "")
             }
         }
         //The whole Column where all Configurations are in

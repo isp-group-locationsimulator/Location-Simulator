@@ -1,6 +1,5 @@
 package com.ispgr5.locationsimulator.presentation.select
 
-import com.ispgr5.locationsimulator.FilePicker
 import com.ispgr5.locationsimulator.StorageConfigInterface
 import com.ispgr5.locationsimulator.domain.model.Configuration
 
@@ -17,6 +16,4 @@ sealed class SelectEvent {
         val configuration: Configuration,
         val storageConfigInterface: StorageConfigInterface
     ) : SelectEvent()
-
-    class ImportFile(val filePicker: FilePicker) : SelectEvent()
 }

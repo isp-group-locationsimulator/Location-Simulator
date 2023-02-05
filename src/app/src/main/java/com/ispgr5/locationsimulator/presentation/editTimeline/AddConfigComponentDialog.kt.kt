@@ -1,3 +1,5 @@
+package com.ispgr5.locationsimulator.presentation.editTimeline
+
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*

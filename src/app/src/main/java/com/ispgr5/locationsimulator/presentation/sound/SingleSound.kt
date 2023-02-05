@@ -16,7 +16,7 @@ import com.ispgr5.locationsimulator.presentation.MainActivity
  */
 @Composable
 fun SingleSound(soundName: String, viewModel: SoundViewModel, mainActivity: MainActivity) {
-    Row() {
+    Row {
         Button(
             colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
             onClick = {

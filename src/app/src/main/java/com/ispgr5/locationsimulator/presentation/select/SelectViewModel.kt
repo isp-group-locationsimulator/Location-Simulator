@@ -76,9 +76,6 @@ class SelectViewModel @Inject constructor(
                     )
                 }
             }
-            is SelectEvent.ImportFile -> {
-                event.filePicker.moveFileToPrivateFolder()
-            }
             is SelectEvent.SelectedExportConfiguration -> {
                 event.storageConfigInterface.safeConfigurationToStorage(event.configuration)
             }

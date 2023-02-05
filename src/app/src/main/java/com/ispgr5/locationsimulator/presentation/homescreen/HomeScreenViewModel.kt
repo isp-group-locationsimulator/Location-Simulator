@@ -17,7 +17,7 @@ class HomeScreenViewModel @Inject constructor(
          */
         fun onEvent(event: HomeScreenEvent) {
             when(event){
-                is HomeScreenEvent.MusterAuswahl ->{
+                is HomeScreenEvent.SelectConfiguration ->{
                     return
                 }
             }

@@ -53,7 +53,7 @@ fun SoundScreen(
         ) {
             Text(text = stringResource(id = R.string.soundscreen_import))
         }
-        LazyColumn() {
+        LazyColumn {
             items(state.value.soundNames) { soundName ->
                 SingleSound(soundName, viewModel, mainActivity)
             }

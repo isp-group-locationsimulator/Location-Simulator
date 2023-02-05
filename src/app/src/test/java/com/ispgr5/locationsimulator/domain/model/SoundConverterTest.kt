@@ -15,7 +15,7 @@ class SoundConverterTest {
     /**
      * The read byteArray from the .m4a File
      */
-    lateinit var byteArray: ByteArray
+    private lateinit var byteArray: ByteArray
 
     @Before
     fun setUp() {
