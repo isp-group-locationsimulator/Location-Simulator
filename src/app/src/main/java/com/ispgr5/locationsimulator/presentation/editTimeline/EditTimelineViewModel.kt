@@ -158,10 +158,17 @@ class EditTimelineViewModel @Inject constructor(
                         break
                     }
                 }
-                _state.value = _state.value.copy(
-                    current =  event.selectConfigComp,
-                    currentTimelineIndex = index
-                )
+                if (index == state.value.currentTimelineIndex){
+                    _state.value = _state.value.copy(
+                        current = null,
+                        currentTimelineIndex = -1
+                    )
+                }else {
+                    _state.value = _state.value.copy(
+                        current = event.selectConfigComp,
+                        currentTimelineIndex = index
+                    )
+                }
             }
 
             is EditTimelineEvent.ChangedName -> {

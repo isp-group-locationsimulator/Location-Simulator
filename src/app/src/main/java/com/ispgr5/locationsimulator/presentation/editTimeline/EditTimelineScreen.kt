@@ -1,12 +1,14 @@
 package com.ispgr5.locationsimulator.presentation.editTimeline
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
@@ -19,6 +21,7 @@ import com.ispgr5.locationsimulator.domain.model.Vibration
 import com.ispgr5.locationsimulator.presentation.editTimeline.components.AddConfigComponentDialog
 
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun EditTimelineScreen(
     navController: NavController,
@@ -28,10 +31,31 @@ fun EditTimelineScreen(
 
     var showCustomDialogWithResult by remember { mutableStateOf(false) }
 
-        Column {
-            Column( modifier = Modifier.padding(12.dp)){
+    LazyColumn(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        /**
+         * Slider as Sticky Header
+         */
+        stickyHeader {
+            if (viewModel.state.value.currentTimelineIndex != -1) {
+                Column(modifier = Modifier.background(Color.White)) {
+                    Column(modifier = Modifier.padding(12.dp)) {
+                        EditConfigComponent(viewModel, navController)
+                    }
+                    Spacer(modifier = Modifier.size(4.dp))
+                    Divider(color = MaterialTheme.colors.primary, thickness = 1.dp)
+                }
+            }
+        }
+        //the rest scrollable content
+        items(1) {
+            /**
+             * Name and Description
+             */
+            Column(modifier = Modifier.padding(12.dp)) {
                 val textState = remember { mutableStateOf(TextFieldValue()) }
-                Text(text = stringResource(id = R.string.editTimeline_name) + ":" , fontWeight = FontWeight.Bold )
+                Text(text = stringResource(id = R.string.editTimeline_name) + ":", fontWeight = FontWeight.Bold)
                 BasicTextField(
                     value = state.name,
                     singleLine = true,
@@ -45,27 +69,23 @@ fun EditTimelineScreen(
                 )
             }
             Spacer(modifier = Modifier.size(4.dp))
-            Divider(color = MaterialTheme.colors.primary, thickness = 1.dp )
+            Divider(color = MaterialTheme.colors.primary, thickness = 1.dp)
             Spacer(modifier = Modifier.size(4.dp))
 
-            Row{
-                LazyRow{
-                    items(state.components) {
-                            configComponent ->
-                        TimelineItem(configComponent, viewModel)
-                    }
+            /**
+             * TimeLine
+             */
+            Column {
+                state.components.forEach { configComponent ->
+                    TimelineItem(configComponent, viewModel)
                 }
-
             }
 
-            Button( onClick = { showCustomDialogWithResult = true }){
+            Button(onClick = { showCustomDialogWithResult = true }) {
                 Text(text = stringResource(id = R.string.editTimeline_add))
             }
-            Column( modifier = Modifier.padding(12.dp)){
-                EditConfigComponent( viewModel, navController)
-            }
-
         }
+    }
 
     if (showCustomDialogWithResult) {
         AddConfigComponentDialog(

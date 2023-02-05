@@ -6,9 +6,6 @@ data class EditTimelineState(
     val name: String = "",
     val description: String = "",
     val components: List<ConfigComponent> = emptyList(),
-    val currentTimelineIndex: Int = 0,
+    val currentTimelineIndex: Int = -1,
     val current: ConfigComponent? = null
-    //both
-
-
-    )
+)

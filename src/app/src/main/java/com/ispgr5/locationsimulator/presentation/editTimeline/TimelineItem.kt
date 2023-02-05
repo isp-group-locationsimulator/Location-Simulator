@@ -23,7 +23,11 @@ fun TimelineItem(
     configItem : ConfigComponent,
     viewModel: EditTimelineViewModel
 ){
-    val current = viewModel.state.value.components[ viewModel.state.value.currentTimelineIndex]
+    val current = if (viewModel.state.value.currentTimelineIndex == -1) {
+        null
+    } else {
+        viewModel.state.value.components[viewModel.state.value.currentTimelineIndex]
+    }
     if(current === configItem){
         //draw selected timeline item
         Card( elevation = 15.dp, backgroundColor = MaterialTheme.colors.surface, modifier = Modifier.padding(6.dp).border(2.dp, MaterialTheme.colors.primary, RoundedCornerShape(10))) {
@@ -48,4 +52,4 @@ fun TimelineItem(
             }
         }
     }
-    }
+}
