@@ -41,58 +41,15 @@ fun OneConfigurationListMember(
                 Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = if (!hasErrors) {
-                    Arrangement.Center
+                    Arrangement.Start
                 } else {
-                    Arrangement.SpaceBetween
+                    Arrangement.Start
                 },
             ) {
-                //The Toggle Button (Arrow up and down when toggled)
-                Button(
-                    onClick = onToggleClicked,
-                    contentPadding = PaddingValues(0.dp),
-                    enabled = true,
-                    shape = MaterialTheme.shapes.small,
-                    border = null,
-                    elevation = null,
-                    colors = ButtonDefaults.buttonColors(
-                        backgroundColor = Color.Transparent,
-                        contentColor = MaterialTheme.colors.primary,
-                        disabledBackgroundColor = Color.Transparent,
-                        disabledContentColor = MaterialTheme.colors.primary.copy(alpha = ContentAlpha.disabled),
-                    )
-                ) {
-                    Icon(
-                        painter = if (isToggled) {
-                            painterResource(id = R.drawable.ic_baseline_keyboard_arrow_up_24)
-                        } else {
-                            painterResource(id = R.drawable.ic_baseline_keyboard_arrow_down_24)
-                        },
-                        contentDescription = null
-                    )
-                }
-                //new row so the Configuration name is centered
-                Row(
-                    if (!hasErrors) {
-                        Modifier.fillMaxWidth()
-                    } else {
-                        Modifier
-                    },
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Start
-                ) {
-                    Column {
-                        Text(text = configuration.name)
-                        if (isToggled) {
-                            Spacer(modifier = Modifier.height(3.dp))
-                            Text(text = configuration.description)
-                        }
-                    }
-                }
-                if (hasErrors) {
+                Column(Modifier.weight(1f)) {
+                    //The Toggle Button (Arrow up and down when toggled)
                     Button(
-                        onClick = {
-                                  //TODO tell the user what is the problem
-                                  },
+                        onClick = onToggleClicked,
                         contentPadding = PaddingValues(0.dp),
                         enabled = true,
                         shape = MaterialTheme.shapes.small,
@@ -106,10 +63,54 @@ fun OneConfigurationListMember(
                         )
                     ) {
                         Icon(
-                            painter = painterResource(id = R.drawable.ic_baseline_error_outline_24),
-                            contentDescription = null,
-                            tint = Color.Red,
+                            painter = if (isToggled) {
+                                painterResource(id = R.drawable.ic_baseline_keyboard_arrow_up_24)
+                            } else {
+                                painterResource(id = R.drawable.ic_baseline_keyboard_arrow_down_24)
+                            },
+                            contentDescription = null
                         )
+                    }
+                }
+                //new row so the Configuration name is centered
+                Column(
+                        Modifier
+                            .weight(4f)
+                            .padding(start = 5.dp, end = 5.dp, top = 0.dp, bottom = 0.dp)
+
+                ) {
+                    Column {
+                        Text(text = configuration.name)
+                        if (isToggled) {
+                            Spacer(modifier = Modifier.height(3.dp))
+                            Text(text = configuration.description)
+                        }
+                    }
+                }
+                Column(Modifier.weight(1f)) {
+                if (hasErrors) {
+                        Button(
+                            onClick = {
+                                //TODO tell the user what is the problem
+                            },
+                            contentPadding = PaddingValues(0.dp),
+                            enabled = true,
+                            shape = MaterialTheme.shapes.small,
+                            border = null,
+                            elevation = null,
+                            colors = ButtonDefaults.buttonColors(
+                                backgroundColor = Color.Transparent,
+                                contentColor = MaterialTheme.colors.primary,
+                                disabledBackgroundColor = Color.Transparent,
+                                disabledContentColor = MaterialTheme.colors.primary.copy(alpha = ContentAlpha.disabled),
+                            )
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_baseline_error_outline_24),
+                                contentDescription = null,
+                                tint = Color.Red,
+                            )
+                        }
                     }
                 }
             }
