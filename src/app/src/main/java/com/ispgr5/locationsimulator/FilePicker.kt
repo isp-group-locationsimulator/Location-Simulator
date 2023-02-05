@@ -5,8 +5,10 @@ import android.content.Context
 import android.net.Uri
 import android.provider.OpenableColumns
 import androidx.activity.result.contract.ActivityResultContracts
+import com.ispgr5.locationsimulator.domain.model.SoundConverter
 import com.ispgr5.locationsimulator.presentation.MainActivity
 import java.io.*
+import java.net.URI
 
 /**
  * This class uses the ActivityResultContracts to access the files we need.
@@ -42,46 +44,26 @@ class FilePicker(private val mainActivity: MainActivity) {
     }
 
     /**
-     * This function opens a file picker and reads the file
-     * //TODO return the read String
-     */
-    fun pickAndReadFile() {
-        readFile.launch("text/*")
-    }
-
-    /**
-     * This variable lets us read a file that we choose.
-     */
-    private val readFile = mainActivity.registerForActivityResult(ActivityResultContracts.GetContent()) { result: Uri? ->
-        result?.let { fileUri ->
-            println(fileUri)
-            val stringBuilder = StringBuilder()
-            try {
-                mainActivity.contentResolver.openInputStream(fileUri)?.use { inputStream ->
-                    BufferedReader(InputStreamReader(inputStream)).use { reader ->
-                        var line: String? = reader.readLine()
-                        while (line != null) {
-                            stringBuilder.append(line)
-                            line = reader.readLine()
-                        }
-                    }
-                }
-            } catch (exception : Exception){
-                println("fehler beim lesen")
-            }
-            //TODO let the above function "pickAndReadFile()" return this String
-            //return stringBuilder.toString()
-            println(stringBuilder.toString())
-        }
-    }
-
-
-    /**
      * This function launches the ActivityResultsLauncher that lets us select a audio file
      * that then will be moved into the private dir.
      */
     fun moveFileToPrivateFolder() {
         copyFile.launch("audio/*")
+    }
+
+    /**
+     * This function creates a new .mp3 file with the byteArray in it. Simply a Sound File
+     * @return the Uri of the created file
+     */
+    fun moveSoundByteArrayToPrivateFolder(byteArray: ByteArray): URI {
+        val file = File(mainActivity.filesDir, "tempSoundFilexxXXX333XXXxxxtempSoundFile.mp3")
+        if (file.exists()) {
+            file.delete()
+        }
+        val outputStream = FileOutputStream(file)
+        outputStream.write(byteArray)
+        outputStream.close()
+        return file.toURI()
     }
 
 
@@ -90,6 +72,27 @@ class FilePicker(private val mainActivity: MainActivity) {
 //        //moveFileToFolder.launch(arrayOf("audio/*"))
 //    }
 
+    /**
+     * this function looks up all Sound files in our private dir and compare its Base64 String
+     * @return the filename of the file with the matching base64 String. null when no matching file exist
+     */
+    fun soundAlreadyExist(soundsBase64String: String): String? {
+        for (existingSoundName in getSoundFileNames()) {
+            //get the Base64 String from the file that already exists
+            val existingSoundAsBase64: String =
+                SoundConverter().encodeByteArrayToBase64String(
+                    File(
+                        mainActivity.filesDir,
+                        existingSoundName
+                    ).readBytes()
+                )
+            if (existingSoundAsBase64 == soundsBase64String) {
+                return existingSoundName
+            }
+        }
+        return null
+    }
+
 
     /**
      * This function returns a File in our private dir with the name it is given.
@@ -97,7 +100,7 @@ class FilePicker(private val mainActivity: MainActivity) {
      * @param fileName The name the file should have
      * @return The File
      */
-    private fun getFileInPrivateDir(fileName: String): File {
+    fun getFileInPrivateDir(fileName: String): File {
         val dir = File(mainActivity.filesDir, "")
         val files = dir.listFiles()
         return if (files == null) {

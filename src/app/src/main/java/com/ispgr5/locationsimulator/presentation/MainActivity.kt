@@ -39,13 +39,13 @@ import kotlinx.serialization.ExperimentalSerializationApi
 class MainActivity : ComponentActivity() {
 
     // With this filePicker we can access the filesystem wherever we want
-    lateinit var filePicker: FilePicker
-    lateinit var storageConfigInterface: StorageConfigInterface
+    private lateinit var filePicker: FilePicker
+    private lateinit var storageConfigInterface: StorageConfigInterface
 
     @OptIn(ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         filePicker = FilePicker(this)
-        storageConfigInterface = StorageConfigInterface(this)
+        storageConfigInterface = StorageConfigInterface(this, filePicker = filePicker)
         super.onCreate(savedInstanceState)
         setContent {
             LocationSimulatorTheme {

@@ -7,11 +7,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ispgr5.locationsimulator.domain.model.*
 import com.ispgr5.locationsimulator.domain.useCase.ConfigurationUseCases
-import com.ispgr5.locationsimulator.presentation.edit.EditEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.math.roundToInt
 
 @HiltViewModel
 class EditTimelineViewModel @Inject constructor(
@@ -132,7 +130,7 @@ class EditTimelineViewModel @Inject constructor(
             }
             is EditTimelineEvent.AddSound -> {
                 viewModelScope.launch {
-                    val sound = Sound("test",3,4,3, 7,false)
+                    val sound = Sound("Klopfen.m4a",3,4,3, 7,false)
                     val listC = state.value.components.toMutableList()
                     listC.add(sound)
                     _state.value = _state.value.copy(

@@ -18,10 +18,25 @@ data class Sound(
     var minPause: Int,
     var maxPause: Int,
     //TODO deprecated
-    val isRandom: Boolean,
-) : ConfigComponent(){
+    val isRandom: Boolean
+) : ConfigComponent() {
 
-    override fun copy() : Sound {
-        return Sound(source,minVolume,maxVolume,minPause,maxPause,isRandom)
+    override fun copy(): Sound {
+        return Sound(source, minVolume, maxVolume, minPause, maxPause, isRandom)
+    }
+
+    /**
+     * returns a copy of the Sound Object. You can pass default parameters.
+     * If no parameters passed this function handles like override fun copy()
+     */
+    fun myCopy(
+        source: String = this.source,
+        minVolume: Int = this.minVolume,
+        maxVolume: Int = this.maxVolume,
+        minPause: Int = this.minPause,
+        maxPause: Int = this.maxPause,
+        isRandom: Boolean = this.isRandom
+    ): Sound {
+        return Sound(source, minVolume, maxVolume, minPause, maxPause, isRandom)
     }
 }
