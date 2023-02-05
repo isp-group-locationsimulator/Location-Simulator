@@ -29,14 +29,27 @@ fun OneConfigurationListMember(
 ) {
     val rowBackgroundColor: Color = Color.LightGray
 
-    Box(
-        Modifier
+    Button(
+        onClick = onToggleClicked,
+        contentPadding = PaddingValues(0.dp),
+        enabled = true,
+        shape = MaterialTheme.shapes.small,
+        border = null,
+        elevation = null,
+        colors = ButtonDefaults.buttonColors(
+            backgroundColor = Color.Transparent,
+            disabledBackgroundColor = Color.Transparent,
+            disabledContentColor = MaterialTheme.colors.primary.copy(alpha = ContentAlpha.disabled),
+        ),
+        modifier = Modifier
+            //.border(width = 1.dp, color = MaterialTheme.colors.primary, shape = RoundedCornerShape(6.dp))
             .background(rowBackgroundColor, shape = RoundedCornerShape(6.dp))
-            .padding(4.dp)
             .fillMaxWidth()
+            .heightIn(min = 55.dp)
+
     ) {
         //Column is needed for toggling so the Toggled Information is shown under the Configuration name
-        Column {
+        Column(modifier = Modifier.padding(4.dp)) {
             Row(
                 Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -46,37 +59,11 @@ fun OneConfigurationListMember(
                     Arrangement.Start
                 },
             ) {
-                Column(Modifier.weight(1f)) {
-                    //The Toggle Button (Arrow up and down when toggled)
-                    Button(
-                        onClick = onToggleClicked,
-                        contentPadding = PaddingValues(0.dp),
-                        enabled = true,
-                        shape = MaterialTheme.shapes.small,
-                        border = null,
-                        elevation = null,
-                        colors = ButtonDefaults.buttonColors(
-                            backgroundColor = Color.Transparent,
-                            contentColor = MaterialTheme.colors.primary,
-                            disabledBackgroundColor = Color.Transparent,
-                            disabledContentColor = MaterialTheme.colors.primary.copy(alpha = ContentAlpha.disabled),
-                        )
-                    ) {
-                        Icon(
-                            painter = if (isToggled) {
-                                painterResource(id = R.drawable.ic_baseline_keyboard_arrow_up_24)
-                            } else {
-                                painterResource(id = R.drawable.ic_baseline_keyboard_arrow_down_24)
-                            },
-                            contentDescription = null
-                        )
-                    }
-                }
                 //new row so the Configuration name is centered
                 Column(
-                        Modifier
-                            .weight(4f)
-                            .padding(start = 5.dp, end = 5.dp, top = 0.dp, bottom = 0.dp)
+                    Modifier
+                        .weight(8f)
+                        .padding(start = 5.dp, end = 5.dp, top = 0.dp, bottom = 0.dp)
 
                 ) {
                     Column {
@@ -88,7 +75,7 @@ fun OneConfigurationListMember(
                     }
                 }
                 Column(Modifier.weight(1f)) {
-                if (hasErrors) {
+                    if (hasErrors) {
                         Button(
                             onClick = {
                                 //TODO tell the user what is the problem
@@ -112,6 +99,16 @@ fun OneConfigurationListMember(
                             )
                         }
                     }
+                }
+                Column(Modifier.weight(1f)) {
+                    Icon(
+                        painter = if (isToggled) {
+                            painterResource(id = R.drawable.ic_baseline_keyboard_arrow_down_24)
+                        } else {
+                            painterResource(id = R.drawable.ic_baseline_keyboard_arrow_right_24)
+                        },
+                        contentDescription = null
+                    )
                 }
             }
             //The Information which is shown when toggle is active
