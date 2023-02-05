@@ -4,12 +4,7 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,6 +14,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.ispgr5.locationsimulator.FilePicker
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.StorageConfigInterface
 import com.ispgr5.locationsimulator.presentation.select.components.OneConfigurationListMember
@@ -32,8 +28,10 @@ import com.ispgr5.locationsimulator.presentation.select.components.OneConfigurat
 fun SelectScreen(
     navController: NavController,
     viewModel: SelectViewModel = hiltViewModel(),
-    storageConfigInterface: StorageConfigInterface
+    storageConfigInterface: StorageConfigInterface,
+    filePicker: FilePicker
 ) {
+    viewModel.updateConfigurationWithErrorsState(filePicker = filePicker)
     val state = viewModel.state.value
 
     Column(
@@ -43,35 +41,62 @@ fun SelectScreen(
             modifier = Modifier
                 .fillMaxWidth(),
             //Add and Delete Buttons should be on the right
-            horizontalArrangement = Arrangement.End
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
             //The Delete Button
             Button(
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
-                onClick = {
-                    viewModel.onEvent(SelectEvent.SelectDeleteMode)
-                }
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_baseline_delete_outline_24),
-                    contentDescription = null
+                onClick = { viewModel.onEvent(SelectEvent.SelectDeleteMode) },
+                contentPadding = PaddingValues(0.dp),
+                enabled = true,
+                shape = MaterialTheme.shapes.small,
+                border = null,
+                elevation = null,
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = Color.Transparent,
+                    contentColor = MaterialTheme.colors.primary,
+                    disabledBackgroundColor = Color.Transparent,
+                    disabledContentColor = MaterialTheme.colors.primary.copy(alpha = ContentAlpha.disabled),
                 )
+            ) {
+                if (state.isInDeleteMode) {
+                    Text(stringResource(id = R.string.finish_deletion))
+                } else {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_baseline_delete_outline_24),
+                        contentDescription = null
+                    )
+                }
             }
             //The Add Button
             Button(
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
-                onClick = {
-                    navController.navigate(route = "editScreen")
-                }
+                onClick = { navController.navigate(route = "editScreen") },
+                contentPadding = PaddingValues(0.dp),
+                enabled = true,
+                shape = MaterialTheme.shapes.small,
+                border = null,
+                elevation = null,
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = Color.Transparent,
+                    contentColor = MaterialTheme.colors.primary,
+                    disabledBackgroundColor = Color.Transparent,
+                    disabledContentColor = MaterialTheme.colors.primary.copy(alpha = ContentAlpha.disabled),
+                )
             ) {
-                Icon(Icons.Outlined.Add, "")
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_baseline_add_24),
+                    contentDescription = null
+                )
             }
         }
         //The whole Column where all Configurations are in
         LazyColumn(
-            modifier = Modifier
-                .padding(15.dp)
-                .fillMaxSize()
+            modifier = if (state.isInDeleteMode) {
+                Modifier.fillMaxSize().padding(end = 15.dp, top = 15.dp, start = 0.dp, bottom = 15.dp)
+            } else {
+                Modifier
+                    .padding(15.dp)
+                    .fillMaxSize()
+            }
         ) {
             //for all configurations in state we create a Row
             items(state.configurations) { configuration ->
@@ -96,14 +121,18 @@ fun SelectScreen(
                             }
                         } else {
                             Button(
-                                colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
-                                onClick = {
-                                    viewModel.onEvent(
-                                        SelectEvent.SelectConfigurationForDeletion(
-                                            configuration = configuration
-                                        )
-                                    )
-                                }
+                                onClick = { viewModel.onEvent(SelectEvent.SelectConfigurationForDeletion(configuration = configuration)) },
+                                contentPadding = PaddingValues(0.dp),
+                                enabled = true,
+                                shape = MaterialTheme.shapes.small,
+                                border = null,
+                                elevation = null,
+                                colors = ButtonDefaults.buttonColors(
+                                    backgroundColor = Color.Transparent,
+                                    contentColor = MaterialTheme.colors.primary,
+                                    disabledBackgroundColor = Color.Transparent,
+                                    disabledContentColor = MaterialTheme.colors.primary.copy(alpha = ContentAlpha.disabled),
+                                )
                             ) {
                                 Icon(
                                     painter = painterResource(id = R.drawable.ic_baseline_cancel_24),
@@ -132,10 +161,11 @@ fun SelectScreen(
                                     storageConfigInterface = storageConfigInterface
                                 )
                             )
-                        }
+                        },
+                        hasErrors = state.configurationsWithErrors.find { conf -> conf.id == configuration.id } != null
                     )
                 }
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(6.dp))
             }
         }
     }

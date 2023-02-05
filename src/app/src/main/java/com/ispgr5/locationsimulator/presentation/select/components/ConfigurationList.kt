@@ -2,10 +2,8 @@ package com.ispgr5.locationsimulator.presentation.select.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,13 +24,14 @@ fun OneConfigurationListMember(
     onToggleClicked: () -> Unit,
     onEditClicked: () -> Unit,
     onSelectClicked: () -> Unit,
-    onExportClicked: () -> Unit
+    onExportClicked: () -> Unit,
+    hasErrors: Boolean
 ) {
     val rowBackgroundColor: Color = Color.LightGray
 
     Box(
         Modifier
-            .background(rowBackgroundColor)
+            .background(rowBackgroundColor, shape = RoundedCornerShape(6.dp))
             .padding(4.dp)
             .fillMaxWidth()
     ) {
@@ -41,12 +40,26 @@ fun OneConfigurationListMember(
             Row(
                 Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center,
+                horizontalArrangement = if (!hasErrors) {
+                    Arrangement.Center
+                } else {
+                    Arrangement.SpaceBetween
+                },
             ) {
                 //The Toggle Button (Arrow up and down when toggled)
                 Button(
                     onClick = onToggleClicked,
-                    colors = ButtonDefaults.buttonColors(backgroundColor = rowBackgroundColor)
+                    contentPadding = PaddingValues(0.dp),
+                    enabled = true,
+                    shape = MaterialTheme.shapes.small,
+                    border = null,
+                    elevation = null,
+                    colors = ButtonDefaults.buttonColors(
+                        backgroundColor = Color.Transparent,
+                        contentColor = MaterialTheme.colors.primary,
+                        disabledBackgroundColor = Color.Transparent,
+                        disabledContentColor = MaterialTheme.colors.primary.copy(alpha = ContentAlpha.disabled),
+                    )
                 ) {
                     Icon(
                         painter = if (isToggled) {
@@ -59,9 +72,13 @@ fun OneConfigurationListMember(
                 }
                 //new row so the Configuration name is centered
                 Row(
-                    Modifier.fillMaxWidth(),
+                    if (!hasErrors) {
+                        Modifier.fillMaxWidth()
+                    } else {
+                        Modifier
+                    },
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
+                    horizontalArrangement = Arrangement.Start
                 ) {
                     Column {
                         Text(text = configuration.name)
@@ -69,6 +86,30 @@ fun OneConfigurationListMember(
                             Spacer(modifier = Modifier.height(3.dp))
                             Text(text = configuration.description)
                         }
+                    }
+                }
+                if (hasErrors) {
+                    Button(
+                        onClick = {
+                                  //TODO tell the user what is the problem
+                                  },
+                        contentPadding = PaddingValues(0.dp),
+                        enabled = true,
+                        shape = MaterialTheme.shapes.small,
+                        border = null,
+                        elevation = null,
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = Color.Transparent,
+                            contentColor = MaterialTheme.colors.primary,
+                            disabledBackgroundColor = Color.Transparent,
+                            disabledContentColor = MaterialTheme.colors.primary.copy(alpha = ContentAlpha.disabled),
+                        )
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_baseline_error_outline_24),
+                            contentDescription = null,
+                            tint = Color.Red,
+                        )
                     }
                 }
             }

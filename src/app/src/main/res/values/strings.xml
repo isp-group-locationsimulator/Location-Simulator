@@ -31,5 +31,5 @@
     <string name="editTimeline_addSound">Add Sound</string>
     <string name="soundscreen_soundselection">Sound Selection</string>
     <string name="soundscreen_import">Import</string>
-
+    <string name="finish_deletion">Finish</string>
 </resources>

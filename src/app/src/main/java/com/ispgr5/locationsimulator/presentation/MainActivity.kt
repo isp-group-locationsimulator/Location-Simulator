@@ -65,7 +65,8 @@ class MainActivity : ComponentActivity() {
                         composable(route = "selectScreen") {
                             SelectScreen(
                                 navController = navController,
-                                storageConfigInterface = storageConfigInterface
+                                storageConfigInterface = storageConfigInterface,
+                                filePicker = filePicker
                             )
                         }
                         composable("editScreen?configurationId={configurationId}",

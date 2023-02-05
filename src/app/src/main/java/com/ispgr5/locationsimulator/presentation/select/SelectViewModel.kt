@@ -4,6 +4,9 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ispgr5.locationsimulator.FilePicker
+import com.ispgr5.locationsimulator.domain.model.Configuration
+import com.ispgr5.locationsimulator.domain.model.Sound
 import com.ispgr5.locationsimulator.domain.useCase.ConfigurationUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -100,5 +103,39 @@ class SelectViewModel @Inject constructor(
             }
             //have to be in View model scope because Database request have to be called by Coroutine
             .launchIn(viewModelScope)
+    }
+
+    /**
+     * This function updated the Select Screen State by looking up the private dir
+     * with the saved Sounds and compare it with the Sound names in all Configurations.
+     *
+     */
+    fun updateConfigurationWithErrorsState(filePicker: FilePicker){
+        val configurationsWithErrors = mutableListOf<Configuration>()
+        val knownSounds = filePicker.getSoundFileNames()
+        for (conf in _state.value.configurations){
+            var hasErrors = false
+            for (comp in conf.components) {
+                if (comp is Sound) {
+                    var existInKnownSounds = false
+                    for (knownSound in knownSounds) {
+                        if (comp.source == knownSound){
+                            existInKnownSounds = true
+                            break
+                        }
+                    }
+                    if (!existInKnownSounds){
+                        hasErrors = true
+                        break
+                    }
+                }
+            }
+            if (hasErrors){
+                configurationsWithErrors.add(conf)
+            }
+        }
+        _state.value = _state.value.copy(
+            configurationsWithErrors = configurationsWithErrors
+        )
     }
 }

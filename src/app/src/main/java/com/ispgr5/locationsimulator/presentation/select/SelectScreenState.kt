@@ -10,5 +10,6 @@ data class SelectScreenState(
     val configurations: List<Configuration> = emptyList(),
     val toggledConfiguration : Configuration? = null,
     val isInDeleteMode: Boolean = false,
-    val selectedConfigurationForDeletion: Configuration? = null
+    val selectedConfigurationForDeletion: Configuration? = null,
+    val configurationsWithErrors:List<Configuration> = emptyList()
 )
