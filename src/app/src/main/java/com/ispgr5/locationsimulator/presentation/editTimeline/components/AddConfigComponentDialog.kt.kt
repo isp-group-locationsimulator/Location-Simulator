@@ -1,4 +1,4 @@
-package com.ispgr5.locationsimulator.presentation.editTimeline
+package com.ispgr5.locationsimulator.presentation.editTimeline.components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -14,24 +14,22 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.ispgr5.locationsimulator.R
 
-
+/**
+ * Opens a Dialog which ask the user for pick between "Add Sound" or "Add Vibration"
+ */
 @Composable
 fun AddConfigComponentDialog(
      onDismiss: () -> Unit,
      onNegativeClick: () -> Unit,
      onVibrationClicked: () -> Unit,
      onSoundClicked: () -> Unit
-
 ) {
-
-
     Dialog(onDismissRequest = onDismiss) {
-
         Card(
+            //shadow around the Dialog Box
             elevation = 8.dp,
             shape = RoundedCornerShape(12.dp)
         ) {
-
             Column(modifier = Modifier.padding(8.dp)) {
 
                 Text(
@@ -41,9 +39,12 @@ fun AddConfigComponentDialog(
                 )
                 Spacer(modifier = Modifier.height(8.dp))
 
+                /**
+                 * Sound and Vibration Select Buttons
+                 */
                 TextButton(onClick = onVibrationClicked) {
                     Icon(
-                        painter = painterResource(id = R.drawable.audionouse2),
+                        painter = painterResource(id = R.drawable.ic_baseline_vibration_24),
                         contentDescription = null
                     )
                     Spacer(modifier = Modifier.width(8.dp))
@@ -58,8 +59,9 @@ fun AddConfigComponentDialog(
                     Text(text = stringResource(id = R.string.editTimeline_addConfigComponentDialog_AddSound),  fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Color.Black )
                 }
 
-
-                // Buttons
+                /**
+                 * cancel Button
+                 */
                 Row(
                     horizontalArrangement = Arrangement.End,
                     modifier = Modifier.fillMaxWidth()

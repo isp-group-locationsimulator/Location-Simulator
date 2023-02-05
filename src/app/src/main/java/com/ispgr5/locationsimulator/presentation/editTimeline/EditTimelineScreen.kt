@@ -16,6 +16,7 @@ import androidx.navigation.NavController
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.domain.model.Sound
 import com.ispgr5.locationsimulator.domain.model.Vibration
+import com.ispgr5.locationsimulator.presentation.editTimeline.components.AddConfigComponentDialog
 
 
 @Composable
