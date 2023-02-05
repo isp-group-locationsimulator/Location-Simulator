@@ -34,11 +34,13 @@ fun SelectScreen(
     navController: NavController,
     viewModel: SelectViewModel = hiltViewModel(),
     storageConfigInterface: StorageConfigInterface,
-    filePicker: FilePicker
+    filePicker: FilePicker,
+    toaster: (String) -> Unit
 ) {
     viewModel.updateConfigurationWithErrorsState(filePicker = filePicker)
     val state = viewModel.state.value
     var sizeOfDeletionConfiguration by remember { mutableStateOf(IntSize.Zero) }
+    val notFound:String = stringResource(id = R.string.not_found)
 
     Column(
         modifier = Modifier.fillMaxSize()
@@ -173,7 +175,12 @@ fun SelectScreen(
                                     )
                                 )
                             },
-                            hasErrors = state.configurationsWithErrors.find { conf -> conf.id == configuration.id } != null
+                            hasErrors = state.configurationsWithErrors.find { conf -> conf.id == configuration.id } != null,
+                            onErrorInfoClicked = {
+                                for(error in viewModel.whatIsHisErrors(configuration = configuration, filePicker = filePicker)){
+                                    toaster("$error $notFound")
+                                }
+                            }
                         )
                     }
                     if (state.selectedConfigurationForDeletion?.id == configuration.id) {
@@ -205,6 +212,5 @@ fun SelectScreen(
                 Spacer(modifier = Modifier.height(6.dp))
             }
         }
-
     }
 }

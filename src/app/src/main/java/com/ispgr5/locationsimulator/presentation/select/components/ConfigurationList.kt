@@ -25,7 +25,8 @@ fun OneConfigurationListMember(
     onEditClicked: () -> Unit,
     onSelectClicked: () -> Unit,
     onExportClicked: () -> Unit,
-    hasErrors: Boolean
+    hasErrors: Boolean,
+    onErrorInfoClicked: () -> Unit
 ) {
     val rowBackgroundColor: Color = Color.LightGray
 
@@ -77,9 +78,7 @@ fun OneConfigurationListMember(
                 Column(Modifier.weight(1f)) {
                     if (hasErrors) {
                         Button(
-                            onClick = {
-                                //TODO tell the user what is the problem
-                            },
+                            onClick = onErrorInfoClicked,
                             contentPadding = PaddingValues(0.dp),
                             enabled = true,
                             shape = MaterialTheme.shapes.small,
@@ -118,17 +117,27 @@ fun OneConfigurationListMember(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceAround
                 ) {
-                    Button(onClick = onExportClicked) {
+                    Button(onClick = onExportClicked, enabled = !hasErrors) {
                         Text(text = stringResource(id = R.string.select_btn_profile_export))
                     }
                     //The Select Button
-                    Button(onClick = onSelectClicked) {
+                    Button(onClick = onSelectClicked, enabled = !hasErrors) {
                         Text(text = stringResource(id = R.string.select_btn_profile_select))
                     }
                     //The Edit Button
                     Button(
-                        colors = ButtonDefaults.buttonColors(backgroundColor = rowBackgroundColor),
-                        onClick = onEditClicked
+                        onClick = onEditClicked,
+                        contentPadding = PaddingValues(0.dp),
+                        enabled = true,
+                        shape = MaterialTheme.shapes.small,
+                        border = null,
+                        elevation = null,
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = Color.Transparent,
+                            contentColor = MaterialTheme.colors.primary,
+                            disabledBackgroundColor = Color.Transparent,
+                            disabledContentColor = MaterialTheme.colors.primary.copy(alpha = ContentAlpha.disabled),
+                        )
                     ) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_baseline_edit_24),

@@ -6,12 +6,12 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.WindowManager
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
+import androidx.compose.material.*
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -66,7 +66,8 @@ class MainActivity : ComponentActivity() {
                             SelectScreen(
                                 navController = navController,
                                 storageConfigInterface = storageConfigInterface,
-                                filePicker = filePicker
+                                filePicker = filePicker,
+                                toaster = toastAMessage
                             )
                         }
                         composable("editScreen?configurationId={configurationId}",
@@ -157,5 +158,9 @@ class MainActivity : ComponentActivity() {
                 startService(it)
             }
         }
+    }
+
+    private val toastAMessage:(message:String) -> Unit = fun(message: String){
+        Toast.makeText(this.applicationContext, message, Toast.LENGTH_SHORT).show()
     }
 }

@@ -138,4 +138,30 @@ class SelectViewModel @Inject constructor(
             configurationsWithErrors = configurationsWithErrors
         )
     }
+
+    /**
+     * search in our private dir for Sounds an look up if there are Sounds used in the configuration but
+     * they don't exist in our private dir
+     * @return unknown Sound names in the given configuration
+     */
+    fun whatIsHisErrors(configuration: Configuration, filePicker: FilePicker):List<String>{
+        val errors = mutableListOf<String>()
+        val knownSounds = filePicker.getSoundFileNames()
+        for (comp in configuration.components){
+            if (comp is Sound){
+                var exist = false
+                for (sound in knownSounds){
+                    if (comp.source == sound){
+                        exist = true
+                        break
+                    }
+                }
+                if (!exist){
+                    errors.add(comp.source)
+                }
+            }
+        }
+        return errors.toSet().toList()
+    }
+
 }
