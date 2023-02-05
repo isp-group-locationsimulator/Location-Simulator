@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -18,7 +19,7 @@ import com.ispgr5.locationsimulator.R
 @Preview
 fun InfoScreen() {
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().padding(30.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -31,7 +32,7 @@ fun InfoScreen() {
         Text(text = "Steffen Marbach")
         Spacer(modifier = Modifier.height(30.dp))
         Text(text = stringResource(id = R.string.infoscreen_support), fontSize = 30.sp)
-        Text(text = stringResource(id = R.string.isp))
+        Text(text = stringResource(id = R.string.isp), textAlign = TextAlign.Center)
         Text(text = stringResource(id = R.string.university))
         Text(text = "Juljan Bouchagiar")
     }
