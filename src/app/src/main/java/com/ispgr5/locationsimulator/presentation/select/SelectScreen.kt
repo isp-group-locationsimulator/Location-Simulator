@@ -174,6 +174,7 @@ fun SelectScreen(
                                         storageConfigInterface = storageConfigInterface
                                     )
                                 )
+                                toaster("Android/data/com.ispgr5.locationsimulator/files/Download")
                             },
                             hasErrors = state.configurationsWithErrors.find { conf -> conf.id == configuration.id } != null,
                             onErrorInfoClicked = {
