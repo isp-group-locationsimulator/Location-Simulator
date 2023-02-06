@@ -46,6 +46,7 @@ fun EditTimelineScreen(
                             onPauseValueChanged = fun(range: ClosedFloatingPointRange<Float>){viewModel.onEvent(EditTimelineEvent.ChangedPause(range))},
                             onVibStrengthChanged = fun(range: ClosedFloatingPointRange<Float>){viewModel.onEvent(EditTimelineEvent.ChangedVibStrength(range))},
                             onVibDurationChanged = fun(range: ClosedFloatingPointRange<Float>){viewModel.onEvent(EditTimelineEvent.ChangedVibDuration(range))},
+                            onDeleteClicked = fun(configComponent:ConfigComponent){viewModel.onEvent(EditTimelineEvent.DeleteConfigurationComponent(configComponent))}
                         )
                     }
                     Spacer(modifier = Modifier.size(4.dp))

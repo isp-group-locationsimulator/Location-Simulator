@@ -184,11 +184,21 @@ class EditTimelineViewModel @Inject constructor(
                     description = event.description
                 )
             }
+            is EditTimelineEvent.DeleteConfigurationComponent -> {
+                viewModelScope.launch {
+                    val compsCopy = state.value.components.toMutableList()
+                    compsCopy.remove(event.configComponent)
+                    _state.value = _state.value.copy(
+                        components = compsCopy
+                    )
+                    _state.value = _state.value.copy(
+                        current = null
+                    )
+                }
+            }
         }
-        //TODO always save?
         saveConfiguration()
     }
-
 
 
     private fun saveConfiguration() {

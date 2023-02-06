@@ -12,4 +12,5 @@ sealed class EditTimelineEvent {
     data class ChangedDescription(val description: String) : EditTimelineEvent()
     object AddSound : EditTimelineEvent()
     object AddVibration : EditTimelineEvent()
+    data class DeleteConfigurationComponent(val configComponent: ConfigComponent):EditTimelineEvent()
 }
