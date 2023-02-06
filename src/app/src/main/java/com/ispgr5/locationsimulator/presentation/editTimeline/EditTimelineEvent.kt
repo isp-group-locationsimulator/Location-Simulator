@@ -13,4 +13,6 @@ sealed class EditTimelineEvent {
     object AddSound : EditTimelineEvent()
     object AddVibration : EditTimelineEvent()
     data class DeleteConfigurationComponent(val configComponent: ConfigComponent):EditTimelineEvent()
+    data class MoveConfCompUp(val configComponent: ConfigComponent):EditTimelineEvent()
+    data class MoveConfCompDown(val configComponent: ConfigComponent):EditTimelineEvent()
 }

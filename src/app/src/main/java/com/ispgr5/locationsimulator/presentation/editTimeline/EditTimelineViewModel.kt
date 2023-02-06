@@ -189,10 +189,30 @@ class EditTimelineViewModel @Inject constructor(
                     val compsCopy = state.value.components.toMutableList()
                     compsCopy.remove(event.configComponent)
                     _state.value = _state.value.copy(
+                        components = compsCopy,
+                        current = null
+                    )
+                }
+            }
+            is EditTimelineEvent.MoveConfCompUp -> {
+                val index = getIndex(state.value.components, event.configComponent)
+                val compsCopy = state.value.components.toMutableList()
+                if (index > 0){
+                    compsCopy[index] = compsCopy[index-1]
+                    compsCopy[index-1] = event.configComponent
+                    _state.value = _state.value.copy(
                         components = compsCopy
                     )
+                }
+            }
+            is EditTimelineEvent.MoveConfCompDown -> {
+                val index = getIndex(state.value.components, event.configComponent)
+                val compsCopy = state.value.components.toMutableList()
+                if (index < compsCopy.size-1){
+                    compsCopy[index] = compsCopy[index+1]
+                    compsCopy[index+1] = event.configComponent
                     _state.value = _state.value.copy(
-                        current = null
+                        components = compsCopy
                     )
                 }
             }
@@ -200,6 +220,14 @@ class EditTimelineViewModel @Inject constructor(
         saveConfiguration()
     }
 
+    private fun getIndex(configComponents: List<ConfigComponent>, configComponent: ConfigComponent): Int{
+        for(i in configComponents.indices){
+            if(configComponents[i] === configComponent){
+                return i
+            }
+        }
+        return -1
+    }
 
     private fun saveConfiguration() {
         viewModelScope.launch {

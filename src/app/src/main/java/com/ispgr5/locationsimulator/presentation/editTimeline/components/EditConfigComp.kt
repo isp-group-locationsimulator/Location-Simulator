@@ -1,9 +1,6 @@
 package com.ispgr5.locationsimulator.presentation.editTimeline.components
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -24,7 +21,9 @@ fun EditConfigComponent(
     onPauseValueChanged: (ClosedFloatingPointRange<Float>) -> Unit,
     onVibStrengthChanged: (ClosedFloatingPointRange<Float>) -> Unit,
     onVibDurationChanged: (ClosedFloatingPointRange<Float>) -> Unit,
-    onDeleteClicked: (configComponent: ConfigComponent) -> Unit
+    onDeleteClicked: (configComponent: ConfigComponent) -> Unit,
+    onMoveUpClicked: (configComponent: ConfigComponent) -> Unit,
+    onMoveDownClicked: (configComponent: ConfigComponent) -> Unit
 ) {
     //so no Time line Item is selected for now
     if (configComponent == null) {
@@ -105,7 +104,8 @@ fun EditConfigComponent(
                 range = 0f..30f
             )
         }
-        Column(modifier = Modifier.weight(1f)) {
+        Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.SpaceBetween) {
+            //TODO ask user he really wants to delete
             Button(
                 onClick = { onDeleteClicked(configComponent) },
                 contentPadding = PaddingValues(0.dp),
@@ -124,6 +124,12 @@ fun EditConfigComponent(
                     painter = painterResource(id = R.drawable.ic_baseline_delete_outline_24),
                     contentDescription = null,
                 )
+            }
+            Button(onClick = {onMoveUpClicked(configComponent)}) {
+                Text(text = "UP")
+            }
+            Button(onClick = {onMoveDownClicked(configComponent)}) {
+                Text(text = "DOWN")
             }
         }
     }
