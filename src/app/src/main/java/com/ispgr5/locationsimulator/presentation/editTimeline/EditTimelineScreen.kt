@@ -13,14 +13,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.max
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
-import com.ispgr5.locationsimulator.domain.model.Sound
-import com.ispgr5.locationsimulator.domain.model.Vibration
 import com.ispgr5.locationsimulator.presentation.editTimeline.components.AddConfigComponentDialog
+import com.ispgr5.locationsimulator.presentation.editTimeline.components.EditConfigComponent
 import com.ispgr5.locationsimulator.presentation.editTimeline.components.Timeline
+import kotlin.properties.Delegates
 
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -30,7 +31,6 @@ fun EditTimelineScreen(
     viewModel: EditTimelineViewModel = hiltViewModel()
 ) {
     val state = viewModel.state.value
-
     var showCustomDialogWithResult by remember { mutableStateOf(false) }
 
     LazyColumn(
@@ -43,7 +43,13 @@ fun EditTimelineScreen(
             if (viewModel.state.value.currentTimelineIndex != -1) {
                 Column(modifier = Modifier.background(Color.White)) {
                     Column(modifier = Modifier.padding(12.dp)) {
-                        EditConfigComponent(viewModel, navController)
+                        EditConfigComponent(
+                            state.current,
+                            onSoundValueChanged = fun(range: ClosedFloatingPointRange<Float>){viewModel.onEvent(EditTimelineEvent.ChangedSoundVolume(range))},
+                            onPauseValueChanged = fun(range: ClosedFloatingPointRange<Float>){viewModel.onEvent(EditTimelineEvent.ChangedPause(range))},
+                            onVibStrengthChanged = fun(range: ClosedFloatingPointRange<Float>){viewModel.onEvent(EditTimelineEvent.ChangedVibStrength(range))},
+                            onVibDurationChanged = fun(range: ClosedFloatingPointRange<Float>){viewModel.onEvent(EditTimelineEvent.ChangedVibDuration(range))},
+                        )
                     }
                     Spacer(modifier = Modifier.size(4.dp))
                     Divider(color = MaterialTheme.colors.primary, thickness = 1.dp)
@@ -80,111 +86,39 @@ fun EditTimelineScreen(
             Timeline(
                 components = state.components,
                 selectedComponent = state.current,
-                onSelectAComponent =  fun(configItem:ConfigComponent){viewModel.onEvent(EditTimelineEvent.SelectedTimelineItem(configItem))}
+                onSelectAComponent = fun(configItem: ConfigComponent) { viewModel.onEvent(EditTimelineEvent.SelectedTimelineItem(configItem)) }
             )
 
+            /**
+             * Add new Timeline Item(Configuration Component)
+             */
             Button(onClick = { showCustomDialogWithResult = true }) {
                 Text(text = stringResource(id = R.string.editTimeline_add))
             }
         }
     }
 
+    /**
+     * The Select Vibration or Sound Dialog
+     */
+    val revShowDialog = fun() { showCustomDialogWithResult = !showCustomDialogWithResult }
     if (showCustomDialogWithResult) {
         AddConfigComponentDialog(
-            onDismiss = {
-                showCustomDialogWithResult = !showCustomDialogWithResult
-            },
-            onNegativeClick = {
-                showCustomDialogWithResult = !showCustomDialogWithResult
-            },
+            onDismiss = { revShowDialog() },
+            onNegativeClick = { revShowDialog() },
             onSoundClicked = {
-                showCustomDialogWithResult = !showCustomDialogWithResult
+                revShowDialog()
                 viewModel.onEvent(EditTimelineEvent.AddSound)
+                //TODO let User pick a Sound from private dir
+                //Button(onClick = { navController.navigate("sound") }) {
+                //    Text(text = stringResource(id = R.string.editTimeline_addSound))
+                //}
             },
             onVibrationClicked = {
-                showCustomDialogWithResult = !showCustomDialogWithResult
+                revShowDialog()
                 viewModel.onEvent(EditTimelineEvent.AddVibration)
             }
         )
     }
 
-
-}
-
-
-@Composable
-fun EditConfigComponent(viewModel: EditTimelineViewModel, navController: NavController){
-    /*TODO Bug doesn't get printed in the beginning*/
-    if(viewModel.state.value.components.isEmpty()){
-        println("isEmpty")
-        return
-    }
-    when(val current = viewModel.state.value.current){
-        is Sound ->{
-            Text(text = stringResource(id = R.string.editTimeline_SoundVolume) + ":")
-            Text( RangeConverter.eightBitIntToPercentageFloat(current.minVolume).toInt().toString() + "%"
-                    + stringResource(id = R.string.editTimeline_range) + RangeConverter.eightBitIntToPercentageFloat(current.maxVolume).toInt().toString() + "% "
-            )
-            SliderForRange(
-                value = RangeConverter.eightBitIntToPercentageFloat(current.minVolume)..RangeConverter.eightBitIntToPercentageFloat(current.maxVolume),
-                func =  {value : ClosedFloatingPointRange<Float> -> viewModel.onEvent(EditTimelineEvent.ChangedSoundVolume(value))},
-                range = 0f..100f
-            )
-            Text(text = stringResource(id = R.string.editTimeline_Pause))
-            SecText(min = RangeConverter.msToS(current.minPause), max = RangeConverter.msToS(current.maxPause))
-            SliderForRange(
-                value = RangeConverter.msToS(current.minPause)..RangeConverter.msToS(current.maxPause),
-                func =  {value : ClosedFloatingPointRange<Float> -> viewModel.onEvent(EditTimelineEvent.ChangedPause(value)) } ,
-                range = 0f..30f
-            )
-            Button(onClick = { navController.navigate("sound") }) {
-                Text(text = stringResource(id = R.string.editTimeline_addSound))
-            }
-        }
-        is Vibration -> {
-            Text(text = stringResource(id = R.string.editTimeline_Vibration_Strength))
-            Text( RangeConverter.eightBitIntToPercentageFloat(current.minStrength).toInt().toString() + "% "
-            + stringResource(id = R.string.editTimeline_range) + RangeConverter.eightBitIntToPercentageFloat(current.maxStrength).toInt().toString() + "%"
-            )
-            SliderForRange(
-                value = RangeConverter.eightBitIntToPercentageFloat(current.minStrength)..RangeConverter.eightBitIntToPercentageFloat(current.maxStrength),
-                func =  {value : ClosedFloatingPointRange<Float> -> viewModel.onEvent(EditTimelineEvent.ChangedVibStrength(value))},
-                range = 0f..100f
-            )
-            Text(text = stringResource(id = R.string.editTimeline_Vibration_duration))
-            SecText(min = RangeConverter.msToS(current.minDuration), max = RangeConverter.msToS(current.maxDuration))
-            SliderForRange(
-                value = RangeConverter.msToS(current.minDuration)..RangeConverter.msToS(current.maxDuration),
-                func =  {value : ClosedFloatingPointRange<Float> -> viewModel.onEvent(EditTimelineEvent.ChangedVibDuration(value))},
-                range = 0f..30f
-            )
-            Text(text = stringResource(id = R.string.editTimeline_Pause))
-            SecText(min = RangeConverter.msToS(current.minPause), max = RangeConverter.msToS(current.maxPause))
-            SliderForRange(
-                value = RangeConverter.msToS(current.minPause)..RangeConverter.msToS(current.maxPause),
-                func =  {value : ClosedFloatingPointRange<Float> -> viewModel.onEvent(EditTimelineEvent.ChangedPause(value))},
-                range = 0f..30f
-            )
-        }
-    }
-
-}
-
-@OptIn(ExperimentalMaterialApi::class)
-@Composable
-fun SliderForRange(func: (ClosedFloatingPointRange<Float>) -> Unit,
-                   value: ClosedFloatingPointRange<Float>,
-                   range: ClosedFloatingPointRange<Float>)
-{
-    RangeSlider(
-        value = (value),
-        onValueChange = func,
-        valueRange = range,
-        onValueChangeFinished = {},
-    )
-}
-
-@Composable
-fun SecText(min : Float, max : Float){
-    Text( String.format("%.1f", min) + "s " + stringResource(id = R.string.editTimeline_range) + String.format("%.1f", max) +"s " )
 }
