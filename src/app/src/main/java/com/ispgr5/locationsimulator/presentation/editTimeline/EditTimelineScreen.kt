@@ -16,9 +16,11 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ispgr5.locationsimulator.R
+import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 import com.ispgr5.locationsimulator.domain.model.Sound
 import com.ispgr5.locationsimulator.domain.model.Vibration
 import com.ispgr5.locationsimulator.presentation.editTimeline.components.AddConfigComponentDialog
+import com.ispgr5.locationsimulator.presentation.editTimeline.components.Timeline
 
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -75,11 +77,11 @@ fun EditTimelineScreen(
             /**
              * TimeLine
              */
-            Column {
-                state.components.forEach { configComponent ->
-                    TimelineItem(configComponent, viewModel)
-                }
-            }
+            Timeline(
+                components = state.components,
+                selectedComponent = state.current,
+                onSelectAComponent =  fun(configItem:ConfigComponent){viewModel.onEvent(EditTimelineEvent.SelectedTimelineItem(configItem))}
+            )
 
             Button(onClick = { showCustomDialogWithResult = true }) {
                 Text(text = stringResource(id = R.string.editTimeline_add))
