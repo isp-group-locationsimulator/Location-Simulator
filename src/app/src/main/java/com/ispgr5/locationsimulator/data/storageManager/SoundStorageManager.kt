@@ -1,4 +1,4 @@
-package com.ispgr5.locationsimulator
+package com.ispgr5.locationsimulator.data.storageManager
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -12,10 +12,9 @@ import java.net.URI
 
 /**
  * This class uses the ActivityResultContracts to access the files we need.
- * TODO: Put the class into a better fitting dir?
  * @param mainActivity This class needs context to access the ActivityResultContracts and the file system.
  */
-class FilePicker(private val mainActivity: MainActivity) {
+class SoundStorageManager(private val mainActivity: MainActivity) {
 
     /**
      * This variable lets us select a file and get its Uri.

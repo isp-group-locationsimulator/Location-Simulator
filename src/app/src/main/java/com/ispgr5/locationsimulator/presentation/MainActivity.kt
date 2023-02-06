@@ -18,8 +18,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.ispgr5.locationsimulator.FilePicker
-import com.ispgr5.locationsimulator.StorageConfigInterface
+import com.ispgr5.locationsimulator.data.storageManager.SoundStorageManager
+import com.ispgr5.locationsimulator.data.storageManager.ConfigurationStorageManager
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 import com.ispgr5.locationsimulator.domain.model.ConfigurationComponentConverter
 import com.ispgr5.locationsimulator.presentation.delay.DelayScreen
@@ -38,14 +38,14 @@ import kotlinx.serialization.ExperimentalSerializationApi
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    // With this filePicker we can access the filesystem wherever we want
-    private lateinit var filePicker: FilePicker
-    private lateinit var storageConfigInterface: StorageConfigInterface
+    // With this soundStorageManager we can access the filesystem wherever we want
+    private lateinit var soundStorageManager: SoundStorageManager
+    private lateinit var configurationStorageManager: ConfigurationStorageManager
 
     @OptIn(ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
-        filePicker = FilePicker(this)
-        storageConfigInterface = StorageConfigInterface(this, filePicker = filePicker)
+        soundStorageManager = SoundStorageManager(this)
+        configurationStorageManager = ConfigurationStorageManager(this, soundStorageManager = soundStorageManager)
         super.onCreate(savedInstanceState)
         setContent {
             LocationSimulatorTheme {
@@ -65,8 +65,8 @@ class MainActivity : ComponentActivity() {
                         composable(route = "selectScreen") {
                             SelectScreen(
                                 navController = navController,
-                                storageConfigInterface = storageConfigInterface,
-                                filePicker = filePicker,
+                                configurationStorageManager = configurationStorageManager,
+                                soundStorageManager = soundStorageManager,
                                 toaster = toastAMessage
                             )
                         }
@@ -81,7 +81,7 @@ class MainActivity : ComponentActivity() {
                         ) {
                             EditScreen(
                                 navController = navController,
-                                storageConfigInterface = storageConfigInterface
+                                configurationStorageManager = configurationStorageManager
                             )
                         }
                         composable(route = "delayScreen?configurationId={configurationId}",
@@ -125,7 +125,7 @@ class MainActivity : ComponentActivity() {
                             }
                             )
                         ) {
-                            SoundScreen(filePicker = filePicker, mainActivity = this@MainActivity)
+                            SoundScreen(soundStorageManager = soundStorageManager, mainActivity = this@MainActivity)
                         }
                     }
                 }

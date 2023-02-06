@@ -2,15 +2,15 @@ package com.ispgr5.locationsimulator.presentation.sound
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import com.ispgr5.locationsimulator.FilePicker
+import com.ispgr5.locationsimulator.data.storageManager.SoundStorageManager
 import com.ispgr5.locationsimulator.presentation.run.SoundPlayer
 
 /**
  * The ViewModel for the Sound
  */
-class SoundViewModel(private val filePicker: FilePicker) {
+class SoundViewModel(private val soundStorageManager: SoundStorageManager) {
     // The provided state for the View
-    private val _state = mutableStateOf(SoundState(filePicker.getSoundFileNames()))
+    private val _state = mutableStateOf(SoundState(soundStorageManager.getSoundFileNames()))
     val state: State<SoundState> = _state
 
     /**
@@ -19,7 +19,7 @@ class SoundViewModel(private val filePicker: FilePicker) {
     fun onEvent(event: SoundEvent) {
         when(event) {
             is SoundEvent.RefreshPage -> {
-                _state.value = SoundState(filePicker.getSoundFileNames())
+                _state.value = SoundState(soundStorageManager.getSoundFileNames())
             }
             is SoundEvent.TestPlaySound -> {
                 val soundPlayer = SoundPlayer()
@@ -30,7 +30,7 @@ class SoundViewModel(private val filePicker: FilePicker) {
                 println(event.soundName)
             }
             is SoundEvent.ImportSound -> {
-                filePicker.moveFileToPrivateFolder()
+                soundStorageManager.moveFileToPrivateFolder()
             }
         }
     }

@@ -1,6 +1,6 @@
 package com.ispgr5.locationsimulator.presentation.select
 
-import com.ispgr5.locationsimulator.StorageConfigInterface
+import com.ispgr5.locationsimulator.data.storageManager.ConfigurationStorageManager
 import com.ispgr5.locationsimulator.domain.model.Configuration
 
 /**
@@ -14,6 +14,6 @@ sealed class SelectEvent {
     object SelectDeleteMode : SelectEvent()
     data class SelectedExportConfiguration(
         val configuration: Configuration,
-        val storageConfigInterface: StorageConfigInterface
+        val configurationStorageManager: ConfigurationStorageManager
     ) : SelectEvent()
 }

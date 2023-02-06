@@ -4,7 +4,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ispgr5.locationsimulator.FilePicker
+import com.ispgr5.locationsimulator.data.storageManager.SoundStorageManager
 import com.ispgr5.locationsimulator.domain.model.Configuration
 import com.ispgr5.locationsimulator.domain.model.Sound
 import com.ispgr5.locationsimulator.domain.useCase.ConfigurationUseCases
@@ -80,7 +80,7 @@ class SelectViewModel @Inject constructor(
                 }
             }
             is SelectEvent.SelectedExportConfiguration -> {
-                event.storageConfigInterface.safeConfigurationToStorage(event.configuration)
+                event.configurationStorageManager.safeConfigurationToStorage(event.configuration)
             }
         }
     }
@@ -110,9 +110,9 @@ class SelectViewModel @Inject constructor(
      * with the saved Sounds and compare it with the Sound names in all Configurations.
      *
      */
-    fun updateConfigurationWithErrorsState(filePicker: FilePicker){
+    fun updateConfigurationWithErrorsState(soundStorageManager: SoundStorageManager){
         val configurationsWithErrors = mutableListOf<Configuration>()
-        val knownSounds = filePicker.getSoundFileNames()
+        val knownSounds = soundStorageManager.getSoundFileNames()
         for (conf in _state.value.configurations){
             var hasErrors = false
             for (comp in conf.components) {
@@ -144,9 +144,9 @@ class SelectViewModel @Inject constructor(
      * they don't exist in our private dir
      * @return unknown Sound names in the given configuration
      */
-    fun whatIsHisErrors(configuration: Configuration, filePicker: FilePicker):List<String>{
+    fun whatIsHisErrors(configuration: Configuration, soundStorageManager: SoundStorageManager):List<String>{
         val errors = mutableListOf<String>()
-        val knownSounds = filePicker.getSoundFileNames()
+        val knownSounds = soundStorageManager.getSoundFileNames()
         for (comp in configuration.components){
             if (comp is Sound){
                 var exist = false

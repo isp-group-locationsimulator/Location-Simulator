@@ -18,9 +18,9 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.ispgr5.locationsimulator.FilePicker
+import com.ispgr5.locationsimulator.data.storageManager.SoundStorageManager
 import com.ispgr5.locationsimulator.R
-import com.ispgr5.locationsimulator.StorageConfigInterface
+import com.ispgr5.locationsimulator.data.storageManager.ConfigurationStorageManager
 import com.ispgr5.locationsimulator.presentation.select.components.OneConfigurationListMember
 
 /**
@@ -33,11 +33,11 @@ import com.ispgr5.locationsimulator.presentation.select.components.OneConfigurat
 fun SelectScreen(
     navController: NavController,
     viewModel: SelectViewModel = hiltViewModel(),
-    storageConfigInterface: StorageConfigInterface,
-    filePicker: FilePicker,
+    configurationStorageManager: ConfigurationStorageManager,
+    soundStorageManager: SoundStorageManager,
     toaster: (String) -> Unit
 ) {
-    viewModel.updateConfigurationWithErrorsState(filePicker = filePicker)
+    viewModel.updateConfigurationWithErrorsState(soundStorageManager = soundStorageManager)
     val state = viewModel.state.value
     var sizeOfDeletionConfiguration by remember { mutableStateOf(IntSize.Zero) }
     val notFound:String = stringResource(id = R.string.not_found)
@@ -171,14 +171,14 @@ fun SelectScreen(
                                 viewModel.onEvent(
                                     SelectEvent.SelectedExportConfiguration(
                                         configuration = configuration,
-                                        storageConfigInterface = storageConfigInterface
+                                        configurationStorageManager = configurationStorageManager
                                     )
                                 )
                                 toaster("Android/data/com.ispgr5.locationsimulator/files/Download")
                             },
                             hasErrors = state.configurationsWithErrors.find { conf -> conf.id == configuration.id } != null,
                             onErrorInfoClicked = {
-                                for(error in viewModel.whatIsHisErrors(configuration = configuration, filePicker = filePicker)){
+                                for(error in viewModel.whatIsHisErrors(configuration = configuration, soundStorageManager = soundStorageManager)){
                                     toaster("$error $notFound")
                                 }
                             }

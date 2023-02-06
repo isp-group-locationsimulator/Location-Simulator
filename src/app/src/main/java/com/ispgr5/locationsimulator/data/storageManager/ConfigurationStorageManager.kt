@@ -1,4 +1,4 @@
-package com.ispgr5.locationsimulator
+package com.ispgr5.locationsimulator.data.storageManager
 
 import android.net.Uri
 import android.os.Environment
@@ -22,9 +22,9 @@ import java.util.*
 /**
  * This class handles the interaction with the local Storage to import and export Configurations
  */
-class StorageConfigInterface(
+class ConfigurationStorageManager(
     private val mainActivity: MainActivity,
-    private val filePicker: FilePicker
+    private val soundStorageManager: SoundStorageManager
 ) {
     /**
      * This class helps to import and export Sound Files and maps the Sound name to his base64String
@@ -192,12 +192,12 @@ class StorageConfigInterface(
 
                 //search this Sound in the already existing Sound files
                 val soundAlreadyExistHere: String? =
-                    soundHelpObject?.let { filePicker.soundAlreadyExist(it.base64String) }
+                    soundHelpObject?.let { soundStorageManager.soundAlreadyExist(it.base64String) }
 
                 //if this sound don't exist then write it to the private Folder
                 if (soundAlreadyExistHere == null) {
                     val outputStream =
-                        FileOutputStream(filePicker.getFileInPrivateDir(soundNameWithEnding))
+                        FileOutputStream(soundStorageManager.getFileInPrivateDir(soundNameWithEnding))
                     outputStream.write(
                         soundHelpObject?.let {
                             SoundConverter().decodeBase64StringToByteArray(

@@ -15,7 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
-import com.ispgr5.locationsimulator.FilePicker
+import com.ispgr5.locationsimulator.data.storageManager.SoundStorageManager
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.presentation.MainActivity
 
@@ -24,10 +24,10 @@ import com.ispgr5.locationsimulator.presentation.MainActivity
  */
 @Composable
 fun SoundScreen(
-    filePicker: FilePicker,
+    soundStorageManager: SoundStorageManager,
     mainActivity: MainActivity
 ) {
-    val viewModel = SoundViewModel(filePicker)
+    val viewModel = SoundViewModel(soundStorageManager)
     val state = viewModel.state
     Column(
         modifier = Modifier.fillMaxSize(),

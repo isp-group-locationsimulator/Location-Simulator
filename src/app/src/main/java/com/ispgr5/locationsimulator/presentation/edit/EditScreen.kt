@@ -12,7 +12,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ispgr5.locationsimulator.R
-import com.ispgr5.locationsimulator.StorageConfigInterface
+import com.ispgr5.locationsimulator.data.storageManager.ConfigurationStorageManager
 
 /**
  * The Edit Screen.
@@ -23,7 +23,7 @@ import com.ispgr5.locationsimulator.StorageConfigInterface
 fun EditScreen(
     navController: NavController,
     viewModel: EditViewModel = hiltViewModel(),
-    storageConfigInterface: StorageConfigInterface
+    configurationStorageManager: ConfigurationStorageManager
 ) {
     //The state from viewmodel
     val state = viewModel.state.value
@@ -56,7 +56,7 @@ fun EditScreen(
             Text(text = stringResource(id = R.string.edit_Save))
         }
         Button(onClick = {
-            viewModel.onEvent(EditEvent.SelectedImportConfiguration(storageConfigInterface = storageConfigInterface))
+            viewModel.onEvent(EditEvent.SelectedImportConfiguration(configurationStorageManager = configurationStorageManager))
             navController.navigateUp()
         }) {
             Text(text = stringResource(id = R.string.edit_Import))
