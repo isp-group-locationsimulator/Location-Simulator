@@ -10,7 +10,7 @@ import androidx.compose.runtime.*
 
 @Preview(name = "Preview1", device = Devices.PIXEL, showSystemUi = true)
 @Composable
-fun testScreen(){
+fun TestScreen(){
     EditTimelineTimeline()
 }
 

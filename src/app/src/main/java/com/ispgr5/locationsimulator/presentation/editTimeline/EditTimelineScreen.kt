@@ -11,9 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.max
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ispgr5.locationsimulator.R
@@ -21,7 +19,6 @@ import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 import com.ispgr5.locationsimulator.presentation.editTimeline.components.AddConfigComponentDialog
 import com.ispgr5.locationsimulator.presentation.editTimeline.components.EditConfigComponent
 import com.ispgr5.locationsimulator.presentation.editTimeline.components.Timeline
-import kotlin.properties.Delegates
 
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -62,7 +59,6 @@ fun EditTimelineScreen(
              * Name and Description
              */
             Column(modifier = Modifier.padding(12.dp)) {
-                val textState = remember { mutableStateOf(TextFieldValue()) }
                 Text(text = stringResource(id = R.string.editTimeline_name) + ":", fontWeight = FontWeight.Bold)
                 BasicTextField(
                     value = state.name,
