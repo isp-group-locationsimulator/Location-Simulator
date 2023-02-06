@@ -2,7 +2,9 @@ package com.ispgr5.locationsimulator.presentation.delay
 
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -13,6 +15,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
+import com.ispgr5.locationsimulator.presentation.editTimeline.components.Timeline
 
 /**
  * The Delay Screen.
@@ -24,7 +27,7 @@ import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 fun DelayScreen(
     navController: NavController,
     viewModel: DelayViewModel = hiltViewModel(),
-    startServiceFunction : (List<ConfigComponent>) -> Unit,
+    startServiceFunction: (List<ConfigComponent>) -> Unit,
 ) {
     //The state from viewmodel
     val state = viewModel.state.value
@@ -41,14 +44,27 @@ fun DelayScreen(
             Text(text = state.configuration.description)
         }
         Button(onClick = {
-            if (state.configuration == null){
+            if (state.configuration == null) {
                 //Don't start
-            }else{
+            } else {
                 viewModel.onEvent(DelayEvent.StartClicked(startServiceFunction))
                 navController.navigate("runScreen")
             }
         }) {
             Text(text = stringResource(id = R.string.delay_btn_start))
+        }
+
+        /**
+         * The Timeline
+         */
+        LazyColumn(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            items(1) {
+                state.configuration?.components?.let {
+                    Timeline(components = it, selectedComponent = null, onSelectAComponent = fun(_: ConfigComponent) {})
+                }
+            }
         }
     }
 }
