@@ -35,4 +35,6 @@
     <string name="finish_deletion">Fertig</string>
     <string name="not_found">Nicht Gefunden</string>
     <string name="homescreen_appname">Ortungssimulator</string>
+    <string name="battery_opt_recommendation">Wir empfehlen, die App von der Akkuoptimierung auszuschließen, damit die Simulation nicht ungewollt beendet wird:</string>
+    <string name="battery_opt_button">Akkuoptimierung deaktivieren</string>
 </resources>

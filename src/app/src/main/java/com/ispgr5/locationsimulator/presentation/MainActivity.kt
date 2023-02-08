@@ -2,8 +2,10 @@ package com.ispgr5.locationsimulator.presentation
 
 import com.ispgr5.locationsimulator.presentation.editTimeline.EditTimelineScreen
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.PowerManager
 import android.util.Log
 import android.view.WindowManager
 import android.widget.Toast
@@ -57,7 +59,10 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
                     NavHost(navController = navController, startDestination = "homeScreen") {
                         composable("homeScreen") {
-                            HomeScreenScreen(navController = navController)
+                            HomeScreenScreen(
+                                navController = navController,
+                                batteryOptDisableFunction = {disableBatteryOptimization()}
+                            )
                         }
                         composable("infoScreen") {
                             InfoScreen(navController = navController)
@@ -157,6 +162,24 @@ class MainActivity : ComponentActivity() {
             } else {
                 startService(it)
             }
+        }
+    }
+
+    private fun disableBatteryOptimization() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val intent = Intent()
+            val pm = getSystemService(POWER_SERVICE) as PowerManager
+            if (!pm.isIgnoringBatteryOptimizations(packageName)) {
+                intent.action =
+                    android.provider.Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+                intent.data = Uri.parse("package:$packageName")
+                startActivity(intent)
+            } else {
+                startActivity(Intent(android.provider.Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS))
+            }
+        } else {
+            startActivity(Intent(android.provider.Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS))
+            startActivityForResult(Intent(android.provider.Settings.ACTION_SETTINGS), 0)
         }
     }
 

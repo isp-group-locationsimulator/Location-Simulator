@@ -34,4 +34,6 @@
     <string name="finish_deletion">Finish</string>
     <string name="not_found">Not Found</string>
     <string name="homescreen_appname">Locationsimulator</string>
+    <string name="battery_opt_recommendation">We recommend excluding the app from battery optimization to make sure the simulation doesn\'t randomly stop:</string>
+    <string name="battery_opt_button">disable battery optimization</string>
 </resources>

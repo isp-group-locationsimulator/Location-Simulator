@@ -27,7 +27,8 @@ import com.ispgr5.locationsimulator.ui.theme.theBlue
 @Composable
 fun HomeScreenScreen(
     navController: NavController,
-    viewModel: HomeScreenViewModel = hiltViewModel()
+    viewModel: HomeScreenViewModel = hiltViewModel(),
+    batteryOptDisableFunction: () -> Unit
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -75,6 +76,13 @@ fun HomeScreenScreen(
             navController.navigate("selectScreen")
         }) {
             Text(text = stringResource(id = R.string.homescreen_btn_quickstart), fontSize = 30.sp)
+        }
+        Spacer(modifier = Modifier.height(60.dp))
+        Text(text = stringResource(id = R.string.battery_opt_recommendation), textAlign = TextAlign.Center)
+        Button(onClick = {
+            viewModel.onEvent(HomeScreenEvent.DisableBatteryOptimization(batteryOptDisableFunction))
+        }) {
+            Text(text = stringResource(id = R.string.battery_opt_button))
         }
     }
 }

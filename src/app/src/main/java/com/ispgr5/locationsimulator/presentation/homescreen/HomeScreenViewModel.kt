@@ -20,6 +20,9 @@ class HomeScreenViewModel @Inject constructor(
                 is HomeScreenEvent.SelectConfiguration ->{
                     return
                 }
+                is HomeScreenEvent.DisableBatteryOptimization -> {
+                    event.batteryOptDisableFunction()
+                }
             }
         }
     }
