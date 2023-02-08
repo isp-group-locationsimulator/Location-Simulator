@@ -33,4 +33,5 @@
     <string name="soundscreen_import">Import</string>
     <string name="finish_deletion">Finish</string>
     <string name="not_found">Not Found</string>
+    <string name="homescreen_appname">Locationsimulator</string>
 </resources>

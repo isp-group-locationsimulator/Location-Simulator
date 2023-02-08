@@ -10,10 +10,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ispgr5.locationsimulator.R
+import com.ispgr5.locationsimulator.ui.theme.Shapes
+import com.ispgr5.locationsimulator.ui.theme.theBlue
 
 /**
  * The Home Screen.
@@ -39,21 +43,38 @@ fun HomeScreenScreen(
         }
     }
     Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(30.dp),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Spacer(modifier = Modifier.height(110.dp))
+        Text(text = stringResource(id = R.string.homescreen_appname), fontSize = 40.sp, color = theBlue)
+
+    }
+    Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Spacer(modifier = Modifier.height(50.dp))
         Button(onClick = {
             viewModel.onEvent(HomeScreenEvent.SelectConfiguration)
             navController.navigate("selectScreen")
+            Modifier
+                .height(100.dp)
+                .width(300.dp)
+
         }) {
-            Text(text = stringResource(id = R.string.homescreen_btn_select_profile))
+            Text(text = stringResource(id = R.string.homescreen_btn_select_profile), fontSize = 30.sp)
         }
+        Spacer(modifier = Modifier.height(60.dp))
         Button(onClick = {
             viewModel.onEvent(HomeScreenEvent.SelectConfiguration)
             navController.navigate("selectScreen")
         }) {
-            Text(text = stringResource(id = R.string.homescreen_btn_quickstart))
+            Text(text = stringResource(id = R.string.homescreen_btn_quickstart), fontSize = 30.sp)
         }
     }
 }
