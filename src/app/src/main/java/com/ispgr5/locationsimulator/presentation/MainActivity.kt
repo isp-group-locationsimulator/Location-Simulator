@@ -60,7 +60,7 @@ class MainActivity : ComponentActivity() {
                             HomeScreenScreen(navController = navController)
                         }
                         composable("infoScreen") {
-                            InfoScreen()
+                            InfoScreen(navController = navController)
                         }
                         composable(route = "selectScreen") {
                             SelectScreen(
