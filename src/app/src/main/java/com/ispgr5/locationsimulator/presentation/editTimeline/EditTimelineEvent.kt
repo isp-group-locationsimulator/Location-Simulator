@@ -15,4 +15,5 @@ sealed class EditTimelineEvent {
     data class DeleteConfigurationComponent(val configComponent: ConfigComponent):EditTimelineEvent()
     data class MoveConfCompUp(val configComponent: ConfigComponent):EditTimelineEvent()
     data class MoveConfCompDown(val configComponent: ConfigComponent):EditTimelineEvent()
+    data class RecordAudio(val recordAudio : () -> Unit) : EditTimelineEvent()
 }

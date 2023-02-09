@@ -216,6 +216,9 @@ class EditTimelineViewModel @Inject constructor(
                     )
                 }
             }
+            is EditTimelineEvent.RecordAudio ->{
+
+            }
         }
         saveConfiguration()
     }

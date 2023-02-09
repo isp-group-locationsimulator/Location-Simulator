@@ -25,6 +25,7 @@ import com.ispgr5.locationsimulator.presentation.editTimeline.components.Timelin
 @Composable
 fun EditTimelineScreen(
     navController: NavController,
+    recordAudio: () -> Unit,
     viewModel: EditTimelineViewModel = hiltViewModel()
 ) {
     val state = viewModel.state.value
@@ -93,6 +94,13 @@ fun EditTimelineScreen(
              */
             Button(onClick = { showCustomDialogWithResult = true }) {
                 Text(text = stringResource(id = R.string.editTimeline_add))
+            }
+
+            /**
+             * Import Audio File
+             */
+            Button(onClick = { recordAudio() }) {
+                Text(text = stringResource(id = R.string.record_sound))
             }
         }
     }

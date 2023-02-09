@@ -1,11 +1,14 @@
 package com.ispgr5.locationsimulator.presentation
 
+import android.app.Activity
 import com.ispgr5.locationsimulator.presentation.editTimeline.EditTimelineScreen
 import android.content.Intent
+import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
+import android.provider.MediaStore
 import android.util.Log
 import android.view.WindowManager
 import android.widget.Toast
@@ -118,7 +121,7 @@ class MainActivity : ComponentActivity() {
                             }
                             )
                         ) {
-                            EditTimelineScreen(navController = navController)
+                            EditTimelineScreen(navController = navController, recordAudio ={recordAudio()})
                         }
                         // TODO: Is this the correct way to setup the navigation?
                         composable("sound?configurationId={configurationId}",
@@ -180,6 +183,23 @@ class MainActivity : ComponentActivity() {
         } else {
             startActivity(Intent(android.provider.Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS))
             startActivityForResult(Intent(android.provider.Settings.ACTION_SETTINGS), 0)
+        }
+    }
+
+    fun recordAudio() {
+        val intent = Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION)
+        val uri = MediaStore.Audio.Media.INTERNAL_CONTENT_URI
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, uri)
+        startActivityForResult(intent, 0)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 0 && resultCode == Activity.RESULT_OK) {
+            // Handle the recorded audio
+            val recordedAudioUri = data?.data
+            val mediaPlayer = MediaPlayer.create(this, recordedAudioUri)
+            mediaPlayer.start()
         }
     }
 
