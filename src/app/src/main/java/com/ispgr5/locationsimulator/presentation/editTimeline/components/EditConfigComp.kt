@@ -46,15 +46,15 @@ fun EditConfigComponent(
                      */
                     Text(text = stringResource(id = R.string.editTimeline_SoundVolume) + ":")
                     Text(
-                        RangeConverter.eightBitIntToPercentageFloat(configComponent.minVolume).toInt().toString() + "%"
-                                + stringResource(id = R.string.editTimeline_range) + RangeConverter.eightBitIntToPercentageFloat(configComponent.maxVolume)
+                        RangeConverter.transformFactorToPercentage(configComponent.minVolume).toInt().toString() + "%"
+                                + stringResource(id = R.string.editTimeline_range) + RangeConverter.transformFactorToPercentage(configComponent.maxVolume)
                             .toInt()
                             .toString() + "% "
                     )
+                    println(configComponent.maxVolume)
                     SliderForRange(
-                        value = RangeConverter.eightBitIntToPercentageFloat(configComponent.minVolume)..RangeConverter.eightBitIntToPercentageFloat(
-                            configComponent.maxVolume
-                        ),
+                        value = RangeConverter.transformFactorToPercentage(configComponent.minVolume)..
+                                RangeConverter.transformFactorToPercentage(configComponent.maxVolume),
                         func = { value: ClosedFloatingPointRange<Float> -> onSoundValueChanged(value) },
                         range = 0f..100f
                     )

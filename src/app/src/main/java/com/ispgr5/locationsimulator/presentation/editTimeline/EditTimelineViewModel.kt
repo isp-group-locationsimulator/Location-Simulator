@@ -62,8 +62,8 @@ class EditTimelineViewModel @Inject constructor(
                     val component = compsCopy[state.value.currentTimelineIndex].copy()
                     when(component) {
                         is Sound -> {
-                            component.minVolume = RangeConverter.floatTo8BitInt(event.range.start)
-                            component.maxVolume = RangeConverter.floatTo8BitInt(event.range.endInclusive)
+                            component.minVolume = RangeConverter.transformPercentageToFactor(event.range.start)
+                            component.maxVolume = RangeConverter.transformPercentageToFactor(event.range.endInclusive)
                         }
                     }
                     compsCopy[state.value.currentTimelineIndex] = component
@@ -130,7 +130,7 @@ class EditTimelineViewModel @Inject constructor(
             }
             is EditTimelineEvent.AddSound -> {
                 viewModelScope.launch {
-                    val sound = Sound("Klopfen.m4a",3,4,3, 7,false)
+                    val sound = Sound("Klopfen.m4a",3f,4f,3, 7,false)
                     val listC = state.value.components.toMutableList()
                     listC.add(sound)
                     _state.value = _state.value.copy(
