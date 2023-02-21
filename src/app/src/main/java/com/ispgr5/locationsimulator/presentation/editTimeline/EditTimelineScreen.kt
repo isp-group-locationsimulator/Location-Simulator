@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -79,21 +80,31 @@ fun EditTimelineScreen(
             Divider(color = MaterialTheme.colors.primary, thickness = 1.dp)
             Spacer(modifier = Modifier.size(4.dp))
 
-            /**
-             * TimeLine
-             */
-            Timeline(
-                components = state.components,
-                selectedComponent = state.current,
-                onSelectAComponent = fun(configItem: ConfigComponent) { viewModel.onEvent(EditTimelineEvent.SelectedTimelineItem(configItem)) }
-            )
+            // This Column should center the Timeline and the Add Button
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                /**
+                 * TimeLine
+                 */
+                Timeline(
+                    components = state.components,
+                    selectedComponent = state.current,
+                    onSelectAComponent = fun(configItem: ConfigComponent) { viewModel.onEvent(EditTimelineEvent.SelectedTimelineItem(configItem)) }
+                )
 
-            /**
-             * Add new Timeline Item(Configuration Component)
-             */
-            Button(onClick = { showCustomDialogWithResult = true }) {
-                Text(text = stringResource(id = R.string.editTimeline_add))
+                /**
+                 * Add new Timeline Item(Configuration Component)
+                 */
+                Button(
+                    onClick = { showCustomDialogWithResult = true },
+                    modifier = Modifier.width(150.dp)
+                ) {
+                    Text(text = stringResource(id = R.string.editTimeline_add))
+                }
             }
+
         }
     }
 

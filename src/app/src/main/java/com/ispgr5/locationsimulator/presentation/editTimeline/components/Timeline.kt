@@ -2,9 +2,7 @@ package com.ispgr5.locationsimulator.presentation.editTimeline.components
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
@@ -14,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
@@ -57,16 +56,22 @@ fun TimelineItem(
         //if selected the Item gets a Border in another Color
         modifier = if (isSelected) {
             Modifier
+                .width(150.dp)
                 .padding(6.dp)
                 .border(2.dp, MaterialTheme.colors.primary, RoundedCornerShape(10))
                 .clickable { onSelect(configItem) }
         } else {
             Modifier
+                .width(150.dp)
                 .padding(6.dp)
                 .clickable { onSelect(configItem) }
         }) {
-        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(4.dp)) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(4.dp)
+        ) {
             Icon(
+
                 painter = if (configItem is Sound) {
                     painterResource(id = R.drawable.audionouse2)
                 } else {
@@ -74,7 +79,13 @@ fun TimelineItem(
                 },
                 contentDescription = null
             )
-            Text(text = configItem.javaClass.simpleName)
+            Text(
+                text = configItem.javaClass.simpleName,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .weight(1f)
+                    .offset(x= (-12).dp)
+            )
         }
     }
 }
