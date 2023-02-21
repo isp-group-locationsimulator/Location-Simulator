@@ -115,16 +115,44 @@ Außerdem haben wir angefangen, die Timeline zu entwickeln.
 Und wir haben angefangen, den Import und Export von Konfigurationen zu implementieren.
 
 ### Projektwoche 15 (27.01 – 02.02)
-Wir haben den weitere Screens hinzugefügt: Den Homescreen, Infoscreen und die Seite zur Auswahl der Sounds.
+Wir haben weitere Screens hinzugefügt: Den Homescreen, Infoscreen und die Seite zur Auswahl der Sounds.
 Außerdem haben wir beim Import und Export von Konfigurationen einen großen Schritt nach vorne gemacht.
 
 ### Projektwoche 16 (03.02 – 09.02)
-
+Wir haben das Interface der App etwas überarbeitet und kleinere Probleme gefixt.
 
 ### Projektwoche 17 (10.02 – 16.02)
-
+Wir haben diese Woche keine Fortschritte verzeichnet, da wir alle in die Klausuren eingebunden sind.
+Die Abgabe des Projekts wurde verschoben.
 
 ### Projektwoche 18 (17.02 – 23.02)
+
+
+### Projektwoche 19 (24.02 – 02.03)
+
+
+### Projektwoche 20 (03.03 – 09.03)
+
+
+### Projektwoche 21 (10.03 – 16.03)
+
+
+### Projektwoche 22 (17.03 – 23.03)
+
+
+### Projektwoche 23 (24.03 – 23.03)
+
+
+### Projektwoche 24 (24.03 – 30.03)
+
+
+### Projektwoche 25 (31.03 – 06.04)
+
+
+### Projektwoche 26 (07.04 – 13.04)
+
+
+### Projektwoche 26 (14.04 – 20.04)
 
 
 ## Abgabetermin Dokumentation
