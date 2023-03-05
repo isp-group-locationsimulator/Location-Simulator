@@ -62,8 +62,9 @@ fun DelayScreen(
             modifier = Modifier.fillMaxSize()
         ) {
             items(1) {
+                //TODO don't show the addButton
                 state.configuration?.components?.let {
-                    Timeline(components = it, selectedComponent = null, onSelectAComponent = fun(_: ConfigComponent) {})
+                    Timeline(components = it, selectedComponent = null, onSelectAComponent = fun(_: ConfigComponent) {}, onAddClicked = fun(){})
                 }
             }
         }
