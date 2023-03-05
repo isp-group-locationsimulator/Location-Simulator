@@ -1,8 +1,11 @@
 package com.ispgr5.locationsimulator.presentation.editTimeline.components
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -34,8 +37,29 @@ fun EditConfigComponent(
     var minPause by Delegates.notNull<Int>()
     var maxPause by Delegates.notNull<Int>()
 
-    Row(modifier = Modifier.fillMaxWidth()) {
-        Column(modifier = Modifier.weight(6f)) {
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(20.dp)
+            .verticalScroll(rememberScrollState()),
+        verticalArrangement = Arrangement.SpaceBetween,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceAround
+        ) {
+            Button(onClick = { onMoveUpClicked(configComponent) }) {
+                //TODO translate or replace with arrow
+                Text(text = "LEFT")
+            }
+            Button(onClick = { onMoveDownClicked(configComponent) }) {
+                //TODO translate or replace with arrow
+                Text(text = "RIGHT")
+            }
+        }
+        Column {
             when (configComponent) {
                 is Sound -> {
                     minPause = configComponent.minPause
@@ -104,8 +128,10 @@ fun EditConfigComponent(
                 range = 0f..30f
             )
         }
-        Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.SpaceBetween) {
-            //TODO ask user he really wants to delete
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ) {
             Button(
                 onClick = { onDeleteClicked(configComponent) },
                 contentPadding = PaddingValues(0.dp),
@@ -119,17 +145,11 @@ fun EditConfigComponent(
                     disabledBackgroundColor = androidx.compose.ui.graphics.Color.Transparent,
                     disabledContentColor = MaterialTheme.colors.primary.copy(alpha = ContentAlpha.disabled),
                 )
-                ) {
+            ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_baseline_delete_outline_24),
                     contentDescription = null,
                 )
-            }
-            Button(onClick = {onMoveUpClicked(configComponent)}) {
-                Text(text = "UP")
-            }
-            Button(onClick = {onMoveDownClicked(configComponent)}) {
-                Text(text = "DOWN")
             }
         }
     }
