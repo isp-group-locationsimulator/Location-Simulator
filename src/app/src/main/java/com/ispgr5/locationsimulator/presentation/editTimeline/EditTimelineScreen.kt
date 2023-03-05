@@ -32,61 +32,89 @@ fun EditTimelineScreen(
         /**
          * Name and Description
          */
-        Column(modifier = Modifier.padding(12.dp)) {
-            Text(text = stringResource(id = R.string.editTimeline_name) + ":", fontWeight = FontWeight.Bold)
-            BasicTextField(
-                value = state.name,
-                singleLine = true,
-                onValueChange = { name -> viewModel.onEvent(EditTimelineEvent.ChangedName(name)) }
-            )
-            Text(text = stringResource(id = R.string.editTimeline_description) + ":")
+        Column(
+            modifier = Modifier
+                .padding(12.dp)
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Column {
+                Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = stringResource(id = R.string.editTimeline_name) + ":",
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.width(100.dp)
+                    )
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        BasicTextField(
+                            value = state.name,
+                            onValueChange = { name -> viewModel.onEvent(EditTimelineEvent.ChangedName(name)) }
+                        )
+                    }
+                }
+            }
             Spacer(modifier = Modifier.size(4.dp))
-            BasicTextField(
-                value = state.description,
-                onValueChange = { description -> viewModel.onEvent(EditTimelineEvent.ChangedDescription(description)) }
-            )
+            Column {
+                Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = stringResource(id = R.string.editTimeline_description) + ":",
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.width(100.dp)
+                    )
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        BasicTextField(
+                            value = state.description,
+                            onValueChange = { description -> viewModel.onEvent(EditTimelineEvent.ChangedDescription(description)) }
+                        )
+                    }
+                }
+            }
         }
 
         Spacer(modifier = Modifier.size(4.dp))
         Divider(color = MaterialTheme.colors.primary, thickness = 1.dp)
-        Spacer(modifier = Modifier.size(4.dp))
+        Spacer(modifier = Modifier.size(7.dp))
 
-        Row {
-            /**
-             * TimeLine
-             */
-            Timeline(
-                components = state.components,
-                selectedComponent = state.current,
-                onSelectAComponent = fun(configItem: ConfigComponent) { viewModel.onEvent(EditTimelineEvent.SelectedTimelineItem(configItem)) },
-                onAddClicked = fun() { showCustomDialogWithResult = true }
-            )
-        }
+        /**
+         * The TimeLine
+         */
+        Timeline(
+            components = state.components,
+            selectedComponent = state.current,
+            onSelectAComponent = fun(configItem: ConfigComponent) { viewModel.onEvent(EditTimelineEvent.SelectedTimelineItem(configItem)) },
+            onAddClicked = fun() { showCustomDialogWithResult = true }
+        )
+        Spacer(modifier = Modifier.size(7.dp))
+        Divider(color = MaterialTheme.colors.primary, thickness = 1.dp)
+
+        /**
+         * The Edit Options, like Slider
+         */
         if (viewModel.state.value.currentTimelineIndex != -1) {
-            Column(
-                modifier = Modifier
-                    .padding(20.dp)
-                    .fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                EditConfigComponent(
-                    state.current,
-                    onSoundValueChanged = fun(range: ClosedFloatingPointRange<Float>) { viewModel.onEvent(EditTimelineEvent.ChangedSoundVolume(range)) },
-                    onPauseValueChanged = fun(range: ClosedFloatingPointRange<Float>) { viewModel.onEvent(EditTimelineEvent.ChangedPause(range)) },
-                    onVibStrengthChanged = fun(range: ClosedFloatingPointRange<Float>) { viewModel.onEvent(EditTimelineEvent.ChangedVibStrength(range)) },
-                    onVibDurationChanged = fun(range: ClosedFloatingPointRange<Float>) { viewModel.onEvent(EditTimelineEvent.ChangedVibDuration(range)) },
-                    onDeleteClicked = fun(configComponent: ConfigComponent) {
-                        viewModel.onEvent(
-                            EditTimelineEvent.DeleteConfigurationComponent(
-                                configComponent
-                            )
+            EditConfigComponent(
+                state.current,
+                onSoundValueChanged = fun(range: ClosedFloatingPointRange<Float>) { viewModel.onEvent(EditTimelineEvent.ChangedSoundVolume(range)) },
+                onPauseValueChanged = fun(range: ClosedFloatingPointRange<Float>) { viewModel.onEvent(EditTimelineEvent.ChangedPause(range)) },
+                onVibStrengthChanged = fun(range: ClosedFloatingPointRange<Float>) { viewModel.onEvent(EditTimelineEvent.ChangedVibStrength(range)) },
+                onVibDurationChanged = fun(range: ClosedFloatingPointRange<Float>) { viewModel.onEvent(EditTimelineEvent.ChangedVibDuration(range)) },
+                onDeleteClicked = fun(configComponent: ConfigComponent) {
+                    viewModel.onEvent(
+                        EditTimelineEvent.DeleteConfigurationComponent(
+                            configComponent
                         )
-                    },
-                    onMoveUpClicked = fun(configComponent: ConfigComponent) { viewModel.onEvent(EditTimelineEvent.MoveConfCompUp(configComponent)) },
-                    onMoveDownClicked = fun(configComponent: ConfigComponent) { viewModel.onEvent(EditTimelineEvent.MoveConfCompDown(configComponent)) }
-                )
-            }
+                    )
+                },
+                onMoveUpClicked = fun(configComponent: ConfigComponent) { viewModel.onEvent(EditTimelineEvent.MoveConfCompUp(configComponent)) },
+                onMoveDownClicked = fun(configComponent: ConfigComponent) { viewModel.onEvent(EditTimelineEvent.MoveConfCompDown(configComponent)) }
+            )
         }
     }
 
