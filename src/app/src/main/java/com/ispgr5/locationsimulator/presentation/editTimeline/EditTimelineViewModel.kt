@@ -130,7 +130,7 @@ class EditTimelineViewModel @Inject constructor(
             }
             is EditTimelineEvent.AddSound -> {
                 viewModelScope.launch {
-                    val sound = Sound("Klopfen.m4a",3f,4f,3, 7,false)
+                    val sound = Sound("Klopfen.m4a",1f,1f,3, 7,false)
                     val listC = state.value.components.toMutableList()
                     listC.add(sound)
                     _state.value = _state.value.copy(
@@ -140,7 +140,7 @@ class EditTimelineViewModel @Inject constructor(
             }
             is EditTimelineEvent.AddVibration -> {
                 viewModelScope.launch {
-                    val vibration = Vibration(3,4,3, 7,6,8)
+                    val vibration = Vibration(3,4,3,7,6,8)
                     val listC = state.value.components.toMutableList()
                     listC.add(vibration)
                     _state.value = _state.value.copy(
