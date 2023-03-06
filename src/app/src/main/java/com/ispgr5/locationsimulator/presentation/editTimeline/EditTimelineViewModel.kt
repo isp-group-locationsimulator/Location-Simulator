@@ -25,7 +25,6 @@ class EditTimelineViewModel @Inject constructor(
     private var currentConfigurationId: Int? = null
 
     init {
-
         savedStateHandle.get<Int>("configurationId")?.let { configurationId ->
             if (configurationId != -1) {
                 viewModelScope.launch {
@@ -130,12 +129,7 @@ class EditTimelineViewModel @Inject constructor(
             }
             is EditTimelineEvent.AddSound -> {
                 viewModelScope.launch {
-                    val sound = Sound("Klopfen.m4a",1f,1f,3, 7,false)
-                    val listC = state.value.components.toMutableList()
-                    listC.add(sound)
-                    _state.value = _state.value.copy(
-                        components = listC
-                    )
+                    event.navController.navigate("sound?configurationId=${currentConfigurationId}")
                 }
             }
             is EditTimelineEvent.AddVibration -> {

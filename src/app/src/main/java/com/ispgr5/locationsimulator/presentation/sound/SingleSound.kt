@@ -9,30 +9,36 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import com.ispgr5.locationsimulator.R
-import com.ispgr5.locationsimulator.presentation.MainActivity
 
 /**
  * Shows a single Audio File and a button to play it.
  */
 @Composable
-fun SingleSound(soundName: String, viewModel: SoundViewModel, mainActivity: MainActivity) {
+fun SingleSound(
+    soundName: String,
+    onPlayClicked: () -> Unit,
+    onSelectClicked: () -> Unit
+) {
     Row {
+        /**
+         * Play this Sound Button
+         */
         Button(
             colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
-            onClick = {
-                viewModel.onEvent(SoundEvent.TestPlaySound(mainActivity, soundName))
-            }
+            onClick = onPlayClicked
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.baseline_play_arrow_24),
                 contentDescription = null
             )
         }
+
+        /**
+         * Button with the sound Name in it. Click to Select
+         */
         Button(
             colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
-            onClick = {
-                viewModel.onEvent(SoundEvent.SelectSound(soundName))
-            }
+            onClick = onSelectClicked
         ) {
             Text(text = soundName)
         }
