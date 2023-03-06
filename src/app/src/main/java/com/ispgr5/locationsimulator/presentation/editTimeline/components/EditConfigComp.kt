@@ -46,25 +46,36 @@ fun EditConfigComponent(
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceAround
-        ) {
-            Button(onClick = { onMoveUpClicked(configComponent) }) {
-                //TODO translate or replace with arrow
-                Text(text = "LEFT")
+        Column {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceAround
+            ) {
+                Button(onClick = { onMoveUpClicked(configComponent) }) {
+                    //TODO translate or replace with arrow
+                    Text(text = "LEFT")
+                }
+                Button(onClick = { onMoveDownClicked(configComponent) }) {
+                    //TODO translate or replace with arrow
+                    Text(text = "RIGHT")
+                }
             }
-            Button(onClick = { onMoveDownClicked(configComponent) }) {
-                //TODO translate or replace with arrow
-                Text(text = "RIGHT")
-            }
+
+            /**
+             * Sound name
+             */
+            when (configComponent) { is Sound -> {
+                Spacer(modifier = Modifier.size(7.dp))
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                    Text(text = configComponent.source)
+                }
+            }}
         }
         Column {
             when (configComponent) {
                 is Sound -> {
                     minPause = configComponent.minPause
                     maxPause = configComponent.maxPause
-
                     /**
                      * Volume
                      */
