@@ -37,8 +37,7 @@ class SoundViewModel @Inject constructor(
             is SoundEvent.TestPlaySound -> {
                 val soundPlayer = SoundPlayer()
                 soundPlayer.startSound(
-                    event.mainActivity.filesDir.toString()
-                            + "/" + event.soundName
+                    event.privateDirUri + "/" + event.soundName
                 )
             }
             is SoundEvent.SelectSound -> {

@@ -129,7 +129,7 @@ class MainActivity : ComponentActivity() {
                             }
                             )
                         ) {
-                            SoundScreen(navController = navController, soundStorageManager = soundStorageManager, mainActivity = this@MainActivity)
+                            SoundScreen(navController = navController, soundStorageManager = soundStorageManager, privateDirUri = this@MainActivity.filesDir.toString())
                         }
                     }
                 }

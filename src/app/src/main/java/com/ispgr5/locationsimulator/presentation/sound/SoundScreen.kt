@@ -29,7 +29,7 @@ fun SoundScreen(
     navController: NavController,
     viewModel: SoundViewModel = hiltViewModel(),
     soundStorageManager: SoundStorageManager,
-    mainActivity: MainActivity
+    privateDirUri: String
 ) {
     val state = viewModel.state.value
     viewModel.onEvent(SoundEvent.RefreshPage(soundStorageManager = soundStorageManager))
@@ -76,7 +76,7 @@ fun SoundScreen(
             items(state.soundNames) { soundName ->
                 SingleSound(
                     soundName,
-                    onPlayClicked = {viewModel.onEvent(SoundEvent.TestPlaySound(mainActivity, soundName))},
+                    onPlayClicked = {viewModel.onEvent(SoundEvent.TestPlaySound(privateDirUri, soundName))},
                     onSelectClicked = {viewModel.onEvent(SoundEvent.SelectSound(soundName, navController))}
                 )
             }
