@@ -120,7 +120,6 @@ class MainActivity : ComponentActivity() {
                         ) {
                             EditTimelineScreen(navController = navController)
                         }
-                        // TODO: Is this the correct way to setup the navigation?
                         composable("sound?configurationId={configurationId}",
                             arguments = listOf(navArgument(
                                 name = "configurationId"
@@ -130,7 +129,7 @@ class MainActivity : ComponentActivity() {
                             }
                             )
                         ) {
-                            SoundScreen(soundStorageManager = soundStorageManager, mainActivity = this@MainActivity)
+                            SoundScreen(navController = navController, soundStorageManager = soundStorageManager, privateDirUri = this@MainActivity.filesDir.toString())
                         }
                     }
                 }

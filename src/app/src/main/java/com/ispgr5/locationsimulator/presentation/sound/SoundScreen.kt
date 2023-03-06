@@ -15,6 +15,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.ispgr5.locationsimulator.data.storageManager.SoundStorageManager
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.presentation.MainActivity
@@ -24,19 +26,24 @@ import com.ispgr5.locationsimulator.presentation.MainActivity
  */
 @Composable
 fun SoundScreen(
+    navController: NavController,
+    viewModel: SoundViewModel = hiltViewModel(),
     soundStorageManager: SoundStorageManager,
-    mainActivity: MainActivity
+    privateDirUri: String
 ) {
-    val viewModel = SoundViewModel(soundStorageManager)
-    val state = viewModel.state
+    val state = viewModel.state.value
+    viewModel.onEvent(SoundEvent.RefreshPage(soundStorageManager = soundStorageManager))
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        /**
+         * The refresh Button
+         */
         Button(
             colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
             onClick = {
-                viewModel.onEvent(SoundEvent.RefreshPage)
+                viewModel.onEvent(SoundEvent.RefreshPage(soundStorageManager = soundStorageManager))
             }
         ) {
             Icon(
@@ -44,18 +51,34 @@ fun SoundScreen(
                 contentDescription = null
             )
         }
+
+        /**
+         * Header Text
+         */
         Text(text = stringResource(id = R.string.soundscreen_soundselection), fontSize = 30.sp)
+
+        /**
+         * import Button
+         */
         Button(
             colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
             onClick = {
-                viewModel.onEvent(SoundEvent.ImportSound)
+                viewModel.onEvent(SoundEvent.ImportSound(soundStorageManager = soundStorageManager))
             }
         ) {
             Text(text = stringResource(id = R.string.soundscreen_import))
         }
+
+        /**
+         * List of all known Sounds
+         */
         LazyColumn {
-            items(state.value.soundNames) { soundName ->
-                SingleSound(soundName, viewModel, mainActivity)
+            items(state.soundNames) { soundName ->
+                SingleSound(
+                    soundName,
+                    onPlayClicked = {viewModel.onEvent(SoundEvent.TestPlaySound(privateDirUri, soundName))},
+                    onSelectClicked = {viewModel.onEvent(SoundEvent.SelectSound(soundName, navController))}
+                )
             }
         }
     }

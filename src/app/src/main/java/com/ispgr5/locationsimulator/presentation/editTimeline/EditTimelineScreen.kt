@@ -128,11 +128,7 @@ fun EditTimelineScreen(
             onNegativeClick = { revShowDialog() },
             onSoundClicked = {
                 revShowDialog()
-                viewModel.onEvent(EditTimelineEvent.AddSound)
-                //TODO let User pick a Sound from private dir
-                //Button(onClick = { navController.navigate("sound") }) {
-                //    Text(text = stringResource(id = R.string.editTimeline_addSound))
-                //}
+                viewModel.onEvent(EditTimelineEvent.AddSound(navController))
             },
             onVibrationClicked = {
                 revShowDialog()
