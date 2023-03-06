@@ -14,6 +14,6 @@ sealed class EditTimelineEvent {
     data class AddSound(val navController: NavController) : EditTimelineEvent()
     object AddVibration : EditTimelineEvent()
     data class DeleteConfigurationComponent(val configComponent: ConfigComponent):EditTimelineEvent()
-    data class MoveConfCompUp(val configComponent: ConfigComponent):EditTimelineEvent()
-    data class MoveConfCompDown(val configComponent: ConfigComponent):EditTimelineEvent()
+    data class MoveConfCompLeft(val configComponent: ConfigComponent):EditTimelineEvent()
+    data class MoveConfCompRight(val configComponent: ConfigComponent):EditTimelineEvent()
 }

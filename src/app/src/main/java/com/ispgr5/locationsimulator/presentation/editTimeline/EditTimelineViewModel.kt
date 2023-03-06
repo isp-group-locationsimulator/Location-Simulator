@@ -188,7 +188,7 @@ class EditTimelineViewModel @Inject constructor(
                     )
                 }
             }
-            is EditTimelineEvent.MoveConfCompUp -> {
+            is EditTimelineEvent.MoveConfCompLeft -> {
                 val index = getIndex(state.value.components, event.configComponent)
                 val compsCopy = state.value.components.toMutableList()
                 if (index > 0){
@@ -199,7 +199,7 @@ class EditTimelineViewModel @Inject constructor(
                     )
                 }
             }
-            is EditTimelineEvent.MoveConfCompDown -> {
+            is EditTimelineEvent.MoveConfCompRight -> {
                 val index = getIndex(state.value.components, event.configComponent)
                 val compsCopy = state.value.components.toMutableList()
                 if (index < compsCopy.size-1){

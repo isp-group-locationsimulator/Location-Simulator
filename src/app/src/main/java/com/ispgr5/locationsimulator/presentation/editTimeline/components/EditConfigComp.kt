@@ -25,8 +25,8 @@ fun EditConfigComponent(
     onVibStrengthChanged: (ClosedFloatingPointRange<Float>) -> Unit,
     onVibDurationChanged: (ClosedFloatingPointRange<Float>) -> Unit,
     onDeleteClicked: (configComponent: ConfigComponent) -> Unit,
-    onMoveUpClicked: (configComponent: ConfigComponent) -> Unit,
-    onMoveDownClicked: (configComponent: ConfigComponent) -> Unit
+    onMoveLeftClicked: (configComponent: ConfigComponent) -> Unit,
+    onMoveRightClicked: (configComponent: ConfigComponent) -> Unit
 ) {
     //so no Time line Item is selected for now
     if (configComponent == null) {
@@ -51,11 +51,11 @@ fun EditConfigComponent(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceAround
             ) {
-                Button(onClick = { onMoveUpClicked(configComponent) }) {
+                Button(onClick = { onMoveLeftClicked(configComponent) }) {
                     //TODO translate or replace with arrow
                     Text(text = "LEFT")
                 }
-                Button(onClick = { onMoveDownClicked(configComponent) }) {
+                Button(onClick = { onMoveRightClicked(configComponent) }) {
                     //TODO translate or replace with arrow
                     Text(text = "RIGHT")
                 }

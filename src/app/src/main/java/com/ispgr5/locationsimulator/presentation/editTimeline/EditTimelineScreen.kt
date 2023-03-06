@@ -112,8 +112,8 @@ fun EditTimelineScreen(
                         )
                     )
                 },
-                onMoveUpClicked = fun(configComponent: ConfigComponent) { viewModel.onEvent(EditTimelineEvent.MoveConfCompUp(configComponent)) },
-                onMoveDownClicked = fun(configComponent: ConfigComponent) { viewModel.onEvent(EditTimelineEvent.MoveConfCompDown(configComponent)) }
+                onMoveLeftClicked = fun(configComponent: ConfigComponent) { viewModel.onEvent(EditTimelineEvent.MoveConfCompLeft(configComponent)) },
+                onMoveRightClicked = fun(configComponent: ConfigComponent) { viewModel.onEvent(EditTimelineEvent.MoveConfCompRight(configComponent)) }
             )
         }
     }
