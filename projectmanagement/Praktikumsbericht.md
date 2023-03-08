@@ -126,10 +126,10 @@ Wir haben diese Woche keine Fortschritte verzeichnet, da wir alle in die Klausur
 Die Abgabe des Projekts wurde verschoben.
 
 ### Projektwoche 18 (17.02 – 23.02)
-
+Wir haben diese Woche vor allem Bugfixes und UI-Probleme bearbeitet.
 
 ### Projektwoche 19 (24.02 – 02.03)
-
+Wir haben diese Woche nur Kleinigkeiten erledigt.
 
 ### Projektwoche 20 (03.03 – 09.03)
 
