@@ -1,7 +1,6 @@
 package com.ispgr5.locationsimulator.presentation.sound
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Button
@@ -14,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -56,29 +56,37 @@ fun SoundScreen(
          */
         Text(text = stringResource(id = R.string.soundscreen_soundselection), fontSize = 30.sp)
 
-        /**
-         * import Button
-         */
-        Button(
-            colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
-            onClick = {
-                viewModel.onEvent(SoundEvent.ImportSound(soundStorageManager = soundStorageManager))
-            }
+        Row(
+            horizontalArrangement = Arrangement.Center
         ) {
-            Text(text = stringResource(id = R.string.soundscreen_import))
+
+            /**
+             * Import Button
+             */
+            Button(
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
+                onClick = {
+                    viewModel.onEvent(SoundEvent.ImportSound(soundStorageManager = soundStorageManager))
+                }
+            ) {
+                Text(text = stringResource(id = R.string.soundscreen_import))
+            }
+
+            /**
+             * The Stop Playback button
+             */
+            Button(
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
+                onClick = {
+                    viewModel.onEvent(SoundEvent.StopPlayback)
+                }
+            ) {
+                Text(text = stringResource(id = R.string.soundscreen_stopplayback))
+            }
+
         }
 
-        /**
-         * The Stop Playback button
-         */
-        Button(
-            colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
-            onClick = {
-                viewModel.onEvent(SoundEvent.StopPlayback)
-            }
-        ) {
-            Text(text = "Test")
-        }
+        Spacer(modifier = Modifier.height(20.dp))
 
         /**
          * List of all known Sounds
@@ -90,6 +98,7 @@ fun SoundScreen(
                     onPlayClicked = {viewModel.onEvent(SoundEvent.TestPlaySound(privateDirUri, soundName))},
                     onSelectClicked = {viewModel.onEvent(SoundEvent.SelectSound(soundName, navController))}
                 )
+                Spacer(modifier = Modifier.height(5.dp))
             }
         }
     }
