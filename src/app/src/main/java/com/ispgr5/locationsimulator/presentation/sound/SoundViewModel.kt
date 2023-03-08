@@ -25,6 +25,7 @@ class SoundViewModel @Inject constructor(
     // The provided state for the View
     private val _state = mutableStateOf(SoundState())
     val state: State<SoundState> = _state
+    private val soundPlayer = SoundPlayer()
 
     /**
      * Handles UI Events
@@ -35,8 +36,10 @@ class SoundViewModel @Inject constructor(
                 _state.value = SoundState(event.soundStorageManager.getSoundFileNames())
             }
             is SoundEvent.TestPlaySound -> {
-                val soundPlayer = SoundPlayer()
-                soundPlayer.startSound(event.privateDirUri + "/" + event.soundName, 0f)
+                soundPlayer.startSound(event.privateDirUri + "/" + event.soundName, 1f)
+            }
+            is SoundEvent.StopPlayback -> {
+                soundPlayer.stopPlayback()
             }
             is SoundEvent.SelectSound -> {
                 savedStateHandle.get<Int>("configurationId")?.let { configurationId ->

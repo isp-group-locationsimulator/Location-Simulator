@@ -6,6 +6,14 @@ import android.media.MediaPlayer
  * This class provides methods to manage the MediaPlayer and play audio with it.
  */
 class SoundPlayer {
+    private val mediaPlayer: MediaPlayer = MediaPlayer()
+
+    init {
+        mediaPlayer.setOnErrorListener { mediaPlayer, _, _ ->
+            mediaPlayer.reset()
+            true
+        }
+    }
 
     /**
      * This function starts a audio file.
@@ -15,20 +23,16 @@ class SoundPlayer {
      * @return We return the length of the file in ms, as we don't save it in the configuration.
      */
     fun startSound(uriAsString : String, volume: Float): Int {
-        val mediaPlayer = MediaPlayer()
-        mediaPlayer.setOnCompletionListener {
-            @Override
-            fun onCompletion(mediaPlayer: MediaPlayer) {
-                println("Sound off")
-                mediaPlayer.release()
-            }
-        }
+        mediaPlayer.reset()
         mediaPlayer.setDataSource(uriAsString)
         mediaPlayer.setVolume(volume, volume)
         mediaPlayer.prepare()
         mediaPlayer.start()
-        // startImport()
         return mediaPlayer.duration
         // TODO: "MediaPlayer finalized without being released"
+    }
+
+    fun stopPlayback() {
+        mediaPlayer.stop()
     }
 }

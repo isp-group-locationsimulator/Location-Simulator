@@ -9,6 +9,7 @@ import com.ispgr5.locationsimulator.data.storageManager.SoundStorageManager
 sealed class SoundEvent {
     data class RefreshPage(val soundStorageManager: SoundStorageManager) : SoundEvent()
     data class TestPlaySound(val privateDirUri: String, val soundName: String) : SoundEvent()
+    object StopPlayback : SoundEvent()
     data class SelectSound(val soundName: String, val navController: NavController) : SoundEvent()
     data class ImportSound(val soundStorageManager: SoundStorageManager): SoundEvent()
 }

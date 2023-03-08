@@ -17,9 +17,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.ispgr5.locationsimulator.data.storageManager.SoundStorageManager
 import com.ispgr5.locationsimulator.R
-import com.ispgr5.locationsimulator.presentation.MainActivity
+import com.ispgr5.locationsimulator.data.storageManager.SoundStorageManager
 
 /**
  * Shows a list of Audio Files to be selected.
@@ -67,6 +66,18 @@ fun SoundScreen(
             }
         ) {
             Text(text = stringResource(id = R.string.soundscreen_import))
+        }
+
+        /**
+         * The Stop Playback button
+         */
+        Button(
+            colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
+            onClick = {
+                viewModel.onEvent(SoundEvent.StopPlayback)
+            }
+        ) {
+            Text(text = "Test")
         }
 
         /**

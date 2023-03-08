@@ -86,7 +86,6 @@ fun EditConfigComponent(
                             .toInt()
                             .toString() + "% "
                     )
-                    println(configComponent.maxVolume)
                     SliderForRange(
                         value = RangeConverter.transformFactorToPercentage(configComponent.minVolume)..
                                 RangeConverter.transformFactorToPercentage(configComponent.maxVolume),
