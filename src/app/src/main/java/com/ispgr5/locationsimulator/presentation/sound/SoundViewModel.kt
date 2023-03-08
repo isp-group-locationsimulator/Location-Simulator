@@ -36,9 +36,7 @@ class SoundViewModel @Inject constructor(
             }
             is SoundEvent.TestPlaySound -> {
                 val soundPlayer = SoundPlayer()
-                soundPlayer.startSound(
-                    event.privateDirUri + "/" + event.soundName
-                )
+                soundPlayer.startSound(event.privateDirUri + "/" + event.soundName, 0f)
             }
             is SoundEvent.SelectSound -> {
                 savedStateHandle.get<Int>("configurationId")?.let { configurationId ->

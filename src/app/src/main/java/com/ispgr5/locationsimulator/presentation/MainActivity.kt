@@ -1,6 +1,5 @@
 package com.ispgr5.locationsimulator.presentation
 
-import com.ispgr5.locationsimulator.presentation.editTimeline.EditTimelineScreen
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -20,12 +19,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.ispgr5.locationsimulator.data.storageManager.SoundStorageManager
 import com.ispgr5.locationsimulator.data.storageManager.ConfigurationStorageManager
+import com.ispgr5.locationsimulator.data.storageManager.SoundStorageManager
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 import com.ispgr5.locationsimulator.domain.model.ConfigurationComponentConverter
 import com.ispgr5.locationsimulator.presentation.delay.DelayScreen
 import com.ispgr5.locationsimulator.presentation.edit.EditScreen
+import com.ispgr5.locationsimulator.presentation.editTimeline.EditTimelineScreen
 import com.ispgr5.locationsimulator.presentation.homescreen.HomeScreenScreen
 import com.ispgr5.locationsimulator.presentation.homescreen.InfoScreen
 import com.ispgr5.locationsimulator.presentation.run.InfinityService
@@ -143,6 +143,7 @@ class MainActivity : ComponentActivity() {
         Intent(this, InfinityService::class.java).also {
             it.action = "START"
             it.putExtra("config", ConfigurationComponentConverter().componentListToString(config))
+            it.putExtra("filesDir", filesDir.toString())
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 startForegroundService(it)
             } else {

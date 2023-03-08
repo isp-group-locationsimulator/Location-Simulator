@@ -10,6 +10,7 @@ import android.widget.Toast
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 import com.ispgr5.locationsimulator.domain.model.ConfigurationComponentConverter
+import com.ispgr5.locationsimulator.domain.model.Sound
 import com.ispgr5.locationsimulator.domain.model.Vibration
 import com.ispgr5.locationsimulator.presentation.MainActivity
 import kotlinx.coroutines.*
@@ -22,6 +23,7 @@ class InfinityService:Service() {
     private var wakeLock: PowerManager.WakeLock? = null
     private var config: List<ConfigComponent>? = null
     private var soundPlayer: SoundPlayer = SoundPlayer()
+    private lateinit var filesDir: String
 
     override fun onBind(p0: Intent?): IBinder? = null
 
@@ -35,6 +37,7 @@ class InfinityService:Service() {
         if(intent != null){
             if(intent.action == "START"){
                 changeConfig(intent.getStringExtra("config"))
+                filesDir = intent.getStringExtra("filesDir").toString()
                 if(config !=null){
                     startService()
                 }
@@ -78,23 +81,29 @@ class InfinityService:Service() {
         GlobalScope.launch(Dispatchers.Default) {
             while (isServiceStarted) {
                 for(item in config!!){
-                    // This path is only an example. The correct path has to be saved in the configuration.
-                    // val testURI = "file:///data/user/0/com.ispgr5.locationsimulator/files/Hannah.mp3"
-                    // Commented out as you don't have this exact path and file. This is just an example to view
-                    // soundPlayer.startSound(testURI)
-                    if(item is Vibration){
-                        val duration = (Math.random() * (item.maxDuration*1000 - item.minDuration*1000 + 1) + item.minDuration*1000).toLong()
-                        val strength = (Math.random() * (item.maxStrength - item.minStrength + 1) + item.minStrength).toInt()
-                        val pause = (Math.random() * (item.maxPause*1000 - item.minPause*1000 + 1) + item.minPause*1000).toLong()
-                        if (Build.VERSION.SDK_INT >= 26) {
-                            Log.d("vib666", "Creating Vibration... Duration:$duration , Strength:$strength")
-                            vibrator.vibrate(VibrationEffect.createOneShot(duration,strength))
-                        } else {
-                            Log.d("vib666","Creating Vibration... Duration:$duration")
-                            vibrator.vibrate(duration)
+                    when (item) {
+                        is Vibration -> {
+                            val duration = (Math.random() * (item.maxDuration*1000 - item.minDuration*1000 + 1) + item.minDuration*1000).toLong()
+                            val strength = (Math.random() * (item.maxStrength - item.minStrength + 1) + item.minStrength).toInt()
+                            val pause = (Math.random() * (item.maxPause*1000 - item.minPause*1000 + 1) + item.minPause*1000).toLong()
+                            if (Build.VERSION.SDK_INT >= 26) {
+                                Log.d("vib666", "Creating Vibration... Duration:$duration , Strength:$strength")
+                                vibrator.vibrate(VibrationEffect.createOneShot(duration,strength))
+                            } else {
+                                Log.d("vib666","Creating Vibration... Duration:$duration")
+                                vibrator.vibrate(duration)
+                            }
+                            Log.d("vib666","Starting sleep... Pause:$pause")
+                            Thread.sleep(duration+pause)
                         }
-                        Log.d("vib666","Starting sleep...Pause:$pause")
-                        Thread.sleep(duration+pause)
+                        is Sound -> {
+                            val pause = (Math.random() * (item.maxPause*1000 - item.minPause*1000 + 1) + item.minPause*1000).toLong()
+                            val volume: Float = (item.minVolume + Math.random() * (item.maxVolume - item.minVolume)).toFloat()
+                            val duration = soundPlayer.startSound(filesDir + "/" +  item.source, volume)
+                            Log.d("sound666","Creating Sound... Duration:$duration , Volume:$volume")
+                            Log.d("sound666","Starting sleep... Pause:$pause")
+                            Thread.sleep(duration+pause)
+                        }
                     }
                     if(!isServiceStarted){
                         break

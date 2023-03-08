@@ -10,8 +10,11 @@ class SoundPlayer {
     /**
      * This function starts a audio file.
      * @param uriAsString This is the Uri as a String to the Audio-File that should be played.
+     * @param volume The Volume the sound should be played at.
+     * The value should be in the range of 0 to 1, with 1 being the full volume and 0 being no volume.
+     * @return We return the length of the file in ms, as we don't save it in the configuration.
      */
-    fun startSound(uriAsString : String) {
+    fun startSound(uriAsString : String, volume: Float): Int {
         val mediaPlayer = MediaPlayer()
         mediaPlayer.setOnCompletionListener {
             @Override
@@ -21,10 +24,11 @@ class SoundPlayer {
             }
         }
         mediaPlayer.setDataSource(uriAsString)
+        mediaPlayer.setVolume(volume, volume)
         mediaPlayer.prepare()
         mediaPlayer.start()
         // startImport()
-
+        return mediaPlayer.duration
         // TODO: "MediaPlayer finalized without being released"
     }
 }
