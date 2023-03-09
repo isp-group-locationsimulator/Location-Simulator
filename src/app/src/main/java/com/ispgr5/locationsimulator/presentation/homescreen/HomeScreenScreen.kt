@@ -1,5 +1,8 @@
 package com.ispgr5.locationsimulator.presentation.homescreen
 
+import android.os.Build
+import android.os.PowerManager
+import androidx.activity.ComponentActivity
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
@@ -8,6 +11,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -16,7 +20,6 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ispgr5.locationsimulator.R
-import com.ispgr5.locationsimulator.ui.theme.Shapes
 import com.ispgr5.locationsimulator.ui.theme.theBlue
 
 /**
@@ -68,7 +71,10 @@ fun HomeScreenScreen(
                 .width(300.dp)
 
         }) {
-            Text(text = stringResource(id = R.string.homescreen_btn_select_profile), fontSize = 30.sp)
+            Text(
+                text = stringResource(id = R.string.homescreen_btn_select_profile),
+                fontSize = 30.sp
+            )
         }
         Spacer(modifier = Modifier.height(60.dp))
         Button(onClick = {
@@ -77,12 +83,20 @@ fun HomeScreenScreen(
         }) {
             Text(text = stringResource(id = R.string.homescreen_btn_quickstart), fontSize = 30.sp)
         }
-        Spacer(modifier = Modifier.height(60.dp))
-        Text(text = stringResource(id = R.string.battery_opt_recommendation), textAlign = TextAlign.Center)
-        Button(onClick = {
-            viewModel.onEvent(HomeScreenEvent.DisableBatteryOptimization(batteryOptDisableFunction))
-        }) {
-            Text(text = stringResource(id = R.string.battery_opt_button))
+    }
+
+    val pm = LocalContext.current.getSystemService(ComponentActivity.POWER_SERVICE) as PowerManager
+    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !pm.isIgnoringBatteryOptimizations(LocalContext.current.packageName)) {
+        Column(modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Bottom,
+            horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(text = stringResource(id = R.string.battery_opt_recommendation), textAlign = TextAlign.Center)
+            //var forceUpdate:Boolean by remember { mutableStateOf(true) }
+            Button(onClick = {
+                viewModel.onEvent(HomeScreenEvent.DisableBatteryOptimization{batteryOptDisableFunction()})
+            }) {
+                Text(text = stringResource(id = R.string.battery_opt_button))
+            }
         }
     }
 }
