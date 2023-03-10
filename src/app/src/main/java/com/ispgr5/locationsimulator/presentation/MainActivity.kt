@@ -174,12 +174,7 @@ class MainActivity : ComponentActivity() {
                     android.provider.Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
                 intent.data = Uri.parse("package:$packageName")
                 startActivity(intent)
-            } else {
-                startActivity(Intent(android.provider.Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS))
             }
-        } else {
-            startActivity(Intent(android.provider.Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS))
-            startActivityForResult(Intent(android.provider.Settings.ACTION_SETTINGS), 0)
         }
     }
 
