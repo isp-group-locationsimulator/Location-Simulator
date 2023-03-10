@@ -63,6 +63,9 @@ class SoundViewModel @Inject constructor(
             is SoundEvent.ImportSound -> {
                 event.soundStorageManager.moveFileToPrivateFolder()
             }
+            is SoundEvent.DeleteSound -> {
+                event.soundStorageManager.deleteFileFromPrivateDir(event.soundName)
+            }
         }
     }
 }

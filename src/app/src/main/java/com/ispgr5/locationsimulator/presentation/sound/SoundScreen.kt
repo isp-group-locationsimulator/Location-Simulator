@@ -96,7 +96,8 @@ fun SoundScreen(
                 SingleSound(
                     soundName,
                     onPlayClicked = {viewModel.onEvent(SoundEvent.TestPlaySound(privateDirUri, soundName))},
-                    onSelectClicked = {viewModel.onEvent(SoundEvent.SelectSound(soundName, navController))}
+                    onSelectClicked = {viewModel.onEvent(SoundEvent.SelectSound(soundName, navController))},
+                    onDeleteClicked = {viewModel.onEvent(SoundEvent.DeleteSound(soundName, soundStorageManager))}
                 )
                 Spacer(modifier = Modifier.height(5.dp))
             }
