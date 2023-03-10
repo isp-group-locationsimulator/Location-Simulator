@@ -65,6 +65,7 @@ class SoundViewModel @Inject constructor(
             }
             is SoundEvent.DeleteSound -> {
                 event.soundStorageManager.deleteFileFromPrivateDir(event.soundName)
+                _state.value = SoundState(event.soundStorageManager.getSoundFileNames())
             }
         }
     }
