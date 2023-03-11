@@ -1,14 +1,10 @@
 package com.ispgr5.locationsimulator.presentation
 
-import android.app.Activity
-import com.ispgr5.locationsimulator.presentation.editTimeline.EditTimelineScreen
 import android.content.Intent
-import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
-import android.provider.MediaStore
 import android.util.Log
 import android.view.WindowManager
 import android.widget.Toast
@@ -23,12 +19,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.ispgr5.locationsimulator.data.storageManager.SoundStorageManager
 import com.ispgr5.locationsimulator.data.storageManager.ConfigurationStorageManager
+import com.ispgr5.locationsimulator.data.storageManager.SoundStorageManager
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 import com.ispgr5.locationsimulator.domain.model.ConfigurationComponentConverter
 import com.ispgr5.locationsimulator.presentation.delay.DelayScreen
 import com.ispgr5.locationsimulator.presentation.edit.EditScreen
+import com.ispgr5.locationsimulator.presentation.editTimeline.EditTimelineScreen
 import com.ispgr5.locationsimulator.presentation.homescreen.HomeScreenScreen
 import com.ispgr5.locationsimulator.presentation.homescreen.InfoScreen
 import com.ispgr5.locationsimulator.presentation.run.InfinityService
@@ -121,9 +118,8 @@ class MainActivity : ComponentActivity() {
                             }
                             )
                         ) {
-                            EditTimelineScreen(navController = navController, recordAudio ={recordAudio()})
+                            EditTimelineScreen(navController = navController)
                         }
-                        // TODO: Is this the correct way to setup the navigation?
                         composable("sound?configurationId={configurationId}",
                             arguments = listOf(navArgument(
                                 name = "configurationId"
@@ -133,7 +129,7 @@ class MainActivity : ComponentActivity() {
                             }
                             )
                         ) {
-                            SoundScreen(soundStorageManager = soundStorageManager, mainActivity = this@MainActivity)
+                            SoundScreen(navController = navController, soundStorageManager = soundStorageManager, privateDirUri = this@MainActivity.filesDir.toString())
                         }
                     }
                 }
@@ -147,6 +143,7 @@ class MainActivity : ComponentActivity() {
         Intent(this, InfinityService::class.java).also {
             it.action = "START"
             it.putExtra("config", ConfigurationComponentConverter().componentListToString(config))
+            it.putExtra("filesDir", filesDir.toString())
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 startForegroundService(it)
             } else {
@@ -177,29 +174,7 @@ class MainActivity : ComponentActivity() {
                     android.provider.Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
                 intent.data = Uri.parse("package:$packageName")
                 startActivity(intent)
-            } else {
-                startActivity(Intent(android.provider.Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS))
             }
-        } else {
-            startActivity(Intent(android.provider.Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS))
-            startActivityForResult(Intent(android.provider.Settings.ACTION_SETTINGS), 0)
-        }
-    }
-
-    fun recordAudio() {
-        val intent = Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION)
-        val uri = MediaStore.Audio.Media.INTERNAL_CONTENT_URI
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, uri)
-        startActivityForResult(intent, 0)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 0 && resultCode == Activity.RESULT_OK) {
-            // Handle the recorded audio
-            val recordedAudioUri = data?.data
-            val mediaPlayer = MediaPlayer.create(this, recordedAudioUri)
-            mediaPlayer.start()
         }
     }
 

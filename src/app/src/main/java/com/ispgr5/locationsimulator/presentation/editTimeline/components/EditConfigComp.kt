@@ -1,8 +1,11 @@
 package com.ispgr5.locationsimulator.presentation.editTimeline.components
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -22,8 +25,8 @@ fun EditConfigComponent(
     onVibStrengthChanged: (ClosedFloatingPointRange<Float>) -> Unit,
     onVibDurationChanged: (ClosedFloatingPointRange<Float>) -> Unit,
     onDeleteClicked: (configComponent: ConfigComponent) -> Unit,
-    onMoveUpClicked: (configComponent: ConfigComponent) -> Unit,
-    onMoveDownClicked: (configComponent: ConfigComponent) -> Unit
+    onMoveLeftClicked: (configComponent: ConfigComponent) -> Unit,
+    onMoveRightClicked: (configComponent: ConfigComponent) -> Unit
 ) {
     //so no Time line Item is selected for now
     if (configComponent == null) {
@@ -34,27 +37,58 @@ fun EditConfigComponent(
     var minPause by Delegates.notNull<Int>()
     var maxPause by Delegates.notNull<Int>()
 
-    Row(modifier = Modifier.fillMaxWidth()) {
-        Column(modifier = Modifier.weight(6f)) {
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(20.dp)
+            .verticalScroll(rememberScrollState()),
+        verticalArrangement = Arrangement.SpaceBetween,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Column {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceAround
+            ) {
+                Button(onClick = { onMoveLeftClicked(configComponent) }) {
+                    //TODO translate or replace with arrow
+                    Text(text = "LEFT")
+                }
+                Button(onClick = { onMoveRightClicked(configComponent) }) {
+                    //TODO translate or replace with arrow
+                    Text(text = "RIGHT")
+                }
+            }
+
+            /**
+             * Sound name
+             */
+            when (configComponent) { is Sound -> {
+                Spacer(modifier = Modifier.size(7.dp))
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                    Text(text = configComponent.source)
+                }
+            }}
+        }
+        Column {
             when (configComponent) {
                 is Sound -> {
                     minPause = configComponent.minPause
                     maxPause = configComponent.maxPause
-
                     /**
                      * Volume
                      */
                     Text(text = stringResource(id = R.string.editTimeline_SoundVolume) + ":")
                     Text(
-                        RangeConverter.eightBitIntToPercentageFloat(configComponent.minVolume).toInt().toString() + "%"
-                                + stringResource(id = R.string.editTimeline_range) + RangeConverter.eightBitIntToPercentageFloat(configComponent.maxVolume)
+                        RangeConverter.transformFactorToPercentage(configComponent.minVolume).toInt().toString() + "%"
+                                + stringResource(id = R.string.editTimeline_range) + RangeConverter.transformFactorToPercentage(configComponent.maxVolume)
                             .toInt()
                             .toString() + "% "
                     )
                     SliderForRange(
-                        value = RangeConverter.eightBitIntToPercentageFloat(configComponent.minVolume)..RangeConverter.eightBitIntToPercentageFloat(
-                            configComponent.maxVolume
-                        ),
+                        value = RangeConverter.transformFactorToPercentage(configComponent.minVolume)..
+                                RangeConverter.transformFactorToPercentage(configComponent.maxVolume),
                         func = { value: ClosedFloatingPointRange<Float> -> onSoundValueChanged(value) },
                         range = 0f..100f
                     )
@@ -104,8 +138,10 @@ fun EditConfigComponent(
                 range = 0f..30f
             )
         }
-        Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.SpaceBetween) {
-            //TODO ask user he really wants to delete
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ) {
             Button(
                 onClick = { onDeleteClicked(configComponent) },
                 contentPadding = PaddingValues(0.dp),
@@ -119,17 +155,11 @@ fun EditConfigComponent(
                     disabledBackgroundColor = androidx.compose.ui.graphics.Color.Transparent,
                     disabledContentColor = MaterialTheme.colors.primary.copy(alpha = ContentAlpha.disabled),
                 )
-                ) {
+            ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_baseline_delete_outline_24),
                     contentDescription = null,
                 )
-            }
-            Button(onClick = {onMoveUpClicked(configComponent)}) {
-                Text(text = "UP")
-            }
-            Button(onClick = {onMoveDownClicked(configComponent)}) {
-                Text(text = "DOWN")
             }
         }
     }

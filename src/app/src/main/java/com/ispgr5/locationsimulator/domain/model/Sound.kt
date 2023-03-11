@@ -11,9 +11,9 @@ import kotlinx.serialization.Serializable
 @SerialName("Sound")
 data class Sound(
     val source: String,
-    //volume in 0..255
-    var minVolume: Int,
-    var maxVolume: Int,
+    //volume in 0f..1f
+    var minVolume: Float,
+    var maxVolume: Float,
     //pause in ms
     var minPause: Int,
     var maxPause: Int,
@@ -31,8 +31,8 @@ data class Sound(
      */
     fun myCopy(
         source: String = this.source,
-        minVolume: Int = this.minVolume,
-        maxVolume: Int = this.maxVolume,
+        minVolume: Float = this.minVolume,
+        maxVolume: Float = this.maxVolume,
         minPause: Int = this.minPause,
         maxPause: Int = this.maxPause,
         isRandom: Boolean = this.isRandom

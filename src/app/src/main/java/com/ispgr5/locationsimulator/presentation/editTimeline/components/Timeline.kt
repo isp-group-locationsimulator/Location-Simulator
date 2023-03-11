@@ -2,14 +2,11 @@ package com.ispgr5.locationsimulator.presentation.editTimeline.components
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,15 +25,34 @@ import com.ispgr5.locationsimulator.domain.model.Sound
 fun Timeline(
     components: List<ConfigComponent>,
     selectedComponent: ConfigComponent?,
-    onSelectAComponent: (ConfigComponent) -> Unit
+    onSelectAComponent: (ConfigComponent) -> Unit,
+    onAddClicked: () -> Unit
 ) {
     //iterate through all Configuration components and Display it with a TimelineItem
-    Column {
+    Row(
+        modifier = Modifier.horizontalScroll(rememberScrollState())
+    ) {
         components.forEach { configComponent ->
             TimelineItem(
                 isSelected = selectedComponent === configComponent,
                 configItem = configComponent,
                 onSelect = onSelectAComponent
+            )
+        }
+        /**
+         * Add new Timeline Item(Configuration Component)
+         */
+        Button(
+            elevation = ButtonDefaults.elevation(4.dp),
+            onClick = onAddClicked,
+            modifier = Modifier
+                .width(55.dp)
+                .height(55.dp)
+                .padding(6.dp)
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_baseline_add_24),
+                contentDescription = null
             )
         }
     }
@@ -53,19 +69,27 @@ fun TimelineItem(
     configItem: ConfigComponent,
     onSelect: (ConfigComponent) -> Unit
 ) {
-    Card(elevation = 2.dp, backgroundColor = MaterialTheme.colors.surface,
+    Card(elevation = 4.dp, backgroundColor = MaterialTheme.colors.surface,
         //if selected the Item gets a Border in another Color
         modifier = if (isSelected) {
             Modifier
+                .width(55.dp)
+                .height(55.dp)
                 .padding(6.dp)
-                .border(2.dp, MaterialTheme.colors.primary, RoundedCornerShape(10))
+                .border(1.dp, MaterialTheme.colors.primary, RoundedCornerShape(10))
                 .clickable { onSelect(configItem) }
         } else {
             Modifier
+                .width(55.dp)
+                .height(55.dp)
                 .padding(6.dp)
                 .clickable { onSelect(configItem) }
         }) {
-        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(4.dp)) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier.padding(2.dp)
+        ) {
             Icon(
                 painter = if (configItem is Sound) {
                     painterResource(id = R.drawable.audionouse2)
@@ -74,7 +98,7 @@ fun TimelineItem(
                 },
                 contentDescription = null
             )
-            Text(text = configItem.javaClass.simpleName)
+
         }
     }
 }

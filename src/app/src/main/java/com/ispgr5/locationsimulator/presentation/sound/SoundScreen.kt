@@ -1,7 +1,6 @@
 package com.ispgr5.locationsimulator.presentation.sound
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Button
@@ -14,29 +13,36 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.ispgr5.locationsimulator.data.storageManager.SoundStorageManager
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.ispgr5.locationsimulator.R
-import com.ispgr5.locationsimulator.presentation.MainActivity
+import com.ispgr5.locationsimulator.data.storageManager.SoundStorageManager
 
 /**
  * Shows a list of Audio Files to be selected.
  */
 @Composable
 fun SoundScreen(
+    navController: NavController,
+    viewModel: SoundViewModel = hiltViewModel(),
     soundStorageManager: SoundStorageManager,
-    mainActivity: MainActivity
+    privateDirUri: String
 ) {
-    val viewModel = SoundViewModel(soundStorageManager)
-    val state = viewModel.state
+    val state = viewModel.state.value
+    viewModel.onEvent(SoundEvent.RefreshPage(soundStorageManager = soundStorageManager))
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        /**
+         * The refresh Button
+         */
         Button(
             colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
             onClick = {
-                viewModel.onEvent(SoundEvent.RefreshPage)
+                viewModel.onEvent(SoundEvent.RefreshPage(soundStorageManager = soundStorageManager))
             }
         ) {
             Icon(
@@ -44,18 +50,56 @@ fun SoundScreen(
                 contentDescription = null
             )
         }
+
+        /**
+         * Header Text
+         */
         Text(text = stringResource(id = R.string.soundscreen_soundselection), fontSize = 30.sp)
-        Button(
-            colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
-            onClick = {
-                viewModel.onEvent(SoundEvent.ImportSound)
-            }
+
+        Row(
+            horizontalArrangement = Arrangement.Center
         ) {
-            Text(text = stringResource(id = R.string.soundscreen_import))
+
+            /**
+             * Import Button
+             */
+            Button(
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
+                onClick = {
+                    viewModel.onEvent(SoundEvent.ImportSound(soundStorageManager = soundStorageManager))
+                }
+            ) {
+                Text(text = stringResource(id = R.string.soundscreen_import))
+            }
+
+            /**
+             * The Stop Playback button
+             */
+            Button(
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
+                onClick = {
+                    viewModel.onEvent(SoundEvent.StopPlayback)
+                }
+            ) {
+                Text(text = stringResource(id = R.string.soundscreen_stopplayback))
+            }
+
         }
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        /**
+         * List of all known Sounds
+         */
         LazyColumn {
-            items(state.value.soundNames) { soundName ->
-                SingleSound(soundName, viewModel, mainActivity)
+            items(state.soundNames) { soundName ->
+                SingleSound(
+                    soundName,
+                    onPlayClicked = {viewModel.onEvent(SoundEvent.TestPlaySound(privateDirUri, soundName))},
+                    onSelectClicked = {viewModel.onEvent(SoundEvent.SelectSound(soundName, navController))},
+                    onDeleteClicked = {viewModel.onEvent(SoundEvent.DeleteSound(soundName, soundStorageManager))}
+                )
+                Spacer(modifier = Modifier.height(5.dp))
             }
         }
     }

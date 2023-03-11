@@ -5,5 +5,5 @@ package com.ispgr5.locationsimulator.presentation.sound
  * It holds a list of Sounds.
  */
 data class SoundState(
-    val soundNames: List<String>
+    val soundNames: List<String> = emptyList()
 )

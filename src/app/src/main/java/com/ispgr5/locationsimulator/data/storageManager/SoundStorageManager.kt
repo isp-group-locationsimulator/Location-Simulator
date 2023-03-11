@@ -152,4 +152,15 @@ class SoundStorageManager(private val mainActivity: MainActivity) {
         cursor?.close()
         return fileName
     }
+
+    /**
+     * This function deletes a file from the private dir.
+     * @param fileNameToDelete The file that should be deleted.
+     */
+    fun deleteFileFromPrivateDir(fileNameToDelete: String) {
+        val pathToFile = File(mainActivity.filesDir.toString() + "/" + fileNameToDelete)
+        if (pathToFile.isFile) {
+            pathToFile.delete()
+        }
+    }
 }

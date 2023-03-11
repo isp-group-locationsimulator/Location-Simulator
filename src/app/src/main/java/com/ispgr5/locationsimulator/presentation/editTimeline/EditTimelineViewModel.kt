@@ -25,7 +25,6 @@ class EditTimelineViewModel @Inject constructor(
     private var currentConfigurationId: Int? = null
 
     init {
-
         savedStateHandle.get<Int>("configurationId")?.let { configurationId ->
             if (configurationId != -1) {
                 viewModelScope.launch {
@@ -62,8 +61,8 @@ class EditTimelineViewModel @Inject constructor(
                     val component = compsCopy[state.value.currentTimelineIndex].copy()
                     when(component) {
                         is Sound -> {
-                            component.minVolume = RangeConverter.floatTo8BitInt(event.range.start)
-                            component.maxVolume = RangeConverter.floatTo8BitInt(event.range.endInclusive)
+                            component.minVolume = RangeConverter.transformPercentageToFactor(event.range.start)
+                            component.maxVolume = RangeConverter.transformPercentageToFactor(event.range.endInclusive)
                         }
                     }
                     compsCopy[state.value.currentTimelineIndex] = component
@@ -130,17 +129,12 @@ class EditTimelineViewModel @Inject constructor(
             }
             is EditTimelineEvent.AddSound -> {
                 viewModelScope.launch {
-                    val sound = Sound("Klopfen.m4a",3,4,3, 7,false)
-                    val listC = state.value.components.toMutableList()
-                    listC.add(sound)
-                    _state.value = _state.value.copy(
-                        components = listC
-                    )
+                    event.navController.navigate("sound?configurationId=${currentConfigurationId}")
                 }
             }
             is EditTimelineEvent.AddVibration -> {
                 viewModelScope.launch {
-                    val vibration = Vibration(3,4,3, 7,6,8)
+                    val vibration = Vibration(3,4,3,7,6,8)
                     val listC = state.value.components.toMutableList()
                     listC.add(vibration)
                     _state.value = _state.value.copy(
@@ -194,7 +188,7 @@ class EditTimelineViewModel @Inject constructor(
                     )
                 }
             }
-            is EditTimelineEvent.MoveConfCompUp -> {
+            is EditTimelineEvent.MoveConfCompLeft -> {
                 val index = getIndex(state.value.components, event.configComponent)
                 val compsCopy = state.value.components.toMutableList()
                 if (index > 0){
@@ -205,7 +199,7 @@ class EditTimelineViewModel @Inject constructor(
                     )
                 }
             }
-            is EditTimelineEvent.MoveConfCompDown -> {
+            is EditTimelineEvent.MoveConfCompRight -> {
                 val index = getIndex(state.value.components, event.configComponent)
                 val compsCopy = state.value.components.toMutableList()
                 if (index < compsCopy.size-1){

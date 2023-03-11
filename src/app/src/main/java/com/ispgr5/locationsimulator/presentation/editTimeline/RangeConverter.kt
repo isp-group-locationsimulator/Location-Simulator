@@ -5,6 +5,19 @@ package com.ispgr5.locationsimulator.presentation.editTimeline
  */
 class RangeConverter {
     companion object {
+        /**
+         * converts UI value in 0f..100f to 0f..1f
+         */
+        fun transformPercentageToFactor(input: Float) : Float{
+            return input/100f
+        }
+
+        /**
+         * converts technical value in 0f..1f to 0f..100f
+         */
+        fun transformFactorToPercentage(input : Float) : Float{
+            return input * 100f
+        }
 
         /**
          * converts UI value in 0f..100f to 0..255

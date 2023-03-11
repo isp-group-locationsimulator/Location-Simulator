@@ -10,10 +10,10 @@ sealed class EditTimelineEvent {
     data class SelectedTimelineItem(val selectConfigComp: ConfigComponent) : EditTimelineEvent()
     data class ChangedName(val name: String) : EditTimelineEvent()
     data class ChangedDescription(val description: String) : EditTimelineEvent()
-    object AddSound : EditTimelineEvent()
+    data class AddSound(val navController: NavController) : EditTimelineEvent()
     object AddVibration : EditTimelineEvent()
     data class DeleteConfigurationComponent(val configComponent: ConfigComponent):EditTimelineEvent()
-    data class MoveConfCompUp(val configComponent: ConfigComponent):EditTimelineEvent()
-    data class MoveConfCompDown(val configComponent: ConfigComponent):EditTimelineEvent()
+    data class MoveConfCompLeft(val configComponent: ConfigComponent):EditTimelineEvent()
+    data class MoveConfCompRight(val configComponent: ConfigComponent):EditTimelineEvent()
     data class RecordAudio(val recordAudio : () -> Unit) : EditTimelineEvent()
 }
