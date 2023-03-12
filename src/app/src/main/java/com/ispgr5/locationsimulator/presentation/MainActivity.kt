@@ -2,7 +2,6 @@ package com.ispgr5.locationsimulator.presentation
 
 import android.app.Activity
 import android.content.Intent
-import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -38,6 +37,8 @@ import com.ispgr5.locationsimulator.presentation.sound.SoundScreen
 import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.serialization.ExperimentalSerializationApi
+import java.io.File
+import java.io.FileOutputStream
 
 // TODO: Add KDoc to this class and methods.
 @AndroidEntryPoint
@@ -144,6 +145,9 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    /**
+     * Starts the background service, which plays the audio and vibration
+     */
     @OptIn(ExperimentalSerializationApi::class)
     val startService: (List<ConfigComponent>) -> Unit = fun(config: List<ConfigComponent>) {
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -159,6 +163,9 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    /**
+     * Stops the background service
+     */
     private fun stopService() {
         window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         Intent(this, InfinityService::class.java).also {
@@ -185,6 +192,9 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    /**
+     * Creates an intent to open the default recording app
+     */
     private fun recordAudio() {
         val intent = Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION)
         val uri = MediaStore.Audio.Media.INTERNAL_CONTENT_URI
@@ -192,13 +202,23 @@ class MainActivity : ComponentActivity() {
         startActivityForResult(intent, 0)
     }
 
+    @Deprecated("Deprecated in Java")
+    //TODO: File needs to get a unique name. Otherwise it can overwrite other files. Maybe Pop-Up?
+    /**
+     * Saves the recorded audio to the internal filesystem of the app
+     */
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 0 && resultCode == Activity.RESULT_OK) {
             // Handle the recorded audio
             val recordedAudioUri = data?.data
-            val mediaPlayer = MediaPlayer.create(this, recordedAudioUri)
-            mediaPlayer.start()
+
+            val inputStream = recordedAudioUri?.let { contentResolver.openInputStream(it) }
+            val file = File(filesDir, "fileName.mp3")
+            val outputStream = FileOutputStream(file)
+            inputStream?.copyTo(outputStream)
+            outputStream.close()
+            inputStream?.close()
         }
     }
 
