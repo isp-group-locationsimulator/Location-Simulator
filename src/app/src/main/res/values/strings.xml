@@ -31,6 +31,7 @@
     <string name="editTimeline_addSound">Add Sound</string>
     <string name="soundscreen_soundselection">Sound Selection</string>
     <string name="soundscreen_import">Import</string>
+    <string name="soundscreen_record">Record</string>
     <string name="finish_deletion">Finish</string>
     <string name="not_found">Not Found</string>
     <string name="homescreen_appname">Locationsimulator</string>

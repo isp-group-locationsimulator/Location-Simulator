@@ -1,10 +1,13 @@
 package com.ispgr5.locationsimulator.presentation
 
+import android.app.Activity
 import android.content.Intent
+import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
+import android.provider.MediaStore
 import android.util.Log
 import android.view.WindowManager
 import android.widget.Toast
@@ -129,7 +132,11 @@ class MainActivity : ComponentActivity() {
                             }
                             )
                         ) {
-                            SoundScreen(navController = navController, soundStorageManager = soundStorageManager, privateDirUri = this@MainActivity.filesDir.toString())
+                            SoundScreen(navController = navController,
+                                soundStorageManager = soundStorageManager,
+                                privateDirUri = this@MainActivity.filesDir.toString(),
+                                recordAudio = {recordAudio()}
+                            )
                         }
                     }
                 }
@@ -175,6 +182,23 @@ class MainActivity : ComponentActivity() {
                 intent.data = Uri.parse("package:$packageName")
                 startActivity(intent)
             }
+        }
+    }
+
+    private fun recordAudio() {
+        val intent = Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION)
+        val uri = MediaStore.Audio.Media.INTERNAL_CONTENT_URI
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, uri)
+        startActivityForResult(intent, 0)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 0 && resultCode == Activity.RESULT_OK) {
+            // Handle the recorded audio
+            val recordedAudioUri = data?.data
+            val mediaPlayer = MediaPlayer.create(this, recordedAudioUri)
+            mediaPlayer.start()
         }
     }
 

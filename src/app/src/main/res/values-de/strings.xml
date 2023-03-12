@@ -32,6 +32,7 @@
     <string name="editTimeline_addSound">Sound hinzufügen</string>
     <string name="soundscreen_soundselection">Sound Auswählen</string>
     <string name="soundscreen_import">Import</string>
+    <string name="soundscreen_record">Aufnahme</string>
     <string name="finish_deletion">Fertig</string>
     <string name="not_found">Nicht Gefunden</string>
     <string name="homescreen_appname">Ortungssimulator</string>

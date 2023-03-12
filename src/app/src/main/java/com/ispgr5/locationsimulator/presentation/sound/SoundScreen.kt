@@ -28,7 +28,8 @@ fun SoundScreen(
     navController: NavController,
     viewModel: SoundViewModel = hiltViewModel(),
     soundStorageManager: SoundStorageManager,
-    privateDirUri: String
+    privateDirUri: String,
+    recordAudio: () -> Unit,
 ) {
     val state = viewModel.state.value
     viewModel.onEvent(SoundEvent.RefreshPage(soundStorageManager = soundStorageManager))
@@ -70,6 +71,17 @@ fun SoundScreen(
                 }
             ) {
                 Text(text = stringResource(id = R.string.soundscreen_import))
+            }
+
+
+            /**
+             * Record Button
+             */
+            Button(
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
+                onClick = { recordAudio() }
+            ) {
+                Text(text = stringResource(id = R.string.soundscreen_record))
             }
 
             /**
