@@ -210,7 +210,9 @@ class MainActivity : ComponentActivity() {
         val intent = Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION)
         val uri = MediaStore.Audio.Media.INTERNAL_CONTENT_URI
         intent.putExtra(MediaStore.EXTRA_OUTPUT, uri)
-        startActivityForResult(intent, 0)
+        //TODO translate
+        val chooserIntent = Intent.createChooser(intent, "Choose an audio recorder app")
+        startActivityForResult(chooserIntent, 0)
     }
 
     @Deprecated("Deprecated in Java")
