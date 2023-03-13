@@ -20,6 +20,7 @@ import kotlinx.serialization.ExperimentalSerializationApi
 class InfinityService:Service() {
 
     private var isServiceStarted = false
+    private var isConfigOrderRandom = true
     private var wakeLock: PowerManager.WakeLock? = null
     private var config: List<ConfigComponent>? = null
     private var soundPlayer: SoundPlayer = SoundPlayer()
@@ -79,34 +80,96 @@ class InfinityService:Service() {
         }
 
         GlobalScope.launch(Dispatchers.Default) {
+
             while (isServiceStarted) {
-                for(item in config!!){
-                    when (item) {
+                if (isConfigOrderRandom) { // Bad Code, I duplicated this code, because I wasn't able to put it into a function. TODO: Deduplicate and refactor.
+                    when (val item = config!!.random()) {
                         is Vibration -> {
-                            val duration = (Math.random() * (item.maxDuration*1000 - item.minDuration*1000 + 1) + item.minDuration*1000).toLong()
-                            val strength = (Math.random() * (item.maxStrength - item.minStrength + 1) + item.minStrength).toInt()
-                            val pause = (Math.random() * (item.maxPause*1000 - item.minPause*1000 + 1) + item.minPause*1000).toLong()
+                            val duration =
+                                (Math.random() * (item.maxDuration * 1000 - item.minDuration * 1000 + 1) + item.minDuration * 1000).toLong()
+                            val strength =
+                                (Math.random() * (item.maxStrength - item.minStrength + 1) + item.minStrength).toInt()
+                            val pause =
+                                (Math.random() * (item.maxPause * 1000 - item.minPause * 1000 + 1) + item.minPause * 1000).toLong()
                             if (Build.VERSION.SDK_INT >= 26) {
-                                Log.d("vib666", "Creating Vibration... Duration:$duration , Strength:$strength")
-                                vibrator.vibrate(VibrationEffect.createOneShot(duration,strength))
+                                Log.d(
+                                    "vib666",
+                                    "Creating Vibration... Duration:$duration , Strength:$strength"
+                                )
+                                vibrator.vibrate(
+                                    VibrationEffect.createOneShot(
+                                        duration,
+                                        strength
+                                    )
+                                )
                             } else {
-                                Log.d("vib666","Creating Vibration... Duration:$duration")
+                                Log.d("vib666", "Creating Vibration... Duration:$duration")
                                 vibrator.vibrate(duration)
                             }
-                            Log.d("vib666","Starting sleep... Pause:$pause")
-                            Thread.sleep(duration+pause)
+                            Log.d("vib666", "Starting sleep... Pause:$pause")
+                            Thread.sleep(duration + pause)
                         }
                         is Sound -> {
-                            val pause = (Math.random() * (item.maxPause*1000 - item.minPause*1000 + 1) + item.minPause*1000).toLong()
-                            val volume: Float = (item.minVolume + Math.random() * (item.maxVolume - item.minVolume)).toFloat()
-                            val duration = soundPlayer.startSound(filesDir + "/" +  item.source, volume)
-                            Log.d("sound666","Creating Sound... Duration:$duration , Volume:$volume")
-                            Log.d("sound666","Starting sleep... Pause:$pause")
-                            Thread.sleep(duration+pause)
+                            val pause =
+                                (Math.random() * (item.maxPause * 1000 - item.minPause * 1000 + 1) + item.minPause * 1000).toLong()
+                            val volume: Float =
+                                (item.minVolume + Math.random() * (item.maxVolume - item.minVolume)).toFloat()
+                            val duration =
+                                soundPlayer.startSound(filesDir + "/" + item.source, volume)
+                            Log.d(
+                                "sound666",
+                                "Creating Sound... Duration:$duration , Volume:$volume"
+                            )
+                            Log.d("sound666", "Starting sleep... Pause:$pause")
+                            Thread.sleep(duration + pause)
                         }
                     }
-                    if(!isServiceStarted){
-                        break
+                } else {
+                    for (item in config!!) {
+                        when (item) {
+                            is Vibration -> {
+                                val duration =
+                                    (Math.random() * (item.maxDuration * 1000 - item.minDuration * 1000 + 1) + item.minDuration * 1000).toLong()
+                                val strength =
+                                    (Math.random() * (item.maxStrength - item.minStrength + 1) + item.minStrength).toInt()
+                                val pause =
+                                    (Math.random() * (item.maxPause * 1000 - item.minPause * 1000 + 1) + item.minPause * 1000).toLong()
+                                if (Build.VERSION.SDK_INT >= 26) {
+                                    Log.d(
+                                        "vib666",
+                                        "Creating Vibration... Duration:$duration , Strength:$strength"
+                                    )
+                                    vibrator.vibrate(
+                                        VibrationEffect.createOneShot(
+                                            duration,
+                                            strength
+                                        )
+                                    )
+                                } else {
+                                    Log.d("vib666", "Creating Vibration... Duration:$duration")
+                                    vibrator.vibrate(duration)
+                                }
+                                Log.d("vib666", "Starting sleep... Pause:$pause")
+                                Thread.sleep(duration + pause)
+                            }
+                            is Sound -> {
+                                val pause =
+                                    (Math.random() * (item.maxPause * 1000 - item.minPause * 1000 + 1) + item.minPause * 1000).toLong()
+                                val volume: Float =
+                                    (item.minVolume + Math.random() * (item.maxVolume - item.minVolume)).toFloat()
+                                val duration =
+                                    soundPlayer.startSound(filesDir + "/" + item.source, volume)
+                                Log.d(
+                                    "sound666",
+                                    "Creating Sound... Duration:$duration , Volume:$volume"
+                                )
+                                Log.d("sound666", "Starting sleep... Pause:$pause")
+                                Thread.sleep(duration + pause)
+                            }
+                        }
+                        if (!isServiceStarted) {
+                            break
+                        }
                     }
                 }
             }
@@ -121,6 +184,10 @@ class InfinityService:Service() {
                 }
             }
         }
+    }
+
+    private fun playSoundOrVibration() {
+
     }
 
     private fun stopService() {
