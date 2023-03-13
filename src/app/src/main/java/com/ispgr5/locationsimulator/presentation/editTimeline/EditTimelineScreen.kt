@@ -50,7 +50,12 @@ fun EditTimelineScreen(
                         Text(
                             text = stringResource(id = R.string.editTimeline_name) + ":",
                             fontWeight = FontWeight.Bold,
-                            modifier = Modifier.width(100.dp)
+                            modifier = Modifier.width(115.dp)
+                        )
+                        Divider(
+                            color = MaterialTheme.colors.background,
+                            modifier = Modifier
+                                .width(10.dp)
                         )
                         Column(
                             modifier = Modifier.fillMaxWidth(),
@@ -70,7 +75,12 @@ fun EditTimelineScreen(
                         Text(
                             text = stringResource(id = R.string.editTimeline_description) + ":",
                             fontWeight = FontWeight.Bold,
-                            modifier = Modifier.width(100.dp)
+                            modifier = Modifier.width(115.dp)
+                        )
+                        Divider(
+                            color = MaterialTheme.colors.background,
+                            modifier = Modifier
+                                .width(10.dp)
                         )
                         Column(
                             modifier = Modifier.fillMaxWidth(),
