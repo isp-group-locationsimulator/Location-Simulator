@@ -159,12 +159,13 @@ class MainActivity : ComponentActivity() {
      * Starts the background service, which plays the audio and vibration
      */
     @OptIn(ExperimentalSerializationApi::class)
-    val startService: (List<ConfigComponent>) -> Unit = fun(config: List<ConfigComponent>) {
+    val startService: (List<ConfigComponent>, Boolean) -> Unit = fun(config: List<ConfigComponent>, randomOrderPlayback: Boolean) {
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         Intent(this, InfinityService::class.java).also {
             it.action = "START"
             it.putExtra("config", ConfigurationComponentConverter().componentListToString(config))
             it.putExtra("filesDir", filesDir.toString())
+            it.putExtra("randomOrderPlayback", randomOrderPlayback.toString())
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 startForegroundService(it)
             } else {

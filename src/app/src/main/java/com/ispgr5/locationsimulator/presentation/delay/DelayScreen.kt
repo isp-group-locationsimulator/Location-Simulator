@@ -28,7 +28,7 @@ import com.ispgr5.locationsimulator.presentation.editTimeline.components.Timelin
 fun DelayScreen(
     navController: NavController,
     viewModel: DelayViewModel = hiltViewModel(),
-    startServiceFunction: (List<ConfigComponent>) -> Unit,
+    startServiceFunction: (List<ConfigComponent>, Boolean) -> Unit,
 ) {
     //The state from viewmodel
     val state = viewModel.state.value

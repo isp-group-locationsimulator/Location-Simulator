@@ -20,7 +20,7 @@ import kotlinx.serialization.ExperimentalSerializationApi
 class InfinityService:Service() {
 
     private var isServiceStarted = false
-    private var isConfigOrderRandom = true
+    private var isConfigOrderRandom = false
     private var wakeLock: PowerManager.WakeLock? = null
     private var config: List<ConfigComponent>? = null
     private var soundPlayer: SoundPlayer = SoundPlayer()
@@ -39,6 +39,9 @@ class InfinityService:Service() {
             if(intent.action == "START"){
                 changeConfig(intent.getStringExtra("config"))
                 filesDir = intent.getStringExtra("filesDir").toString()
+                isConfigOrderRandom = intent.getStringExtra("randomOrderPlayback").toBoolean()
+                println(intent.getStringExtra("randomOrderPlayback"))
+                println(intent.getStringExtra("randomOrderPlayback").toBoolean())
                 if(config !=null){
                     startService()
                 }
