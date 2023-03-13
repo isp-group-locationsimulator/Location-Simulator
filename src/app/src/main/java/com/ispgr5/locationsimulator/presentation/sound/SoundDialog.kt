@@ -31,7 +31,10 @@ fun SoundDialog(popUpState: State<Boolean>, onDismiss: (String) -> Unit) {
                 )
             },
             confirmButton = {
-                Button(onClick = { onDismiss(text.value) }) {
+                Button(
+                    enabled = text.value != "",
+                    onClick = { onDismiss(text.value)
+                    }) {
                     Text(text= stringResource(id = R.string.soundscreen_dialog_button))
                 }
             }

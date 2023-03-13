@@ -145,7 +145,6 @@ class MainActivity : ComponentActivity() {
                             SoundDialog(
                                 popUpState = popUpState,
                                 onDismiss = {fileName ->
-                                    //TODO: if file name does not exist
                                     saveAudioFile(fileName)
                                     popUpState.value = false
                                 }
