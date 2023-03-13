@@ -33,6 +33,7 @@ class EditTimelineViewModel @Inject constructor(
                         _state.value = _state.value.copy(
                             name = configuration.name,
                             description = configuration.description,
+                            randomOrderPlayback = configuration.randomOrderPlayback,
                             components = configuration.components
                         )
                     }
