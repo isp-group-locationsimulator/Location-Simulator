@@ -230,7 +230,7 @@ class MainActivity : ComponentActivity() {
      */
     private fun saveAudioFile(fileName:String){
         val inputStream = recordedAudioUri?.let { contentResolver.openInputStream(it) }
-        val file = File(filesDir, fileName)
+        val file = soundStorageManager.getFileInPrivateDir(fileName)
         val outputStream = FileOutputStream(file)
         inputStream?.copyTo(outputStream)
         outputStream.close()
