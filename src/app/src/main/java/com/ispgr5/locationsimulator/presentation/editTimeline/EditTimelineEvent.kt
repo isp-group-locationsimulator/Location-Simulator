@@ -17,4 +17,5 @@ sealed class EditTimelineEvent {
     data class MoveConfCompLeft(val configComponent: ConfigComponent):EditTimelineEvent()
     data class MoveConfCompRight(val configComponent: ConfigComponent):EditTimelineEvent()
     data class RecordAudio(val recordAudio : () -> Unit) : EditTimelineEvent()
+    data class ChangedRandomOrderPlayback(val randomOrderPlayback: Boolean) : EditTimelineEvent()
 }

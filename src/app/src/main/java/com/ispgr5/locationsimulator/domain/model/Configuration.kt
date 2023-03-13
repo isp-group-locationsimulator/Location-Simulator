@@ -10,6 +10,7 @@ import androidx.room.PrimaryKey
 data class Configuration(
     val name: String,
     val description: String,
+    val randomOrderPlayback: Boolean,
     val components: List<ConfigComponent>,
     @PrimaryKey val id: Int? = null
 )

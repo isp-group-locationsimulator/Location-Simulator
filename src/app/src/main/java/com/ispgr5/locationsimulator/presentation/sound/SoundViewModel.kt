@@ -52,6 +52,7 @@ class SoundViewModel @Inject constructor(
                                     id = configurationId,
                                     name = configuration.name,
                                     description = configuration.description,
+                                    randomOrderPlayback = configuration.randomOrderPlayback,
                                     components = componentsCopy
                                 )
                             )

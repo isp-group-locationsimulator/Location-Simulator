@@ -2,7 +2,10 @@ package com.ispgr5.locationsimulator.presentation.editTimeline
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material.*
+import androidx.compose.material.Divider
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Switch
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -75,6 +78,24 @@ fun EditTimelineScreen(
                             onValueChange = { description -> viewModel.onEvent(EditTimelineEvent.ChangedDescription(description)) }
                         )
                     }
+                }
+            }
+            Spacer(modifier = Modifier.size(4.dp))
+            Column {
+                Text(
+                    text = stringResource(id = R.string.editTimeline_randomOrderPlayback) + ":",
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.width(100.dp)
+                )
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Switch(
+                        checked = state.randomOrderPlayback,
+                        onCheckedChange = { randomOrderPlayback -> viewModel.onEvent(EditTimelineEvent.ChangedRandomOrderPlayback(randomOrderPlayback)) }
+                    )
                 }
             }
         }

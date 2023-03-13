@@ -34,12 +34,11 @@ import com.ispgr5.locationsimulator.presentation.homescreen.InfoScreen
 import com.ispgr5.locationsimulator.presentation.run.InfinityService
 import com.ispgr5.locationsimulator.presentation.run.RunScreen
 import com.ispgr5.locationsimulator.presentation.select.SelectScreen
-import com.ispgr5.locationsimulator.presentation.sound.SoundScreen
 import com.ispgr5.locationsimulator.presentation.sound.SoundDialog
+import com.ispgr5.locationsimulator.presentation.sound.SoundScreen
 import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.serialization.ExperimentalSerializationApi
-import java.io.File
 import java.io.FileOutputStream
 
 // TODO: Add KDoc to this class and methods.
