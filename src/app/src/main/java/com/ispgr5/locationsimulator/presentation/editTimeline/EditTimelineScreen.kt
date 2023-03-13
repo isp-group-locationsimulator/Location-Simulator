@@ -33,7 +33,7 @@ fun EditTimelineScreen(
         modifier = Modifier.fillMaxSize()
     ) {
         /**
-         * Name and Description
+         * Name, Description and Random order
          */
         Column(
             modifier = Modifier
@@ -82,20 +82,22 @@ fun EditTimelineScreen(
             }
             Spacer(modifier = Modifier.size(4.dp))
             Column {
-                Text(
-                    text = stringResource(id = R.string.editTimeline_randomOrderPlayback) + ":",
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.width(100.dp)
-                )
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Switch(
-                        checked = state.randomOrderPlayback,
-                        onCheckedChange = { randomOrderPlayback -> viewModel.onEvent(EditTimelineEvent.ChangedRandomOrderPlayback(randomOrderPlayback)) }
+                Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = stringResource(id = R.string.editTimeline_randomOrderPlayback) + ":",
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.width(100.dp)
                     )
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Switch(
+                            checked = state.randomOrderPlayback,
+                            onCheckedChange = { randomOrderPlayback -> viewModel.onEvent(EditTimelineEvent.ChangedRandomOrderPlayback(randomOrderPlayback)) }
+                        )
+                    }
                 }
             }
         }
