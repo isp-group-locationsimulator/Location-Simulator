@@ -6,6 +6,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -29,63 +30,72 @@ fun EditTimelineScreen(
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        /**
-         * Name and Description
-         */
-        Column(
-            modifier = Modifier
-                .padding(12.dp)
-                .fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.End
         ) {
-            Column {
-                Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = stringResource(id = R.string.editTimeline_name) + ":",
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.width(115.dp)
-                    )
-                    Divider(
-                        color = MaterialTheme.colors.background,
-                        modifier = Modifier
-                            .width(15.dp)
-                    )
-                    Column(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        BasicTextField(
-                            value = state.name,
-                            onValueChange = { name -> viewModel.onEvent(EditTimelineEvent.ChangedName(name)) }
+
+            /**
+             * Name and Description
+             */
+            Column(
+                modifier = Modifier
+                    .padding(12.dp)
+                    .fillMaxWidth()
+                    .weight(1f),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Column {
+                    Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = stringResource(id = R.string.editTimeline_name) + ":",
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.width(100.dp)
                         )
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            BasicTextField(
+                                value = state.name,
+                                onValueChange = { name -> viewModel.onEvent(EditTimelineEvent.ChangedName(name)) }
+                            )
+                        }
+                    }
+                }
+                Spacer(modifier = Modifier.size(4.dp))
+                Column {
+                    Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = stringResource(id = R.string.editTimeline_description) + ":",
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.width(100.dp)
+                        )
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            BasicTextField(
+                                value = state.description,
+                                onValueChange = { description -> viewModel.onEvent(EditTimelineEvent.ChangedDescription(description)) }
+                            )
+                        }
                     }
                 }
             }
-            Spacer(modifier = Modifier.size(4.dp))
-            Column {
-                Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = stringResource(id = R.string.editTimeline_description) + ":",
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.width(115.dp)
-                    )
-                    Divider(
-                        color = MaterialTheme.colors.background,
-                        modifier = Modifier
-                            .width(15.dp)
-                    )
-                    Column(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        BasicTextField(
-                            value = state.description,
-                            onValueChange = { description -> viewModel.onEvent(EditTimelineEvent.ChangedDescription(description)) }
-                        )
-                    }
-                }
+
+            /**
+             * Button to return to the SelectScreen
+             */
+            Button(onClick = {
+                navController.navigate("selectScreen")
+            }, modifier = Modifier.padding(5.dp)) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_baseline_cancel_24),
+                    contentDescription = ""
+                )
             }
         }
 
