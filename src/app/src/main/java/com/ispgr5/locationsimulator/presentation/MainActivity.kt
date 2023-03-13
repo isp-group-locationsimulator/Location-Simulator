@@ -15,6 +15,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.*
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -34,6 +35,7 @@ import com.ispgr5.locationsimulator.presentation.run.InfinityService
 import com.ispgr5.locationsimulator.presentation.run.RunScreen
 import com.ispgr5.locationsimulator.presentation.select.SelectScreen
 import com.ispgr5.locationsimulator.presentation.sound.SoundScreen
+import com.ispgr5.locationsimulator.presentation.sound.SoundDialog
 import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -47,6 +49,8 @@ class MainActivity : ComponentActivity() {
     // With this soundStorageManager we can access the filesystem wherever we want
     private lateinit var soundStorageManager: SoundStorageManager
     private lateinit var configurationStorageManager: ConfigurationStorageManager
+    private var popUpState = mutableStateOf(false)
+    private var recordedAudioUri: Uri? = null
 
     @OptIn(ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -138,6 +142,14 @@ class MainActivity : ComponentActivity() {
                                 privateDirUri = this@MainActivity.filesDir.toString(),
                                 recordAudio = {recordAudio()}
                             )
+                            SoundDialog(
+                                popUpState = popUpState,
+                                onDismiss = {fileName ->
+                                    //TODO: if file name does not exist
+                                    saveAudioFile(fileName)
+                                    popUpState.value = false
+                                }
+                            )
                         }
                     }
                 }
@@ -203,23 +215,27 @@ class MainActivity : ComponentActivity() {
     }
 
     @Deprecated("Deprecated in Java")
-    //TODO: File needs to get a unique name. Otherwise it can overwrite other files. Maybe Pop-Up?
     /**
-     * Saves the recorded audio to the internal filesystem of the app
+     * Sets the Uri of the recorded audio file
      */
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 0 && resultCode == Activity.RESULT_OK) {
-            // Handle the recorded audio
-            val recordedAudioUri = data?.data
-
-            val inputStream = recordedAudioUri?.let { contentResolver.openInputStream(it) }
-            val file = File(filesDir, "fileName.mp3")
-            val outputStream = FileOutputStream(file)
-            inputStream?.copyTo(outputStream)
-            outputStream.close()
-            inputStream?.close()
+            popUpState.value = true
+            recordedAudioUri = data?.data
         }
+    }
+
+    /**
+     * Saves the recorded audio to the internal filesystem of the app
+     */
+    private fun saveAudioFile(fileName:String){
+        val inputStream = recordedAudioUri?.let { contentResolver.openInputStream(it) }
+        val file = File(filesDir, fileName)
+        val outputStream = FileOutputStream(file)
+        inputStream?.copyTo(outputStream)
+        outputStream.close()
+        inputStream?.close()
     }
 
     private val toastAMessage:(message:String) -> Unit = fun(message: String){
