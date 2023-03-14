@@ -26,7 +26,8 @@ fun Timeline(
     components: List<ConfigComponent>,
     selectedComponent: ConfigComponent?,
     onSelectAComponent: (ConfigComponent) -> Unit,
-    onAddClicked: () -> Unit
+    onAddClicked: () -> Unit,
+    showAddButton: Boolean = true
 ) {
     //iterate through all Configuration components and Display it with a TimelineItem
     Row(
@@ -42,18 +43,20 @@ fun Timeline(
         /**
          * Add new Timeline Item(Configuration Component)
          */
-        Button(
-            elevation = ButtonDefaults.elevation(4.dp),
-            onClick = onAddClicked,
-            modifier = Modifier
-                .width(55.dp)
-                .height(55.dp)
-                .padding(6.dp)
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_baseline_add_24),
-                contentDescription = null
-            )
+        if (showAddButton) {
+            Button(
+                elevation = ButtonDefaults.elevation(4.dp),
+                onClick = onAddClicked,
+                modifier = Modifier
+                    .width(55.dp)
+                    .height(55.dp)
+                    .padding(6.dp)
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_baseline_add_24),
+                    contentDescription = null
+                )
+            }
         }
     }
 }
