@@ -57,7 +57,8 @@ object AppModule {
             getConfigurations = GetConfigurations(repository),
             deleteConfiguration = DeleteConfiguration(repository),
             addConfiguration = AddConfiguration(repository),
-            getConfiguration = GetConfiguration(repository)
+            getConfiguration = GetConfiguration(repository),
+            getFavoriteConfigurations = GetFavoriteConfigurations(repository)
         )
     }
 }

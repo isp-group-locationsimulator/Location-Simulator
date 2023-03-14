@@ -28,4 +28,8 @@ class ConfigurationRepositoryImpl(
     override suspend fun deleteConfiguration(configuration: Configuration) {
         return dao.deleteConfiguration(configuration = configuration)
     }
+
+    override fun getFavoriteConfigurations(): Flow<List<Configuration>> {
+        return dao.getFavoriteConfigurations()
+    }
 }

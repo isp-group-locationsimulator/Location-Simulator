@@ -11,6 +11,7 @@ data class Configuration(
     val name: String,
     val description: String,
     val components: List<ConfigComponent>,
+    val isFavorite: Boolean = false,
     @PrimaryKey val id: Int? = null
 )
 

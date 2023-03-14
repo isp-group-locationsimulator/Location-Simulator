@@ -16,4 +16,6 @@ interface ConfigurationRepository {
     suspend fun insertConfiguration(configuration: Configuration)
 
     suspend fun deleteConfiguration(configuration: Configuration)
+
+    fun getFavoriteConfigurations(): Flow<List<Configuration>>
 }

@@ -7,5 +7,6 @@ data class ConfigurationUseCases(
     val getConfigurations: GetConfigurations,
     val deleteConfiguration: DeleteConfiguration,
     val addConfiguration: AddConfiguration,
-    val getConfiguration: GetConfiguration
+    val getConfiguration: GetConfiguration,
+    val getFavoriteConfigurations: GetFavoriteConfigurations
 )

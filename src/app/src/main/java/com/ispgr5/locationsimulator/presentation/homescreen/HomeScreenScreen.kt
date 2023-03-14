@@ -5,6 +5,8 @@ import android.os.PowerManager
 import androidx.activity.ComponentActivity
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Button
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
@@ -20,6 +22,8 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ispgr5.locationsimulator.R
+import com.ispgr5.locationsimulator.data.storageManager.SoundStorageManager
+import com.ispgr5.locationsimulator.presentation.select.components.OneConfigurationListMember
 import com.ispgr5.locationsimulator.ui.theme.theBlue
 
 /**
@@ -31,8 +35,12 @@ import com.ispgr5.locationsimulator.ui.theme.theBlue
 fun HomeScreenScreen(
     navController: NavController,
     viewModel: HomeScreenViewModel = hiltViewModel(),
-    batteryOptDisableFunction: () -> Unit
+    batteryOptDisableFunction: () -> Unit,
+    soundStorageManager: SoundStorageManager,
+    toaster: (String) -> Unit
 ) {
+    viewModel.updateConfigurationWithErrorsState(soundStorageManager = soundStorageManager)
+    val state = viewModel.state.value
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.End
@@ -77,14 +85,40 @@ fun HomeScreenScreen(
             )
         }
         Spacer(modifier = Modifier.height(60.dp))
-        Button(onClick = {
-            viewModel.onEvent(HomeScreenEvent.SelectConfiguration)
-            navController.navigate("selectScreen")
-        }) {
-            Text(text = stringResource(id = R.string.homescreen_btn_quickstart), fontSize = 30.sp)
+
+        /**
+         * The Favorite Configurations
+         */
+        LazyColumn(
+            Modifier
+                .padding(15.dp)
+                .fillMaxWidth()
+        ) {
+            items(state.favoriteConfigurations) { configuration ->
+                OneConfigurationListMember(
+                    configuration = configuration,
+                    onToggleClicked = {navController.navigate("delayScreen?configurationId=${configuration.id}")},
+                    isToggled = false,
+                    onEditClicked = {},
+                    onSelectClicked = {},
+                    onExportClicked = {},
+                    hasErrors = state.configurationsWithErrors.find { conf -> conf.id == configuration.id } != null,
+                    onErrorInfoClicked = {
+                        for (error in viewModel.whatIsHisErrors(configuration = configuration, soundStorageManager = soundStorageManager)) {
+                            toaster("$error stringResource(id = R.string.not_found)")
+                        }
+                    },
+                    isFavorite = configuration.isFavorite,
+                    onFavoriteClicked = {}
+                )
+                Spacer(modifier = Modifier.height(6.dp))
+            }
         }
     }
 
+    /**
+     * battery optimization hint
+     */
     val pm = LocalContext.current.getSystemService(ComponentActivity.POWER_SERVICE) as PowerManager
     if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !pm.isIgnoringBatteryOptimizations(LocalContext.current.packageName)) {
         Column(modifier = Modifier.fillMaxSize(),
@@ -100,9 +134,3 @@ fun HomeScreenScreen(
         }
     }
 }
-/*@Composable
-@Preview
-@ExperimentalAnimationApi
-fun TestScreen(){
-    HomeScreenScreen()
-}*/

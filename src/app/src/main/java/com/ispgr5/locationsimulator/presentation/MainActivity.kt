@@ -69,7 +69,9 @@ class MainActivity : ComponentActivity() {
                         composable("homeScreen") {
                             HomeScreenScreen(
                                 navController = navController,
-                                batteryOptDisableFunction = {disableBatteryOptimization()}
+                                batteryOptDisableFunction = {disableBatteryOptimization()},
+                                soundStorageManager = soundStorageManager,
+                                toaster = toastAMessage
                             )
                         }
                         composable("infoScreen") {
