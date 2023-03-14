@@ -16,4 +16,5 @@ sealed class SelectEvent {
         val configuration: Configuration,
         val configurationStorageManager: ConfigurationStorageManager
     ) : SelectEvent()
+    data class FavoriteClicked(val configuration: Configuration, val toaster: (String) -> Unit) : SelectEvent()
 }

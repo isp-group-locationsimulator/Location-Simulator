@@ -26,7 +26,9 @@ fun OneConfigurationListMember(
     onSelectClicked: () -> Unit,
     onExportClicked: () -> Unit,
     hasErrors: Boolean,
-    onErrorInfoClicked: () -> Unit
+    onErrorInfoClicked: () -> Unit,
+    isFavorite: Boolean,
+    onFavoriteClicked: () -> Unit
 ) {
     val rowBackgroundColor: Color = Color.LightGray
 
@@ -75,6 +77,7 @@ fun OneConfigurationListMember(
                         }
                     }
                 }
+
                 Column(Modifier.weight(1f)) {
                     if (hasErrors) {
                         Button(
@@ -99,6 +102,37 @@ fun OneConfigurationListMember(
                         }
                     }
                 }
+                Column(Modifier.weight(1f)) {
+                    Button(
+                        onClick = onFavoriteClicked,
+                        contentPadding = PaddingValues(0.dp),
+                        enabled = true,
+                        shape = MaterialTheme.shapes.small,
+                        border = null,
+                        elevation = null,
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = Color.Transparent,
+                            contentColor = MaterialTheme.colors.primary,
+                            disabledBackgroundColor = Color.Transparent,
+                            disabledContentColor = MaterialTheme.colors.primary.copy(alpha = ContentAlpha.disabled),
+                        )
+                    ) {
+                        if (isFavorite) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_baseline_star_24),
+                                contentDescription = null,
+                                tint = Color.Yellow,
+                            )
+                        } else {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_baseline_star_outline_24),
+                                contentDescription = null,
+                                tint = Color.Black,
+                            )
+                        }
+                    }
+                }
+
                 Column(Modifier.weight(1f)) {
                     Icon(
                         painter = if (isToggled) {

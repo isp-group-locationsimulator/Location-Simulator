@@ -181,7 +181,9 @@ fun SelectScreen(
                                 for(error in viewModel.whatIsHisErrors(configuration = configuration, soundStorageManager = soundStorageManager)){
                                     toaster("$error $notFound")
                                 }
-                            }
+                            },
+                            isFavorite = configuration.isFavorite,
+                            onFavoriteClicked = {viewModel.onEvent(SelectEvent.FavoriteClicked(configuration, toaster))}
                         )
                     }
                     if (state.selectedConfigurationForDeletion?.id == configuration.id) {

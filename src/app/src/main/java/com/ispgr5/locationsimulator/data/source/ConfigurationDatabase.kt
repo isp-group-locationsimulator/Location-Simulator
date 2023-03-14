@@ -11,7 +11,7 @@ import com.ispgr5.locationsimulator.domain.model.ConfigurationComponentConverter
  */
 @Database(
     entities = [Configuration::class],
-    version = 5,
+    version = 6,
     exportSchema = false
 )
 @TypeConverters(ConfigurationComponentConverter::class)
