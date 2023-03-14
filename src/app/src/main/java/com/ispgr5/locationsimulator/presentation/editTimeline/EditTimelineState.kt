@@ -5,6 +5,7 @@ import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 data class EditTimelineState(
     val name: String = "",
     val description: String = "",
+    val randomOrderPlayback: Boolean = false,
     val components: List<ConfigComponent> = emptyList(),
     val currentTimelineIndex: Int = -1,
     val current: ConfigComponent? = null

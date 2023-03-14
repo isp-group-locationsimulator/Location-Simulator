@@ -33,6 +33,7 @@ class EditTimelineViewModel @Inject constructor(
                         _state.value = _state.value.copy(
                             name = configuration.name,
                             description = configuration.description,
+                            randomOrderPlayback = configuration.randomOrderPlayback,
                             components = configuration.components
                         )
                     }
@@ -213,6 +214,11 @@ class EditTimelineViewModel @Inject constructor(
             is EditTimelineEvent.RecordAudio ->{
 
             }
+            is EditTimelineEvent.ChangedRandomOrderPlayback -> {
+                _state.value = _state.value.copy(
+                    randomOrderPlayback = event.randomOrderPlayback
+                )
+            }
         }
         saveConfiguration()
     }
@@ -234,6 +240,7 @@ class EditTimelineViewModel @Inject constructor(
                         id = currentConfigurationId,
                         name = _state.value.name,
                         description = _state.value.description,
+                        randomOrderPlayback = _state.value.randomOrderPlayback,
                         components = _state.value.components
                     )
                 )

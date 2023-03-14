@@ -157,6 +157,7 @@ class ConfigurationStorageManager(
                             Configuration(
                                 name = jsonObj.get("name") as String,
                                 description = jsonObj.get("description") as String,
+                                randomOrderPlayback = jsonObj.getBoolean("randomOrderPlayback"),
                                 components = components
                             )
                         )

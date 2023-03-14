@@ -91,6 +91,7 @@ class SelectViewModel @Inject constructor(
                     val confInList = Configuration(
                         name = event.configuration.name,
                         description = event.configuration.description,
+                        randomOrderPlayback = event.configuration.randomOrderPlayback,
                         components = event.configuration.components,
                         isFavorite = !event.configuration.isFavorite,
                         id = event.configuration.id

@@ -34,12 +34,11 @@ import com.ispgr5.locationsimulator.presentation.homescreen.InfoScreen
 import com.ispgr5.locationsimulator.presentation.run.InfinityService
 import com.ispgr5.locationsimulator.presentation.run.RunScreen
 import com.ispgr5.locationsimulator.presentation.select.SelectScreen
-import com.ispgr5.locationsimulator.presentation.sound.SoundScreen
 import com.ispgr5.locationsimulator.presentation.sound.SoundDialog
+import com.ispgr5.locationsimulator.presentation.sound.SoundScreen
 import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.serialization.ExperimentalSerializationApi
-import java.io.File
 import java.io.FileOutputStream
 
 // TODO: Add KDoc to this class and methods.
@@ -162,12 +161,13 @@ class MainActivity : ComponentActivity() {
      * Starts the background service, which plays the audio and vibration
      */
     @OptIn(ExperimentalSerializationApi::class)
-    val startService: (List<ConfigComponent>) -> Unit = fun(config: List<ConfigComponent>) {
+    val startService: (List<ConfigComponent>, Boolean) -> Unit = fun(config: List<ConfigComponent>, randomOrderPlayback: Boolean) {
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         Intent(this, InfinityService::class.java).also {
             it.action = "START"
             it.putExtra("config", ConfigurationComponentConverter().componentListToString(config))
             it.putExtra("filesDir", filesDir.toString())
+            it.putExtra("randomOrderPlayback", randomOrderPlayback.toString())
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 startForegroundService(it)
             } else {

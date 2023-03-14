@@ -41,4 +41,5 @@
     <string name="soundscreen_stopplayback">Abspielen Stoppen</string>
     <string name="soundscreen_dialog_title">Geben Sie einen Namen ein:</string>
     <string name="soundscreen_dialog_button">Bestätigen</string>
+    <string name="editTimeline_randomOrderPlayback">Zufällige Reihenfolge</string>
 </resources>

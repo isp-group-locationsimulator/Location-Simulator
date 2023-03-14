@@ -40,4 +40,5 @@
     <string name="soundscreen_stopplayback">Stop Playback</string>
     <string name="soundscreen_dialog_title">Enter a name:</string>
     <string name="soundscreen_dialog_button">Confirm</string>
+    <string name="editTimeline_randomOrderPlayback">Random order</string>
 </resources>

@@ -9,5 +9,6 @@ import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 data class EditScreenState(
     val name: String = "",
     val description: String = "",
+    val randomOrderPlayback: Boolean = false,
     val components: List<ConfigComponent> = emptyList()
 )

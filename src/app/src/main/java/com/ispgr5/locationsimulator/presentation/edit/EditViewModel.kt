@@ -39,6 +39,7 @@ class EditViewModel @Inject constructor(
                         _state.value = _state.value.copy(
                             name = configuration.name,
                             description = configuration.description,
+                            randomOrderPlayback = configuration.randomOrderPlayback,
                             components = configuration.components
                         )
                     }
@@ -73,6 +74,7 @@ class EditViewModel @Inject constructor(
                             Configuration(
                                 id = currentConfigurationId,
                                 name = _state.value.name,
+                                randomOrderPlayback = _state.value.randomOrderPlayback,
                                 description = _state.value.description,
                                 //TODO This is just an example for testing. Enter the user input here
                                 components = listOf(
