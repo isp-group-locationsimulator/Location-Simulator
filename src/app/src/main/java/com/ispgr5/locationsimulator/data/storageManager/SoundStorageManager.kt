@@ -17,16 +17,6 @@ import java.net.URI
 class SoundStorageManager(private val mainActivity: MainActivity) {
 
 	/**
-	 * This variable lets us select a file and get its Uri.
-	 * At the moment redundant, to be used later (maybe)
-	 */
-	private val moveFileToFolder = mainActivity.registerForActivityResult(
-		ActivityResultContracts.OpenDocument()
-	) {
-		println(it.toString())
-	}
-
-	/**
 	 * This variable lets us copy a file that we choose to our private dir.
 	 */
 	private val copyFile =

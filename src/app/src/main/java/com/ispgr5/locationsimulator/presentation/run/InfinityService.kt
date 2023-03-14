@@ -78,7 +78,7 @@ class InfinityService : Service() {
 				getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
 			vibratorManager.defaultVibrator
 		} else {
-			@Suppress("DEPRECATION")
+			@Suppress("DEPRECATION") // Needed for the support of older Android versions.
 			getSystemService(VIBRATOR_SERVICE) as Vibrator
 		}
 
@@ -136,6 +136,7 @@ class InfinityService : Service() {
 					)
 				} else {
 					Log.d("Signal-Infinity", "Creating Vibration... Duration: $duration ms")
+					@Suppress("DEPRECATION") // Needed for the support of older Android versions.
 					vibrator.vibrate(duration)
 				}
 				Log.d("Signal-Infinity", "Starting sleep... Pause: $pause ms")
@@ -166,7 +167,7 @@ class InfinityService : Service() {
 					it.release()
 				}
 			}
-			stopForeground(true)
+			stopForeground(true) // TODO: Deprecated. Replace with stopForeground(0)?
 			stopSelf()
 		} catch (e: Exception) {
 			Log.d("debug", "Service stopped without being started: ${e.message}")
@@ -208,6 +209,7 @@ class InfinityService : Service() {
 				PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_MUTABLE)
 			}
 
+		@Suppress("DEPRECATION") // Needed for the support of older Android versions.
 		val builder: Notification.Builder =
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) Notification.Builder(
 				this,
