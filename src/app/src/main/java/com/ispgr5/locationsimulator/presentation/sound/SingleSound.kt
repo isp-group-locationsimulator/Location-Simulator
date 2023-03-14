@@ -20,49 +20,51 @@ import com.ispgr5.locationsimulator.R
  */
 @Composable
 fun SingleSound(
-    soundName: String,
-    onPlayClicked: () -> Unit,
-    onSelectClicked: () -> Unit,
-    onDeleteClicked: () -> Unit
+	soundName: String,
+	onPlayClicked: () -> Unit,
+	onSelectClicked: () -> Unit,
+	onDeleteClicked: () -> Unit
 ) {
-    Row(Modifier.padding(horizontal = 5.dp)) {
-        /**
-         * Play this Sound Button
-         */
-        Button(
-            modifier = Modifier.height(intrinsicSize = IntrinsicSize.Max),
-            colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
-            onClick = onPlayClicked
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.baseline_play_arrow_24),
-                contentDescription = null
-            )
-        }
+	Row(Modifier.padding(horizontal = 5.dp)) {
+		/**
+		 * Play this Sound Button
+		 */
+		Button(
+			modifier = Modifier.height(intrinsicSize = IntrinsicSize.Max),
+			colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
+			onClick = onPlayClicked
+		) {
+			Icon(
+				painter = painterResource(id = R.drawable.baseline_play_arrow_24),
+				contentDescription = null
+			)
+		}
 
-        /**
-         * Button with the sound Name in it. Click to Select
-         */
-        Button(
-            modifier = Modifier.height(intrinsicSize = IntrinsicSize.Max).weight(1f),
-            colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
-            onClick = onSelectClicked
-        ) {
-            Text(text = soundName)
-        }
+		/**
+		 * Button with the sound Name in it. Click to Select
+		 */
+		Button(
+			modifier = Modifier
+				.height(intrinsicSize = IntrinsicSize.Max)
+				.weight(1f),
+			colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
+			onClick = onSelectClicked
+		) {
+			Text(text = soundName)
+		}
 
-        /**
-         * Button to delete the sound.
-         */
-        Button(
-            modifier = Modifier.height(intrinsicSize = IntrinsicSize.Max),
-            colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
-            onClick = onDeleteClicked
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_baseline_delete_outline_24),
-                contentDescription = null
-            )
-        }
-    }
+		/**
+		 * Button to delete the sound.
+		 */
+		Button(
+			modifier = Modifier.height(intrinsicSize = IntrinsicSize.Max),
+			colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
+			onClick = onDeleteClicked
+		) {
+			Icon(
+				painter = painterResource(id = R.drawable.ic_baseline_delete_outline_24),
+				contentDescription = null
+			)
+		}
+	}
 }

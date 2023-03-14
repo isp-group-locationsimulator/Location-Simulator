@@ -9,13 +9,13 @@ import kotlinx.coroutines.flow.Flow
  */
 interface ConfigurationRepository {
 
-    fun getConfigurations(): Flow<List<Configuration>>
+	fun getConfigurations(): Flow<List<Configuration>>
 
-    suspend fun getConfigurationById(id: Int): Configuration?
+	suspend fun getConfigurationById(id: Int): Configuration?
 
-    suspend fun insertConfiguration(configuration: Configuration)
+	suspend fun insertConfiguration(configuration: Configuration)
 
-    suspend fun deleteConfiguration(configuration: Configuration)
+	suspend fun deleteConfiguration(configuration: Configuration)
 
-    fun getFavoriteConfigurations(): Flow<List<Configuration>>
+	fun getFavoriteConfigurations(): Flow<List<Configuration>>
 }

@@ -33,116 +33,132 @@ import com.ispgr5.locationsimulator.ui.theme.theBlue
 @ExperimentalAnimationApi
 @Composable
 fun HomeScreenScreen(
-    navController: NavController,
-    viewModel: HomeScreenViewModel = hiltViewModel(),
-    batteryOptDisableFunction: () -> Unit,
-    soundStorageManager: SoundStorageManager,
-    toaster: (String) -> Unit
+	navController: NavController,
+	viewModel: HomeScreenViewModel = hiltViewModel(),
+	batteryOptDisableFunction: () -> Unit,
+	soundStorageManager: SoundStorageManager,
+	toaster: (String) -> Unit
 ) {
-    viewModel.updateConfigurationWithErrorsState(soundStorageManager = soundStorageManager)
-    val state = viewModel.state.value
-    val notFound: String = stringResource(id = R.string.not_found)
+	viewModel.updateConfigurationWithErrorsState(soundStorageManager = soundStorageManager)
+	val state = viewModel.state.value
+	val notFound: String = stringResource(id = R.string.not_found)
 
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.End
-    ) {
-        Button(onClick = {
-            navController.navigate("infoScreen")
-        }, modifier = Modifier.padding(5.dp)) {
-            Icon(
-                painter = painterResource(id = R.drawable.baseline_info_24),
-                contentDescription = ""
-            )
-        }
-    }
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(30.dp),
-        verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Spacer(modifier = Modifier.height(110.dp))
-        Text(text = stringResource(id = R.string.homescreen_appname), fontSize = 40.sp, color = theBlue)
+	Row(
+		modifier = Modifier.fillMaxWidth(),
+		horizontalArrangement = Arrangement.End
+	) {
+		Button(onClick = {
+			navController.navigate("infoScreen")
+		}, modifier = Modifier.padding(5.dp)) {
+			Icon(
+				painter = painterResource(id = R.drawable.baseline_info_24),
+				contentDescription = ""
+			)
+		}
+	}
+	Column(
+		modifier = Modifier
+			.fillMaxSize()
+			.padding(30.dp),
+		verticalArrangement = Arrangement.Top,
+		horizontalAlignment = Alignment.CenterHorizontally
+	) {
+		Spacer(modifier = Modifier.height(110.dp))
+		Text(
+			text = stringResource(id = R.string.homescreen_appname),
+			fontSize = 40.sp,
+			color = theBlue
+		)
 
-    }
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Spacer(modifier = Modifier.height(50.dp))
-        Button(onClick = {
-            viewModel.onEvent(HomeScreenEvent.SelectConfiguration)
-            navController.navigate("selectScreen")
-            Modifier
-                .height(100.dp)
-                .width(300.dp)
+	}
+	Column(
+		modifier = Modifier.fillMaxSize(),
+		verticalArrangement = Arrangement.Center,
+		horizontalAlignment = Alignment.CenterHorizontally
+	) {
+		Spacer(modifier = Modifier.height(50.dp))
+		Button(onClick = {
+			viewModel.onEvent(HomeScreenEvent.SelectConfiguration)
+			navController.navigate("selectScreen")
+			Modifier
+				.height(100.dp)
+				.width(300.dp)
 
-        }) {
-            Text(
-                text = stringResource(id = R.string.homescreen_btn_select_profile),
-                fontSize = 30.sp
-            )
-        }
-        Spacer(modifier = Modifier.height(60.dp))
+		}) {
+			Text(
+				text = stringResource(id = R.string.homescreen_btn_select_profile),
+				fontSize = 30.sp
+			)
+		}
+		Spacer(modifier = Modifier.height(60.dp))
 
-        /**
-         * The Favorite Configurations
-         */
-        LazyColumn(
-            Modifier
-                .padding(15.dp)
-                .fillMaxWidth()
-        ) {
-            items(state.favoriteConfigurations) { configuration ->
-                OneConfigurationListMember(
-                    configuration = configuration,
-                    onToggleClicked = {
-                        if (state.configurationsWithErrors.find { conf -> conf.id == configuration.id } == null) {
-                            navController.navigate("delayScreen?configurationId=${configuration.id}")
-                        } else {
-                            for (error in viewModel.whatIsHisErrors(configuration = configuration, soundStorageManager = soundStorageManager)) {
-                                toaster("$error $notFound")
-                            }
-                        }
-                    },
-                    isToggled = false,
-                    onEditClicked = {},
-                    onSelectClicked = {},
-                    onExportClicked = {},
-                    hasErrors = state.configurationsWithErrors.find { conf -> conf.id == configuration.id } != null,
-                    onErrorInfoClicked = {
-                        for (error in viewModel.whatIsHisErrors(configuration = configuration, soundStorageManager = soundStorageManager)) {
-                            toaster("$error $notFound")
-                        }
-                    },
-                    isFavorite = configuration.isFavorite,
-                    onFavoriteClicked = {}
-                )
-                Spacer(modifier = Modifier.height(6.dp))
-            }
-        }
-    }
+		/**
+		 * The Favorite Configurations
+		 */
+		LazyColumn(
+			Modifier
+				.padding(15.dp)
+				.fillMaxWidth()
+		) {
+			items(state.favoriteConfigurations) { configuration ->
+				OneConfigurationListMember(
+					configuration = configuration,
+					onToggleClicked = {
+						if (state.configurationsWithErrors.find { conf -> conf.id == configuration.id } == null) {
+							navController.navigate("delayScreen?configurationId=${configuration.id}")
+						} else {
+							for (error in viewModel.whatIsHisErrors(
+								configuration = configuration,
+								soundStorageManager = soundStorageManager
+							)) {
+								toaster("$error $notFound")
+							}
+						}
+					},
+					isToggled = false,
+					onEditClicked = {},
+					onSelectClicked = {},
+					onExportClicked = {},
+					hasErrors = state.configurationsWithErrors.find { conf -> conf.id == configuration.id } != null,
+					onErrorInfoClicked = {
+						for (error in viewModel.whatIsHisErrors(
+							configuration = configuration,
+							soundStorageManager = soundStorageManager
+						)) {
+							toaster("$error $notFound")
+						}
+					},
+					isFavorite = configuration.isFavorite,
+					onFavoriteClicked = {}
+				)
+				Spacer(modifier = Modifier.height(6.dp))
+			}
+		}
+	}
 
-    /**
-     * battery optimization hint
-     */
-    val pm = LocalContext.current.getSystemService(ComponentActivity.POWER_SERVICE) as PowerManager
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !pm.isIgnoringBatteryOptimizations(LocalContext.current.packageName)) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Bottom,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(text = stringResource(id = R.string.battery_opt_recommendation), textAlign = TextAlign.Center)
-            //var forceUpdate:Boolean by remember { mutableStateOf(true) }
-            Button(onClick = {
-                viewModel.onEvent(HomeScreenEvent.DisableBatteryOptimization { batteryOptDisableFunction() })
-            }) {
-                Text(text = stringResource(id = R.string.battery_opt_button))
-            }
-        }
-    }
+	/**
+	 * battery optimization hint
+	 */
+	val pm = LocalContext.current.getSystemService(ComponentActivity.POWER_SERVICE) as PowerManager
+	if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !pm.isIgnoringBatteryOptimizations(
+			LocalContext.current.packageName
+		)
+	) {
+		Column(
+			modifier = Modifier.fillMaxSize(),
+			verticalArrangement = Arrangement.Bottom,
+			horizontalAlignment = Alignment.CenterHorizontally
+		) {
+			Text(
+				text = stringResource(id = R.string.battery_opt_recommendation),
+				textAlign = TextAlign.Center
+			)
+			//var forceUpdate:Boolean by remember { mutableStateOf(true) }
+			Button(onClick = {
+				viewModel.onEvent(HomeScreenEvent.DisableBatteryOptimization { batteryOptDisableFunction() })
+			}) {
+				Text(text = stringResource(id = R.string.battery_opt_button))
+			}
+		}
+	}
 }

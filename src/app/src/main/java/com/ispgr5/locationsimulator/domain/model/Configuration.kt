@@ -8,12 +8,12 @@ import androidx.room.PrimaryKey
  */
 @Entity
 data class Configuration(
-    val name: String,
-    val description: String,
-    val randomOrderPlayback: Boolean,
-    val components: List<ConfigComponent>,
-    val isFavorite: Boolean = false,
-    @PrimaryKey val id: Int? = null
+	val name: String,
+	val description: String,
+	val randomOrderPlayback: Boolean,
+	val components: List<ConfigComponent>,
+	val isFavorite: Boolean = false,
+	@PrimaryKey val id: Int? = null
 )
 
 class InvalidConfigurationException(message: String) : Exception(message)

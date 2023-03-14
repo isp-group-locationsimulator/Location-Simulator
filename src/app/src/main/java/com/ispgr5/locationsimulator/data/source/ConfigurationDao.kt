@@ -11,18 +11,18 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface ConfigurationDao {
 
-    @Query("SELECT * FROM configuration")
-    fun getConfigurations(): Flow<List<Configuration>>
+	@Query("SELECT * FROM configuration")
+	fun getConfigurations(): Flow<List<Configuration>>
 
-    @Query("SELECT * FROM configuration WHERE id = :id")
-    suspend fun getConfigurationById(id: Int): Configuration?
+	@Query("SELECT * FROM configuration WHERE id = :id")
+	suspend fun getConfigurationById(id: Int): Configuration?
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertConfiguration(configuration: Configuration)
+	@Insert(onConflict = OnConflictStrategy.REPLACE)
+	suspend fun insertConfiguration(configuration: Configuration)
 
-    @Delete
-    suspend fun deleteConfiguration(configuration: Configuration)
+	@Delete
+	suspend fun deleteConfiguration(configuration: Configuration)
 
-    @Query("SELECT * FROM configuration WHERE isFavorite = true")
-    fun getFavoriteConfigurations(): Flow<List<Configuration>>
+	@Query("SELECT * FROM configuration WHERE isFavorite = true")
+	fun getFavoriteConfigurations(): Flow<List<Configuration>>
 }

@@ -26,46 +26,52 @@ import com.ispgr5.locationsimulator.presentation.editTimeline.components.Timelin
 @ExperimentalAnimationApi
 @Composable
 fun DelayScreen(
-    navController: NavController,
-    viewModel: DelayViewModel = hiltViewModel(),
-    startServiceFunction: (List<ConfigComponent>, Boolean) -> Unit,
+	navController: NavController,
+	viewModel: DelayViewModel = hiltViewModel(),
+	startServiceFunction: (List<ConfigComponent>, Boolean) -> Unit,
 ) {
-    //The state from viewmodel
-    val state = viewModel.state.value
+	//The state from viewmodel
+	val state = viewModel.state.value
 
-    Column(
-        Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        if (state.configuration == null) {
-            Text(text = "Configuration is null")
-        } else {
-            Text(text = state.configuration.name)
-            Text(text = state.configuration.description)
-        }
-        Button(
-            onClick = {
-                viewModel.onEvent(DelayEvent.StartClicked(startServiceFunction))
-                navController.navigate("runScreen")
-            },
-            enabled = state.configuration != null
-        ) {
-            Text(text = stringResource(id = R.string.delay_btn_start))
-        }
+	Column(
+		Modifier.fillMaxWidth(),
+		horizontalAlignment = Alignment.CenterHorizontally
+	) {
+		if (state.configuration == null) {
+			Text(text = "Configuration is null")
+		} else {
+			Text(text = state.configuration.name)
+			Text(text = state.configuration.description)
+		}
+		Button(
+			onClick = {
+				viewModel.onEvent(DelayEvent.StartClicked(startServiceFunction))
+				navController.navigate("runScreen")
+			},
+			enabled = state.configuration != null
+		) {
+			Text(text = stringResource(id = R.string.delay_btn_start))
+		}
 
-        /**
-         * The Timeline
-         */
-        Spacer(modifier = Modifier.size(8.dp))
-        Divider(color = MaterialTheme.colors.primary, thickness = 1.dp)
-        LazyColumn(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            items(1) {
-                state.configuration?.components?.let {
-                    Timeline(components = it, selectedComponent = null, onSelectAComponent = fun(_: ConfigComponent) {}, onAddClicked = fun(){}, showAddButton = false)
-                }
-            }
-        }
-    }
+		/**
+		 * The Timeline
+		 */
+		Spacer(modifier = Modifier.size(8.dp))
+		Divider(color = MaterialTheme.colors.primary, thickness = 1.dp)
+		LazyColumn(
+			modifier = Modifier.fillMaxSize()
+		) {
+			items(1) {
+				state.configuration?.components?.let {
+					Timeline(
+						components = it,
+						selectedComponent = null,
+						onSelectAComponent = fun(_: ConfigComponent) {},
+						onAddClicked = fun() {},
+						showAddButton = false
+					)
+				}
+			}
+		}
+	}
 }

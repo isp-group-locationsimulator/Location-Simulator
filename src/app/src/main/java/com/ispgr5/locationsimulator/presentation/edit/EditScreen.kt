@@ -1,7 +1,10 @@
 package com.ispgr5.locationsimulator.presentation.edit
 
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
@@ -21,45 +24,45 @@ import com.ispgr5.locationsimulator.data.storageManager.ConfigurationStorageMana
 @ExperimentalAnimationApi
 @Composable
 fun EditScreen(
-    navController: NavController,
-    viewModel: EditViewModel = hiltViewModel(),
-    configurationStorageManager: ConfigurationStorageManager
+	navController: NavController,
+	viewModel: EditViewModel = hiltViewModel(),
+	configurationStorageManager: ConfigurationStorageManager
 ) {
-    //The state from viewmodel
-    val state = viewModel.state.value
+	//The state from viewmodel
+	val state = viewModel.state.value
 
-    Column(
-        Modifier
-            .padding(15.dp)
-            .fillMaxSize()
-    ) {
-        //The name Input Field
-        Text(text = stringResource(id = R.string.edit_name))
-        TextField(
-            value = state.name,
-            onValueChange = { viewModel.onEvent(EditEvent.EnteredName(it)) },
-            modifier = Modifier.fillMaxWidth()
-        )
-        //The description Input Field
-        Text(text = stringResource(id = R.string.edit_Description))
-        TextField(
-            value = state.description,
-            onValueChange = { viewModel.onEvent(EditEvent.EnteredDescription(it)) },
-            modifier = Modifier.fillMaxWidth()
-        )
-        //The save Configuration Button
-        Button(onClick = {
-            viewModel.onEvent(EditEvent.SaveConfiguration)
-            //navigate back to the Select Screen
-            navController.navigate("selectScreen")
-        }) {
-            Text(text = stringResource(id = R.string.edit_Save))
-        }
-        Button(onClick = {
-            viewModel.onEvent(EditEvent.SelectedImportConfiguration(configurationStorageManager = configurationStorageManager))
-            navController.navigateUp()
-        }) {
-            Text(text = stringResource(id = R.string.edit_Import))
-        }
-    }
+	Column(
+		Modifier
+			.padding(15.dp)
+			.fillMaxSize()
+	) {
+		//The name Input Field
+		Text(text = stringResource(id = R.string.edit_name))
+		TextField(
+			value = state.name,
+			onValueChange = { viewModel.onEvent(EditEvent.EnteredName(it)) },
+			modifier = Modifier.fillMaxWidth()
+		)
+		//The description Input Field
+		Text(text = stringResource(id = R.string.edit_Description))
+		TextField(
+			value = state.description,
+			onValueChange = { viewModel.onEvent(EditEvent.EnteredDescription(it)) },
+			modifier = Modifier.fillMaxWidth()
+		)
+		//The save Configuration Button
+		Button(onClick = {
+			viewModel.onEvent(EditEvent.SaveConfiguration)
+			//navigate back to the Select Screen
+			navController.navigate("selectScreen")
+		}) {
+			Text(text = stringResource(id = R.string.edit_Save))
+		}
+		Button(onClick = {
+			viewModel.onEvent(EditEvent.SelectedImportConfiguration(configurationStorageManager = configurationStorageManager))
+			navController.navigateUp()
+		}) {
+			Text(text = stringResource(id = R.string.edit_Import))
+		}
+	}
 }

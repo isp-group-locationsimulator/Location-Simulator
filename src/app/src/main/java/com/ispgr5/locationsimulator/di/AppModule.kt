@@ -22,43 +22,43 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
-    /**
-     * Creates the Database
-     */
-    @Provides
-    @Singleton
-    fun provideConfigurationDatabase(app: Application): ConfigurationDatabase {
-        return Room.databaseBuilder(
-            app,
-            ConfigurationDatabase::class.java,
-            ConfigurationDatabase.DATABASE_NAME
-        )
-            .fallbackToDestructiveMigration()
-            .addTypeConverter(ConfigurationComponentConverter())
-            .build()
-    }
+	/**
+	 * Creates the Database
+	 */
+	@Provides
+	@Singleton
+	fun provideConfigurationDatabase(app: Application): ConfigurationDatabase {
+		return Room.databaseBuilder(
+			app,
+			ConfigurationDatabase::class.java,
+			ConfigurationDatabase.DATABASE_NAME
+		)
+			.fallbackToDestructiveMigration()
+			.addTypeConverter(ConfigurationComponentConverter())
+			.build()
+	}
 
-    /**
-     * Creates the Database Repository
-     */
-    @Provides
-    @Singleton
-    fun provideConfigurationRepository(db: ConfigurationDatabase): ConfigurationRepository {
-        return ConfigurationRepositoryImpl(db.configurationDao)
-    }
+	/**
+	 * Creates the Database Repository
+	 */
+	@Provides
+	@Singleton
+	fun provideConfigurationRepository(db: ConfigurationDatabase): ConfigurationRepository {
+		return ConfigurationRepositoryImpl(db.configurationDao)
+	}
 
-    /**
-     * Creates the Database Interface (UseCases)
-     */
-    @Provides
-    @Singleton
-    fun provideConfigurationUseCases(repository: ConfigurationRepository): ConfigurationUseCases {
-        return ConfigurationUseCases(
-            getConfigurations = GetConfigurations(repository),
-            deleteConfiguration = DeleteConfiguration(repository),
-            addConfiguration = AddConfiguration(repository),
-            getConfiguration = GetConfiguration(repository),
-            getFavoriteConfigurations = GetFavoriteConfigurations(repository)
-        )
-    }
+	/**
+	 * Creates the Database Interface (UseCases)
+	 */
+	@Provides
+	@Singleton
+	fun provideConfigurationUseCases(repository: ConfigurationRepository): ConfigurationUseCases {
+		return ConfigurationUseCases(
+			getConfigurations = GetConfigurations(repository),
+			deleteConfiguration = DeleteConfiguration(repository),
+			addConfiguration = AddConfiguration(repository),
+			getConfiguration = GetConfiguration(repository),
+			getFavoriteConfigurations = GetFavoriteConfigurations(repository)
+		)
+	}
 }

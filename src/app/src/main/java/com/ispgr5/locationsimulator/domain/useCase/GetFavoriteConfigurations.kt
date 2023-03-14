@@ -8,9 +8,9 @@ import kotlinx.coroutines.flow.Flow
  * Interface to get all Configurations from Database where isFavorite = true
  */
 class GetFavoriteConfigurations(
-    private val repository: ConfigurationRepository
+	private val repository: ConfigurationRepository
 ) {
-    operator fun invoke(): Flow<List<Configuration>> {
-        return repository.getFavoriteConfigurations()
-    }
+	operator fun invoke(): Flow<List<Configuration>> {
+		return repository.getFavoriteConfigurations()
+	}
 }

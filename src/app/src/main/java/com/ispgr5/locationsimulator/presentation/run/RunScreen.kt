@@ -20,23 +20,25 @@ import com.ispgr5.locationsimulator.R
 @ExperimentalAnimationApi
 @Composable
 fun RunScreen(
-    navController: NavController,
-    stopServiceFunction : () -> Unit,
-    viewModel: RunViewModel = hiltViewModel()
+	navController: NavController,
+	stopServiceFunction: () -> Unit,
+	viewModel: RunViewModel = hiltViewModel()
 ) {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Button(
-            modifier = Modifier.width(200.dp).height(120.dp),
-            onClick = {
-            viewModel.onEvent(RunEvent.StopClicked(stopServiceFunction))
-            navController.navigateUp()
-        }) {
-            Text(text = stringResource(id = R.string.run_stop), fontSize = 30.sp)
-        }
-    }
+	Column(
+		modifier = Modifier.fillMaxSize(),
+		verticalArrangement = Arrangement.Center,
+		horizontalAlignment = Alignment.CenterHorizontally
+	) {
+		Button(
+			modifier = Modifier
+				.width(200.dp)
+				.height(120.dp),
+			onClick = {
+				viewModel.onEvent(RunEvent.StopClicked(stopServiceFunction))
+				navController.navigateUp()
+			}) {
+			Text(text = stringResource(id = R.string.run_stop), fontSize = 30.sp)
+		}
+	}
 
 }

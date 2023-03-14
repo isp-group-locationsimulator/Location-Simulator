@@ -16,20 +16,20 @@ import androidx.compose.ui.text.input.KeyboardType
  */
 @Composable
 fun MyNumberField(
-    //The Text shown over the Number Field
-    description: String,
-    //The Number shown in the Number Field
-    number: Int,
-    //The Function that will be called by a change
-    onValueChanges: (String) -> Unit
+	//The Text shown over the Number Field
+	description: String,
+	//The Number shown in the Number Field
+	number: Int,
+	//The Function that will be called by a change
+	onValueChanges: (String) -> Unit
 ) {
-    Column {
-        Text(text = description)
-        TextField(
-            value = number.toString(),
-            modifier = Modifier.fillMaxWidth(),
-            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.NumberPassword),
-            onValueChange = onValueChanges
-        )
-    }
+	Column {
+		Text(text = description)
+		TextField(
+			value = number.toString(),
+			modifier = Modifier.fillMaxWidth(),
+			keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.NumberPassword),
+			onValueChange = onValueChanges
+		)
+	}
 }
