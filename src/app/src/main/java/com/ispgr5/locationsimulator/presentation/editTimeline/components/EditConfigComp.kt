@@ -52,12 +52,16 @@ fun EditConfigComponent(
                 horizontalArrangement = Arrangement.SpaceAround
             ) {
                 Button(onClick = { onMoveLeftClicked(configComponent) }) {
-                    //TODO translate or replace with arrow
-                    Text(text = "LEFT")
+                    Icon(
+                        painter = painterResource(id = R.drawable.baseline_arrow_back_24),
+                        contentDescription = null
+                    )
                 }
                 Button(onClick = { onMoveRightClicked(configComponent) }) {
-                    //TODO translate or replace with arrow
-                    Text(text = "RIGHT")
+                    Icon(
+                        painter = painterResource(id = R.drawable.baseline_arrow_forward_24),
+                        contentDescription = null
+                    )
                 }
             }
 

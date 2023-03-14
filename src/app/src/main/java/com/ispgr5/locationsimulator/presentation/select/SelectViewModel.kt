@@ -84,8 +84,8 @@ class SelectViewModel @Inject constructor(
             }
             is SelectEvent.FavoriteClicked -> {
                 if (!event.configuration.isFavorite && state.value.configurations.filter { conf -> conf.isFavorite }.size >= 2){
-                    //TODO translate
-                    event.toaster("Es können nur 2 Konfigurationen Favoriten sein")
+                    //TODO Translate. Problem: We are not in a composable. Text is in String "selectscreen_favetoast"
+                    event.toaster("Sie können maximal zwei Konfigurationen als Favoriten wählen.")
                 }else{
                     val configurationListCopy = state.value.configurations.toMutableList()
                     val confInList = Configuration(

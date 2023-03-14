@@ -42,4 +42,5 @@
     <string name="soundscreen_dialog_title">Geben Sie einen Namen ein:</string>
     <string name="soundscreen_dialog_button">Bestätigen</string>
     <string name="editTimeline_randomOrderPlayback">Zufällige Reihenfolge</string>
+    <string name="selectscreen_favetoast">Sie können maximal zwei Konfigurationen als Favoriten wählen.</string>
 </resources>
