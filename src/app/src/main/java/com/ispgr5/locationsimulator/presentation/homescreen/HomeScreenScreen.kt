@@ -41,6 +41,8 @@ fun HomeScreenScreen(
 ) {
     viewModel.updateConfigurationWithErrorsState(soundStorageManager = soundStorageManager)
     val state = viewModel.state.value
+    val notFound: String = stringResource(id = R.string.not_found)
+
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.End
@@ -97,7 +99,15 @@ fun HomeScreenScreen(
             items(state.favoriteConfigurations) { configuration ->
                 OneConfigurationListMember(
                     configuration = configuration,
-                    onToggleClicked = {navController.navigate("delayScreen?configurationId=${configuration.id}")},
+                    onToggleClicked = {
+                        if (state.configurationsWithErrors.find { conf -> conf.id == configuration.id } == null) {
+                            navController.navigate("delayScreen?configurationId=${configuration.id}")
+                        } else {
+                            for (error in viewModel.whatIsHisErrors(configuration = configuration, soundStorageManager = soundStorageManager)) {
+                                toaster("$error $notFound")
+                            }
+                        }
+                    },
                     isToggled = false,
                     onEditClicked = {},
                     onSelectClicked = {},
@@ -105,7 +115,7 @@ fun HomeScreenScreen(
                     hasErrors = state.configurationsWithErrors.find { conf -> conf.id == configuration.id } != null,
                     onErrorInfoClicked = {
                         for (error in viewModel.whatIsHisErrors(configuration = configuration, soundStorageManager = soundStorageManager)) {
-                            toaster("$error stringResource(id = R.string.not_found)")
+                            toaster("$error $notFound")
                         }
                     },
                     isFavorite = configuration.isFavorite,
@@ -120,14 +130,16 @@ fun HomeScreenScreen(
      * battery optimization hint
      */
     val pm = LocalContext.current.getSystemService(ComponentActivity.POWER_SERVICE) as PowerManager
-    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !pm.isIgnoringBatteryOptimizations(LocalContext.current.packageName)) {
-        Column(modifier = Modifier.fillMaxSize(),
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !pm.isIgnoringBatteryOptimizations(LocalContext.current.packageName)) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Bottom,
-            horizontalAlignment = Alignment.CenterHorizontally) {
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             Text(text = stringResource(id = R.string.battery_opt_recommendation), textAlign = TextAlign.Center)
             //var forceUpdate:Boolean by remember { mutableStateOf(true) }
             Button(onClick = {
-                viewModel.onEvent(HomeScreenEvent.DisableBatteryOptimization{batteryOptDisableFunction()})
+                viewModel.onEvent(HomeScreenEvent.DisableBatteryOptimization { batteryOptDisableFunction() })
             }) {
                 Text(text = stringResource(id = R.string.battery_opt_button))
             }

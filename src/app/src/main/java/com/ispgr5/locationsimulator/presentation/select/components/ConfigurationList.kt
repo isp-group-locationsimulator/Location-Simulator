@@ -77,6 +77,31 @@ fun OneConfigurationListMember(
                         }
                     }
                 }
+
+                Column(Modifier.weight(1f)) {
+                    if (hasErrors) {
+                        Button(
+                            onClick = onErrorInfoClicked,
+                            contentPadding = PaddingValues(0.dp),
+                            enabled = true,
+                            shape = MaterialTheme.shapes.small,
+                            border = null,
+                            elevation = null,
+                            colors = ButtonDefaults.buttonColors(
+                                backgroundColor = Color.Transparent,
+                                contentColor = MaterialTheme.colors.primary,
+                                disabledBackgroundColor = Color.Transparent,
+                                disabledContentColor = MaterialTheme.colors.primary.copy(alpha = ContentAlpha.disabled),
+                            )
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_baseline_error_outline_24),
+                                contentDescription = null,
+                                tint = Color.Red,
+                            )
+                        }
+                    }
+                }
                 Column(Modifier.weight(1f)) {
                     Button(
                         onClick = onFavoriteClicked,
@@ -107,30 +132,7 @@ fun OneConfigurationListMember(
                         }
                     }
                 }
-                if (hasErrors) {
-                    Column(Modifier.weight(1f)) {
-                        Button(
-                            onClick = onErrorInfoClicked,
-                            contentPadding = PaddingValues(0.dp),
-                            enabled = true,
-                            shape = MaterialTheme.shapes.small,
-                            border = null,
-                            elevation = null,
-                            colors = ButtonDefaults.buttonColors(
-                                backgroundColor = Color.Transparent,
-                                contentColor = MaterialTheme.colors.primary,
-                                disabledBackgroundColor = Color.Transparent,
-                                disabledContentColor = MaterialTheme.colors.primary.copy(alpha = ContentAlpha.disabled),
-                            )
-                        ) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_baseline_error_outline_24),
-                                contentDescription = null,
-                                tint = Color.Red,
-                            )
-                        }
-                    }
-                }
+
                 Column(Modifier.weight(1f)) {
                     Icon(
                         painter = if (isToggled) {
