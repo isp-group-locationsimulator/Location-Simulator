@@ -82,6 +82,29 @@ class SelectViewModel @Inject constructor(
             is SelectEvent.SelectedExportConfiguration -> {
                 event.configurationStorageManager.safeConfigurationToStorage(event.configuration)
             }
+            is SelectEvent.FavoriteClicked -> {
+                if (!event.configuration.isFavorite && state.value.configurations.filter { conf -> conf.isFavorite }.size >= 2){
+                    //TODO translate
+                    event.toaster("Es können nur 2 Konfigurationen Favoriten sein")
+                }else{
+                    val configurationListCopy = state.value.configurations.toMutableList()
+                    val confInList = Configuration(
+                        name = event.configuration.name,
+                        description = event.configuration.description,
+                        components = event.configuration.components,
+                        isFavorite = !event.configuration.isFavorite,
+                        id = event.configuration.id
+                    )
+                    configurationListCopy[configurationListCopy.indexOfFirst{ conf -> conf.id == event.configuration.id }] = confInList
+
+                    _state.value = _state.value.copy(
+                        configurations = configurationListCopy
+                    )
+                    viewModelScope.launch {
+                        configurationUseCases.addConfiguration(confInList)
+                    }
+                }
+            }
         }
     }
 
