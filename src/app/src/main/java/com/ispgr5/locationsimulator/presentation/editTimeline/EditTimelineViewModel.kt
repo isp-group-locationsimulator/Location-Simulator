@@ -211,9 +211,6 @@ class EditTimelineViewModel @Inject constructor(
                     )
                 }
             }
-            is EditTimelineEvent.RecordAudio ->{
-
-            }
             is EditTimelineEvent.ChangedRandomOrderPlayback -> {
                 _state.value = _state.value.copy(
                     randomOrderPlayback = event.randomOrderPlayback
