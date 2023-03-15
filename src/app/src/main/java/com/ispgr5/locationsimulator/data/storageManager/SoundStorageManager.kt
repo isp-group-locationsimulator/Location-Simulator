@@ -165,4 +165,16 @@ class SoundStorageManager(private val mainActivity: MainActivity) {
 			pathToFile.delete()
 		}
 	}
+
+	/**
+	 * This function adds a file to the privateDir that is gets as an InputStream.
+	 * @param fileName The name the file should have.
+	 * @param inputStream The InputStream of the file.
+	 */
+	fun addSoundFile(fileName: String, inputStream: InputStream) {
+		val file = File(mainActivity.filesDir, fileName)
+		val outputStream = FileOutputStream(file)
+		val bytes = inputStream.readBytes() // This is not recommended, see https://www.baeldung.com/kotlin/inputstream-to-file . Should be changed.
+		outputStream.write(bytes)
+	}
 }

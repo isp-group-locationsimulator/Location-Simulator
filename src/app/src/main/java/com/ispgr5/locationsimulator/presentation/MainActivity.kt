@@ -2,6 +2,7 @@ package com.ispgr5.locationsimulator.presentation
 
 import android.app.Activity
 import android.content.Intent
+import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -40,6 +41,7 @@ import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.serialization.ExperimentalSerializationApi
 import java.io.FileOutputStream
+import java.io.InputStream
 
 // TODO: Add KDoc to this class and methods.
 @AndroidEntryPoint
@@ -54,6 +56,7 @@ class MainActivity : ComponentActivity() {
 	@OptIn(ExperimentalAnimationApi::class)
 	override fun onCreate(savedInstanceState: Bundle?) {
 		soundStorageManager = SoundStorageManager(this)
+		installFilesOnFirstStartup()
 		configurationStorageManager =
 			ConfigurationStorageManager(this, soundStorageManager = soundStorageManager)
 		super.onCreate(savedInstanceState)
@@ -248,5 +251,24 @@ class MainActivity : ComponentActivity() {
 
 	private val toastAMessage: (message: String) -> Unit = fun(message: String) {
 		Toast.makeText(this.applicationContext, message, Toast.LENGTH_SHORT).show()
+	}
+
+	/**
+	 * This function installs the audio files that come with the app.
+	 */
+	private fun installFilesOnFirstStartup() {
+		val preferences: SharedPreferences = getSharedPreferences("prefs", MODE_PRIVATE)
+		val firstStart: Boolean = preferences.getBoolean("firstStart", true)
+		if (firstStart) {
+
+			assets.list("sounds")?.forEach {
+				println("Warum? Sound: $it")
+				val inputStream: InputStream = assets.open("sounds/$it")
+				soundStorageManager.addSoundFile(it, inputStream)
+			}
+			val editor: SharedPreferences.Editor = preferences.edit()
+			editor.putBoolean("firstStart", false)
+			editor.apply()
+		}
 	}
 }
