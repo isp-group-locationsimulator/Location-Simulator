@@ -1,7 +1,10 @@
 package com.ispgr5.locationsimulator.data.storageManager
 
+import android.content.ContentValues
 import android.net.Uri
+import android.os.Build
 import android.os.Environment
+import android.provider.MediaStore
 import androidx.activity.result.contract.ActivityResultContracts
 import com.google.gson.Gson
 import com.ispgr5.locationsimulator.domain.model.*
@@ -38,29 +41,56 @@ class ConfigurationStorageManager(
 	 **********************************************/
 
 	/**
-	 * This function safes the given configuration into app local Download Folder(Android/data/com.ispgr5.locationsimulator/files/Download)
+	 * This function safes the given configuration into the external download folder
 	 */
-	@OptIn(ExperimentalSerializationApi::class)
 	fun safeConfigurationToStorage(configuration: Configuration) {
-		//this is the app local Download Folder(Android/data/com.ispgr5.locationsimulator/files/Download)
-		val downloadDir = mainActivity.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
-
 		//read current time and date and safe it with the filename(so there are no duplicates)
 		val dateTimeString = SimpleDateFormat(
 			"dd.MM.yyyy_HH:mm:ss",
 			Locale.getDefault()
 		).format(Date(System.currentTimeMillis()))
 
-		val file = File(downloadDir, configuration.name + "_" + dateTimeString + ".txt")
-		//when the user spams the Export Button and this function is called with in 1 second so the unique timestamp don't work
-		if (file.exists()) {
-			file.delete()
-		}
+		val jsonString = getConfigString(configuration)
 
+		//for android 10 or higher use the MediaStore API
+		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+			//set the correct file name, type and path
+			val values = ContentValues().apply {
+				put(MediaStore.Downloads.DISPLAY_NAME, configuration.name + "_" + dateTimeString + ".txt")
+				put(MediaStore.Downloads.MIME_TYPE, "text/plain")
+				put(MediaStore.Downloads.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS)
+			}
+
+			//send the configuration to the file using an output stream
+			val resolver = mainActivity.contentResolver
+			val uri = resolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values)
+			resolver.openOutputStream(uri!!)?.use { outputStream ->
+				outputStream.write(jsonString.toByteArray())
+				outputStream.close()
+			}
+		}
+		//for older versions access the file directly (NOT YET TESTED)
+		else {
+			//The external downloads directory
+			val downloadDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+			val file = File(downloadDir, configuration.name + "_" + dateTimeString + ".txt")
+
+			//when the user spams the Export Button and this function is called with in 1 second so the unique timestamp don't work
+			if (file.exists()) {
+				file.delete()
+			}
+
+			//write the Json String into the File
+			file.appendText(jsonString)
+		}
+	}
+
+	private fun getConfigString(configuration: Configuration): String {
 		//add the Configuration to the jsonString
 		val jsonString = JSONObject()
 		jsonString.put("name", configuration.name)
 		jsonString.put("description", configuration.description)
+		jsonString.put("randomOrderPlayback", configuration.randomOrderPlayback)
 		jsonString.put(
 			"configurationComponents",
 			ConfigurationComponentConverter().componentListToString(configuration.components)
@@ -94,10 +124,8 @@ class ConfigurationStorageManager(
 			"sounds", Gson().toJson(soundList.toTypedArray(), Array<SoundHelp>::class.java)
 		)
 
-		//write the Json String into the File
-		file.appendText(jsonString.toString())
+		return jsonString.toString()
 	}
-
 
 	/***********************************************\
 	 *                                             *

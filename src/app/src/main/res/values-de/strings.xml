@@ -43,4 +43,5 @@
     <string name="soundscreen_dialog_button">Bestätigen</string>
     <string name="editTimeline_randomOrderPlayback">Zufällige Reihenfolge</string>
     <string name="selectscreen_favetoast">Sie können maximal zwei Konfigurationen als Favoriten wählen.</string>
+    <string name="export_toast_message">Die Konfiguration wurde im Download Ordner gespeichert</string>
 </resources>

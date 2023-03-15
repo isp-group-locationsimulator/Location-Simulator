@@ -42,4 +42,5 @@
     <string name="soundscreen_dialog_button">Confirm</string>
     <string name="editTimeline_randomOrderPlayback">Random order</string>
     <string name="selectscreen_favetoast">You can select only up to two configurations as a favourite.</string>
+    <string name="export_toast_message">Configuration saved to download folder</string>
 </resources>

@@ -161,6 +161,7 @@ fun SelectScreen(
 									sizeOfDeletionConfiguration = it
 								}
 							}) {
+						val toastString = stringResource(id = R.string.export_toast_message)
 						OneConfigurationListMember(
 							configuration = configuration,
 							isToggled = configuration.id == state.toggledConfiguration?.id,
@@ -180,7 +181,7 @@ fun SelectScreen(
 										configurationStorageManager = configurationStorageManager
 									)
 								)
-								toaster("Android/data/com.ispgr5.locationsimulator/files/Download")
+								toaster(toastString)
 							},
 							hasErrors = state.configurationsWithErrors.find { conf -> conf.id == configuration.id } != null,
 							onErrorInfoClicked = {
