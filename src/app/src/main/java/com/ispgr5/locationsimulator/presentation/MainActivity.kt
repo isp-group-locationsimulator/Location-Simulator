@@ -204,16 +204,13 @@ class MainActivity : ComponentActivity() {
 
 	@SuppressLint("BatteryLife") // We need to have the Service run in the background as long as the user wants. The app only runs, when the user explicitly hits start.
 	private fun disableBatteryOptimization() {
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-			val intent = Intent()
-			val pm = getSystemService(POWER_SERVICE) as PowerManager
-			if (!pm.isIgnoringBatteryOptimizations(packageName)) {
-				intent.action =
-					android.provider.Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
-				intent.data = Uri.parse("package:$packageName")
-				startActivity(intent)
-			}
-		}
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return
+		val pm = getSystemService(POWER_SERVICE) as PowerManager
+		if (pm.isIgnoringBatteryOptimizations(packageName)) return
+		val intent = Intent()
+		intent.action = android.provider.Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+		intent.data = Uri.parse("package:$packageName")
+		startActivity(intent)
 	}
 
 	/**
@@ -234,10 +231,9 @@ class MainActivity : ComponentActivity() {
 	 */
 	override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 		super.onActivityResult(requestCode, resultCode, data)
-		if (requestCode == 0 && resultCode == Activity.RESULT_OK) {
-			popUpState.value = true
-			recordedAudioUri = data?.data
-		}
+		if (requestCode != 0 || resultCode != Activity.RESULT_OK) return
+		popUpState.value = true
+		recordedAudioUri = data?.data
 	}
 
 	/**
