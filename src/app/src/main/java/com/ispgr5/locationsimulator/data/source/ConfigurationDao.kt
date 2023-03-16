@@ -23,6 +23,6 @@ interface ConfigurationDao {
 	@Delete
 	suspend fun deleteConfiguration(configuration: Configuration)
 
-	@Query("SELECT * FROM configuration WHERE 'isFavorite' = 1")
+	@Query("SELECT * FROM configuration WHERE isFavorite = 1")
 	fun getFavoriteConfigurations(): Flow<List<Configuration>>
 }
