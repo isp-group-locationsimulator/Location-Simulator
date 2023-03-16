@@ -10,6 +10,7 @@ import android.os.PowerManager
 import android.provider.MediaStore
 import android.util.Log
 import android.view.WindowManager
+import android.webkit.MimeTypeMap
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -258,13 +259,25 @@ class MainActivity : ComponentActivity() {
 	 */
 	private fun installFilesOnFirstStartup() {
 		val preferences: SharedPreferences = getSharedPreferences("prefs", MODE_PRIVATE)
-		val firstStart: Boolean = preferences.getBoolean("firstStart", true)
+		//val firstStart: Boolean = preferences.getBoolean("firstStart", true)
+		val firstStart = true
 		if (firstStart) {
 
 			assets.list("sounds")?.forEach {
-				println("Warum? Sound: $it")
-				val inputStream: InputStream = assets.open("sounds/$it")
-				soundStorageManager.addSoundFile(it, inputStream)
+				var isTypeAudio = false
+				val extension = MimeTypeMap.getFileExtensionFromUrl(it)
+				if (extension != null) { // Those ifs shall catch files that we didn't put into assets ourself. Will fail, if there somehow are audio files not from us.
+					val type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
+					if (type != null) {
+						if (type.startsWith("audio")) {
+							isTypeAudio = true
+						}
+					}
+				}
+				if (isTypeAudio) {
+					val inputStream: InputStream = assets.open("sounds/$it")
+					soundStorageManager.addSoundFile(it, inputStream)
+				}
 			}
 			val editor: SharedPreferences.Editor = preferences.edit()
 			editor.putBoolean("firstStart", false)
