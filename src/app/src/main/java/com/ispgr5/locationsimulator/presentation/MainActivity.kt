@@ -1,5 +1,6 @@
 package com.ispgr5.locationsimulator.presentation
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.SharedPreferences
@@ -201,6 +202,7 @@ class MainActivity : ComponentActivity() {
 		}
 	}
 
+	@SuppressLint("BatteryLife") // We need to have the Service run in the background as long as the user wants. The app only runs, when the user explicitly hits start.
 	private fun disableBatteryOptimization() {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 			val intent = Intent()

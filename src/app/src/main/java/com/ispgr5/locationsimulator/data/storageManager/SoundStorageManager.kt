@@ -103,17 +103,16 @@ class SoundStorageManager(private val mainActivity: MainActivity) {
 			while (areThereCopies) {
 				if (fileNames.contains(fileNameReturnValue)) {
 					// This should put a _new before the file-extension of a filename
-					try {
-						fileNameReturnValue =
-							fileNameReturnValue.substring(0, fileNameReturnValue.lastIndexOf(".")) +
-									"_new" + fileNameReturnValue.substring(
-								fileNameReturnValue.lastIndexOf(
-									"."
-								)
+					fileNameReturnValue = try {
+						fileNameReturnValue.substring(0, fileNameReturnValue.lastIndexOf(".")) +
+								"_new" + fileNameReturnValue.substring(
+							fileNameReturnValue.lastIndexOf(
+								"."
 							)
-						//exception, wenn the parameter fileName don't have a ending like .mp3
+						)
+						// exception, when the parameter fileName doesn't have a file extension
 					} catch (e: Exception) {
-						fileNameReturnValue = fileNameReturnValue + "_new"
+						fileNameReturnValue + "_new"
 					}
 				} else {
 					areThereCopies = false
