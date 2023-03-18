@@ -53,7 +53,7 @@ class HomeScreenViewModel @Inject constructor(
 	fun onEvent(event: HomeScreenEvent) {
 		when (event) {
 			is HomeScreenEvent.SelectConfiguration -> {
-				return TODO()
+				return
 			}
 			is HomeScreenEvent.DisableBatteryOptimization -> {
 				event.batteryOptDisableFunction()
