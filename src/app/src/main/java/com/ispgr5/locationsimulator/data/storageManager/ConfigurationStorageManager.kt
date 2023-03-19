@@ -1,11 +1,15 @@
 package com.ispgr5.locationsimulator.data.storageManager
 
+import android.Manifest
 import android.content.ContentValues
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.google.gson.Gson
 import com.ispgr5.locationsimulator.domain.model.*
 import com.ispgr5.locationsimulator.domain.useCase.ConfigurationUseCases
@@ -15,10 +19,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.serialization.ExperimentalSerializationApi
 import org.json.JSONObject
-import java.io.BufferedReader
-import java.io.File
-import java.io.FileOutputStream
-import java.io.InputStreamReader
+import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -69,19 +70,27 @@ class ConfigurationStorageManager(
 				outputStream.close()
 			}
 		}
-		//for older versions access the file directly (NOT YET TESTED)
+		//for older versions ask for permission to write external storage and save the file using an output stream
 		else {
-			//The external downloads directory
-			val downloadDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-			val file = File(downloadDir, configuration.name + "_" + dateTimeString + ".txt")
-
-			//when the user spams the Export Button and this function is called with in 1 second so the unique timestamp don't work
-			if (file.exists()) {
-				file.delete()
+			//check if the permission to write external storage is granted
+			if (ContextCompat.checkSelfPermission(
+					mainActivity,
+					Manifest.permission.WRITE_EXTERNAL_STORAGE
+				) != PackageManager.PERMISSION_GRANTED
+			) {
+				//if the permission is not granted ask for the permission
+				ActivityCompat.requestPermissions(
+					mainActivity,
+					arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+					0
+				)
+			} else {
+				//if the permission is granted write the configuration file to the external download folder
+				val file = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), configuration.name + "_" + dateTimeString + ".txt")
+				val fileOutputStream = FileOutputStream(file)
+				fileOutputStream.write(jsonString.toByteArray())
+				fileOutputStream.close()
 			}
-
-			//write the Json String into the File
-			file.appendText(jsonString)
 		}
 	}
 
