@@ -9,7 +9,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 //The name for json. for example{"comp_type":"Sound","source":""}
 @SerialName("Sound")
-data class Sound(
+class Sound(
+	override val id: Int,
 	val source: String,
 	//volume in 0f..1f
 	val minVolume: Float,
@@ -22,7 +23,7 @@ data class Sound(
 ) : ConfigComponent() {
 
 	override fun copy(): Sound {
-		return Sound(source, minVolume, maxVolume, minPause, maxPause, isRandom)
+		return Sound(id, source, minVolume, maxVolume, minPause, maxPause, isRandom)
 	}
 
 	/**
@@ -30,6 +31,7 @@ data class Sound(
 	 * If no parameters passed this function handles like override fun copy()
 	 */
 	fun myCopy(
+		id: Int = this.id,
 		source: String = this.source,
 		minVolume: Float = this.minVolume,
 		maxVolume: Float = this.maxVolume,
@@ -37,6 +39,6 @@ data class Sound(
 		maxPause: Int = this.maxPause,
 		isRandom: Boolean = this.isRandom
 	): Sound {
-		return Sound(source, minVolume, maxVolume, minPause, maxPause, isRandom)
+		return Sound(id, source, minVolume, maxVolume, minPause, maxPause, isRandom)
 	}
 }

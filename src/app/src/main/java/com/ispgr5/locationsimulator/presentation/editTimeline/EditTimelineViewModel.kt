@@ -41,21 +41,12 @@ class EditTimelineViewModel @Inject constructor(
                 }
             }
         }
-
-        //reset current selected to first
-        if (state.value.components.isNotEmpty()) {
-            _state.value = _state.value.copy(
-                current = state.value.components[0],
-                currentTimelineIndex = 0
-            )
-        }
     }
 
     /**
      * handles ui Events
      */
     fun onEvent(event: EditTimelineEvent) {
-
         when (event) {
             is EditTimelineEvent.ChangedSoundVolume -> {
                 viewModelScope.launch {
@@ -146,7 +137,9 @@ class EditTimelineViewModel @Inject constructor(
             }
             is EditTimelineEvent.AddVibration -> {
                 viewModelScope.launch {
-                    val vibration = Vibration(3, 4, 3, 7, 6, 8)
+                    val vibration = Vibration(
+                        id = (state.value.components.maxByOrNull { it.id }?.id ?: 0) +1,
+                        3, 4, 3, 7, 6, 8)
                     val listC = state.value.components.toMutableList()
                     listC.add(vibration)
                     _state.value = _state.value.copy(

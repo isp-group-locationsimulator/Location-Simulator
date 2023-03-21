@@ -47,7 +47,9 @@ class SoundViewModel @Inject constructor(
 						configurationUseCases.getConfiguration(configurationId)
 							?.also { configuration ->
 								val componentsCopy = configuration.components.toMutableList()
-								componentsCopy.add(Sound(event.soundName, 1f, 1f, 3, 7, false))
+								componentsCopy.add(Sound(
+									(componentsCopy.maxByOrNull { it.id }?.id ?: 0) +1,
+									event.soundName, 1f, 1f, 3, 7, false))
 								configurationUseCases.addConfiguration(
 									Configuration(
 										id = configurationId,

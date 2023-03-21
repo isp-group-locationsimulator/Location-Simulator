@@ -79,6 +79,7 @@ class EditViewModel @Inject constructor(
 								//TODO This is just an example for testing. Enter the user input here
 								components = listOf(
 									Vibration(
+										id = 1,
 										minStrength = 1,
 										maxStrength = 255,
 										minPause = 3,
@@ -87,6 +88,7 @@ class EditViewModel @Inject constructor(
 										maxDuration = 2
 									),
 									Vibration(
+										id = 2,
 										minStrength = 1,
 										maxStrength = 255,
 										minPause = 3,
