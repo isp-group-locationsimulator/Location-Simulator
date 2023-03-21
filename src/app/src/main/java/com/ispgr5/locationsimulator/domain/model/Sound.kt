@@ -12,11 +12,11 @@ import kotlinx.serialization.Serializable
 data class Sound(
 	val source: String,
 	//volume in 0f..1f
-	var minVolume: Float,
-	var maxVolume: Float,
+	val minVolume: Float,
+	val maxVolume: Float,
 	//pause in ms
-	var minPause: Int,
-	var maxPause: Int,
+	val minPause: Int,
+	val maxPause: Int,
 	//TODO deprecated
 	val isRandom: Boolean
 ) : ConfigComponent() {
