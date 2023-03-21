@@ -30,7 +30,7 @@ import com.ispgr5.locationsimulator.data.storageManager.SoundStorageManager
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 import com.ispgr5.locationsimulator.domain.model.ConfigurationComponentConverter
 import com.ispgr5.locationsimulator.presentation.delay.DelayScreen
-import com.ispgr5.locationsimulator.presentation.Add.EditScreen
+import com.ispgr5.locationsimulator.presentation.add.AddScreen
 import com.ispgr5.locationsimulator.presentation.editTimeline.EditTimelineScreen
 import com.ispgr5.locationsimulator.presentation.homescreen.HomeScreenScreen
 import com.ispgr5.locationsimulator.presentation.homescreen.InfoScreen
@@ -91,7 +91,7 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                         composable("editScreen") {
-                            EditScreen(
+                            AddScreen(
                                 navController = navController,
                                 configurationStorageManager = configurationStorageManager
                             )

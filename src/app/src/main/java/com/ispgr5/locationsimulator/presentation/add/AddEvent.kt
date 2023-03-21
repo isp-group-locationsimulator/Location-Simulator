@@ -1,4 +1,4 @@
-package com.ispgr5.locationsimulator.presentation.Add
+package com.ispgr5.locationsimulator.presentation.add
 
 import com.ispgr5.locationsimulator.data.storageManager.ConfigurationStorageManager
 

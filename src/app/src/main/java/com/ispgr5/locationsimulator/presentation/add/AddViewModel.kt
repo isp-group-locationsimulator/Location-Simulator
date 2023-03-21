@@ -1,8 +1,7 @@
-package com.ispgr5.locationsimulator.presentation.Add
+package com.ispgr5.locationsimulator.presentation.add
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ispgr5.locationsimulator.domain.model.Configuration
@@ -19,8 +18,6 @@ import javax.inject.Inject
 @HiltViewModel
 class AddViewModel @Inject constructor(
 	private val configurationUseCases: ConfigurationUseCases,
-	//saveStateHandle is required to get the navigation Arguments like configurationId
-	savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
 	//The provided state for the View

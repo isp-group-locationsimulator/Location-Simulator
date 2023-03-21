@@ -1,4 +1,4 @@
-package com.ispgr5.locationsimulator.presentation.Add
+package com.ispgr5.locationsimulator.presentation.add
 
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Column
@@ -23,7 +23,7 @@ import com.ispgr5.locationsimulator.data.storageManager.ConfigurationStorageMana
  */
 @ExperimentalAnimationApi
 @Composable
-fun EditScreen(
+fun AddScreen(
 	navController: NavController,
 	viewModel: AddViewModel = hiltViewModel(),
 	configurationStorageManager: ConfigurationStorageManager
