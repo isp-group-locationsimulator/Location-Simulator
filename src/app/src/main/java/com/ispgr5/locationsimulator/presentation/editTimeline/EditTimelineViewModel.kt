@@ -29,15 +29,41 @@ class EditTimelineViewModel @Inject constructor(
         savedStateHandle.get<Int>("configurationId")?.let { configurationId ->
             if (configurationId != -1) {
                 viewModelScope.launch {
-                    configurationUseCases.getConfiguration(configurationId)?.also { configuration ->
-                        currentConfigurationId = configuration.id
-                        _state.value = _state.value.copy(
-                            name = configuration.name,
-                            description = configuration.description,
-                            randomOrderPlayback = configuration.randomOrderPlayback,
-                            components = configuration.components
-                        )
-                    }
+                    configurationUseCases.getConfiguration(configurationId)
+                        ?.also { configuration ->
+                            var newSound: Sound? = null
+                            var components = configuration.components
+                            savedStateHandle.get<String>("soundNameToAdd")?.let { soundName ->
+                                if (soundName != "") {
+                                    val componentsCopy = configuration.components.toMutableList()
+                                    newSound = Sound(
+                                        (componentsCopy.maxByOrNull { it.id }?.id ?: 0) + 1,
+                                        soundName, 1f, 1f, 3, 7, false
+                                    )
+                                    componentsCopy.add(
+                                        newSound!!
+                                    )
+                                    configurationUseCases.addConfiguration(
+                                        Configuration(
+                                            id = configurationId,
+                                            name = configuration.name,
+                                            description = configuration.description,
+                                            randomOrderPlayback = configuration.randomOrderPlayback,
+                                            components = componentsCopy
+                                        )
+                                    )
+                                    components = componentsCopy
+                                }
+                            }
+                            currentConfigurationId = configuration.id
+                            _state.value = _state.value.copy(
+                                name = configuration.name,
+                                description = configuration.description,
+                                randomOrderPlayback = configuration.randomOrderPlayback,
+                                components = components,
+                                current = newSound
+                            )
+                        }
                 }
             }
         }
@@ -61,7 +87,7 @@ class EditTimelineViewModel @Inject constructor(
                         }
                     }
                     _state.value = _state.value.copy(
-                        components = state.value.components.map { if (it === state.value.current ) component else it },
+                        components = state.value.components.map { if (it === state.value.current) component else it },
                         current = component
                     )
                 }
@@ -85,7 +111,7 @@ class EditTimelineViewModel @Inject constructor(
                         }
                     }
                     _state.value = _state.value.copy(
-                        components = state.value.components.map { if (it === state.value.current ) component else it },
+                        components = state.value.components.map { if (it === state.value.current) component else it },
                         current = component
                     )
                 }
@@ -103,7 +129,7 @@ class EditTimelineViewModel @Inject constructor(
                         }
                     }
                     _state.value = _state.value.copy(
-                        components = state.value.components.map { if (it === state.value.current ) component else it },
+                        components = state.value.components.map { if (it === state.value.current) component else it },
                         current = component
                     )
                 }
@@ -121,7 +147,7 @@ class EditTimelineViewModel @Inject constructor(
                         }
                     }
                     _state.value = _state.value.copy(
-                        components = state.value.components.map { if (it === state.value.current ) component else it },
+                        components = state.value.components.map { if (it === state.value.current) component else it },
                         current = component
                     )
                 }
@@ -134,8 +160,9 @@ class EditTimelineViewModel @Inject constructor(
             is EditTimelineEvent.AddVibration -> {
                 viewModelScope.launch {
                     val vibration = Vibration(
-                        id = (state.value.components.maxByOrNull { it.id }?.id ?: 0) +1,
-                        3, 4, 3, 7, 6, 8)
+                        id = (state.value.components.maxByOrNull { it.id }?.id ?: 0) + 1,
+                        3, 4, 3, 7, 6, 8
+                    )
                     val listC = state.value.components.toMutableList()
                     listC.add(vibration)
                     _state.value = _state.value.copy(
@@ -145,7 +172,11 @@ class EditTimelineViewModel @Inject constructor(
             }
             is EditTimelineEvent.SelectedTimelineItem -> {
                 _state.value = _state.value.copy(
-                    current = if (event.selectConfigComp === state.value.current){null}else{event.selectConfigComp}
+                    current = if (event.selectConfigComp === state.value.current) {
+                        null
+                    } else {
+                        event.selectConfigComp
+                    }
                 )
             }
 

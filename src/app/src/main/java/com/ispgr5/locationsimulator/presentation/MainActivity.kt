@@ -55,105 +55,108 @@ class MainActivity : ComponentActivity() {
 	private var popUpState = mutableStateOf(false)
 	private var recordedAudioUri: Uri? = null
 
-	@OptIn(ExperimentalAnimationApi::class)
-	override fun onCreate(savedInstanceState: Bundle?) {
-		soundStorageManager = SoundStorageManager(this)
-		installFilesOnFirstStartup()
-		configurationStorageManager =
-			ConfigurationStorageManager(this, soundStorageManager = soundStorageManager)
-		super.onCreate(savedInstanceState)
-		setContent {
-			LocationSimulatorTheme {
-				// A surface container using the 'background' color from the theme
-				Surface(
-					modifier = Modifier.fillMaxSize(),
-					color = MaterialTheme.colors.background
-				) {
-					val navController = rememberNavController()
-					NavHost(navController = navController, startDestination = "homeScreen") {
-						composable("homeScreen") {
-							HomeScreenScreen(
-								navController = navController,
-								batteryOptDisableFunction = { disableBatteryOptimization() },
-								soundStorageManager = soundStorageManager,
-								toaster = toastAMessage
-							)
-						}
-						composable("infoScreen") {
-							InfoScreen(navController = navController)
-						}
-						composable(route = "selectScreen") {
-							SelectScreen(
-								navController = navController,
-								configurationStorageManager = configurationStorageManager,
-								soundStorageManager = soundStorageManager,
-								toaster = toastAMessage
-							)
-						}
-						composable("editScreen"){
-							EditScreen(
-								navController = navController,
-								configurationStorageManager = configurationStorageManager
-							)
-						}
-						composable(route = "delayScreen?configurationId={configurationId}",
-							arguments = listOf(navArgument(
-								name = "configurationId"
-							) {
-								type = NavType.IntType
-								defaultValue = -1
-							}
-							)
-						) {
-							DelayScreen(
-								navController = navController,
-								startServiceFunction = startService
-							)
-						}
-						composable("runScreen") {
-							RunScreen(navController, stopServiceFunction = { stopService() })
-						}
-						composable("stopService") {
-							navController.navigateUp()
-						}
-						composable("editTimeline?configurationId={configurationId}",
-							arguments = listOf(navArgument(
-								name = "configurationId"
-							) {
-								type = NavType.IntType
-								defaultValue = -1
-							}
-							)
-						) {
-							EditTimelineScreen(navController = navController)
-						}
-						composable("sound?configurationId={configurationId}",
-							arguments = listOf(navArgument(
-								name = "configurationId"
-							) {
-								type = NavType.IntType
-								defaultValue = -1
-							}
-							)
-						) {
-							SoundScreen(navController = navController,
-								soundStorageManager = soundStorageManager,
-								privateDirUri = this@MainActivity.filesDir.toString(),
-								recordAudio = { recordAudio() }
-							)
-							SoundDialog(
-								popUpState = popUpState,
-								onDismiss = { fileName ->
-									saveAudioFile(fileName)
-									popUpState.value = false
-								}
-							)
-						}
-					}
-				}
-			}
-		}
-	}
+    @OptIn(ExperimentalAnimationApi::class)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        soundStorageManager = SoundStorageManager(this)
+        installFilesOnFirstStartup()
+        configurationStorageManager =
+            ConfigurationStorageManager(this, soundStorageManager = soundStorageManager)
+        super.onCreate(savedInstanceState)
+        setContent {
+            LocationSimulatorTheme {
+                // A surface container using the 'background' color from the theme
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colors.background
+                ) {
+                    val navController = rememberNavController()
+                    NavHost(navController = navController, startDestination = "homeScreen") {
+                        composable("homeScreen") {
+                            HomeScreenScreen(
+                                navController = navController,
+                                batteryOptDisableFunction = { disableBatteryOptimization() },
+                                soundStorageManager = soundStorageManager,
+                                toaster = toastAMessage
+                            )
+                        }
+                        composable("infoScreen") {
+                            InfoScreen(navController = navController)
+                        }
+                        composable(route = "selectScreen") {
+                            SelectScreen(
+                                navController = navController,
+                                configurationStorageManager = configurationStorageManager,
+                                soundStorageManager = soundStorageManager,
+                                toaster = toastAMessage
+                            )
+                        }
+                        composable("editScreen") {
+                            EditScreen(
+                                navController = navController,
+                                configurationStorageManager = configurationStorageManager
+                            )
+                        }
+                        composable(route = "delayScreen?configurationId={configurationId}",
+                            arguments = listOf(navArgument(
+                                name = "configurationId"
+                            ) {
+                                type = NavType.IntType
+                                defaultValue = -1
+                            }
+                            )
+                        ) {
+                            DelayScreen(
+                                navController = navController,
+                                startServiceFunction = startService
+                            )
+                        }
+                        composable("runScreen") {
+                            RunScreen(navController, stopServiceFunction = { stopService() })
+                        }
+                        composable("stopService") {
+                            navController.navigateUp()
+                        }
+                        composable("editTimeline?configurationId={configurationId}&soundNameToAdd={soundNameToAdd}",
+                            arguments = listOf(
+                                navArgument(name = "configurationId") {
+                                    type = NavType.IntType
+                                    defaultValue = -1
+                                },
+                                navArgument(name = "soundNameToAdd") {
+                                    type = NavType.StringType
+                                    defaultValue = ""
+                                }
+                            )
+                        ) {
+                            EditTimelineScreen(navController = navController)
+                        }
+                        composable("sound?configurationId={configurationId}",
+                            arguments = listOf(navArgument(
+                                name = "configurationId"
+                            ) {
+                                type = NavType.IntType
+                                defaultValue = -1
+                            }
+                            )
+                        ) {
+                            SoundScreen(navController = navController,
+                                soundStorageManager = soundStorageManager,
+                                privateDirUri = this@MainActivity.filesDir.toString(),
+                                recordAudio = { recordAudio() }
+                            )
+                            SoundDialog(
+                                popUpState = popUpState,
+                                onDismiss = { fileName ->
+                                    saveAudioFile(fileName)
+                                    popUpState.value = false
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
 
 	/**
 	 * Starts the background service, which plays the audio and vibration
