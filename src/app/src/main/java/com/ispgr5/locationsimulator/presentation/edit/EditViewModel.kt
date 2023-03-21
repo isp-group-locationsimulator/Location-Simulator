@@ -85,7 +85,7 @@ class EditViewModel @Inject constructor(
 										minPause = 3,
 										maxPause = 8,
 										minDuration = 1,
-										maxDuration = 2
+										maxDuration = 3000
 									),
 									Vibration(
 										id = 2,
@@ -93,8 +93,8 @@ class EditViewModel @Inject constructor(
 										maxStrength = 255,
 										minPause = 3,
 										maxPause = 8,
-										minDuration = 3,
-										maxDuration = 4
+										minDuration = 2000,
+										maxDuration = 7000
 									),
 								)
 							)
