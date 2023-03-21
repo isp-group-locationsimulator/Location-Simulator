@@ -49,9 +49,9 @@ class EditTimelineViewModel @Inject constructor(
     fun onEvent(event: EditTimelineEvent) {
         when (event) {
             is EditTimelineEvent.ChangedSoundVolume -> {
+                if (state.value.current == null){return}
                 viewModelScope.launch {
-                    val compsCopy = state.value.components.toMutableList()
-                    var component = compsCopy[state.value.currentTimelineIndex].copy()
+                    var component = state.value.current!!.copy()
                     when (component) {
                         is Sound -> {
                             component = component.myCopy(
@@ -60,17 +60,16 @@ class EditTimelineViewModel @Inject constructor(
                             )
                         }
                     }
-                    compsCopy[state.value.currentTimelineIndex] = component
                     _state.value = _state.value.copy(
-                        components = compsCopy,
+                        components = state.value.components.map { if (it === state.value.current ) component else it },
                         current = component
                     )
                 }
             }
             is EditTimelineEvent.ChangedPause -> {
+                if (state.value.current == null){return}
                 viewModelScope.launch {
-                    val compsCopy = state.value.components.toMutableList()
-                    var component = compsCopy[state.value.currentTimelineIndex].copy()
+                    var component = state.value.current!!.copy()
                     when (component) {
                         is Sound -> {
                             component = (component as Sound).myCopy(
@@ -85,17 +84,16 @@ class EditTimelineViewModel @Inject constructor(
                             )
                         }
                     }
-                    compsCopy[state.value.currentTimelineIndex] = component
                     _state.value = _state.value.copy(
-                        components = compsCopy,
+                        components = state.value.components.map { if (it === state.value.current ) component else it },
                         current = component
                     )
                 }
             }
             is EditTimelineEvent.ChangedVibStrength -> {
+                if (state.value.current == null){return}
                 viewModelScope.launch {
-                    val compsCopy = state.value.components.toMutableList()
-                    var component = compsCopy[state.value.currentTimelineIndex].copy()
+                    var component = state.value.current!!.copy()
                     when (component) {
                         is Vibration -> {
                             component = (component as Vibration).myCopy(
@@ -104,17 +102,16 @@ class EditTimelineViewModel @Inject constructor(
                             )
                         }
                     }
-                    compsCopy[state.value.currentTimelineIndex] = component
                     _state.value = _state.value.copy(
-                        components = compsCopy,
+                        components = state.value.components.map { if (it === state.value.current ) component else it },
                         current = component
                     )
                 }
             }
             is EditTimelineEvent.ChangedVibDuration -> {
+                if (state.value.current == null){return}
                 viewModelScope.launch {
-                    val compsCopy = state.value.components.toMutableList()
-                    var component = compsCopy[state.value.currentTimelineIndex].copy()
+                    var component = state.value.current!!.copy()
                     when (component) {
                         is Vibration -> {
                             component = (component as Vibration).myCopy(
@@ -123,9 +120,8 @@ class EditTimelineViewModel @Inject constructor(
                             )
                         }
                     }
-                    compsCopy[state.value.currentTimelineIndex] = component
                     _state.value = _state.value.copy(
-                        components = compsCopy,
+                        components = state.value.components.map { if (it === state.value.current ) component else it },
                         current = component
                     )
                 }
@@ -148,26 +144,9 @@ class EditTimelineViewModel @Inject constructor(
                 }
             }
             is EditTimelineEvent.SelectedTimelineItem -> {
-                //find index
-                val compsCopy = state.value.components.toMutableList()
-                var index = 0
-                for (i in compsCopy.indices) {
-                    if (compsCopy[i] === event.selectConfigComp) {
-                        index = i
-                        break
-                    }
-                }
-                if (index == state.value.currentTimelineIndex) {
-                    _state.value = _state.value.copy(
-                        current = null,
-                        currentTimelineIndex = -1
-                    )
-                } else {
-                    _state.value = _state.value.copy(
-                        current = event.selectConfigComp,
-                        currentTimelineIndex = index
-                    )
-                }
+                _state.value = _state.value.copy(
+                    current = if (event.selectConfigComp === state.value.current){null}else{event.selectConfigComp}
+                )
             }
 
             is EditTimelineEvent.ChangedName -> {
