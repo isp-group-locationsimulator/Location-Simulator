@@ -4,7 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -15,6 +15,7 @@ import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 import com.ispgr5.locationsimulator.domain.model.Sound
 import com.ispgr5.locationsimulator.domain.model.Vibration
 import com.ispgr5.locationsimulator.presentation.editTimeline.RangeConverter
+import com.ispgr5.locationsimulator.presentation.universalComponents.ConfirmDeleteDialog
 import kotlin.properties.Delegates
 
 @Composable
@@ -36,6 +37,9 @@ fun EditConfigComponent(
 	//needed to show the Pause Slider separately
 	var minPause by Delegates.notNull<Int>()
 	var maxPause by Delegates.notNull<Int>()
+
+	//Delete Confirm Dialog
+	var showDeleteConfirmDialog by remember { mutableStateOf(false) }
 
 
 	Column(
@@ -163,7 +167,7 @@ fun EditConfigComponent(
 			SliderForRange(
 				value = RangeConverter.msToS(minPause)..RangeConverter.msToS(maxPause),
 				func = { value: ClosedFloatingPointRange<Float> -> onPauseValueChanged(value) },
-				range = 0f..30f
+				range = 0f..60f
 			)
 		}
 		Row(
@@ -171,7 +175,7 @@ fun EditConfigComponent(
 			horizontalArrangement = Arrangement.Center
 		) {
 			Button(
-				onClick = { onDeleteClicked(configComponent) },
+				onClick = { showDeleteConfirmDialog = true }, //show Confirm Dialog
 				contentPadding = PaddingValues(0.dp),
 				enabled = true,
 				shape = MaterialTheme.shapes.small,
@@ -190,6 +194,14 @@ fun EditConfigComponent(
 				)
 			}
 		}
+	}
+	//Dialog to confirm the deleting of an config Component
+	val revShowDialog = fun() {  showDeleteConfirmDialog = ! showDeleteConfirmDialog }
+	if(showDeleteConfirmDialog) {
+		ConfirmDeleteDialog(onDismiss = revShowDialog, onConfirm = {
+			revShowDialog
+			onDeleteClicked(configComponent)
+		})
 	}
 }
 

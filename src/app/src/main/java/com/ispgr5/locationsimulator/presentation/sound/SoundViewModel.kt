@@ -1,16 +1,13 @@
 package com.ispgr5.locationsimulator.presentation.sound
 
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.ispgr5.locationsimulator.domain.model.Configuration
-import com.ispgr5.locationsimulator.domain.model.Sound
 import com.ispgr5.locationsimulator.domain.useCase.ConfigurationUseCases
 import com.ispgr5.locationsimulator.presentation.run.SoundPlayer
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
@@ -43,23 +40,7 @@ class SoundViewModel @Inject constructor(
 			}
 			is SoundEvent.SelectSound -> {
 				savedStateHandle.get<Int>("configurationId")?.let { configurationId ->
-					viewModelScope.launch {
-						configurationUseCases.getConfiguration(configurationId)
-							?.also { configuration ->
-								val componentsCopy = configuration.components.toMutableList()
-								componentsCopy.add(Sound(event.soundName, 1f, 1f, 3, 7, false))
-								configurationUseCases.addConfiguration(
-									Configuration(
-										id = configurationId,
-										name = configuration.name,
-										description = configuration.description,
-										randomOrderPlayback = configuration.randomOrderPlayback,
-										components = componentsCopy
-									)
-								)
-							}
-					}
-					event.navController.navigate("editTimeline?configurationId=${configurationId}")
+					event.navController.navigate("editTimeline?configurationId=${configurationId}&soundNameToAdd=${event.soundName}")
 				}
 			}
 			is SoundEvent.ImportSound -> {
