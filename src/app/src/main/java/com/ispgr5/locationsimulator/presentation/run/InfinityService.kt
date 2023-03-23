@@ -115,14 +115,15 @@ class InfinityService : Service() {
 	 * @param vibrator The Vibrator that should be used to play the Vibrations.
 	 */
 	private fun playSoundOrVibration(item: ConfigComponent, vibrator: Vibrator) {
+		//duration and pause is in ms !
 		when (item) {
 			is Vibration -> {
 				val duration =
-					(Math.random() * (item.maxDuration * 1000 - item.minDuration * 1000 + 1) + item.minDuration * 1000).toLong()
+					(Math.random() * (item.maxDuration  - item.minDuration  + 1) + item.minDuration ).toLong()
 				val strength =
 					(Math.random() * (item.maxStrength - item.minStrength + 1) + item.minStrength).toInt()
 				val pause =
-					(Math.random() * (item.maxPause * 1000 - item.minPause * 1000 + 1) + item.minPause * 1000).toLong()
+					(Math.random() * (item.maxPause  - item.minPause  + 1) + item.minPause ).toLong()
 				if (Build.VERSION.SDK_INT >= 26) {
 					Log.d(
 						"Signal-Infinity",
@@ -144,7 +145,7 @@ class InfinityService : Service() {
 			}
 			is Sound -> {
 				val pause =
-					(Math.random() * (item.maxPause * 1000 - item.minPause * 1000 + 1) + item.minPause * 1000).toLong()
+					(Math.random() * (item.maxPause  - item.minPause  + 1) + item.minPause ).toLong()
 				val volume: Float =
 					(item.minVolume + Math.random() * (item.maxVolume - item.minVolume)).toFloat()
 				val duration =

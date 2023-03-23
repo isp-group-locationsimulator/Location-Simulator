@@ -13,8 +13,10 @@ import kotlinx.serialization.Serializable
 data class Vibration(
 	var minStrength: Int,
 	var maxStrength: Int,
+	//pause in ms
 	var minPause: Int,
 	var maxPause: Int,
+	//duration in ms
 	var minDuration: Int,
 	var maxDuration: Int
 ) : ConfigComponent() {

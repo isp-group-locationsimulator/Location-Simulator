@@ -163,7 +163,7 @@ fun EditConfigComponent(
 			SliderForRange(
 				value = RangeConverter.msToS(minPause)..RangeConverter.msToS(maxPause),
 				func = { value: ClosedFloatingPointRange<Float> -> onPauseValueChanged(value) },
-				range = 0f..30f
+				range = 0f..60f
 			)
 		}
 		Row(
