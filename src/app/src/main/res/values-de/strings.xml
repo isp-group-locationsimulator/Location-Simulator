@@ -44,4 +44,8 @@
     <string name="editTimeline_randomOrderPlayback">Zufällige Reihenfolge</string>
     <string name="selectscreen_favetoast">Sie können maximal zwei Konfigurationen als Favoriten wählen.</string>
     <string name="export_toast_message">Die Konfiguration wurde im Download Ordner gespeichert</string>
+    <string name="confirmDeleteDialogTitle">Löschen</string>
+    <string name="confirmDeleteDialogText">Sind sie sicher, dass sie Löschen möchten?</string>
+    <string name="confirmDeleteDialogDismissBtn">Abbrechen</string>
+    <string name="confirmDeleteDialogConfirmBtn">Löschen</string>
 </resources>

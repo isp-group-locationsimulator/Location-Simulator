@@ -44,4 +44,8 @@
     <string name="editTimeline_randomOrderPlayback">Random order</string>
     <string name="selectscreen_favetoast">You can select only up to two configurations as a favourite.</string>
     <string name="export_toast_message">Configuration saved to download folder</string>
+    <string name="confirmDeleteDialogTitle">Delete</string>
+    <string name="confirmDeleteDialogText">Are you sure you want to delete?</string>
+    <string name="confirmDeleteDialogDismissBtn">Cancel</string>
+    <string name="confirmDeleteDialogConfirmBtn">Delete</string>
 </resources>
