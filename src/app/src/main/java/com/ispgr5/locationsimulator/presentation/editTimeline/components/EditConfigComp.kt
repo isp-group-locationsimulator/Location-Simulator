@@ -198,7 +198,10 @@ fun EditConfigComponent(
 	//Dialog to confirm the deleting of an config Component
 	val revShowDialog = fun() {  showDeleteConfirmDialog = ! showDeleteConfirmDialog }
 	if(showDeleteConfirmDialog) {
-		ConfirmDeleteDialog(onDismiss = revShowDialog, onConfirm = {onDeleteClicked(configComponent)})
+		ConfirmDeleteDialog(onDismiss = revShowDialog, onConfirm = {
+			revShowDialog
+			onDeleteClicked(configComponent)
+		})
 	}
 }
 

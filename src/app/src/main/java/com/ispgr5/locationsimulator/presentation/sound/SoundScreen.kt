@@ -7,7 +7,7 @@ import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -19,6 +19,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.data.storageManager.SoundStorageManager
+import com.ispgr5.locationsimulator.presentation.universalComponents.ConfirmDeleteDialog
 
 /**
  * Shows a list of Audio Files to be selected.
@@ -33,6 +34,11 @@ fun SoundScreen(
 ) {
 	val state = viewModel.state.value
 	viewModel.onEvent(SoundEvent.RefreshPage(soundStorageManager = soundStorageManager))
+
+	//Delte Confirmation
+	var showDeleteConfirmDialog by remember { mutableStateOf(false) }
+	var soundNameToDelete  by remember { mutableStateOf("")}  //String to store which sound should be deleted
+
 	Column(
 		modifier = Modifier.fillMaxSize(),
 		horizontalAlignment = Alignment.CenterHorizontally
@@ -124,16 +130,26 @@ fun SoundScreen(
 						)
 					},
 					onDeleteClicked = {
-						viewModel.onEvent(
-							SoundEvent.DeleteSound(
-								soundName,
-								soundStorageManager
-							)
-						)
+						soundNameToDelete = soundName
+						showDeleteConfirmDialog = true
 					}
 				)
 				Spacer(modifier = Modifier.height(5.dp))
 			}
 		}
+	}
+
+	//Dialog to confirm the deleting of an config Component
+	val revShowDialog = fun() {  showDeleteConfirmDialog = ! showDeleteConfirmDialog }
+	if(showDeleteConfirmDialog) {
+		ConfirmDeleteDialog(onDismiss = revShowDialog, onConfirm = {
+			showDeleteConfirmDialog = false
+			viewModel.onEvent(
+				SoundEvent.DeleteSound(
+					soundNameToDelete,
+					soundStorageManager
+				)
+			)
+		})
 	}
 }
