@@ -7,10 +7,9 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Button
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -23,7 +22,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.data.storageManager.SoundStorageManager
+import com.ispgr5.locationsimulator.presentation.MainActivity
 import com.ispgr5.locationsimulator.presentation.select.components.OneConfigurationListMember
+import com.ispgr5.locationsimulator.ui.theme.ThemeState
 import com.ispgr5.locationsimulator.ui.theme.theBlue
 
 /**
@@ -37,7 +38,9 @@ fun HomeScreenScreen(
 	viewModel: HomeScreenViewModel = hiltViewModel(),
 	batteryOptDisableFunction: () -> Unit,
 	soundStorageManager: SoundStorageManager,
-	toaster: (String) -> Unit
+	toaster: (String) -> Unit,
+	activity: MainActivity,
+	darkTheme: MutableState<ThemeState>
 ) {
 	viewModel.updateConfigurationWithErrorsState(soundStorageManager = soundStorageManager)
 	val state = viewModel.state.value
@@ -133,8 +136,43 @@ fun HomeScreenScreen(
 				)
 				Spacer(modifier = Modifier.height(6.dp))
 			}
+			
+		}
+		Row(
+			Modifier
+				.fillMaxWidth()
+				.padding(16.dp),
+			verticalAlignment = Alignment.CenterVertically,
+			horizontalArrangement = Arrangement.SpaceEvenly
+
+
+		){
+			// Get the current theme mode
+
+
+			// Switch to toggle the theme mode
+			Switch(
+				checked = darkTheme.value.isDarkTheme,
+				onCheckedChange = {
+					viewModel.onEvent(HomeScreenEvent.ChangedAppTheme(it, activity, darkTheme))
+					/*if(state.isLightTheme) {
+						// Toggle the theme mode
+						AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_YES)
+					}
+					else{
+						AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_NO)
+					}*/
+				},
+				colors = SwitchDefaults.colors(
+					checkedThumbColor = MaterialTheme.colors.primary,
+					uncheckedThumbColor = MaterialTheme.colors.primary,
+					checkedTrackColor = MaterialTheme.colors.secondary,
+					uncheckedTrackColor = MaterialTheme.colors.secondary,
+				)
+			)
 		}
 	}
+
 
 	/**
 	 * battery optimization hint

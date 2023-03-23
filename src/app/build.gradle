@@ -102,4 +102,6 @@ dependencies {
 
     //for Base64 de and encoding
     implementation 'com.google.guava:guava:29.0-jre'
+
+    implementation 'androidx.appcompat:appcompat:1.4.1'
 }

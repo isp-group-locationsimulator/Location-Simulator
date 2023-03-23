@@ -1,5 +1,7 @@
 package com.ispgr5.locationsimulator.presentation.homescreen
 
+import android.content.SharedPreferences
+import androidx.activity.ComponentActivity
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -57,6 +59,13 @@ class HomeScreenViewModel @Inject constructor(
 			}
 			is HomeScreenEvent.DisableBatteryOptimization -> {
 				event.batteryOptDisableFunction()
+			}
+			is HomeScreenEvent.ChangedAppTheme -> {
+				event.darkTheme.value = event.darkTheme.value.copy(isDarkTheme = event.isDarkTheme)
+				val editor: SharedPreferences.Editor = event.activity.getSharedPreferences("prefs", ComponentActivity.MODE_PRIVATE).edit()
+				editor.putBoolean("isDarkTheme", event.isDarkTheme)
+				editor.apply()
+				println(event.isDarkTheme)
 			}
 		}
 	}

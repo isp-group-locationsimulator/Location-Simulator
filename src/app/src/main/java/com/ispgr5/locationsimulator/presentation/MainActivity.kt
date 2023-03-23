@@ -40,6 +40,7 @@ import com.ispgr5.locationsimulator.presentation.select.SelectScreen
 import com.ispgr5.locationsimulator.presentation.sound.SoundDialog
 import com.ispgr5.locationsimulator.presentation.sound.SoundScreen
 import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
+import com.ispgr5.locationsimulator.ui.theme.ThemeState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.serialization.ExperimentalSerializationApi
 import java.io.FileOutputStream
@@ -62,8 +63,9 @@ class MainActivity : ComponentActivity() {
 		configurationStorageManager =
 			ConfigurationStorageManager(this, soundStorageManager = soundStorageManager)
 		super.onCreate(savedInstanceState)
+		val themeState = mutableStateOf(ThemeState(getSharedPreferences("prefs", MODE_PRIVATE).getBoolean("isDarkTheme", false)))
 		setContent {
-			LocationSimulatorTheme {
+			LocationSimulatorTheme(themeState) {
 				// A surface container using the 'background' color from the theme
 				Surface(
 					modifier = Modifier.fillMaxSize(),
@@ -76,7 +78,9 @@ class MainActivity : ComponentActivity() {
 								navController = navController,
 								batteryOptDisableFunction = { disableBatteryOptimization() },
 								soundStorageManager = soundStorageManager,
-								toaster = toastAMessage
+								toaster = toastAMessage,
+								activity = this@MainActivity,
+								darkTheme = themeState
 							)
 						}
 						composable("infoScreen") {
