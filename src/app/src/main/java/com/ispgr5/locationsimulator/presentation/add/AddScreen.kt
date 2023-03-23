@@ -1,4 +1,4 @@
-package com.ispgr5.locationsimulator.presentation.edit
+package com.ispgr5.locationsimulator.presentation.add
 
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Column
@@ -23,9 +23,9 @@ import com.ispgr5.locationsimulator.data.storageManager.ConfigurationStorageMana
  */
 @ExperimentalAnimationApi
 @Composable
-fun EditScreen(
+fun AddScreen(
 	navController: NavController,
-	viewModel: EditViewModel = hiltViewModel(),
+	viewModel: AddViewModel = hiltViewModel(),
 	configurationStorageManager: ConfigurationStorageManager
 ) {
 	//The state from viewmodel
@@ -40,26 +40,26 @@ fun EditScreen(
 		Text(text = stringResource(id = R.string.edit_name))
 		TextField(
 			value = state.name,
-			onValueChange = { viewModel.onEvent(EditEvent.EnteredName(it)) },
+			onValueChange = { viewModel.onEvent(AddEvent.EnteredName(it)) },
 			modifier = Modifier.fillMaxWidth()
 		)
 		//The description Input Field
 		Text(text = stringResource(id = R.string.edit_Description))
 		TextField(
 			value = state.description,
-			onValueChange = { viewModel.onEvent(EditEvent.EnteredDescription(it)) },
+			onValueChange = { viewModel.onEvent(AddEvent.EnteredDescription(it)) },
 			modifier = Modifier.fillMaxWidth()
 		)
 		//The save Configuration Button
 		Button(onClick = {
-			viewModel.onEvent(EditEvent.SaveConfiguration)
+			viewModel.onEvent(AddEvent.SaveConfiguration)
 			//navigate back to the Select Screen
 			navController.navigate("selectScreen")
 		}) {
 			Text(text = stringResource(id = R.string.edit_Save))
 		}
 		Button(onClick = {
-			viewModel.onEvent(EditEvent.SelectedImportConfiguration(configurationStorageManager = configurationStorageManager))
+			viewModel.onEvent(AddEvent.SelectedImportConfiguration(configurationStorageManager = configurationStorageManager))
 			navController.navigateUp()
 		}) {
 			Text(text = stringResource(id = R.string.edit_Import))

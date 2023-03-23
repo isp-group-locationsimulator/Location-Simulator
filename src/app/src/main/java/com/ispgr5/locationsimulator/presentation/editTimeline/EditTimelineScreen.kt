@@ -179,7 +179,7 @@ fun EditTimelineScreen(
 		/**
 		 * The Edit Options, like Slider
 		 */
-		if (viewModel.state.value.currentTimelineIndex != -1) {
+		if (state.current != null) {
 			EditConfigComponent(
 				state.current,
 				onSoundValueChanged = fun(range: ClosedFloatingPointRange<Float>) {
