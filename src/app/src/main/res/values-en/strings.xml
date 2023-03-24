@@ -48,4 +48,12 @@
     <string name="confirmDeleteDialogText">Are you sure you want to delete?</string>
     <string name="confirmDeleteDialogDismissBtn">Cancel</string>
     <string name="confirmDeleteDialogConfirmBtn">Delete</string>
+    <string name="ScreenInfo">Info</string>
+    <string name="ScreenHome">Home</string>
+    <string name="ScreenRun">Running Configuration</string>
+    <string name="ScreenSelect">Select Configuration</string>
+    <string name="ScreenSound">Select Sound</string>
+    <string name="ScreenAdd">Add Configuration</string>
+    <string name="ScreenDelay"> Configuration Info</string>
+    <string name="ScreenEdit"> Edit Configuration</string>
 </resources>

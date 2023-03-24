@@ -22,6 +22,7 @@ import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.data.storageManager.ConfigurationStorageManager
 import com.ispgr5.locationsimulator.data.storageManager.SoundStorageManager
 import com.ispgr5.locationsimulator.presentation.select.components.OneConfigurationListMember
+import com.ispgr5.locationsimulator.presentation.universalComponents.TopBar
 
 /**
  * The Select Screen.
@@ -31,159 +32,139 @@ import com.ispgr5.locationsimulator.presentation.select.components.OneConfigurat
 @ExperimentalAnimationApi
 @Composable
 fun SelectScreen(
-	navController: NavController,
-	viewModel: SelectViewModel = hiltViewModel(),
-	configurationStorageManager: ConfigurationStorageManager,
-	soundStorageManager: SoundStorageManager,
-	toaster: (String) -> Unit
+    navController: NavController,
+    viewModel: SelectViewModel = hiltViewModel(),
+    configurationStorageManager: ConfigurationStorageManager,
+    soundStorageManager: SoundStorageManager,
+    toaster: (String) -> Unit
 ) {
-	viewModel.updateConfigurationWithErrorsState(soundStorageManager = soundStorageManager)
-	val state = viewModel.state.value
-	var sizeOfDeletionConfiguration by remember { mutableStateOf(IntSize.Zero) }
-	val notFound: String = stringResource(id = R.string.not_found)
+    viewModel.updateConfigurationWithErrorsState(soundStorageManager = soundStorageManager)
+    val state = viewModel.state.value
+    var sizeOfDeletionConfiguration by remember { mutableStateOf(IntSize.Zero) }
+    val notFound: String = stringResource(id = R.string.not_found)
 
-	Column(
-		modifier = Modifier.fillMaxSize()
-	) {
-		Row(
-			modifier = Modifier
-				.fillMaxWidth(),
-			//Add and Delete Buttons should be on the right
-			horizontalArrangement = Arrangement.SpaceBetween
-		) {
-			//The Delete Button
-			Button(
-				onClick = { viewModel.onEvent(SelectEvent.SelectDeleteMode) },
-				contentPadding = PaddingValues(0.dp),
-				enabled = true,
-				shape = MaterialTheme.shapes.small,
-				border = null,
-				elevation = null,
-				colors = ButtonDefaults.buttonColors(
-					backgroundColor = Color.Transparent,
-					contentColor = MaterialTheme.colors.primary,
-					disabledBackgroundColor = Color.Transparent,
-					disabledContentColor = MaterialTheme.colors.primary.copy(alpha = ContentAlpha.disabled),
-				)
-			) {
-				if (state.isInDeleteMode) {
-					Text(stringResource(id = R.string.finish_deletion))
-				} else {
-					Icon(
-						painter = painterResource(id = R.drawable.ic_baseline_delete_outline_24),
-						contentDescription = null
-					)
-				}
-			}
-			//The Add Button
-			Button(
-				onClick = { navController.navigate(route = "editScreen") },
-				contentPadding = PaddingValues(0.dp),
-				enabled = true,
-				shape = MaterialTheme.shapes.small,
-				border = null,
-				elevation = null,
-				colors = ButtonDefaults.buttonColors(
-					backgroundColor = Color.Transparent,
-					contentColor = MaterialTheme.colors.primary,
-					disabledBackgroundColor = Color.Transparent,
-					disabledContentColor = MaterialTheme.colors.primary.copy(alpha = ContentAlpha.disabled),
-				)
-			) {
-				Icon(
-					painter = painterResource(id = R.drawable.ic_baseline_add_24),
-					contentDescription = null
-				)
-			}
-		}
-		//The whole Column where all Configurations are in
-		LazyColumn(
-			modifier = if (state.isInDeleteMode) {
-				Modifier
-					.fillMaxSize()
-					.padding(end = 15.dp, top = 15.dp, start = 0.dp, bottom = 15.dp)
-			} else {
-				Modifier
-					.padding(15.dp)
-					.fillMaxSize()
-			}
-		) {
+    Scaffold(
+        topBar = {
+            TopBar(navController, stringResource(id = R.string.ScreenSelect),
+                extraActions = {
+                    //The Delete Button
+                    IconButton(
+                        onClick = { viewModel.onEvent(SelectEvent.SelectDeleteMode) },
+                    ) {
+                        if (state.isInDeleteMode) {
+                            Text(stringResource(id = R.string.finish_deletion))
+                        } else {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_baseline_delete_outline_24),
+                                contentDescription = null
+                            )
+                        }
+                    }
+                    //The Add Button
+                    IconButton(
+                        onClick = { navController.navigate(route = "editScreen") },
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_baseline_add_24),
+                            contentDescription = null
+                        )
 
-			//for all configurations in state we create a Row
-			items(state.configurations) { configuration ->
-				Row(
-					if (configuration.id == state.selectedConfigurationForDeletion?.id) {
-						Modifier
-							.fillMaxWidth()
-							.padding(start = 15.dp)
-					} else {
-						Modifier.fillMaxWidth()
-					},
+                    }
+                })
+        },
+        content = {
+            Spacer(modifier = Modifier.height(it.calculateTopPadding()))
 
-					verticalAlignment = Alignment.CenterVertically,
-					horizontalArrangement = Arrangement.Center
-				) {
-					if (state.isInDeleteMode && configuration.id != state.selectedConfigurationForDeletion?.id) {
-						Column(Modifier.weight(1f)) {
-							Button(
-								onClick = {
-									viewModel.onEvent(
-										SelectEvent.SelectConfigurationForDeletion(
-											configuration = configuration
-										)
-									)
-								},
-								contentPadding = PaddingValues(0.dp),
-								enabled = true,
-								shape = MaterialTheme.shapes.small,
-								border = null,
-								elevation = null,
-								colors = ButtonDefaults.buttonColors(
-									backgroundColor = Color.Transparent,
-									contentColor = MaterialTheme.colors.primary,
-									disabledBackgroundColor = Color.Transparent,
-									disabledContentColor = MaterialTheme.colors.primary.copy(alpha = ContentAlpha.disabled),
-								)
-							) {
-								Icon(
-									painter = painterResource(id = R.drawable.ic_baseline_cancel_24),
-									contentDescription = null,
-									tint = Color.Red,
-								)
-							}
-						}
-					}
-					Column(
-						Modifier
-							.weight(5f)
-							.onSizeChanged {
-								if (configuration.id == state.selectedConfigurationForDeletion?.id) {
-									sizeOfDeletionConfiguration = it
-								}
-							}) {
-						val toastString = stringResource(id = R.string.export_toast_message)
-						OneConfigurationListMember(
-							configuration = configuration,
-							isToggled = configuration.id == state.toggledConfiguration?.id,
-							onToggleClicked = {
-								viewModel.onEvent(
-									SelectEvent.ToggledConfiguration(
-										configuration
-									)
-								)
-							},
-							onEditClicked = { navController.navigate("editTimeline?configurationId=${configuration.id}") },
-							onSelectClicked = { navController.navigate("delayScreen?configurationId=${configuration.id}") },
-							onExportClicked = {
-								viewModel.onEvent(
-									SelectEvent.SelectedExportConfiguration(
-										configuration = configuration,
-										configurationStorageManager = configurationStorageManager
-									)
-								)
-								toaster(toastString)
-							},
-							onDuplicateClicked = {
+            //The whole Column where all Configurations are in
+            LazyColumn(
+                modifier = if (state.isInDeleteMode) {
+					Modifier
+						.fillMaxSize()
+						.padding(end = 15.dp, top = 15.dp, start = 0.dp, bottom = 15.dp)
+                } else {
+					Modifier
+						.padding(15.dp)
+						.fillMaxSize()
+                }
+            ) {
+
+                //for all configurations in state we create a Row
+                items(state.configurations) { configuration ->
+                    Row(
+                        if (configuration.id == state.selectedConfigurationForDeletion?.id) {
+							Modifier
+								.fillMaxWidth()
+								.padding(start = 15.dp)
+                        } else {
+                            Modifier.fillMaxWidth()
+                        },
+
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        if (state.isInDeleteMode && configuration.id != state.selectedConfigurationForDeletion?.id) {
+                            Column(Modifier.weight(1f)) {
+                                Button(
+                                    onClick = {
+                                        viewModel.onEvent(
+                                            SelectEvent.SelectConfigurationForDeletion(
+                                                configuration = configuration
+                                            )
+                                        )
+                                    },
+                                    contentPadding = PaddingValues(0.dp),
+                                    enabled = true,
+                                    shape = MaterialTheme.shapes.small,
+                                    border = null,
+                                    elevation = null,
+                                    colors = ButtonDefaults.buttonColors(
+                                        backgroundColor = Color.Transparent,
+                                        contentColor = MaterialTheme.colors.primary,
+                                        disabledBackgroundColor = Color.Transparent,
+                                        disabledContentColor = MaterialTheme.colors.primary.copy(
+                                            alpha = ContentAlpha.disabled
+                                        ),
+                                    )
+                                ) {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.ic_baseline_cancel_24),
+                                        contentDescription = null,
+                                        tint = Color.Red,
+                                    )
+                                }
+                            }
+                        }
+                        Column(
+							Modifier
+								.weight(5f)
+								.onSizeChanged {
+									if (configuration.id == state.selectedConfigurationForDeletion?.id) {
+										sizeOfDeletionConfiguration = it
+									}
+								}) {
+                            val toastString = stringResource(id = R.string.export_toast_message)
+                            OneConfigurationListMember(
+                                configuration = configuration,
+                                isToggled = configuration.id == state.toggledConfiguration?.id,
+                                onToggleClicked = {
+                                    viewModel.onEvent(
+                                        SelectEvent.ToggledConfiguration(
+                                            configuration
+                                        )
+                                    )
+                                },
+                                onEditClicked = { navController.navigate("editTimeline?configurationId=${configuration.id}") },
+                                onSelectClicked = { navController.navigate("delayScreen?configurationId=${configuration.id}") },
+                                onExportClicked = {
+                                    viewModel.onEvent(
+                                        SelectEvent.SelectedExportConfiguration(
+                                            configuration = configuration,
+                                            configurationStorageManager = configurationStorageManager
+                                        )
+                                    )
+                                    toaster(toastString)
+                                },
+                                onDuplicateClicked = {
 								viewModel.onEvent(
 									SelectEvent.Duplicate(
 										id = configuration.id
@@ -239,5 +220,5 @@ fun SelectScreen(
 				Spacer(modifier = Modifier.height(6.dp))
 			}
 		}
-	}
+	})
 }
