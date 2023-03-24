@@ -7,10 +7,7 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Button
-import androidx.compose.material.Icon
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,23 +43,21 @@ fun HomeScreenScreen(
 	val notFound: String = stringResource(id = R.string.not_found)
 
 	Scaffold(
-		topBar = { TopBar(navController, stringResource(id = R.string.ScreenHome),false) },
+		topBar = { TopBar(navController, stringResource(id = R.string.ScreenHome),false,
+		extraActions = {IconButton(onClick = {
+			navController.navigate("infoScreen")
+		}, modifier = Modifier.padding(5.dp)) {
+			Icon(
+				painter = painterResource(id = R.drawable.baseline_info_24),
+				contentDescription = ""
+			)
+		}}
+
+		) },
 		content = {
 			Spacer(modifier = Modifier.height(it.calculateTopPadding()))
 
-			Row(
-				modifier = Modifier.fillMaxWidth(),
-				horizontalArrangement = Arrangement.End
-			) {
-				Button(onClick = {
-					navController.navigate("infoScreen")
-				}, modifier = Modifier.padding(5.dp)) {
-					Icon(
-						painter = painterResource(id = R.drawable.baseline_info_24),
-						contentDescription = ""
-					)
-				}
-			}
+
 			Column(
 				modifier = Modifier
 					.fillMaxSize()
