@@ -218,6 +218,11 @@ fun EditTimelineScreen(
 					viewModel.onEvent(
 						EditTimelineEvent.MoveConfCompRight(configComponent)
 					)
+				},
+				onConfigComponentNameChanged = { name ->
+					viewModel.onEvent(
+						EditTimelineEvent.ChangeConfigComponentName(name)
+					)
 				}
 			)
 		}

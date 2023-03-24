@@ -2,6 +2,7 @@ package com.ispgr5.locationsimulator.presentation.editTimeline.components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -9,7 +10,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 import com.ispgr5.locationsimulator.domain.model.Sound
@@ -27,7 +31,8 @@ fun EditConfigComponent(
 	onVibDurationChanged: (ClosedFloatingPointRange<Float>) -> Unit,
 	onDeleteClicked: (configComponent: ConfigComponent) -> Unit,
 	onMoveLeftClicked: (configComponent: ConfigComponent) -> Unit,
-	onMoveRightClicked: (configComponent: ConfigComponent) -> Unit
+	onMoveRightClicked: (configComponent: ConfigComponent) -> Unit,
+	onConfigComponentNameChanged: (name: String) -> Unit
 ) {
 	//so no Time line Item is selected for now
 	if (configComponent == null) {
@@ -79,7 +84,26 @@ fun EditConfigComponent(
 						modifier = Modifier.fillMaxWidth(),
 						horizontalArrangement = Arrangement.Center
 					) {
-						Text(text = configComponent.source)
+						Text(
+							text = configComponent.source,
+							fontSize = 20.sp,
+						)
+					}
+				}
+				 is Vibration -> {
+					Spacer(modifier = Modifier.size(7.dp))
+					Row(
+						modifier = Modifier.fillMaxWidth(),
+						horizontalArrangement = Arrangement.Center
+					) {
+						BasicTextField(
+							textStyle = TextStyle(textAlign = TextAlign.Center,fontSize = 20.sp),
+							value = configComponent.name,
+							onValueChange = { name ->
+								onConfigComponentNameChanged (name)
+							}
+						)
+
 					}
 				}
 			}

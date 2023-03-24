@@ -12,6 +12,7 @@ import kotlinx.serialization.Serializable
 @SerialName("Vibration")
 data class Vibration(
 	override val id: Int,
+	val name: String,
 	val minStrength: Int,
 	val maxStrength: Int,
 	val minPause: Int,
@@ -20,7 +21,7 @@ data class Vibration(
 	val maxDuration: Int
 ) : ConfigComponent() {
 	override fun copy(): Vibration {
-		return Vibration(id, minStrength, maxStrength, minPause, maxPause, minDuration, maxDuration)
+		return Vibration(id, name, minStrength, maxStrength, minPause, maxPause, minDuration, maxDuration)
 	}
 
 	/**
@@ -29,6 +30,7 @@ data class Vibration(
 	 */
 	fun myCopy(
 		id: Int = this.id,
+		name: String = this.name,
 		minStrength: Int = this.minStrength,
 		maxStrength: Int = this.maxStrength,
 		minPause: Int = this.minPause,
@@ -36,6 +38,6 @@ data class Vibration(
 		minDuration: Int = this.minDuration,
 		maxDuration: Int = this.maxDuration
 	): Vibration {
-		return Vibration(id, minStrength, maxStrength, minPause, maxPause, minDuration, maxDuration)
+		return Vibration(id, name, minStrength, maxStrength, minPause, maxPause, minDuration, maxDuration)
 	}
 }
