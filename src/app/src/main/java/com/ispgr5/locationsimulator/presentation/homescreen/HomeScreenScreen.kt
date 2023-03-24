@@ -122,6 +122,7 @@ fun HomeScreenScreen(
 					onEditClicked = {},
 					onSelectClicked = {},
 					onExportClicked = {},
+					onDuplicateClicked = {},
 					hasErrors = state.configurationsWithErrors.find { conf -> conf.id == configuration.id } != null,
 					onErrorInfoClicked = {
 						for (error in viewModel.whatIsHisErrors(

@@ -183,6 +183,13 @@ fun SelectScreen(
 								)
 								toaster(toastString)
 							},
+							onDuplicateClicked = {
+								viewModel.onEvent(
+									SelectEvent.Duplicate(
+										id = configuration.id
+									)
+								)
+							},
 							hasErrors = state.configurationsWithErrors.find { conf -> conf.id == configuration.id } != null,
 							onErrorInfoClicked = {
 								for (error in viewModel.whatIsHisErrors(

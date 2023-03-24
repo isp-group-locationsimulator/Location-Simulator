@@ -25,6 +25,7 @@ fun OneConfigurationListMember(
 	onEditClicked: () -> Unit,
 	onSelectClicked: () -> Unit,
 	onExportClicked: () -> Unit,
+	onDuplicateClicked: () -> Unit,
 	hasErrors: Boolean,
 	onErrorInfoClicked: () -> Unit,
 	isFavorite: Boolean,
@@ -146,10 +147,10 @@ fun OneConfigurationListMember(
 			}
 			//The Information which is shown when toggle is active
 			if (isToggled) {
-				Row(
+				Column(
 					Modifier.fillMaxWidth(),
-					verticalAlignment = Alignment.CenterVertically,
-					horizontalArrangement = Arrangement.SpaceAround
+					verticalArrangement = Arrangement.SpaceAround,
+					horizontalAlignment = Alignment.CenterHorizontally
 				) {
 					Button(onClick = onExportClicked, enabled = !hasErrors) {
 						Text(text = stringResource(id = R.string.select_btn_profile_export))
@@ -177,6 +178,10 @@ fun OneConfigurationListMember(
 							painter = painterResource(id = R.drawable.ic_baseline_edit_24),
 							contentDescription = null
 						)
+					}
+					//The Select Button
+					Button(onClick = onDuplicateClicked, enabled = !hasErrors) {
+						Text(text = "Clone")
 					}
 				}
 			}

@@ -19,4 +19,5 @@ sealed class SelectEvent {
 
 	data class FavoriteClicked(val configuration: Configuration, val toaster: (String) -> Unit) :
 		SelectEvent()
+	data class Duplicate(val id:Int?) : SelectEvent()
 }
