@@ -25,6 +25,7 @@ import com.ispgr5.locationsimulator.data.storageManager.SoundStorageManager
 import com.ispgr5.locationsimulator.presentation.MainActivity
 import com.ispgr5.locationsimulator.presentation.select.components.OneConfigurationListMember
 import com.ispgr5.locationsimulator.ui.theme.ThemeState
+import com.ispgr5.locationsimulator.presentation.universalComponents.TopBar
 import com.ispgr5.locationsimulator.ui.theme.theBlue
 
 /**
@@ -46,54 +47,57 @@ fun HomeScreenScreen(
 	val state = viewModel.state.value
 	val notFound: String = stringResource(id = R.string.not_found)
 
-	Row(
-		modifier = Modifier.fillMaxWidth(),
-		horizontalArrangement = Arrangement.End
-	) {
-		Button(onClick = {
+	Scaffold(
+		topBar = { TopBar(navController, stringResource(id = R.string.ScreenHome),false,
+		extraActions = {IconButton(onClick = {
 			navController.navigate("infoScreen")
 		}, modifier = Modifier.padding(5.dp)) {
 			Icon(
 				painter = painterResource(id = R.drawable.baseline_info_24),
 				contentDescription = ""
 			)
-		}
-	}
-	Column(
-		modifier = Modifier
-			.fillMaxSize()
-			.padding(30.dp),
-		verticalArrangement = Arrangement.Top,
-		horizontalAlignment = Alignment.CenterHorizontally
-	) {
-		Spacer(modifier = Modifier.height(110.dp))
-		Text(
-			text = stringResource(id = R.string.homescreen_appname),
-			fontSize = 40.sp,
-			color = theBlue
-		)
+		}}
 
-	}
-	Column(
-		modifier = Modifier.fillMaxSize(),
-		verticalArrangement = Arrangement.Center,
-		horizontalAlignment = Alignment.CenterHorizontally
-	) {
-		Spacer(modifier = Modifier.height(50.dp))
-		Button(onClick = {
-			viewModel.onEvent(HomeScreenEvent.SelectConfiguration)
-			navController.navigate("selectScreen")
-			Modifier
-				.height(100.dp)
-				.width(300.dp)
+		) },
+		content = {
+			Spacer(modifier = Modifier.height(it.calculateTopPadding()))
 
-		}) {
-			Text(
-				text = stringResource(id = R.string.homescreen_btn_select_profile),
-				fontSize = 30.sp
-			)
-		}
-		Spacer(modifier = Modifier.height(60.dp))
+
+			Column(
+				modifier = Modifier
+					.fillMaxSize()
+					.padding(30.dp),
+				verticalArrangement = Arrangement.Top,
+				horizontalAlignment = Alignment.CenterHorizontally
+			) {
+				Spacer(modifier = Modifier.height(110.dp))
+				Text(
+					text = stringResource(id = R.string.homescreen_appname),
+					fontSize = 40.sp,
+					color = theBlue
+				)
+
+			}
+			Column(
+				modifier = Modifier.fillMaxSize(),
+				verticalArrangement = Arrangement.Center,
+				horizontalAlignment = Alignment.CenterHorizontally
+			) {
+				Spacer(modifier = Modifier.height(50.dp))
+				Button(onClick = {
+					viewModel.onEvent(HomeScreenEvent.SelectConfiguration)
+					navController.navigate("selectScreen")
+					Modifier
+						.height(100.dp)
+						.width(300.dp)
+
+				}) {
+					Text(
+						text = stringResource(id = R.string.homescreen_btn_select_profile),
+						fontSize = 30.sp
+					)
+				}
+				Spacer(modifier = Modifier.height(60.dp))
 
 		/**
 		 * The Favorite Configurations
@@ -136,7 +140,7 @@ fun HomeScreenScreen(
 				)
 				Spacer(modifier = Modifier.height(6.dp))
 			}
-			
+
 		}
 		Row(
 			Modifier
@@ -174,29 +178,34 @@ fun HomeScreenScreen(
 	}
 
 
-	/**
-	 * battery optimization hint
-	 */
-	val pm = LocalContext.current.getSystemService(ComponentActivity.POWER_SERVICE) as PowerManager
-	if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !pm.isIgnoringBatteryOptimizations(
-			LocalContext.current.packageName
-		)
-	) {
-		Column(
-			modifier = Modifier.fillMaxSize(),
-			verticalArrangement = Arrangement.Bottom,
-			horizontalAlignment = Alignment.CenterHorizontally
-		) {
-			Text(
-				text = stringResource(id = R.string.battery_opt_recommendation),
-				textAlign = TextAlign.Center
-			)
-			//var forceUpdate:Boolean by remember { mutableStateOf(true) }
-			Button(onClick = {
-				viewModel.onEvent(HomeScreenEvent.DisableBatteryOptimization { batteryOptDisableFunction() })
-			}) {
-				Text(text = stringResource(id = R.string.battery_opt_button))
+			/**
+			 * battery optimization hint
+			 */
+			/**
+			 * battery optimization hint
+			 */
+			val pm =
+				LocalContext.current.getSystemService(ComponentActivity.POWER_SERVICE) as PowerManager
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !pm.isIgnoringBatteryOptimizations(
+					LocalContext.current.packageName
+				)
+			) {
+				Column(
+					modifier = Modifier.fillMaxSize(),
+					verticalArrangement = Arrangement.Bottom,
+					horizontalAlignment = Alignment.CenterHorizontally
+				) {
+					Text(
+						text = stringResource(id = R.string.battery_opt_recommendation),
+						textAlign = TextAlign.Center
+					)
+					//var forceUpdate:Boolean by remember { mutableStateOf(true) }
+					Button(onClick = {
+						viewModel.onEvent(HomeScreenEvent.DisableBatteryOptimization { batteryOptDisableFunction() })
+					}) {
+						Text(text = stringResource(id = R.string.battery_opt_button))
+					}
+				}
 			}
-		}
-	}
+		})
 }
