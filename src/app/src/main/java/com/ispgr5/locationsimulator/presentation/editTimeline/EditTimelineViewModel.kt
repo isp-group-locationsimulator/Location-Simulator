@@ -152,6 +152,23 @@ class EditTimelineViewModel @Inject constructor(
                     )
                 }
             }
+            is EditTimelineEvent.ChangeConfigComponentName -> {
+                if (state.value.current == null){return}
+                viewModelScope.launch {
+                    var component = state.value.current!!.copy()
+                    when (component) {
+                        is Vibration -> {
+                            component = (component as Vibration).myCopy(
+                                name = event.name
+                            )
+                        }
+                    }
+                    _state.value = _state.value.copy(
+                        components = state.value.components.map { if (it === state.value.current) component else it },
+                        current = component
+                    )
+                }
+            }
             is EditTimelineEvent.AddSound -> {
                 viewModelScope.launch {
                     event.navController.navigate("sound?configurationId=${currentConfigurationId}")
@@ -160,7 +177,7 @@ class EditTimelineViewModel @Inject constructor(
             is EditTimelineEvent.AddVibration -> {
                 viewModelScope.launch {
                     val vibration = Vibration(
-                        id = (state.value.components.maxByOrNull { it.id }?.id ?: 0) + 1,
+                        id = (state.value.components.maxByOrNull { it.id }?.id ?: 0) + 1,"default",
                         3, 4, 3, 7, 6, 8
                     )
                     val listC = state.value.components.toMutableList()

@@ -54,6 +54,7 @@ class AddViewModel @Inject constructor(
 								components = listOf(
 									Vibration(
 										id = 1,
+										name = "default Name",
 										minStrength = 1,
 										maxStrength = 255,
 										minPause = 3,
@@ -63,6 +64,7 @@ class AddViewModel @Inject constructor(
 									),
 									Vibration(
 										id = 2,
+										name = "default Name",
 										minStrength = 1,
 										maxStrength = 255,
 										minPause = 3,
