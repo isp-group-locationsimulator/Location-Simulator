@@ -20,4 +20,5 @@ sealed class EditTimelineEvent {
 	data class MoveConfCompRight(val configComponent: ConfigComponent) : EditTimelineEvent()
 	data class ChangedRandomOrderPlayback(val randomOrderPlayback: Boolean) : EditTimelineEvent()
 	data class ChangeConfigComponentName(val name: String) : EditTimelineEvent()
+	data class CopyConfigComponent(val configComponent: ConfigComponent) : EditTimelineEvent()
 }

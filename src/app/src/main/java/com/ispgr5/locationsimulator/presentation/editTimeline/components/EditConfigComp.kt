@@ -32,7 +32,8 @@ fun EditConfigComponent(
 	onDeleteClicked: (configComponent: ConfigComponent) -> Unit,
 	onMoveLeftClicked: (configComponent: ConfigComponent) -> Unit,
 	onMoveRightClicked: (configComponent: ConfigComponent) -> Unit,
-	onConfigComponentNameChanged: (name: String) -> Unit
+	onConfigComponentNameChanged: (name: String) -> Unit,
+	onCopyConfigComponent: (configComponent: ConfigComponent) -> Unit,
 ) {
 	//so no Time line Item is selected for now
 	if (configComponent == null) {
@@ -194,28 +195,39 @@ fun EditConfigComponent(
 				range = 0f..60f
 			)
 		}
-		Row(
-			modifier = Modifier.fillMaxWidth(),
-			horizontalArrangement = Arrangement.Center
-		) {
-			Button(
-				onClick = { showDeleteConfirmDialog = true }, //show Confirm Dialog
-				contentPadding = PaddingValues(0.dp),
-				enabled = true,
-				shape = MaterialTheme.shapes.small,
-				border = null,
-				elevation = null,
-				colors = ButtonDefaults.buttonColors(
-					backgroundColor = androidx.compose.ui.graphics.Color.Transparent,
-					contentColor = androidx.compose.ui.graphics.Color.Red,
-					disabledBackgroundColor = androidx.compose.ui.graphics.Color.Transparent,
-					disabledContentColor = MaterialTheme.colors.primary.copy(alpha = ContentAlpha.disabled),
-				)
+		Column {
+			Row(
+				modifier = Modifier.fillMaxWidth(),
+				horizontalArrangement = Arrangement.Center
 			) {
-				Icon(
-					painter = painterResource(id = R.drawable.ic_baseline_delete_outline_24),
-					contentDescription = null,
-				)
+				//TODO: Is this a good position?
+				Button(onClick = { onCopyConfigComponent(configComponent) }, modifier = Modifier.fillMaxWidth()) {
+					Text(text = stringResource(id = R.string.DuplicateComponent))
+				}
+			}
+			Row(
+				modifier = Modifier.fillMaxWidth(),
+				horizontalArrangement = Arrangement.Center
+			) {
+				Button(
+					onClick = { showDeleteConfirmDialog = true }, //show Confirm Dialog
+					contentPadding = PaddingValues(0.dp),
+					enabled = true,
+					shape = MaterialTheme.shapes.small,
+					border = null,
+					elevation = null,
+					colors = ButtonDefaults.buttonColors(
+						backgroundColor = androidx.compose.ui.graphics.Color.Transparent,
+						contentColor = androidx.compose.ui.graphics.Color.Red,
+						disabledBackgroundColor = androidx.compose.ui.graphics.Color.Transparent,
+						disabledContentColor = MaterialTheme.colors.primary.copy(alpha = ContentAlpha.disabled),
+					)
+				) {
+					Icon(
+						painter = painterResource(id = R.drawable.ic_baseline_delete_outline_24),
+						contentDescription = null,
+					)
+				}
 			}
 		}
 	}

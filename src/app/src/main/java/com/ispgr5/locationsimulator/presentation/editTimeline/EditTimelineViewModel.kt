@@ -247,6 +247,30 @@ class EditTimelineViewModel @Inject constructor(
                     randomOrderPlayback = event.randomOrderPlayback
                 )
             }
+            is EditTimelineEvent.CopyConfigComponent -> {
+                if (state.value.current == null){return}
+                viewModelScope.launch {
+                    val componentsListCopy = state.value.components.toMutableList()
+                    var component = state.value.current!!.copy()
+                    when (component) {
+                        is Vibration -> {
+                            component = (component as Vibration).myCopy(
+                                id = (componentsListCopy.maxByOrNull { it.id }?.id ?: 0) + 1
+                            )
+                        }
+                        is Sound -> {
+                            component = (component as Sound).myCopy(
+                                id = (componentsListCopy.maxByOrNull { it.id }?.id ?: 0) + 1
+                            )
+                        }
+                    }
+                    componentsListCopy.add(component)
+                    _state.value = _state.value.copy(
+                        components = componentsListCopy,
+                        current = component
+                    )
+                }
+            }
         }
         saveConfiguration()
     }
