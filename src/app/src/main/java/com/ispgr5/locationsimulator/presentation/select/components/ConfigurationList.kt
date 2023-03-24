@@ -147,14 +147,17 @@ fun OneConfigurationListMember(
 			}
 			//The Information which is shown when toggle is active
 			if (isToggled) {
-				Column(
+				Row(
 					Modifier.fillMaxWidth(),
-					verticalArrangement = Arrangement.SpaceAround,
-					horizontalAlignment = Alignment.CenterHorizontally
+					verticalAlignment = Alignment.CenterVertically,
+					horizontalArrangement = Arrangement.SpaceAround
 				) {
+					//TODO: Icon
+					//The Export Button
 					Button(onClick = onExportClicked, enabled = !hasErrors) {
 						Text(text = stringResource(id = R.string.select_btn_profile_export))
 					}
+					//TODO: Icon
 					//The Select Button
 					Button(onClick = onSelectClicked, enabled = !hasErrors) {
 						Text(text = stringResource(id = R.string.select_btn_profile_select))
@@ -179,8 +182,9 @@ fun OneConfigurationListMember(
 							contentDescription = null
 						)
 					}
-					//The Select Button
+					//The Duplicate Button
 					Button(onClick = onDuplicateClicked, enabled = !hasErrors) {
+						//TODO: Icon
 						Text(text = "Clone")
 					}
 				}

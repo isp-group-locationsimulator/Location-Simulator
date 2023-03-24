@@ -114,7 +114,7 @@ class SelectViewModel @Inject constructor(
 					configurationUseCases.getConfiguration(event.id!!)?.also { configuration ->
 						configurationUseCases.addConfiguration(
 							Configuration(
-								name = configuration.name + "(Clone)",
+								name = configuration.name,
 								randomOrderPlayback = configuration.randomOrderPlayback,
 								description = configuration.description,
 								components = configuration.components,
