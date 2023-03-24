@@ -56,4 +56,5 @@
     <string name="ScreenAdd">Konfiguration erstellen</string>
     <string name="ScreenDelay"> Konfiguration Übersicht</string>
     <string name="ScreenEdit"> Konfiguration bearbeiten</string>
+    <string name="DuplicateComponent"> Duplizieren </string>
 </resources>
