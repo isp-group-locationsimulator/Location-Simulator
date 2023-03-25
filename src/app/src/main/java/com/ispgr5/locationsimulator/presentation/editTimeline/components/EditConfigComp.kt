@@ -1,5 +1,8 @@
 package com.ispgr5.locationsimulator.presentation.editTimeline.components
 
+import android.content.Context
+import android.os.Build
+import android.os.Vibrator
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicTextField
@@ -8,6 +11,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -21,6 +25,7 @@ import com.ispgr5.locationsimulator.domain.model.Vibration
 import com.ispgr5.locationsimulator.presentation.editTimeline.RangeConverter
 import com.ispgr5.locationsimulator.presentation.universalComponents.ConfirmDeleteDialog
 import kotlin.properties.Delegates
+
 
 @Composable
 fun EditConfigComponent(
@@ -141,27 +146,36 @@ fun EditConfigComponent(
 					/**
 					 * The Vibration Strength
 					 */
-					Text(text = stringResource(id = R.string.editTimeline_Vibration_Strength))
-					Text(
-						RangeConverter.eightBitIntToPercentageFloat(configComponent.minStrength)
-							.toInt().toString() + "% "
-								+ stringResource(id = R.string.editTimeline_range) + RangeConverter.eightBitIntToPercentageFloat(
-							configComponent.maxStrength
-						)
-							.toInt()
-							.toString() + "%"
-					)
-					SliderForRange(
-						value = RangeConverter.eightBitIntToPercentageFloat(configComponent.minStrength)..RangeConverter.eightBitIntToPercentageFloat(
-							configComponent.maxStrength
-						),
-						func = { value: ClosedFloatingPointRange<Float> ->
-							onVibStrengthChanged(
-								value
+					val vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+						// Use the recommended method to get the Vibrator service
+						LocalContext.current.getSystemService(Vibrator::class.java)
+					} else {
+						// Use the deprecated method to get the Vibrator service
+						LocalContext.current.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+					}
+					if (Build.VERSION.SDK_INT >= 26 && vibrator.hasAmplitudeControl()) {
+						Text(text = stringResource(id = R.string.editTimeline_Vibration_Strength))
+						Text(
+							RangeConverter.eightBitIntToPercentageFloat(configComponent.minStrength)
+								.toInt().toString() + "% "
+									+ stringResource(id = R.string.editTimeline_range) + RangeConverter.eightBitIntToPercentageFloat(
+								configComponent.maxStrength
 							)
-						},
-						range = 0f..100f
-					)
+								.toInt()
+								.toString() + "%"
+						)
+						SliderForRange(
+							value = RangeConverter.eightBitIntToPercentageFloat(configComponent.minStrength)..RangeConverter.eightBitIntToPercentageFloat(
+								configComponent.maxStrength
+							),
+							func = { value: ClosedFloatingPointRange<Float> ->
+								onVibStrengthChanged(
+									value
+								)
+							},
+							range = 0f..100f
+						)
+					}
 
 					/**
 					 * The Vibration duration
