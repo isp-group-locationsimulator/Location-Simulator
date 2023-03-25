@@ -46,9 +46,7 @@ fun SoundScreen(
 				modifier = Modifier.fillMaxSize(),
 				horizontalAlignment = Alignment.CenterHorizontally
 			) {
-				/**
-				 * The refresh Button
-				 */
+
 				/**
 				 * The refresh Button
 				 */
@@ -67,10 +65,6 @@ fun SoundScreen(
 				/**
 				 * Header Text
 				 */
-
-				/**
-				 * Header Text
-				 */
 				Text(
 					text = stringResource(id = R.string.soundscreen_soundselection),
 					fontSize = 30.sp
@@ -83,9 +77,6 @@ fun SoundScreen(
 					/**
 					 * Import Button
 					 */
-					/**
-					 * Import Button
-					 */
 					Button(
 						colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
 						onClick = {
@@ -94,12 +85,6 @@ fun SoundScreen(
 					) {
 						Text(text = stringResource(id = R.string.soundscreen_import))
 					}
-
-
-					/**
-					 * Record Button
-					 */
-
 
 					/**
 					 * Record Button
@@ -110,10 +95,6 @@ fun SoundScreen(
 					) {
 						Text(text = stringResource(id = R.string.soundscreen_record))
 					}
-
-					/**
-					 * The Stop Playback button
-					 */
 
 					/**
 					 * The Stop Playback button
@@ -130,10 +111,6 @@ fun SoundScreen(
 				}
 
 				Spacer(modifier = Modifier.height(20.dp))
-
-				/**
-				 * List of all known Sounds
-				 */
 
 				/**
 				 * List of all known Sounds
