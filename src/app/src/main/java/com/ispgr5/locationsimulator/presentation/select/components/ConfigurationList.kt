@@ -9,7 +9,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.domain.model.Configuration
@@ -152,15 +151,45 @@ fun OneConfigurationListMember(
 					verticalAlignment = Alignment.CenterVertically,
 					horizontalArrangement = Arrangement.SpaceAround
 				) {
-					//TODO: Icon
-					//The Export Button
-					Button(onClick = onExportClicked, enabled = !hasErrors) {
-						Text(text = stringResource(id = R.string.select_btn_profile_export))
-					}
-					//TODO: Icon
 					//The Select Button
-					Button(onClick = onSelectClicked, enabled = !hasErrors) {
-						Text(text = stringResource(id = R.string.select_btn_profile_select))
+					Button(
+						onClick = onSelectClicked,
+						contentPadding = PaddingValues(0.dp),
+						enabled = !hasErrors,
+						shape = MaterialTheme.shapes.small,
+						border = null,
+						elevation = null,
+						colors = ButtonDefaults.buttonColors(
+							backgroundColor = Color.Transparent,
+							contentColor = MaterialTheme.colors.primary,
+							disabledBackgroundColor = Color.Transparent,
+							disabledContentColor = MaterialTheme.colors.primary.copy(alpha = ContentAlpha.disabled),
+						)
+					) {
+						Icon(
+							painter = painterResource(id = R.drawable.baseline_play_arrow_24),
+							contentDescription = null
+						)
+					}
+					//The Export Button
+					Button(
+						onClick = onExportClicked,
+						contentPadding = PaddingValues(0.dp),
+						enabled = !hasErrors,
+						shape = MaterialTheme.shapes.small,
+						border = null,
+						elevation = null,
+						colors = ButtonDefaults.buttonColors(
+							backgroundColor = Color.Transparent,
+							contentColor = MaterialTheme.colors.primary,
+							disabledBackgroundColor = Color.Transparent,
+							disabledContentColor = MaterialTheme.colors.primary.copy(alpha = ContentAlpha.disabled),
+						)
+					) {
+						Icon(
+							painter = painterResource(id = R.drawable.ic_baseline_download_24),
+							contentDescription = null
+						)
 					}
 					//The Edit Button
 					Button(
@@ -183,9 +212,24 @@ fun OneConfigurationListMember(
 						)
 					}
 					//The Duplicate Button
-					Button(onClick = onDuplicateClicked, enabled = !hasErrors) {
-						//TODO: Icon
-						Text(text = "Clone")
+					Button(
+						onClick = onDuplicateClicked,
+						contentPadding = PaddingValues(0.dp),
+						enabled = !hasErrors,
+						shape = MaterialTheme.shapes.small,
+						border = null,
+						elevation = null,
+						colors = ButtonDefaults.buttonColors(
+							backgroundColor = Color.Transparent,
+							contentColor = MaterialTheme.colors.primary,
+							disabledBackgroundColor = Color.Transparent,
+							disabledContentColor = MaterialTheme.colors.primary.copy(alpha = ContentAlpha.disabled),
+						)
+					) {
+						Icon(
+							painter = painterResource(id = R.drawable.ic_baseline_call_split_24),
+							contentDescription = null
+						)
 					}
 				}
 			}
