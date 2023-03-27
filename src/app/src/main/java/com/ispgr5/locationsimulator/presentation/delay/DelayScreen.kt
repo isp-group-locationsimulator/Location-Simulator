@@ -1,14 +1,17 @@
 package com.ispgr5.locationsimulator.presentation.delay
 
+import Timer
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ispgr5.locationsimulator.R
@@ -39,20 +42,21 @@ fun DelayScreen(
 				Modifier.fillMaxWidth(),
 				horizontalAlignment = Alignment.CenterHorizontally
 			) {
+				Spacer(modifier = Modifier.size(8.dp))
+
 				if (state.configuration == null) {
 					Text(text = "Configuration is null")
 				} else {
-					Text(text = state.configuration.name)
+					Text(
+						text = state.configuration.name,
+						style = TextStyle(fontSize = 24.sp)
+					)
+
+					Spacer(modifier = Modifier.size(8.dp))
+					Divider(color = MaterialTheme.colors.primary, thickness = 1.dp)
+					Spacer(modifier = Modifier.size(8.dp))
+
 					Text(text = state.configuration.description)
-				}
-				Button(
-					onClick = {
-						viewModel.onEvent(DelayEvent.StartClicked(startServiceFunction))
-						navController.navigate("runScreen")
-					},
-					enabled = state.configuration != null
-				) {
-					Text(text = stringResource(id = R.string.delay_btn_start))
 				}
 
 				/**
@@ -60,9 +64,9 @@ fun DelayScreen(
 				 */
 				Spacer(modifier = Modifier.size(8.dp))
 				Divider(color = MaterialTheme.colors.primary, thickness = 1.dp)
-				LazyColumn(
-					modifier = Modifier.fillMaxSize()
-				) {
+				Spacer(modifier = Modifier.size(8.dp))
+
+				LazyColumn {
 					items(1) {
 						state.configuration?.components?.let {
 							Timeline(
@@ -75,6 +79,12 @@ fun DelayScreen(
 						}
 					}
 				}
+
+				Spacer(modifier = Modifier.size(8.dp))
+				Divider(color = MaterialTheme.colors.primary, thickness = 1.dp)
+				Spacer(modifier = Modifier.size(8.dp))
+
+				Timer(viewModel, startServiceFunction, navController)
 			}
 		})
 }

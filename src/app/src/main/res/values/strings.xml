@@ -56,4 +56,7 @@
     <string name="ScreenDelay"> Configuration Info</string>
     <string name="ScreenEdit"> Edit Configuration</string>
     <string name="DuplicateComponent"> Duplicate </string>
+    <string name="TimerHours">Hours</string>
+    <string name="TimerMinutes">Minutes</string>
+    <string name="TimerSeconds">Seconds</string>
 </resources>
