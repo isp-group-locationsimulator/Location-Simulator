@@ -71,27 +71,31 @@ private val DarkThemeColors = darkColors(
 
 )*/
 private val LightThemeColors = lightColors(
-	primary = primaryLight,
+	primary = theBlue,
 	primaryVariant = primaryLightVariant,
-	onPrimary = Black2,
-	secondary = lightSecondary,
-	secondaryVariant = lightSecondaryVariant,
+	onPrimary = White2,
+	secondary = secondaryLight,
+	secondaryVariant = secondaryDark,
 	onSecondary = Black2,
 	error = RedErrorDark,
 	onError = RedErrorLight,
-
+	onBackground = Black2,
+	surface = theBlueVeryLight,
+	onSurface = Black2
 	)
 
 private val DarkThemeColors = darkColors(
-	primary = primaryDark,
+	primary = LightBlack,
 	primaryVariant = primaryDarkVariant,
 	onPrimary = White2,
-	secondary = darkSecondary,
-	secondaryVariant = darkSecondaryVariant,
+	secondary = secondaryLight,
+	secondaryVariant = secondaryDark,
 	onSecondary = White2,
 	error = RedErrorLight,
 	onError = RedErrorLight,
-	//surface = Color(0xFF3c506b),
+	onBackground = White2,
+	surface = LighterBlack,
+	onSurface = White2
 
 
 )

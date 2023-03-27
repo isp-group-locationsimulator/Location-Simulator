@@ -52,8 +52,7 @@ fun SoundScreen(
 				/**
 				 * The refresh Button
 				 */
-				Button(
-					colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
+				IconButton(
 					onClick = {
 						viewModel.onEvent(SoundEvent.RefreshPage(soundStorageManager = soundStorageManager))
 					}
@@ -87,10 +86,11 @@ fun SoundScreen(
 					 * Import Button
 					 */
 					Button(
-						colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
+						colors = ButtonDefaults.buttonColors(),
 						onClick = {
 							viewModel.onEvent(SoundEvent.ImportSound(soundStorageManager = soundStorageManager))
-						}
+						},
+						modifier = Modifier.padding(5.dp)
 					) {
 						Text(text = stringResource(id = R.string.soundscreen_import))
 					}
@@ -105,8 +105,9 @@ fun SoundScreen(
 					 * Record Button
 					 */
 					Button(
-						colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
-						onClick = { recordAudio() }
+						colors = ButtonDefaults.buttonColors(),
+						onClick = { recordAudio() },
+						modifier = Modifier.padding(5.dp)
 					) {
 						Text(text = stringResource(id = R.string.soundscreen_record))
 					}
@@ -119,10 +120,11 @@ fun SoundScreen(
 					 * The Stop Playback button
 					 */
 					Button(
-						colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
+						colors = ButtonDefaults.buttonColors(),
 						onClick = {
 							viewModel.onEvent(SoundEvent.StopPlayback)
-						}
+						},
+						modifier = Modifier.padding(5.dp)
 					) {
 						Text(text = stringResource(id = R.string.soundscreen_stopplayback))
 					}

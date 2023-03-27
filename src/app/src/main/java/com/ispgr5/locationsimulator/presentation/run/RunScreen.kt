@@ -44,7 +44,7 @@ fun RunScreen(
 					onClick = {
 						viewModel.onEvent(RunEvent.StopClicked(stopServiceFunction))
 						navController.popBackStack()
-					}) {
+					})  {
 					Text(text = stringResource(id = R.string.run_stop), fontSize = 30.sp)
 				}
 			}

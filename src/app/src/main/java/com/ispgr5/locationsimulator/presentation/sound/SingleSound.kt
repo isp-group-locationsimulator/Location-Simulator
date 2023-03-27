@@ -4,10 +4,7 @@ import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,9 +26,8 @@ fun SingleSound(
 		/**
 		 * Play this Sound Button
 		 */
-		Button(
+		IconButton(
 			modifier = Modifier.height(intrinsicSize = IntrinsicSize.Max),
-			colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
 			onClick = onPlayClicked
 		) {
 			Icon(
@@ -46,8 +42,8 @@ fun SingleSound(
 		Button(
 			modifier = Modifier
 				.height(intrinsicSize = IntrinsicSize.Max)
-				.weight(1f),
-			colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
+				.weight(1f)
+				.padding(2.dp),
 			onClick = onSelectClicked
 		) {
 			Text(text = soundName)
@@ -56,9 +52,8 @@ fun SingleSound(
 		/**
 		 * Button to delete the sound.
 		 */
-		Button(
+		IconButton(
 			modifier = Modifier.height(intrinsicSize = IntrinsicSize.Max),
-			colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
 			onClick = onDeleteClicked
 		) {
 			Icon(

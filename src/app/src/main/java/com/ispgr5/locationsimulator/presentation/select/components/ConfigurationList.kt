@@ -30,7 +30,7 @@ fun OneConfigurationListMember(
 	isFavorite: Boolean,
 	onFavoriteClicked: () -> Unit
 ) {
-	val rowBackgroundColor: Color = Color.LightGray
+	val rowBackgroundColor: Color = MaterialTheme.colors.surface
 
 	Button(
 		onClick = onToggleClicked,
@@ -151,7 +151,8 @@ fun OneConfigurationListMember(
 					verticalAlignment = Alignment.CenterVertically,
 					horizontalArrangement = Arrangement.SpaceAround
 				) {
-					Button(onClick = onExportClicked, enabled = !hasErrors) {
+					Button(onClick = onExportClicked, enabled = !hasErrors
+					) {
 						Text(text = stringResource(id = R.string.select_btn_profile_export))
 					}
 					//The Select Button

@@ -12,11 +12,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -73,8 +76,9 @@ fun HomeScreenScreen(
 				Spacer(modifier = Modifier.height(110.dp))
 				Text(
 					text = stringResource(id = R.string.homescreen_appname),
-					fontSize = 40.sp,
-					color = theBlue
+					fontSize = 8.em,
+					fontWeight = FontWeight.Bold,
+					color = MaterialTheme.colors.onBackground
 				)
 
 			}
