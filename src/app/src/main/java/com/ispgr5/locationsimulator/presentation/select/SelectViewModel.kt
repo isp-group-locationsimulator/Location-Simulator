@@ -1,5 +1,6 @@
 package com.ispgr5.locationsimulator.presentation.select
 
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -104,6 +105,22 @@ class SelectViewModel @Inject constructor(
 					)
 					viewModelScope.launch {
 						configurationUseCases.addConfiguration(confInList)
+					}
+				}
+			}
+			is SelectEvent.Duplicate -> {
+				Log.d("testt", "duplicate${event.id}")
+				viewModelScope.launch {
+					configurationUseCases.getConfiguration(event.id!!)?.also { configuration ->
+						configurationUseCases.addConfiguration(
+							Configuration(
+								name = configuration.name,
+								randomOrderPlayback = configuration.randomOrderPlayback,
+								description = configuration.description,
+								components = configuration.components,
+								isFavorite = false,
+							)
+						)
 					}
 				}
 			}

@@ -164,54 +164,61 @@ fun SelectScreen(
                                     )
                                     toaster(toastString)
                                 },
-                                hasErrors = state.configurationsWithErrors.find { conf -> conf.id == configuration.id } != null,
-                                onErrorInfoClicked = {
-                                    for (error in viewModel.whatIsHisErrors(
-                                        configuration = configuration,
-                                        soundStorageManager = soundStorageManager
-                                    )) {
-                                        toaster("$error $notFound")
-                                    }
-                                },
-                                isFavorite = configuration.isFavorite,
-                                onFavoriteClicked = {
-                                    viewModel.onEvent(
-                                        SelectEvent.FavoriteClicked(
-                                            configuration,
-                                            toaster
-                                        )
-                                    )
-                                }
-                            )
-                        }
-                        if (state.selectedConfigurationForDeletion?.id == configuration.id) {
-                            Column(Modifier.weight(1.5f)) {
-                                Button(
-                                    modifier = Modifier
-                                        .then(
-                                            with(LocalDensity.current) {
-                                                Modifier.size(
-                                                    width = 9999.dp,
-                                                    height = sizeOfDeletionConfiguration.height.toDp(),
-                                                )
-                                            }
-                                        ),
-                                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red),
-                                    onClick = {
-                                        viewModel.onEvent(
-                                            SelectEvent.DeleteConfiguration(
-                                                configuration = configuration
-                                            )
-                                        )
-                                    }
-                                ) {
-                                    Text(text = stringResource(id = R.string.select_btn_profile_delete))
-                                }
-                            }
-                        }
-                    }
-                    Spacer(modifier = Modifier.height(6.dp))
-                }
-            }
-        })
+                                onDuplicateClicked = {
+								viewModel.onEvent(
+									SelectEvent.Duplicate(
+										id = configuration.id
+									)
+								)
+							},
+							hasErrors = state.configurationsWithErrors.find { conf -> conf.id == configuration.id } != null,
+							onErrorInfoClicked = {
+								for (error in viewModel.whatIsHisErrors(
+									configuration = configuration,
+									soundStorageManager = soundStorageManager
+								)) {
+									toaster("$error $notFound")
+								}
+							},
+							isFavorite = configuration.isFavorite,
+							onFavoriteClicked = {
+								viewModel.onEvent(
+									SelectEvent.FavoriteClicked(
+										configuration,
+										toaster
+									)
+								)
+							}
+						)
+					}
+					if (state.selectedConfigurationForDeletion?.id == configuration.id) {
+						Column(Modifier.weight(1.5f)) {
+							Button(
+								modifier = Modifier
+									.then(
+										with(LocalDensity.current) {
+											Modifier.size(
+												width = 9999.dp,
+												height = sizeOfDeletionConfiguration.height.toDp(),
+											)
+										}
+									),
+								colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red),
+								onClick = {
+									viewModel.onEvent(
+										SelectEvent.DeleteConfiguration(
+											configuration = configuration
+										)
+									)
+								}
+							) {
+								Text(text = stringResource(id = R.string.select_btn_profile_delete))
+							}
+						}
+					}
+				}
+				Spacer(modifier = Modifier.height(6.dp))
+			}
+		}
+	})
 }

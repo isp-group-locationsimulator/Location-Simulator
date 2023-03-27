@@ -58,10 +58,6 @@ fun DelayScreen(
 				/**
 				 * The Timeline
 				 */
-
-				/**
-				 * The Timeline
-				 */
 				Spacer(modifier = Modifier.size(8.dp))
 				Divider(color = MaterialTheme.colors.primary, thickness = 1.dp)
 				LazyColumn(

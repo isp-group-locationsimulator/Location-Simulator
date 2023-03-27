@@ -25,6 +25,7 @@ fun OneConfigurationListMember(
 	onEditClicked: () -> Unit,
 	onSelectClicked: () -> Unit,
 	onExportClicked: () -> Unit,
+	onDuplicateClicked: () -> Unit,
 	hasErrors: Boolean,
 	onErrorInfoClicked: () -> Unit,
 	isFavorite: Boolean,
@@ -151,10 +152,12 @@ fun OneConfigurationListMember(
 					verticalAlignment = Alignment.CenterVertically,
 					horizontalArrangement = Arrangement.SpaceAround
 				) {
-					Button(onClick = onExportClicked, enabled = !hasErrors
-					) {
+					//TODO: Icon
+					//The Export Button
+					Button(onClick = onExportClicked, enabled = !hasErrors) {
 						Text(text = stringResource(id = R.string.select_btn_profile_export))
 					}
+					//TODO: Icon
 					//The Select Button
 					Button(onClick = onSelectClicked, enabled = !hasErrors) {
 						Text(text = stringResource(id = R.string.select_btn_profile_select))
@@ -178,6 +181,11 @@ fun OneConfigurationListMember(
 							painter = painterResource(id = R.drawable.ic_baseline_edit_24),
 							contentDescription = null
 						)
+					}
+					//The Duplicate Button
+					Button(onClick = onDuplicateClicked, enabled = !hasErrors) {
+						//TODO: Icon
+						Text(text = "Clone")
 					}
 				}
 			}

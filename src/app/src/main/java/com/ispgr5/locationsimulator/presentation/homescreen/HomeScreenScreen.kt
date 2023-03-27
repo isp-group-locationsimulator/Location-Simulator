@@ -130,6 +130,7 @@ fun HomeScreenScreen(
 					onEditClicked = {},
 					onSelectClicked = {},
 					onExportClicked = {},
+					onDuplicateClicked = {},
 					hasErrors = state.configurationsWithErrors.find { conf -> conf.id == configuration.id } != null,
 					onErrorInfoClicked = {
 						for (error in viewModel.whatIsHisErrors(
@@ -181,35 +182,31 @@ fun HomeScreenScreen(
 		}
 	}
 
-
-			/**
-			 * battery optimization hint
-			 */
-			/**
-			 * battery optimization hint
-			 */
-			val pm =
-				LocalContext.current.getSystemService(ComponentActivity.POWER_SERVICE) as PowerManager
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !pm.isIgnoringBatteryOptimizations(
-					LocalContext.current.packageName
-				)
+		/**
+		 * battery optimization hint
+		 */
+		val pm =
+			LocalContext.current.getSystemService(ComponentActivity.POWER_SERVICE) as PowerManager
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !pm.isIgnoringBatteryOptimizations(
+				LocalContext.current.packageName
+			)
+		) {
+			Column(
+				modifier = Modifier.fillMaxSize(),
+				verticalArrangement = Arrangement.Bottom,
+				horizontalAlignment = Alignment.CenterHorizontally
 			) {
-				Column(
-					modifier = Modifier.fillMaxSize(),
-					verticalArrangement = Arrangement.Bottom,
-					horizontalAlignment = Alignment.CenterHorizontally
-				) {
-					Text(
-						text = stringResource(id = R.string.battery_opt_recommendation),
-						textAlign = TextAlign.Center
-					)
-					//var forceUpdate:Boolean by remember { mutableStateOf(true) }
-					Button(onClick = {
-						viewModel.onEvent(HomeScreenEvent.DisableBatteryOptimization { batteryOptDisableFunction() })
-					}) {
-						Text(text = stringResource(id = R.string.battery_opt_button))
-					}
+				Text(
+					text = stringResource(id = R.string.battery_opt_recommendation),
+					textAlign = TextAlign.Center
+				)
+				//var forceUpdate:Boolean by remember { mutableStateOf(true) }
+				Button(onClick = {
+					viewModel.onEvent(HomeScreenEvent.DisableBatteryOptimization { batteryOptDisableFunction() })
+				}) {
+					Text(text = stringResource(id = R.string.battery_opt_button))
 				}
 			}
-		})
+		}
+	})
 }

@@ -1,15 +1,23 @@
 package com.ispgr5.locationsimulator.presentation.editTimeline.components
 
+import android.content.Context
+import android.os.Build
+import android.os.Vibrator
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 import com.ispgr5.locationsimulator.domain.model.Sound
@@ -17,6 +25,7 @@ import com.ispgr5.locationsimulator.domain.model.Vibration
 import com.ispgr5.locationsimulator.presentation.editTimeline.RangeConverter
 import com.ispgr5.locationsimulator.presentation.universalComponents.ConfirmDeleteDialog
 import kotlin.properties.Delegates
+
 
 @Composable
 fun EditConfigComponent(
@@ -27,7 +36,9 @@ fun EditConfigComponent(
 	onVibDurationChanged: (ClosedFloatingPointRange<Float>) -> Unit,
 	onDeleteClicked: (configComponent: ConfigComponent) -> Unit,
 	onMoveLeftClicked: (configComponent: ConfigComponent) -> Unit,
-	onMoveRightClicked: (configComponent: ConfigComponent) -> Unit
+	onMoveRightClicked: (configComponent: ConfigComponent) -> Unit,
+	onConfigComponentNameChanged: (name: String) -> Unit,
+	onCopyConfigComponent: (configComponent: ConfigComponent) -> Unit,
 ) {
 	//so no Time line Item is selected for now
 	if (configComponent == null) {
@@ -79,7 +90,26 @@ fun EditConfigComponent(
 						modifier = Modifier.fillMaxWidth(),
 						horizontalArrangement = Arrangement.Center
 					) {
-						Text(text = configComponent.source)
+						Text(
+							text = configComponent.source,
+							fontSize = 20.sp,
+						)
+					}
+				}
+				 is Vibration -> {
+					Spacer(modifier = Modifier.size(7.dp))
+					Row(
+						modifier = Modifier.fillMaxWidth(),
+						horizontalArrangement = Arrangement.Center
+					) {
+						BasicTextField(
+							textStyle = TextStyle(textAlign = TextAlign.Center,fontSize = 20.sp),
+							value = configComponent.name,
+							onValueChange = { name ->
+								onConfigComponentNameChanged (name)
+							}
+						)
+
 					}
 				}
 			}
@@ -116,27 +146,36 @@ fun EditConfigComponent(
 					/**
 					 * The Vibration Strength
 					 */
-					Text(text = stringResource(id = R.string.editTimeline_Vibration_Strength))
-					Text(
-						RangeConverter.eightBitIntToPercentageFloat(configComponent.minStrength)
-							.toInt().toString() + "% "
-								+ stringResource(id = R.string.editTimeline_range) + RangeConverter.eightBitIntToPercentageFloat(
-							configComponent.maxStrength
-						)
-							.toInt()
-							.toString() + "%"
-					)
-					SliderForRange(
-						value = RangeConverter.eightBitIntToPercentageFloat(configComponent.minStrength)..RangeConverter.eightBitIntToPercentageFloat(
-							configComponent.maxStrength
-						),
-						func = { value: ClosedFloatingPointRange<Float> ->
-							onVibStrengthChanged(
-								value
+					val vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+						// Use the recommended method to get the Vibrator service
+						LocalContext.current.getSystemService(Vibrator::class.java)
+					} else {
+						// Use the deprecated method to get the Vibrator service
+						LocalContext.current.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+					}
+					if (Build.VERSION.SDK_INT >= 26 && vibrator.hasAmplitudeControl()) {
+						Text(text = stringResource(id = R.string.editTimeline_Vibration_Strength))
+						Text(
+							RangeConverter.eightBitIntToPercentageFloat(configComponent.minStrength)
+								.toInt().toString() + "% "
+									+ stringResource(id = R.string.editTimeline_range) + RangeConverter.eightBitIntToPercentageFloat(
+								configComponent.maxStrength
 							)
-						},
-						range = 0f..100f
-					)
+								.toInt()
+								.toString() + "%"
+						)
+						SliderForRange(
+							value = RangeConverter.eightBitIntToPercentageFloat(configComponent.minStrength)..RangeConverter.eightBitIntToPercentageFloat(
+								configComponent.maxStrength
+							),
+							func = { value: ClosedFloatingPointRange<Float> ->
+								onVibStrengthChanged(
+									value
+								)
+							},
+							range = 0f..100f
+						)
+					}
 
 					/**
 					 * The Vibration duration
@@ -170,28 +209,39 @@ fun EditConfigComponent(
 				range = 0f..60f
 			)
 		}
-		Row(
-			modifier = Modifier.fillMaxWidth(),
-			horizontalArrangement = Arrangement.Center
-		) {
-			Button(
-				onClick = { showDeleteConfirmDialog = true }, //show Confirm Dialog
-				contentPadding = PaddingValues(0.dp),
-				enabled = true,
-				shape = MaterialTheme.shapes.small,
-				border = null,
-				elevation = null,
-				colors = ButtonDefaults.buttonColors(
-					backgroundColor = androidx.compose.ui.graphics.Color.Transparent,
-					contentColor = androidx.compose.ui.graphics.Color.Red,
-					disabledBackgroundColor = androidx.compose.ui.graphics.Color.Transparent,
-					disabledContentColor = MaterialTheme.colors.primary.copy(alpha = ContentAlpha.disabled),
-				)
+		Column {
+			Row(
+				modifier = Modifier.fillMaxWidth(),
+				horizontalArrangement = Arrangement.Center
 			) {
-				Icon(
-					painter = painterResource(id = R.drawable.ic_baseline_delete_outline_24),
-					contentDescription = null,
-				)
+				//TODO: Is this a good position?
+				Button(onClick = { onCopyConfigComponent(configComponent) }, modifier = Modifier.fillMaxWidth()) {
+					Text(text = stringResource(id = R.string.DuplicateComponent))
+				}
+			}
+			Row(
+				modifier = Modifier.fillMaxWidth(),
+				horizontalArrangement = Arrangement.Center
+			) {
+				Button(
+					onClick = { showDeleteConfirmDialog = true }, //show Confirm Dialog
+					contentPadding = PaddingValues(0.dp),
+					enabled = true,
+					shape = MaterialTheme.shapes.small,
+					border = null,
+					elevation = null,
+					colors = ButtonDefaults.buttonColors(
+						backgroundColor = androidx.compose.ui.graphics.Color.Transparent,
+						contentColor = androidx.compose.ui.graphics.Color.Red,
+						disabledBackgroundColor = androidx.compose.ui.graphics.Color.Transparent,
+						disabledContentColor = MaterialTheme.colors.primary.copy(alpha = ContentAlpha.disabled),
+					)
+				) {
+					Icon(
+						painter = painterResource(id = R.drawable.ic_baseline_delete_outline_24),
+						contentDescription = null,
+					)
+				}
 			}
 		}
 	}
