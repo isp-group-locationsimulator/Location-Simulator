@@ -45,6 +45,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.serialization.ExperimentalSerializationApi
 import java.io.FileOutputStream
 import java.io.InputStream
+import java.security.AccessController.getContext
 
 // TODO: Add KDoc to this class and methods.
 @AndroidEntryPoint
@@ -111,7 +112,9 @@ class MainActivity : ComponentActivity() {
                         ) {
                             DelayScreen(
                                 navController = navController,
-                                startServiceFunction = startService
+                                startServiceFunction = startService,
+								context = this@MainActivity,
+								privateDirUri = this@MainActivity.filesDir.toString(),
                             )
                         }
                         composable("runScreen") {

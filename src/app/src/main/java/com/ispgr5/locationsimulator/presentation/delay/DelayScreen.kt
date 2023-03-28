@@ -1,6 +1,7 @@
 package com.ispgr5.locationsimulator.presentation.delay
 
 import Timer
+import android.content.Context
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -15,6 +16,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ispgr5.locationsimulator.R
+import com.ispgr5.locationsimulator.data.storageManager.SoundStorageManager
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 import com.ispgr5.locationsimulator.presentation.editTimeline.components.Timeline
 import com.ispgr5.locationsimulator.presentation.universalComponents.TopBar
@@ -30,6 +32,8 @@ fun DelayScreen(
 	navController: NavController,
 	viewModel: DelayViewModel = hiltViewModel(),
 	startServiceFunction: (List<ConfigComponent>, Boolean) -> Unit,
+	context : Context, //context needed for calculating Sound Length
+	privateDirUri : String //the private Directory Uri  needed for calculating Sound Length
 ) {
 	//The state from viewmodel
 	val state = viewModel.state.value
@@ -80,7 +84,16 @@ fun DelayScreen(
 					}
 				}
 
-				Spacer(modifier = Modifier.size(8.dp))
+				Spacer(modifier = Modifier.size(5.dp))
+
+				//extra runtime
+				Text( String.format("%.0f",	state.configuration?.getMinDuration( context,privateDirUri))
+						+ "s - " +
+						String.format("%.0f",	state.configuration?.getMaxDuration(context,privateDirUri))
+						+"s " + stringResource(id = R.string.ConfigInfoPerIteration) )
+
+				Spacer(modifier = Modifier.size(3.dp))
+
 				Divider(color = MaterialTheme.colors.primary, thickness = 1.dp)
 				Spacer(modifier = Modifier.size(8.dp))
 

@@ -59,4 +59,6 @@
     <string name="TimerHours">Hours</string>
     <string name="TimerMinutes">Minutes</string>
     <string name="TimerSeconds">Seconds</string>
+    <string name="ConfigInfoPerIteration"> per iteration</string>
+
 </resources>

@@ -15,8 +15,10 @@ data class Vibration(
 	val name: String,
 	val minStrength: Int,
 	val maxStrength: Int,
+	//in ms
 	val minPause: Int,
 	val maxPause: Int,
+	//in ms
 	val minDuration: Int,
 	val maxDuration: Int
 ) : ConfigComponent() {

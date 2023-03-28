@@ -22,7 +22,7 @@ import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 import com.ispgr5.locationsimulator.domain.model.Sound
 import com.ispgr5.locationsimulator.domain.model.Vibration
-import com.ispgr5.locationsimulator.presentation.editTimeline.RangeConverter
+import com.ispgr5.locationsimulator.domain.model.RangeConverter
 import com.ispgr5.locationsimulator.presentation.universalComponents.ConfirmDeleteDialog
 import kotlin.properties.Delegates
 

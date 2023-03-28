@@ -1,4 +1,4 @@
-package com.ispgr5.locationsimulator.presentation.editTimeline
+package com.ispgr5.locationsimulator.domain.model
 
 /**
  * Class to help converting user friendly ranges into technical values for configuration and vise versa.
