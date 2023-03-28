@@ -56,7 +56,7 @@ fun EditConfigComponent(
 	Column(
 		modifier = Modifier
 			.fillMaxSize()
-			.padding(20.dp)
+			.padding(10.dp)
 			.verticalScroll(rememberScrollState()),
 		verticalArrangement = Arrangement.SpaceBetween,
 		horizontalAlignment = Alignment.CenterHorizontally,
@@ -66,16 +66,31 @@ fun EditConfigComponent(
 				modifier = Modifier.fillMaxWidth(),
 				horizontalArrangement = Arrangement.SpaceAround
 			) {
-				Button(onClick = { onMoveLeftClicked(configComponent) }) {
-					Icon(
-						painter = painterResource(id = R.drawable.baseline_arrow_back_24),
-						contentDescription = null
+				Column( horizontalAlignment = Alignment.CenterHorizontally) {
+					Button(onClick = { onMoveLeftClicked(configComponent) }) {
+						Icon(
+							painter = painterResource(id = R.drawable.baseline_arrow_back_24),
+							contentDescription = null
+						)
+					}
+					Text( stringResource(id = R.string.TimelineMoveLeft) ,
+						textAlign = TextAlign.Center,
+						modifier = Modifier.width(100.dp),
+						fontSize = 15.sp,
 					)
 				}
-				Button(onClick = { onMoveRightClicked(configComponent) }) {
-					Icon(
-						painter = painterResource(id = R.drawable.baseline_arrow_forward_24),
-						contentDescription = null
+				Column( horizontalAlignment = Alignment.CenterHorizontally) {
+					Button(onClick = { onMoveRightClicked(configComponent) }) {
+						Icon(
+							painter = painterResource(id = R.drawable.baseline_arrow_forward_24),
+							contentDescription = null
+						)
+					}
+					Text(
+						text = stringResource(id = R.string.TimelineMoveRight) ,
+						textAlign = TextAlign.Center,
+						modifier = Modifier.width(100.dp),
+						fontSize = 15.sp,
 					)
 				}
 			}

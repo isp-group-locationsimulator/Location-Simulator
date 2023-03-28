@@ -60,5 +60,7 @@
     <string name="TimerMinutes">Minutes</string>
     <string name="TimerSeconds">Seconds</string>
     <string name="ConfigInfoPerIteration"> per iteration</string>
+    <string name="TimelineMoveLeft">move left in Timeline</string>
+    <string name="TimelineMoveRight">move right in Timeline</string>
 
 </resources>

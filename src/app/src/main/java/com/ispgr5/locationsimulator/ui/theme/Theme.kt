@@ -81,7 +81,7 @@ private val LightThemeColors = lightColors(
 	onError = RedErrorLight,
 	onBackground = Black2,
 	surface = theBlueVeryLight,
-	onSurface = Black2
+	onSurface = Black2,
 	)
 
 private val DarkThemeColors = darkColors(

@@ -79,6 +79,7 @@ fun OneConfigurationListMember(
 				}
 
 				Column(Modifier.weight(1f)) {
+					//showing errors
 					if (hasErrors) {
 						Button(
 							onClick = onErrorInfoClicked,
@@ -117,6 +118,7 @@ fun OneConfigurationListMember(
 							disabledContentColor = MaterialTheme.colors.primary.copy(alpha = ContentAlpha.disabled),
 						)
 					) {
+						//favorite
 						if (isFavorite) {
 							Icon(
 								painter = painterResource(id = R.drawable.ic_baseline_star_24),
@@ -127,7 +129,7 @@ fun OneConfigurationListMember(
 							Icon(
 								painter = painterResource(id = R.drawable.ic_baseline_star_outline_24),
 								contentDescription = null,
-								tint = Color.Black,
+								tint = MaterialTheme.colors.onSurface,
 							)
 						}
 					}
@@ -168,7 +170,8 @@ fun OneConfigurationListMember(
 					) {
 						Icon(
 							painter = painterResource(id = R.drawable.baseline_play_arrow_24),
-							contentDescription = null
+							contentDescription = null,
+							tint = MaterialTheme.colors.onSurface
 						)
 					}
 					//The Export Button
@@ -188,7 +191,8 @@ fun OneConfigurationListMember(
 					) {
 						Icon(
 							painter = painterResource(id = R.drawable.ic_baseline_download_24),
-							contentDescription = null
+							contentDescription = null,
+							tint = MaterialTheme.colors.onSurface
 						)
 					}
 					//The Edit Button
@@ -208,7 +212,8 @@ fun OneConfigurationListMember(
 					) {
 						Icon(
 							painter = painterResource(id = R.drawable.ic_baseline_edit_24),
-							contentDescription = null
+							contentDescription = null,
+							tint = MaterialTheme.colors.onSurface
 						)
 					}
 					//The Duplicate Button
@@ -228,7 +233,8 @@ fun OneConfigurationListMember(
 					) {
 						Icon(
 							painter = painterResource(id = R.drawable.ic_baseline_call_split_24),
-							contentDescription = null
+							contentDescription = null,
+							tint = MaterialTheme.colors.onSurface
 						)
 					}
 				}

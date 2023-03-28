@@ -61,4 +61,6 @@
     <string name="TimerMinutes">Minuten</string>
     <string name="TimerSeconds">Sekunden</string>
     <string name="ConfigInfoPerIteration"> pro Iteration</string>
+    <string name="TimelineMoveLeft">nach links in Zeitleiste</string>
+    <string name="TimelineMoveRight">nach rechts in Zeitleiste</string>
 </resources>
