@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ispgr5.locationsimulator.R
-import com.ispgr5.locationsimulator.presentation.editTimeline.RangeConverter
+import com.ispgr5.locationsimulator.domain.model.RangeConverter
 import com.ispgr5.locationsimulator.presentation.editTimeline.components.SecText
 import com.ispgr5.locationsimulator.presentation.editTimeline.components.SliderForRange
 import com.ispgr5.locationsimulator.presentation.universalComponents.TopBar
@@ -320,7 +320,6 @@ fun SettingsScreen(
                                 .clip(CircleShape)
                                 .background(color)
                                 .size(20.dp)
-
                         )
                     }
                 }
