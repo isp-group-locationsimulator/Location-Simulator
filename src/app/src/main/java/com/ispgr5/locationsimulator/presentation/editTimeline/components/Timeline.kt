@@ -10,9 +10,11 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.ispgr5.locationsimulator.R
+import com.ispgr5.locationsimulator.core.util.TestTags
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 import com.ispgr5.locationsimulator.domain.model.Sound
 
@@ -51,6 +53,7 @@ fun Timeline(
 					.width(55.dp)
 					.height(55.dp)
 					.padding(6.dp)
+					.testTag(TestTags.EDIT_SCREEN_ADD_BUTTON)
 			) {
 				Icon(
 					painter = painterResource(id = R.drawable.ic_baseline_add_24),

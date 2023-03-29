@@ -11,6 +11,8 @@ class ConfigurationComponentConverterTest {
 
     private val testCompList: List<ConfigComponent> = listOf(
         Vibration(
+            id = 2,
+            name = "testVib",
             minStrength = 2,
             maxStrength = 5,
             minPause = 3,
@@ -19,9 +21,10 @@ class ConfigurationComponentConverterTest {
             maxDuration = 4
         ),
         Sound(
+            id = 3,
             source = "soundSource",
-            minVolume = 3,
-            maxVolume = 7,
+            minVolume = 3f,
+            maxVolume = 7f,
             minPause = 1,
             maxPause = 9,
             isRandom = true
