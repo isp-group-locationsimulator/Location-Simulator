@@ -46,6 +46,7 @@ class AddViewModel @Inject constructor(
 			is AddEvent.SaveConfiguration -> {
 				viewModelScope.launch {
 					try {
+						val defaultValues = event.getDefaultValues()
 						configurationUseCases.addConfiguration(
 							Configuration(
 								name = _state.value.name,
@@ -54,23 +55,23 @@ class AddViewModel @Inject constructor(
 								components = listOf(
 									Vibration(
 										id = 1,
-										name = "default Name",
-										minStrength = 1,
-										maxStrength = 255,
-										minPause = 3,
-										maxPause = 8,
-										minDuration = 1,
-										maxDuration = 3000
+										name = defaultValues.defaultNameVibration,
+										minStrength = defaultValues.minStrengthVibration,
+										maxStrength = defaultValues.maxStrengthVibration,
+										minPause = defaultValues.minPauseVibration,
+										maxPause = defaultValues.maxPauseVibration,
+										minDuration = defaultValues.minDurationVibration,
+										maxDuration = defaultValues.maxDurationVibration
 									),
 									Vibration(
 										id = 2,
-										name = "default Name",
-										minStrength = 1,
-										maxStrength = 255,
-										minPause = 3,
-										maxPause = 8,
-										minDuration = 2000,
-										maxDuration = 7000
+										name = defaultValues.defaultNameVibration,
+										minStrength = defaultValues.minStrengthVibration,
+										maxStrength = defaultValues.maxStrengthVibration,
+										minPause = defaultValues.minPauseVibration,
+										maxPause = defaultValues.maxPauseVibration,
+										minDuration = defaultValues.minDurationVibration,
+										maxDuration = defaultValues.maxDurationVibration
 									),
 								)
 							)

@@ -2,6 +2,7 @@ package com.ispgr5.locationsimulator.presentation.editTimeline
 
 import androidx.navigation.NavController
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
+import com.ispgr5.locationsimulator.presentation.settings.SettingsState
 
 sealed class EditTimelineEvent {
 	data class ChangedSoundVolume(val range: ClosedFloatingPointRange<Float>) : EditTimelineEvent()
@@ -12,7 +13,7 @@ sealed class EditTimelineEvent {
 	data class ChangedName(val name: String) : EditTimelineEvent()
 	data class ChangedDescription(val description: String) : EditTimelineEvent()
 	data class AddSound(val navController: NavController) : EditTimelineEvent()
-	object AddVibration : EditTimelineEvent()
+	class AddVibration(val getDefaultValuesFunction: () -> SettingsState) : EditTimelineEvent()
 	data class DeleteConfigurationComponent(val configComponent: ConfigComponent) :
 		EditTimelineEvent()
 

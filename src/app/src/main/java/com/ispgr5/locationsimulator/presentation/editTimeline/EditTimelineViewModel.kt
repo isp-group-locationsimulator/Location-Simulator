@@ -1,5 +1,6 @@
 package com.ispgr5.locationsimulator.presentation.editTimeline
 
+
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
@@ -7,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ispgr5.locationsimulator.domain.model.*
 import com.ispgr5.locationsimulator.domain.useCase.ConfigurationUseCases
+import com.ispgr5.locationsimulator.presentation.settings.SettingsState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -33,12 +35,20 @@ class EditTimelineViewModel @Inject constructor(
                         ?.also { configuration ->
                             var newSound: Sound? = null
                             var components = configuration.components
+
+
                             savedStateHandle.get<String>("soundNameToAdd")?.let { soundName ->
                                 if (soundName != "") {
+
+                                    val minVolume =  savedStateHandle.get<Float>("minVolume")
+                                    val maxVolume =  savedStateHandle.get<Float>("maxVolume")
+                                    val minPause =  savedStateHandle.get<Int>("minPause")
+                                    val maxPause =  savedStateHandle.get<Int>("maxPause")
+
                                     val componentsCopy = configuration.components.toMutableList()
                                     newSound = Sound(
                                         (componentsCopy.maxByOrNull { it.id }?.id ?: 0) + 1,
-                                        soundName, 1f, 1f, 3, 7, false
+                                        soundName, minVolume!!, maxVolume!!, minPause!!, maxPause!!, false
                                     )
                                     componentsCopy.add(
                                         newSound!!
@@ -176,9 +186,16 @@ class EditTimelineViewModel @Inject constructor(
             }
             is EditTimelineEvent.AddVibration -> {
                 viewModelScope.launch {
+                    val defaultValues: SettingsState = event.getDefaultValuesFunction()
                     val vibration = Vibration(
-                        id = (state.value.components.maxByOrNull { it.id }?.id ?: 0) + 1,"default",
-                        3, 4, 3, 7, 6, 8
+                        id = (state.value.components.maxByOrNull { it.id }?.id ?: 0) + 1,
+                        name = defaultValues.defaultNameVibration,
+                        minStrength = defaultValues.minStrengthVibration,
+                        maxStrength = defaultValues.maxStrengthVibration,
+                        minPause = defaultValues.minPauseVibration,
+                        maxPause = defaultValues.maxPauseVibration,
+                        minDuration = defaultValues.minDurationVibration,
+                        maxDuration = defaultValues.maxDurationVibration
                     )
                     val listC = state.value.components.toMutableList()
                     listC.add(vibration)
