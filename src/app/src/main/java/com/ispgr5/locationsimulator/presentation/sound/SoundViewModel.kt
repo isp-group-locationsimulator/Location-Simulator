@@ -1,6 +1,6 @@
 package com.ispgr5.locationsimulator.presentation.sound
 
-import android.util.Log
+
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
@@ -39,8 +39,15 @@ class SoundViewModel @Inject constructor(
 				soundPlayer.stopPlayback()
 			}
 			is SoundEvent.SelectSound -> {
+				val defaultValues = event.getDefaultValues()
 				savedStateHandle.get<Int>("configurationId")?.let { configurationId ->
-					event.navController.navigate("editTimeline?configurationId=${configurationId}&soundNameToAdd=${event.soundName}")
+					event.navController.navigate("editTimeline?" +
+							"configurationId=${configurationId}" +
+							"&soundNameToAdd=${event.soundName}" +
+							"&minVolume=${defaultValues.minVolumeSound}" +
+							"&maxVolume=${defaultValues.maxVolumeSound}" +
+							"&minPause=${defaultValues.minPauseSound}" +
+							"&maxPause=${defaultValues.maxPauseSound}")
 				}
 			}
 			is SoundEvent.ImportSound -> {

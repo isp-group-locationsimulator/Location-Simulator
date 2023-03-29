@@ -14,6 +14,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.data.storageManager.ConfigurationStorageManager
+import com.ispgr5.locationsimulator.presentation.settings.SettingsState
 import com.ispgr5.locationsimulator.presentation.universalComponents.TopBar
 
 /**
@@ -25,7 +26,8 @@ import com.ispgr5.locationsimulator.presentation.universalComponents.TopBar
 fun AddScreen(
 	navController: NavController,
 	viewModel: AddViewModel = hiltViewModel(),
-	configurationStorageManager: ConfigurationStorageManager
+	configurationStorageManager: ConfigurationStorageManager,
+	getDefaultValuesFunction : () -> SettingsState
 ) {
 	//The state from viewmodel
 	val state = viewModel.state.value
@@ -55,7 +57,7 @@ fun AddScreen(
 				)
 				//The save Configuration Button
 				Button(onClick = {
-					viewModel.onEvent(AddEvent.SaveConfiguration)
+					viewModel.onEvent(AddEvent.SaveConfiguration(getDefaultValuesFunction))
 					//navigate back to the Select Screen
 					navController.navigate("selectScreen")
 				}) {

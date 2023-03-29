@@ -16,6 +16,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.data.storageManager.SoundStorageManager
+import com.ispgr5.locationsimulator.presentation.settings.SettingsState
 import com.ispgr5.locationsimulator.presentation.universalComponents.ConfirmDeleteDialog
 import com.ispgr5.locationsimulator.presentation.universalComponents.TopBar
 
@@ -29,6 +30,7 @@ fun SoundScreen(
 	soundStorageManager: SoundStorageManager,
 	privateDirUri: String,
 	recordAudio: () -> Unit,
+	getDefaultValuesFunction : () -> SettingsState
 ) {
 	val state = viewModel.state.value
 	viewModel.onEvent(SoundEvent.RefreshPage(soundStorageManager = soundStorageManager))
@@ -131,7 +133,8 @@ fun SoundScreen(
 								viewModel.onEvent(
 									SoundEvent.SelectSound(
 										soundName,
-										navController
+										navController,
+										getDefaultValuesFunction
 									)
 								)
 							},

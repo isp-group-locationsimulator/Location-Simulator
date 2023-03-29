@@ -44,7 +44,6 @@ fun EditConfigComponent(
 	if (configComponent == null) {
 		return
 	}
-
 	//needed to show the Pause Slider separately
 	var minPause by Delegates.notNull<Int>()
 	var maxPause by Delegates.notNull<Int>()
@@ -125,7 +124,7 @@ fun EditConfigComponent(
 					Text(text = stringResource(id = R.string.editTimeline_SoundVolume) + ":")
 					Text(
 						RangeConverter.transformFactorToPercentage(configComponent.minVolume)
-							.toInt().toString() + "%"
+							.toInt().toString() + "% "
 								+ stringResource(id = R.string.editTimeline_range) + RangeConverter.transformFactorToPercentage(
 							configComponent.maxVolume
 						)
