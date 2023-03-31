@@ -18,7 +18,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -72,10 +71,10 @@ fun HomeScreenScreen(
 				verticalArrangement = Arrangement.Top,
 				horizontalAlignment = Alignment.CenterHorizontally
 			) {
-				Spacer(modifier = Modifier.height(110.dp))
+				Spacer(modifier = Modifier.height(25.dp))
 				Text(
 					text = stringResource(id = R.string.homescreen_appname),
-					fontSize = 8.em,
+					fontSize = 35.sp,
 					fontWeight = FontWeight.Bold,
 					color = MaterialTheme.colors.onBackground
 				)
@@ -86,7 +85,7 @@ fun HomeScreenScreen(
 				verticalArrangement = Arrangement.Center,
 				horizontalAlignment = Alignment.CenterHorizontally
 			) {
-				Spacer(modifier = Modifier.height(50.dp))
+				Spacer(modifier = Modifier.height(30.dp))
 				Button(onClick = {
 					viewModel.onEvent(HomeScreenEvent.SelectConfiguration)
 					navController.navigate(Screen.SelectScreen.route)
@@ -100,14 +99,14 @@ fun HomeScreenScreen(
 						fontSize = 30.sp
 					)
 				}
-				Spacer(modifier = Modifier.height(60.dp))
+				Spacer(modifier = Modifier.height(50.dp))
 
 		/**
 		 * The Favorite Configurations
 		 */
 		LazyColumn(
 			Modifier
-				.padding(15.dp)
+				.padding(25.dp)
 				.fillMaxWidth()
 		) {
 			items(state.favoriteConfigurations) { configuration ->
@@ -142,7 +141,7 @@ fun HomeScreenScreen(
 					isFavorite = configuration.isFavorite,
 					onFavoriteClicked = {}
 				)
-				Spacer(modifier = Modifier.height(6.dp))
+				Spacer(modifier = Modifier.height(20.dp))
 			}
 
 		}
@@ -151,13 +150,19 @@ fun HomeScreenScreen(
 				.fillMaxWidth()
 				.padding(16.dp),
 			verticalAlignment = Alignment.CenterVertically,
-			horizontalArrangement = Arrangement.SpaceEvenly
+			horizontalArrangement = Arrangement.Center
 
 
 		){
 			/**
 			 * Switch for Darkmode
 			 */
+			Text(
+				text = stringResource(id = R.string.homescreen_darkmode),
+				fontSize = 20.sp,
+				fontWeight = FontWeight.SemiBold,
+				color = MaterialTheme.colors.onBackground
+			)
 			Switch(
 				checked = darkTheme.value.isDarkTheme,
 				onCheckedChange = {

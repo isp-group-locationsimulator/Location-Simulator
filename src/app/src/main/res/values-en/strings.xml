@@ -65,4 +65,5 @@
     <string name="TimelineMoveLeft">move left in Timeline</string>
     <string name="TimelineMoveRight">move right in Timeline</string>
     <string name="PlaceholderDefaultName"> "Enter a name" </string>
+    <string name="homescreen_darkmode">Darkmode</string>
 </resources>
