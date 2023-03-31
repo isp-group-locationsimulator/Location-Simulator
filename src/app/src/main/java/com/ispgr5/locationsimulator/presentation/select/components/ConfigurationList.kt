@@ -8,9 +8,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.ispgr5.locationsimulator.R
+import com.ispgr5.locationsimulator.core.util.TestTags
 import com.ispgr5.locationsimulator.domain.model.Configuration
 
 /**
@@ -49,6 +51,7 @@ fun OneConfigurationListMember(
 			.background(rowBackgroundColor, shape = RoundedCornerShape(6.dp))
 			.fillMaxWidth()
 			.heightIn(min = 55.dp)
+			.testTag(TestTags.SELECT_CONFIG_BUTTON_PREFIX + configuration.name)
 
 	) {
 		//Column is needed for toggling so the Toggled Information is shown under the Configuration name
@@ -161,6 +164,7 @@ fun OneConfigurationListMember(
 						shape = MaterialTheme.shapes.small,
 						border = null,
 						elevation = null,
+						modifier = Modifier.testTag(TestTags.SELECT_CONFIG_BUTTON_SELECT_PREFIX + configuration.name),
 						colors = ButtonDefaults.buttonColors(
 							backgroundColor = Color.Transparent,
 							contentColor = MaterialTheme.colors.primary,
@@ -203,6 +207,7 @@ fun OneConfigurationListMember(
 						shape = MaterialTheme.shapes.small,
 						border = null,
 						elevation = null,
+						modifier = Modifier.testTag(TestTags.SELECT_CONFIG_BUTTON_EDIT_PREFIX + configuration.name),
 						colors = ButtonDefaults.buttonColors(
 							backgroundColor = Color.Transparent,
 							contentColor = MaterialTheme.colors.primary,
@@ -224,6 +229,7 @@ fun OneConfigurationListMember(
 						shape = MaterialTheme.shapes.small,
 						border = null,
 						elevation = null,
+						modifier = Modifier.testTag(TestTags.SELECT_CONFIG_BUTTON_DUPLICTAE_PREFIX + configuration.name),
 						colors = ButtonDefaults.buttonColors(
 							backgroundColor = Color.Transparent,
 							contentColor = MaterialTheme.colors.primary,

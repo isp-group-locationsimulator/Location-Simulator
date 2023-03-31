@@ -8,11 +8,13 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ispgr5.locationsimulator.R
+import com.ispgr5.locationsimulator.core.util.TestTags
 import com.ispgr5.locationsimulator.data.storageManager.ConfigurationStorageManager
 import com.ispgr5.locationsimulator.presentation.settings.SettingsState
 import com.ispgr5.locationsimulator.presentation.universalComponents.TopBar
@@ -47,21 +49,21 @@ fun AddScreen(
 				TextField(
 					value = state.name,
 					onValueChange = { viewModel.onEvent(AddEvent.EnteredName(it)) },
-					modifier = Modifier.fillMaxWidth()
+					modifier = Modifier.fillMaxWidth().testTag(TestTags.ADD_NAME_TEXTINPUT)
 				)
 				//The description Input Field
 				Text(text = stringResource(id = R.string.edit_Description))
 				TextField(
 					value = state.description,
 					onValueChange = { viewModel.onEvent(AddEvent.EnteredDescription(it)) },
-					modifier = Modifier.fillMaxWidth()
+					modifier = Modifier.fillMaxWidth().testTag(TestTags.ADD_DESCRIPTION_TEXTINPUT)
 				)
 				//The save Configuration Button
 				Button(onClick = {
 					viewModel.onEvent(AddEvent.SaveConfiguration(getDefaultValuesFunction))
 					//navigate back to the Select Screen
 					navController.popBackStack()
-				}) {
+				} , modifier = Modifier.testTag(TestTags.ADD_SAVE_BUTTON)) {
 					Text(text = stringResource(id = R.string.edit_Save))
 				}
 				Button(onClick = {

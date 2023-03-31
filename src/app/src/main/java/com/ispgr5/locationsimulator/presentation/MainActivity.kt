@@ -67,7 +67,7 @@ class MainActivity : ComponentActivity() {
 
     @OptIn(ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
-        soundStorageManager = SoundStorageManager(this)
+		soundStorageManager = SoundStorageManager(this@MainActivity)
         installFilesOnFirstStartup()
         configurationStorageManager =
             ConfigurationStorageManager(this, soundStorageManager = soundStorageManager)
@@ -87,7 +87,9 @@ class MainActivity : ComponentActivity() {
 	}
 
 
-	companion object {
+
+
+
 		/**
 		 * create Navigation App Host controller, which is responsible for all navigation
 		 */
@@ -95,7 +97,7 @@ class MainActivity : ComponentActivity() {
 		@Composable
 		fun NavigationAppHost(
 			navController: NavHostController,
-			themeState: MutableState<ThemeState>
+			themeState: MutableState<ThemeState>,
 		) {
 			NavHost(navController = navController, startDestination = Screen.HomeScreen.route) {
 				composable(Screen.HomeScreen.route) {
@@ -103,9 +105,9 @@ class MainActivity : ComponentActivity() {
 						navController = navController,
 						batteryOptDisableFunction = { disableBatteryOptimization() },
 						soundStorageManager = soundStorageManager,
-						toaster = toastAMessage,
 						activity = this@MainActivity,
-						darkTheme = themeState
+						darkTheme = themeState,
+						toaster = toastAMessage
 					)
 				}
 				composable(Screen.InfoScreen.route) {
@@ -197,7 +199,8 @@ class MainActivity : ComponentActivity() {
 					}
 					)
 				) {
-					SoundScreen(navController = navController,
+					SoundScreen(
+						navController = navController,
 						soundStorageManager = soundStorageManager,
 						privateDirUri = this@MainActivity.filesDir.toString(),
 						recordAudio = { recordAudio() },
@@ -213,7 +216,8 @@ class MainActivity : ComponentActivity() {
 				}
 			}
 		}
-	}
+
+
 	
 
 

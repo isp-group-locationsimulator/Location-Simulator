@@ -66,7 +66,7 @@ fun SelectScreen(
                     //The Add Button
                     IconButton(
                         onClick = { navController.navigate(route = Screen.AddScreen.route) },
-                        modfifier = Modifier.testTag(TestTags.SELECT_ADD_BUTTON)
+                        modifier = Modifier.testTag(TestTags.SELECT_ADD_BUTTON)
                     ) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_baseline_add_24),

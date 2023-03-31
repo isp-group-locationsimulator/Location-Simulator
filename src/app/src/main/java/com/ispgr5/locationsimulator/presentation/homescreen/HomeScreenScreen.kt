@@ -81,7 +81,8 @@ fun HomeScreenScreen(
 					text = stringResource(id = R.string.homescreen_appname),
 					fontSize = 8.em,
 					fontWeight = FontWeight.Bold,
-					color = MaterialTheme.colors.onBackground
+					color = MaterialTheme.colors.onBackground,
+					modifier = Modifier.testTag(TestTags.HOME_APPNAME)
 				)
 
 			}
@@ -94,12 +95,11 @@ fun HomeScreenScreen(
 				Button(onClick = {
 					viewModel.onEvent(HomeScreenEvent.SelectConfiguration)
 					navController.navigate(Screen.SelectScreen.route)
-					Modifier
-						.height(100.dp)
-						.width(300.dp)
-						.testTag(TestTags.HOME_SELECT_CONFIG_BUTTON);
 
-				}) {
+				} , modifier = Modifier
+					.height(100.dp)
+					.width(300.dp)
+					.testTag(TestTags.HOME_SELECT_CONFIG_BUTTON)) {
 					Text(
 						text = stringResource(id = R.string.homescreen_btn_select_profile),
 						fontSize = 30.sp
