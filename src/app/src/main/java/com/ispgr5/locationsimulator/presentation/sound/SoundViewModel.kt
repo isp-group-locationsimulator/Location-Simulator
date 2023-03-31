@@ -7,6 +7,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.ispgr5.locationsimulator.domain.useCase.ConfigurationUseCases
 import com.ispgr5.locationsimulator.presentation.run.SoundPlayer
+import com.ispgr5.locationsimulator.presentation.util.Screen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -41,13 +42,14 @@ class SoundViewModel @Inject constructor(
 			is SoundEvent.SelectSound -> {
 				val defaultValues = event.getDefaultValues()
 				savedStateHandle.get<Int>("configurationId")?.let { configurationId ->
-					event.navController.navigate("editTimeline?" +
-							"configurationId=${configurationId}" +
-							"&soundNameToAdd=${event.soundName}" +
-							"&minVolume=${defaultValues.minVolumeSound}" +
-							"&maxVolume=${defaultValues.maxVolumeSound}" +
-							"&minPause=${defaultValues.minPauseSound}" +
-							"&maxPause=${defaultValues.maxPauseSound}")
+					event.navController.navigate(Screen.EditTimelineScreen.createRoute(
+						configurationId = configurationId,
+						soundNameToAdd = event.soundName,
+						minVolume = defaultValues.minVolumeSound,
+						maxVolume = defaultValues.maxVolumeSound,
+						minPause = defaultValues.minPauseSound,
+						maxPause = defaultValues.maxPauseSound
+					))
 				}
 			}
 			is SoundEvent.ImportSound -> {

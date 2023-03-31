@@ -29,6 +29,7 @@ import com.ispgr5.locationsimulator.presentation.MainActivity
 import com.ispgr5.locationsimulator.presentation.select.components.OneConfigurationListMember
 import com.ispgr5.locationsimulator.ui.theme.ThemeState
 import com.ispgr5.locationsimulator.presentation.universalComponents.TopBar
+import com.ispgr5.locationsimulator.presentation.util.Screen
 import com.ispgr5.locationsimulator.ui.theme.theBlue
 
 /**
@@ -53,7 +54,7 @@ fun HomeScreenScreen(
 	Scaffold(
 		topBar = { TopBar(navController, stringResource(id = R.string.ScreenHome),false,
 		extraActions = {IconButton(onClick = {
-			navController.navigate("infoScreen")
+			navController.navigate(Screen.InfoScreen.route)
 		}, modifier = Modifier.padding(5.dp)) {
 			Icon(
 				painter = painterResource(id = R.drawable.baseline_info_24),
@@ -90,7 +91,7 @@ fun HomeScreenScreen(
 				Spacer(modifier = Modifier.height(50.dp))
 				Button(onClick = {
 					viewModel.onEvent(HomeScreenEvent.SelectConfiguration)
-					navController.navigate("selectScreen")
+					navController.navigate(Screen.SelectScreen.route)
 					Modifier
 						.height(100.dp)
 						.width(300.dp)
@@ -116,7 +117,7 @@ fun HomeScreenScreen(
 					configuration = configuration,
 					onToggleClicked = {
 						if (state.configurationsWithErrors.find { conf -> conf.id == configuration.id } == null) {
-							navController.navigate("delayScreen?configurationId=${configuration.id}")
+							navController.navigate(Screen.DelayScreen.createRoute(configuration.id!!))
 						} else {
 							for (error in viewModel.whatIsHisErrors(
 								configuration = configuration,

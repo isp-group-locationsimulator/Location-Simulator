@@ -42,6 +42,7 @@ import com.ispgr5.locationsimulator.presentation.settings.SettingsScreen
 import com.ispgr5.locationsimulator.presentation.settings.SettingsState
 import com.ispgr5.locationsimulator.presentation.sound.SoundDialog
 import com.ispgr5.locationsimulator.presentation.sound.SoundScreen
+import com.ispgr5.locationsimulator.presentation.util.Screen
 import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
 import com.ispgr5.locationsimulator.ui.theme.ThemeState
 import dagger.hilt.android.AndroidEntryPoint
@@ -76,8 +77,8 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colors.background
                 ) {
                     val navController = rememberNavController()
-                    NavHost(navController = navController, startDestination = "homeScreen") {
-                        composable("homeScreen") {
+                    NavHost(navController = navController, startDestination = Screen.HomeScreen.route) {
+                        composable(Screen.HomeScreen.route) {
                             HomeScreenScreen(
                                 navController = navController,
                                 batteryOptDisableFunction = { disableBatteryOptimization() },
@@ -87,10 +88,10 @@ class MainActivity : ComponentActivity() {
 								darkTheme = themeState
                             )
                         }
-                        composable("infoScreen") {
+                        composable(Screen.InfoScreen.route) {
                             InfoScreen(navController = navController)
                         }
-                        composable(route = "selectScreen") {
+                        composable(route = Screen.SelectScreen.route) {
                             SelectScreen(
                                 navController = navController,
                                 configurationStorageManager = configurationStorageManager,
@@ -98,21 +99,21 @@ class MainActivity : ComponentActivity() {
                                 toaster = toastAMessage
                             )
                         }
-                        composable("editScreen") {
+                        composable(Screen.AddScreen.route) {
                             AddScreen(
                                 navController = navController,
                                 configurationStorageManager = configurationStorageManager,
 								getDefaultValuesFunction = getDefaultValues
                             )
                         }
-						composable("settingsScreen") {
+						composable(Screen.SettingsScreen.route) {
 							SettingsScreen(
 								navController = navController,
 								saveDefaultValuesFunction = saveDefaultValues,
 								getDefaultValuesFunction = getDefaultValues
 							)
 						}
-                        composable(route = "delayScreen?configurationId={configurationId}",
+                        composable(route = Screen.DelayScreen.route,
                             arguments = listOf(navArgument(
                                 name = "configurationId"
                             ) {
@@ -128,19 +129,13 @@ class MainActivity : ComponentActivity() {
 								privateDirUri = this@MainActivity.filesDir.toString(),
                             )
                         }
-                        composable("runScreen") {
+                        composable(Screen.RunScreen.route) {
                             RunScreen(navController, stopServiceFunction = { stopService() })
                         }
-                        composable("stopService") {
-                            navController.navigateUp()
+                        composable(Screen.StopService.route) {
+                            navController.navigateUp()    //Todo not needed
                         }
-                        composable("editTimeline?" +
-								"configurationId={configurationId}" +
-								"&soundNameToAdd={soundNameToAdd}" +
-								"&minVolume={minVolume}" +
-								"&maxVolume={maxVolume}" +
-								"&minPause={minPause}" +
-								"&maxPause={maxPause}",
+                        composable(Screen.EditTimelineScreen.route,
                             arguments = listOf(
                                 navArgument(name = "configurationId") {
                                     type = NavType.IntType
@@ -173,7 +168,7 @@ class MainActivity : ComponentActivity() {
 								getDefaultValuesFunction = getDefaultValues
 							)
                         }
-                        composable("sound?configurationId={configurationId}",
+                        composable(Screen.SoundScreen.route,
                             arguments = listOf(navArgument(
                                 name = "configurationId"
                             ) {

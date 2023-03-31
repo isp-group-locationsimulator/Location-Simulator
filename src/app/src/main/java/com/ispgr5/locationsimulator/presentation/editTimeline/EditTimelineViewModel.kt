@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.ispgr5.locationsimulator.domain.model.*
 import com.ispgr5.locationsimulator.domain.useCase.ConfigurationUseCases
 import com.ispgr5.locationsimulator.presentation.settings.SettingsState
+import com.ispgr5.locationsimulator.presentation.util.Screen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -181,7 +182,7 @@ class EditTimelineViewModel @Inject constructor(
             }
             is EditTimelineEvent.AddSound -> {
                 viewModelScope.launch {
-                    event.navController.navigate("sound?configurationId=${currentConfigurationId}")
+                    event.navController.navigate( Screen.SoundScreen.createRoute(currentConfigurationId!!))
                 }
             }
             is EditTimelineEvent.AddVibration -> {

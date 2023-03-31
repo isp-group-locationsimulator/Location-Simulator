@@ -19,6 +19,7 @@ import com.ispgr5.locationsimulator.presentation.editTimeline.components.EditCon
 import com.ispgr5.locationsimulator.presentation.editTimeline.components.Timeline
 import com.ispgr5.locationsimulator.presentation.settings.SettingsState
 import com.ispgr5.locationsimulator.presentation.universalComponents.TopBar
+import com.ispgr5.locationsimulator.presentation.util.Screen
 
 
 @Composable
@@ -35,7 +36,7 @@ fun EditTimelineScreen(
 			extraActions = {
 				//The Add Button
 				IconButton(
-					onClick = { navController.navigate(route = "settingsScreen") },
+					onClick = { navController.navigate(route = Screen.SettingsScreen.route) },
 				) {
 					Icon(
 						painter = painterResource(id = R.drawable.ic_baseline_settings_24),

@@ -17,6 +17,7 @@ import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 import com.ispgr5.locationsimulator.presentation.delay.DelayEvent
 import com.ispgr5.locationsimulator.presentation.delay.DelayViewModel
+import com.ispgr5.locationsimulator.presentation.util.Screen
 import kotlinx.coroutines.delay
 
 /**
@@ -48,7 +49,7 @@ fun Timer(
         }
         if(timerRunning) {
             viewModel.onEvent(DelayEvent.StartClicked(startServiceFunction))
-            navController.navigate("runScreen")
+            navController.navigate(Screen.RunScreen.route)
         }
     }
 

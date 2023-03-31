@@ -19,6 +19,7 @@ import com.ispgr5.locationsimulator.core.util.TestTags
 import com.ispgr5.locationsimulator.di.AppModule
 import com.ispgr5.locationsimulator.presentation.MainActivity
 import com.ispgr5.locationsimulator.presentation.settings.SettingsState
+import com.ispgr5.locationsimulator.presentation.util.Screen
 import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
 import com.ispgr5.locationsimulator.ui.theme.ThemeState
 import dagger.hilt.android.testing.HiltAndroidRule
@@ -51,9 +52,9 @@ class EditTimelineScreenTest{
                 LocationSimulatorTheme(themeState) {
                     NavHost(
                         navController = navController,
-                        startDestination = "editScreen"   //TODO
+                        startDestination = Screen.EditTimelineScreen.createRoute(0)    //TODO
                     ) {
-                        composable(route = "editScreen") {
+                        composable(route = Screen.EditTimelineScreen.route) {
                             EditTimelineScreen(
                                 navController = navController,
                                 getDefaultValuesFunction = getDefaultValuesTest

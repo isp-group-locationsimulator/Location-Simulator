@@ -23,6 +23,7 @@ import com.ispgr5.locationsimulator.data.storageManager.ConfigurationStorageMana
 import com.ispgr5.locationsimulator.data.storageManager.SoundStorageManager
 import com.ispgr5.locationsimulator.presentation.select.components.OneConfigurationListMember
 import com.ispgr5.locationsimulator.presentation.universalComponents.TopBar
+import com.ispgr5.locationsimulator.presentation.util.Screen
 
 /**
  * The Select Screen.
@@ -62,7 +63,7 @@ fun SelectScreen(
                     }
                     //The Add Button
                     IconButton(
-                        onClick = { navController.navigate(route = "editScreen") },
+                        onClick = { navController.navigate(route = Screen.AddScreen.route) },
                     ) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_baseline_add_24),
@@ -153,8 +154,8 @@ fun SelectScreen(
                                         )
                                     )
                                 },
-                                onEditClicked = { navController.navigate("editTimeline?configurationId=${configuration.id}") },
-                                onSelectClicked = { navController.navigate("delayScreen?configurationId=${configuration.id}") },
+                                onEditClicked = { navController.navigate(Screen.EditTimelineScreen.createRoute(configuration.id!!)) },
+                                onSelectClicked = { navController.navigate(Screen.DelayScreen.createRoute(configuration.id!!))},
                                 onExportClicked = {
                                     viewModel.onEvent(
                                         SelectEvent.SelectedExportConfiguration(

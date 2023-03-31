@@ -16,6 +16,7 @@ import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.data.storageManager.ConfigurationStorageManager
 import com.ispgr5.locationsimulator.presentation.settings.SettingsState
 import com.ispgr5.locationsimulator.presentation.universalComponents.TopBar
+import com.ispgr5.locationsimulator.presentation.util.Screen
 
 /**
  * The Edit Screen.
@@ -59,7 +60,7 @@ fun AddScreen(
 				Button(onClick = {
 					viewModel.onEvent(AddEvent.SaveConfiguration(getDefaultValuesFunction))
 					//navigate back to the Select Screen
-					navController.navigate("selectScreen")
+					navController.popBackStack()
 				}) {
 					Text(text = stringResource(id = R.string.edit_Save))
 				}
