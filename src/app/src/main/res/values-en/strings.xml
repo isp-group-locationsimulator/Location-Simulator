@@ -56,6 +56,7 @@
     <string name="ScreenAdd">Add Configuration</string>
     <string name="ScreenDelay"> Configuration Info</string>
     <string name="ScreenEdit"> Edit Configuration</string>
+    <string name="ScreenSettings"> Default Settings </string>
     <string name="DuplicateComponent"> Duplicate </string>
     <string name="TimerHours">Hours</string>
     <string name="TimerMinutes">Minutes</string>
@@ -63,4 +64,5 @@
     <string name="ConfigInfoPerIteration"> per iteration</string>
     <string name="TimelineMoveLeft">move left in Timeline</string>
     <string name="TimelineMoveRight">move right in Timeline</string>
+    <string name="PlaceholderDefaultName"> "Enter a name" </string>
 </resources>

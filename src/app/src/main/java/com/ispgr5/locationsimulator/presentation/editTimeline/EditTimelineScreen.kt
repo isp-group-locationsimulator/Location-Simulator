@@ -6,6 +6,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -16,19 +17,34 @@ import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 import com.ispgr5.locationsimulator.presentation.editTimeline.components.AddConfigComponentDialog
 import com.ispgr5.locationsimulator.presentation.editTimeline.components.EditConfigComponent
 import com.ispgr5.locationsimulator.presentation.editTimeline.components.Timeline
+import com.ispgr5.locationsimulator.presentation.settings.SettingsState
 import com.ispgr5.locationsimulator.presentation.universalComponents.TopBar
 
 
 @Composable
 fun EditTimelineScreen(
 	navController: NavController,
-	viewModel: EditTimelineViewModel = hiltViewModel()
+	viewModel: EditTimelineViewModel = hiltViewModel() ,
+	getDefaultValuesFunction : () -> SettingsState
 ) {
 	val state = viewModel.state.value
 	var showCustomDialogWithResult by remember { mutableStateOf(false) }
 
 	Scaffold(
-		topBar = { TopBar(navController, stringResource(id = R.string.ScreenEdit)) },
+		topBar = { TopBar(navController, stringResource(id = R.string.ScreenEdit),
+			extraActions = {
+				//The Add Button
+				IconButton(
+					onClick = { navController.navigate(route = "settingsScreen") },
+				) {
+					Icon(
+						painter = painterResource(id = R.drawable.ic_baseline_settings_24),
+						contentDescription = null,
+					)
+
+				}
+			}
+		)},
 		content = {
 			Spacer(modifier = Modifier.height(it.calculateTopPadding()))
 
@@ -237,11 +253,15 @@ fun EditTimelineScreen(
 					onNegativeClick = { revShowDialog() },
 					onSoundClicked = {
 						revShowDialog()
-						viewModel.onEvent(EditTimelineEvent.AddSound(navController))
+						viewModel.onEvent(
+							EditTimelineEvent.AddSound(navController)
+						)
 					},
 					onVibrationClicked = {
 						revShowDialog()
-						viewModel.onEvent(EditTimelineEvent.AddVibration)
+						viewModel.onEvent(
+							EditTimelineEvent.AddVibration(getDefaultValuesFunction)
+						)
 					}
 				)
 			}
