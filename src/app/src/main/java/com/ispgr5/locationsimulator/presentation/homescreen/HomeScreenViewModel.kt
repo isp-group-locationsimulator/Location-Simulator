@@ -65,7 +65,6 @@ class HomeScreenViewModel @Inject constructor(
 				val editor: SharedPreferences.Editor = event.activity.getSharedPreferences("prefs", ComponentActivity.MODE_PRIVATE).edit()
 				editor.putBoolean("isDarkTheme", event.isDarkTheme)
 				editor.apply()
-				println(event.isDarkTheme)
 			}
 		}
 	}

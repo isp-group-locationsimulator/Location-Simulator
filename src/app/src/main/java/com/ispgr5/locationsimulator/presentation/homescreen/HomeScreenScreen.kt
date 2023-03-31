@@ -12,7 +12,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -27,10 +26,9 @@ import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.data.storageManager.SoundStorageManager
 import com.ispgr5.locationsimulator.presentation.MainActivity
 import com.ispgr5.locationsimulator.presentation.select.components.OneConfigurationListMember
-import com.ispgr5.locationsimulator.ui.theme.ThemeState
 import com.ispgr5.locationsimulator.presentation.universalComponents.TopBar
 import com.ispgr5.locationsimulator.presentation.util.Screen
-import com.ispgr5.locationsimulator.ui.theme.theBlue
+import com.ispgr5.locationsimulator.ui.theme.ThemeState
 
 /**
  * The Home Screen.
@@ -157,21 +155,13 @@ fun HomeScreenScreen(
 
 
 		){
-			// Get the current theme mode
-
-
-			// Switch to toggle the theme mode
+			/**
+			 * Switch for Darkmode
+			 */
 			Switch(
 				checked = darkTheme.value.isDarkTheme,
 				onCheckedChange = {
 					viewModel.onEvent(HomeScreenEvent.ChangedAppTheme(it, activity, darkTheme))
-					/*if(state.isLightTheme) {
-						// Toggle the theme mode
-						AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_YES)
-					}
-					else{
-						AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_NO)
-					}*/
 				},
 				colors = SwitchDefaults.colors(
 					checkedThumbColor = MaterialTheme.colors.primary,
