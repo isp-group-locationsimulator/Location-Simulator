@@ -62,12 +62,9 @@ class EditTimelineScreenTest{
      */
     @Test
     fun clickAddButtonAddConfigComponentDialog_isVisible(){
-
-       // composeRule.onNodeWithTag(TestTags.EDIT_SCREEN_ADD_DIALOG).assertDoesNotExist()
+        composeRule.onNodeWithTag(TestTags.EDIT_SCREEN_ADD_DIALOG).assertDoesNotExist()
         composeRule.onNodeWithTag(TestTags.EDIT_SCREEN_ADD_BUTTON).performClick();
-        composeRule.onNodeWithTag(TestTags.EDIT_SCREEN_ADD_DIALOG).assertDoesNotExist();
-        assertEquals(2,4);
-        Log.d("Test","Hello Test");
+        composeRule.onNodeWithTag(TestTags.EDIT_SCREEN_ADD_DIALOG).assertIsDisplayed();
     }
 
 }
