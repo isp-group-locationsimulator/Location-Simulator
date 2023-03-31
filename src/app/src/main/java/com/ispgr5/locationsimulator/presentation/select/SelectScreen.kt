@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntSize
@@ -19,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ispgr5.locationsimulator.R
+import com.ispgr5.locationsimulator.core.util.TestTags
 import com.ispgr5.locationsimulator.data.storageManager.ConfigurationStorageManager
 import com.ispgr5.locationsimulator.data.storageManager.SoundStorageManager
 import com.ispgr5.locationsimulator.presentation.select.components.OneConfigurationListMember
@@ -64,6 +66,7 @@ fun SelectScreen(
                     //The Add Button
                     IconButton(
                         onClick = { navController.navigate(route = Screen.AddScreen.route) },
+                        modfifier = Modifier.testTag(TestTags.SELECT_ADD_BUTTON)
                     ) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_baseline_add_24),

@@ -5,7 +5,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -32,7 +31,7 @@ fun AddConfigComponentDialog(
 			elevation = 8.dp,
 			shape = RoundedCornerShape(12.dp),
 			backgroundColor = MaterialTheme.colors.surface,
-			modifier = Modifier.testTag(TestTags.EDIT_SCREEN_ADD_DIALOG)
+			modifier = Modifier.testTag(TestTags.EDIT_TIMELINE_SCREEN_ADD_DIALOG)
 		) {
 			Column(modifier = Modifier.padding(8.dp)) {
 

@@ -53,7 +53,7 @@ fun Timeline(
 					.width(55.dp)
 					.height(55.dp)
 					.padding(6.dp)
-					.testTag(TestTags.EDIT_SCREEN_ADD_BUTTON)
+					.testTag(TestTags.EDIT_TIMELINE_SCREEN_ADD_BUTTON)
 			) {
 				Icon(
 					painter = painterResource(id = R.drawable.ic_baseline_add_24),

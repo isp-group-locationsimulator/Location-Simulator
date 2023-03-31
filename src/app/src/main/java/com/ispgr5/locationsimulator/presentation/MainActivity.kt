@@ -87,125 +87,130 @@ class MainActivity : ComponentActivity() {
 	}
 
 
-	/**
-	 * create Navigation App Host controller, which is responsible for all navigation
-	 */
-	@OptIn(ExperimentalAnimationApi::class)
-	@Composable
-	fun NavigationAppHost(navController: NavHostController, themeState : MutableState<ThemeState>){
-		NavHost(navController = navController, startDestination = Screen.HomeScreen.route) {
-			composable(Screen.HomeScreen.route) {
-				HomeScreenScreen(
-					navController = navController,
-					batteryOptDisableFunction = { disableBatteryOptimization() },
-					soundStorageManager = soundStorageManager,
-					toaster = toastAMessage,
-					activity = this@MainActivity,
-					darkTheme = themeState
-				)
-			}
-			composable(Screen.InfoScreen.route) {
-				InfoScreen(navController = navController)
-			}
-			composable(route = Screen.SelectScreen.route) {
-				SelectScreen(
-					navController = navController,
-					configurationStorageManager = configurationStorageManager,
-					soundStorageManager = soundStorageManager,
-					toaster = toastAMessage
-				)
-			}
-			composable(Screen.AddScreen.route) {
-				AddScreen(
-					navController = navController,
-					configurationStorageManager = configurationStorageManager,
-					getDefaultValuesFunction = getDefaultValues
-				)
-			}
-			composable(Screen.SettingsScreen.route) {
-				SettingsScreen(
-					navController = navController,
-					saveDefaultValuesFunction = saveDefaultValues,
-					getDefaultValuesFunction = getDefaultValues
-				)
-			}
-			composable(route = Screen.DelayScreen.route,
-				arguments = listOf(navArgument(
-					name = "configurationId"
-				) {
-					type = NavType.IntType
-					defaultValue = -1
+	companion object {
+		/**
+		 * create Navigation App Host controller, which is responsible for all navigation
+		 */
+		@OptIn(ExperimentalAnimationApi::class)
+		@Composable
+		fun NavigationAppHost(
+			navController: NavHostController,
+			themeState: MutableState<ThemeState>
+		) {
+			NavHost(navController = navController, startDestination = Screen.HomeScreen.route) {
+				composable(Screen.HomeScreen.route) {
+					HomeScreenScreen(
+						navController = navController,
+						batteryOptDisableFunction = { disableBatteryOptimization() },
+						soundStorageManager = soundStorageManager,
+						toaster = toastAMessage,
+						activity = this@MainActivity,
+						darkTheme = themeState
+					)
 				}
-				)
-			) {
-				DelayScreen(
-					navController = navController,
-					startServiceFunction = startService,
-					context = this@MainActivity,
-					privateDirUri = this@MainActivity.filesDir.toString(),
-				)
-			}
-			composable(Screen.RunScreen.route) {
-				RunScreen(navController, stopServiceFunction = { stopService() })
-			}
-			composable(Screen.StopService.route) {
-				navController.navigateUp()    //Todo not needed
-			}
-			composable(Screen.EditTimelineScreen.route,
-				arguments = listOf(
-					navArgument(name = "configurationId") {
+				composable(Screen.InfoScreen.route) {
+					InfoScreen(navController = navController)
+				}
+				composable(route = Screen.SelectScreen.route) {
+					SelectScreen(
+						navController = navController,
+						configurationStorageManager = configurationStorageManager,
+						soundStorageManager = soundStorageManager,
+						toaster = toastAMessage
+					)
+				}
+				composable(Screen.AddScreen.route) {
+					AddScreen(
+						navController = navController,
+						configurationStorageManager = configurationStorageManager,
+						getDefaultValuesFunction = getDefaultValues
+					)
+				}
+				composable(Screen.SettingsScreen.route) {
+					SettingsScreen(
+						navController = navController,
+						saveDefaultValuesFunction = saveDefaultValues,
+						getDefaultValuesFunction = getDefaultValues
+					)
+				}
+				composable(route = Screen.DelayScreen.route,
+					arguments = listOf(navArgument(
+						name = "configurationId"
+					) {
 						type = NavType.IntType
 						defaultValue = -1
-					},
-					navArgument(name = "soundNameToAdd") {
-						type = NavType.StringType
-						defaultValue = ""
-					},
-					navArgument(name = "minVolume") {
-						type = NavType.FloatType
-						defaultValue = 0f
-					},
-					navArgument(name = "maxVolume") {
-						type = NavType.FloatType
-						defaultValue = 1f
-					},
-					navArgument(name = "minPause") {
-						type = NavType.IntType
-						defaultValue = 0
-					},
-					navArgument(name = "maxPause") {
-						type = NavType.IntType
-						defaultValue = 1000
 					}
-				)
-			) {
-				EditTimelineScreen(
-					navController = navController,
-					getDefaultValuesFunction = getDefaultValues
-				)
-			}
-			composable(Screen.SoundScreen.route,
-				arguments = listOf(navArgument(
-					name = "configurationId"
+					)
 				) {
-					type = NavType.IntType
-					defaultValue = -1
+					DelayScreen(
+						navController = navController,
+						startServiceFunction = startService,
+						context = this@MainActivity,
+						privateDirUri = this@MainActivity.filesDir.toString(),
+					)
 				}
-				)
-			) {
-				SoundScreen(navController = navController,
-					soundStorageManager = soundStorageManager,
-					privateDirUri = this@MainActivity.filesDir.toString(),
-					recordAudio = { recordAudio() } ,
-					getDefaultValuesFunction = getDefaultValues
-				)
-				SoundDialog(
-					popUpState = popUpState,
-					onDismiss = { fileName ->
-						saveAudioFile(fileName)
-						popUpState.value = false
+				composable(Screen.RunScreen.route) {
+					RunScreen(navController, stopServiceFunction = { stopService() })
+				}
+				composable(Screen.StopService.route) {
+					navController.navigateUp()    //Todo not needed
+				}
+				composable(Screen.EditTimelineScreen.route,
+					arguments = listOf(
+						navArgument(name = "configurationId") {
+							type = NavType.IntType
+							defaultValue = -1
+						},
+						navArgument(name = "soundNameToAdd") {
+							type = NavType.StringType
+							defaultValue = ""
+						},
+						navArgument(name = "minVolume") {
+							type = NavType.FloatType
+							defaultValue = 0f
+						},
+						navArgument(name = "maxVolume") {
+							type = NavType.FloatType
+							defaultValue = 1f
+						},
+						navArgument(name = "minPause") {
+							type = NavType.IntType
+							defaultValue = 0
+						},
+						navArgument(name = "maxPause") {
+							type = NavType.IntType
+							defaultValue = 1000
+						}
+					)
+				) {
+					EditTimelineScreen(
+						navController = navController,
+						getDefaultValuesFunction = getDefaultValues
+					)
+				}
+				composable(Screen.SoundScreen.route,
+					arguments = listOf(navArgument(
+						name = "configurationId"
+					) {
+						type = NavType.IntType
+						defaultValue = -1
 					}
-				)
+					)
+				) {
+					SoundScreen(navController = navController,
+						soundStorageManager = soundStorageManager,
+						privateDirUri = this@MainActivity.filesDir.toString(),
+						recordAudio = { recordAudio() },
+						getDefaultValuesFunction = getDefaultValues
+					)
+					SoundDialog(
+						popUpState = popUpState,
+						onDismiss = { fileName ->
+							saveAudioFile(fileName)
+							popUpState.value = false
+						}
+					)
+				}
 			}
 		}
 	}
