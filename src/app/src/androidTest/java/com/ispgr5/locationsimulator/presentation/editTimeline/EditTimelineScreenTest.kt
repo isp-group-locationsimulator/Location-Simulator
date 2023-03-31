@@ -1,9 +1,11 @@
 package com.ispgr5.locationsimulator.presentation.editTimeline
 
 import android.annotation.SuppressLint
+import android.content.SharedPreferences
 import android.os.Debug
 import android.util.Log
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.test.assertIsDisplayed
@@ -16,6 +18,7 @@ import androidx.navigation.compose.rememberNavController
 import com.ispgr5.locationsimulator.core.util.TestTags
 import com.ispgr5.locationsimulator.di.AppModule
 import com.ispgr5.locationsimulator.presentation.MainActivity
+import com.ispgr5.locationsimulator.presentation.settings.SettingsState
 import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
 import com.ispgr5.locationsimulator.ui.theme.ThemeState
 import dagger.hilt.android.testing.HiltAndroidRule
@@ -41,21 +44,31 @@ class EditTimelineScreenTest{
     @Before
     fun setUp(){
         hiltRule.inject() //always needed for dependencies
-        composeRule.setContent {
-            val navController = rememberNavController()
-            val themeState = mutableStateOf(ThemeState(isDarkTheme = false))
-            LocationSimulatorTheme(themeState) {
-                NavHost(
-                    navController = navController,
-                    startDestination = "editScreen"   //TODO
-                    ){
-                    composable( route = "editScreen"){
-                        EditTimelineScreen(navController = navController)
+        composeRule.activity.runOnUiThread {
+            composeRule.activity.setContent {
+                val navController = rememberNavController()
+                val themeState = mutableStateOf(ThemeState(isDarkTheme = false))
+                LocationSimulatorTheme(themeState) {
+                    NavHost(
+                        navController = navController,
+                        startDestination = "editScreen"   //TODO
+                    ) {
+                        composable(route = "editScreen") {
+                            EditTimelineScreen(
+                                navController = navController,
+                                getDefaultValuesFunction = getDefaultValuesTest
+                            );
+                        }
                     }
                 }
             }
         }
     }
+    /** stub for getting default values */
+    private val getDefaultValuesTest : () -> SettingsState =
+        fun(): SettingsState {
+            return SettingsState()
+        }
 
     /**
     test if Dialog for adding Sound or Vibration opens up when clicking Add Button
