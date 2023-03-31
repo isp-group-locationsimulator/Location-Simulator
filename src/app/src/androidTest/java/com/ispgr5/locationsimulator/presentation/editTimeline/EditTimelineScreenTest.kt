@@ -12,9 +12,11 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.ispgr5.locationsimulator.core.util.TestTags
 import com.ispgr5.locationsimulator.di.AppModule
 import com.ispgr5.locationsimulator.presentation.MainActivity
@@ -52,13 +54,13 @@ class EditTimelineScreenTest{
                 LocationSimulatorTheme(themeState) {
                     NavHost(
                         navController = navController,
-                        startDestination = Screen.EditTimelineScreen.createRoute(0)    //TODO
+                        startDestination = "testEditTimeline"    //TODO
                     ) {
-                        composable(route = Screen.EditTimelineScreen.route) {
+                        composable("testEditTimeline") {
                             EditTimelineScreen(
                                 navController = navController,
                                 getDefaultValuesFunction = getDefaultValuesTest
-                            );
+                            )
                         }
                     }
                 }
