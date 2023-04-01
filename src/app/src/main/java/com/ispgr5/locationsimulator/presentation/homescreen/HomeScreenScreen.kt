@@ -12,7 +12,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -20,7 +19,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -29,10 +27,9 @@ import com.ispgr5.locationsimulator.core.util.TestTags
 import com.ispgr5.locationsimulator.data.storageManager.SoundStorageManager
 import com.ispgr5.locationsimulator.presentation.MainActivity
 import com.ispgr5.locationsimulator.presentation.select.components.OneConfigurationListMember
-import com.ispgr5.locationsimulator.ui.theme.ThemeState
 import com.ispgr5.locationsimulator.presentation.universalComponents.TopBar
 import com.ispgr5.locationsimulator.presentation.util.Screen
-import com.ispgr5.locationsimulator.ui.theme.theBlue
+import com.ispgr5.locationsimulator.ui.theme.ThemeState
 
 /**
  * The Home Screen.
@@ -76,10 +73,10 @@ fun HomeScreenScreen(
 				verticalArrangement = Arrangement.Top,
 				horizontalAlignment = Alignment.CenterHorizontally
 			) {
-				Spacer(modifier = Modifier.height(110.dp))
+				Spacer(modifier = Modifier.height(25.dp))
 				Text(
 					text = stringResource(id = R.string.homescreen_appname),
-					fontSize = 8.em,
+					fontSize = 35.sp,
 					fontWeight = FontWeight.Bold,
 					color = MaterialTheme.colors.onBackground,
 					modifier = Modifier.testTag(TestTags.HOME_APPNAME)
@@ -91,7 +88,7 @@ fun HomeScreenScreen(
 				verticalArrangement = Arrangement.Center,
 				horizontalAlignment = Alignment.CenterHorizontally
 			) {
-				Spacer(modifier = Modifier.height(50.dp))
+				Spacer(modifier = Modifier.height(30.dp))
 				Button(onClick = {
 					viewModel.onEvent(HomeScreenEvent.SelectConfiguration)
 					navController.navigate(Screen.SelectScreen.route)
@@ -105,14 +102,14 @@ fun HomeScreenScreen(
 						fontSize = 30.sp
 					)
 				}
-				Spacer(modifier = Modifier.height(60.dp))
+				Spacer(modifier = Modifier.height(50.dp))
 
 		/**
 		 * The Favorite Configurations
 		 */
 		LazyColumn(
 			Modifier
-				.padding(15.dp)
+				.padding(25.dp)
 				.fillMaxWidth()
 		) {
 			items(state.favoriteConfigurations) { configuration ->
@@ -147,7 +144,7 @@ fun HomeScreenScreen(
 					isFavorite = configuration.isFavorite,
 					onFavoriteClicked = {}
 				)
-				Spacer(modifier = Modifier.height(6.dp))
+				Spacer(modifier = Modifier.height(20.dp))
 			}
 
 		}
@@ -156,25 +153,23 @@ fun HomeScreenScreen(
 				.fillMaxWidth()
 				.padding(16.dp),
 			verticalAlignment = Alignment.CenterVertically,
-			horizontalArrangement = Arrangement.SpaceEvenly
+			horizontalArrangement = Arrangement.Center
 
 
 		){
-			// Get the current theme mode
-
-
-			// Switch to toggle the theme mode
+			/**
+			 * Switch for Darkmode
+			 */
+			Text(
+				text = stringResource(id = R.string.homescreen_darkmode),
+				fontSize = 20.sp,
+				fontWeight = FontWeight.SemiBold,
+				color = MaterialTheme.colors.onBackground
+			)
 			Switch(
 				checked = darkTheme.value.isDarkTheme,
 				onCheckedChange = {
 					viewModel.onEvent(HomeScreenEvent.ChangedAppTheme(it, activity, darkTheme))
-					/*if(state.isLightTheme) {
-						// Toggle the theme mode
-						AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_YES)
-					}
-					else{
-						AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_NO)
-					}*/
 				},
 				colors = SwitchDefaults.colors(
 					checkedThumbColor = MaterialTheme.colors.primary,
