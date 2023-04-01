@@ -38,7 +38,6 @@ class KernfunktionalitaetEndToEndTest {
     fun setUp() {
         hiltRule.inject() //always needed for dependencies
 
-
         composeRule.activity.runOnUiThread {
             composeRule.activity.setContent {
                 val navController = rememberNavController()
@@ -47,7 +46,6 @@ class KernfunktionalitaetEndToEndTest {
                     composeRule.activity.NavigationAppHost(navController,themeState);
                 }
             }
-
         }
     }
 
@@ -91,6 +89,30 @@ class KernfunktionalitaetEndToEndTest {
             composeRule.onNodeWithTag(TestTags.SELECT_CONFIG_BUTTON_EDIT_PREFIX + name).performClick()
 
             //in Edit Screen
+
+            //click on a vibration
+            composeRule.onAllNodesWithTag(TestTags.EDIT_CONFIG_ITEM_VIBRATION)[0].performClick()
+
+            //edit Strength
+            composeRule.onNodeWithTag(TestTags.EDIT_VIB_SLIDER_STRENGTH).performGesture { swipeRight() }
+            composeRule.onNodeWithTag(TestTags.EDIT_VIB_SLIDER_STRENGTH).performGesture { swipeRight() }
+            composeRule.onNodeWithTag(TestTags.EDIT_VIB_SLIDER_DURATION).performGesture { swipeRight() }
+            composeRule.onNodeWithTag(TestTags.EDIT_VIB_SLIDER_DURATION).performGesture { swipeRight() }
+            composeRule.onNodeWithTag(TestTags.EDIT_SLIDER_PAUSE).performGesture { swipeRight() }
+            composeRule.onNodeWithTag(TestTags.EDIT_SLIDER_PAUSE).performGesture { swipeRight() }
+
+            composeRule.onNodeWithTag(TestTags.TOP_BAR_BACK_BUTTON).performClick()
+
+            // in select screen
+            composeRule.onNodeWithTag(TestTags.SELECT_CONFIG_BUTTON_SELECT_PREFIX + name).performClick()
+
+            //in delay Screen
+            //start
+            composeRule.onNodeWithTag(TestTags.DELAY_START_BUTTON).performClick()
+
+            //in run screen
+            // stop
+            composeRule.onNodeWithTag(TestTags.RUN_END_BUTTON).performClick()
     }
 
 

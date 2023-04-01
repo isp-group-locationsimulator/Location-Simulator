@@ -75,6 +75,11 @@ fun TimelineItem(
 	configItem: ConfigComponent,
 	onSelect: (ConfigComponent) -> Unit
 ) {
+	//only for testing
+	var testTag = TestTags.EDIT_CONFIG_ITEM_VIBRATION
+	if(configItem is Sound ){ testTag = TestTags.EDIT_CONFIG_ITEM_SOUND }
+
+
 	Card(elevation = 4.dp, backgroundColor = MaterialTheme.colors.surface,
 		//if selected the Item gets a Border in another Color
 		modifier = if (isSelected) {
@@ -84,12 +89,14 @@ fun TimelineItem(
 				.padding(6.dp)
 				.border(1.dp, MaterialTheme.colors.primary, RoundedCornerShape(10))
 				.clickable { onSelect(configItem) }
+				.testTag( testTag)
 		} else {
 			Modifier
 				.width(55.dp)
 				.height(55.dp)
 				.padding(6.dp)
 				.clickable { onSelect(configItem) }
+				.testTag(testTag)
 		}) {
 		Row(
 			verticalAlignment = Alignment.CenterVertically,

@@ -176,7 +176,8 @@ fun HomeScreenScreen(
 					uncheckedThumbColor = MaterialTheme.colors.primary,
 					checkedTrackColor = MaterialTheme.colors.secondary,
 					uncheckedTrackColor = MaterialTheme.colors.secondary,
-				)
+				),
+				modifier = Modifier.testTag(TestTags.HOME_DARKMODE_SLIDER)
 			)
 		}
 	}

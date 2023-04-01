@@ -12,6 +12,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -19,6 +20,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ispgr5.locationsimulator.R
+import com.ispgr5.locationsimulator.core.util.TestTags
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 import com.ispgr5.locationsimulator.domain.model.Sound
 import com.ispgr5.locationsimulator.domain.model.Vibration
@@ -177,8 +179,13 @@ fun EditConfigComponent(
 							)
 								.toInt()
 								.toString() + "%"
+						, modifier = Modifier.testTag(TestTags.EDIT_VIB_SLIDER_STRENGTH_TEXT)
 						)
+						/**
+						 * The Vibration Strength
+						 */
 						SliderForRange(
+							modifier = Modifier.testTag(TestTags.EDIT_VIB_SLIDER_STRENGTH),
 							value = RangeConverter.eightBitIntToPercentageFloat(configComponent.minStrength)..RangeConverter.eightBitIntToPercentageFloat(
 								configComponent.maxStrength
 							),
@@ -187,7 +194,8 @@ fun EditConfigComponent(
 									value
 								)
 							},
-							range = 0f..100f
+							range = 0f..100f,
+
 						)
 					}
 
@@ -208,7 +216,8 @@ fun EditConfigComponent(
 								value
 							)
 						},
-						range = 0f..30f
+						range = 0f..30f,
+						modifier = Modifier.testTag(TestTags.EDIT_VIB_SLIDER_DURATION)
 					)
 				}
 			}
@@ -220,7 +229,8 @@ fun EditConfigComponent(
 			SliderForRange(
 				value = RangeConverter.msToS(minPause)..RangeConverter.msToS(maxPause),
 				func = { value: ClosedFloatingPointRange<Float> -> onPauseValueChanged(value) },
-				range = 0f..60f
+				range = 0f..60f,
+				modifier = Modifier.testTag(TestTags.EDIT_SLIDER_PAUSE)
 			)
 		}
 		Column {
@@ -274,18 +284,20 @@ fun EditConfigComponent(
 fun SliderForRange(
 	func: (ClosedFloatingPointRange<Float>) -> Unit,
 	value: ClosedFloatingPointRange<Float>,
-	range: ClosedFloatingPointRange<Float>
+	range: ClosedFloatingPointRange<Float>,
+	modifier: Modifier = Modifier
 ) {
 	RangeSlider(
 		value = (value),
 		onValueChange = func,
 		valueRange = range,
 		onValueChangeFinished = {},
+		modifier = modifier
 	)
 }
 
 @Composable
-fun SecText(min: Float, max: Float) {
+fun SecText(min: Float, max: Float, modifier: Modifier = Modifier) {
 	Text(
 		String.format(
 			"%.1f",
@@ -294,5 +306,5 @@ fun SecText(min: Float, max: Float) {
 			"%.1f",
 			max
 		) + "s "
-	)
+	, modifier = modifier)
 }
