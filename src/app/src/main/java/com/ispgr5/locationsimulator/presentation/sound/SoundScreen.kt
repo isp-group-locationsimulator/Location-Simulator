@@ -7,8 +7,6 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -19,6 +17,7 @@ import com.ispgr5.locationsimulator.data.storageManager.SoundStorageManager
 import com.ispgr5.locationsimulator.presentation.settings.SettingsState
 import com.ispgr5.locationsimulator.presentation.universalComponents.ConfirmDeleteDialog
 import com.ispgr5.locationsimulator.presentation.universalComponents.TopBar
+import kotlinx.coroutines.delay
 
 /**
  * Shows a list of Audio Files to be selected.
@@ -33,9 +32,16 @@ fun SoundScreen(
 	getDefaultValuesFunction : () -> SettingsState
 ) {
 	val state = viewModel.state.value
-	viewModel.onEvent(SoundEvent.RefreshPage(soundStorageManager = soundStorageManager))
 
-	//Delte Confirmation
+	// Refresh screen every second so imported and recorded sound are being shown
+	LaunchedEffect(true){
+		while (true){
+			viewModel.onEvent(SoundEvent.RefreshPage(soundStorageManager = soundStorageManager))
+			delay(1000)
+		}
+	}
+
+	//Delete Confirmation
 	var showDeleteConfirmDialog by remember { mutableStateOf(false) }
 	var soundNameToDelete  by remember { mutableStateOf("")}  //String to store which sound should be deleted
 
@@ -48,7 +54,7 @@ fun SoundScreen(
 				modifier = Modifier.fillMaxSize(),
 				horizontalAlignment = Alignment.CenterHorizontally
 			) {
-
+/*
 				/**
 				 * The refresh Button
 				 */
@@ -62,7 +68,7 @@ fun SoundScreen(
 						contentDescription = null
 					)
 				}
-
+*/
 				/**
 				 * Header Text
 				 */
