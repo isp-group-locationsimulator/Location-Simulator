@@ -5,14 +5,10 @@ import androidx.activity.compose.setContent
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.test.core.app.launchActivity
 import com.ispgr5.locationsimulator.core.util.TestTags
 import com.ispgr5.locationsimulator.di.AppModule
 import com.ispgr5.locationsimulator.presentation.MainActivity
-import com.ispgr5.locationsimulator.presentation.editTimeline.EditTimelineScreen
 import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
 import com.ispgr5.locationsimulator.ui.theme.ThemeState
 import dagger.hilt.android.testing.HiltAndroidRule
@@ -43,7 +39,7 @@ class KernfunktionalitaetEndToEndTest {
                 val navController = rememberNavController()
                 val themeState = mutableStateOf(ThemeState(isDarkTheme = false))
                 LocationSimulatorTheme(themeState) {
-                    composeRule.activity.NavigationAppHost(navController,themeState);
+                    composeRule.activity.NavigationAppHost(navController,themeState)
                 }
             }
         }
@@ -60,20 +56,20 @@ class KernfunktionalitaetEndToEndTest {
 
             //in Home Screen go to select Config page
             composeRule.onNodeWithTag(TestTags.HOME_APPNAME).assertIsDisplayed()
-            composeRule.onNodeWithTag(TestTags.HOME_SELECT_CONFIG_BUTTON).assertIsDisplayed();
-            composeRule.onNodeWithTag(TestTags.HOME_SELECT_CONFIG_BUTTON).performClick();
+            composeRule.onNodeWithTag(TestTags.HOME_SELECT_CONFIG_BUTTON).assertIsDisplayed()
+            composeRule.onNodeWithTag(TestTags.HOME_SELECT_CONFIG_BUTTON).performClick()
 
             //in Select Config Screen
 
             //Check if add config Button exists
-            composeRule.onNodeWithTag(TestTags.SELECT_ADD_BUTTON).assertIsDisplayed();
+            composeRule.onNodeWithTag(TestTags.SELECT_ADD_BUTTON).assertIsDisplayed()
             //click on Add Config Button
-            composeRule.onNodeWithTag(TestTags.SELECT_ADD_BUTTON).performClick();
+            composeRule.onNodeWithTag(TestTags.SELECT_ADD_BUTTON).performClick()
 
             //in Add Screen
 
             //add Config
-            val name = "TestName1";
+            val name = "TestName1"
             val description = "TestDescription1"
 
             composeRule.onNodeWithTag(TestTags.ADD_NAME_TEXTINPUT).performTextInput(name)
@@ -93,9 +89,10 @@ class KernfunktionalitaetEndToEndTest {
             //click on a vibration
             composeRule.onAllNodesWithTag(TestTags.EDIT_CONFIG_ITEM_VIBRATION)[0].performClick()
 
+            //TODO: Check if device can handle vibration strength
             //edit Strength
-            composeRule.onNodeWithTag(TestTags.EDIT_VIB_SLIDER_STRENGTH).performGesture { swipeRight() }
-            composeRule.onNodeWithTag(TestTags.EDIT_VIB_SLIDER_STRENGTH).performGesture { swipeRight() }
+            //composeRule.onNodeWithTag(TestTags.EDIT_VIB_SLIDER_STRENGTH).performGesture { swipeRight() }
+            //composeRule.onNodeWithTag(TestTags.EDIT_VIB_SLIDER_STRENGTH).performGesture { swipeRight() }
             composeRule.onNodeWithTag(TestTags.EDIT_VIB_SLIDER_DURATION).performGesture { swipeRight() }
             composeRule.onNodeWithTag(TestTags.EDIT_VIB_SLIDER_DURATION).performGesture { swipeRight() }
             composeRule.onNodeWithTag(TestTags.EDIT_SLIDER_PAUSE).performGesture { swipeRight() }

@@ -12,18 +12,17 @@ import kotlinx.serialization.Serializable
 class Sound(
 	override val id: Int,
 	val source: String,
+	val name : String,
 	//volume in 0f..1f
 	val minVolume: Float,
 	val maxVolume: Float,
 	//pause in ms
 	val minPause: Int,
-	val maxPause: Int,
-	//TODO deprecated
-	val isRandom: Boolean
+	val maxPause: Int
 ) : ConfigComponent() {
 
 	override fun copy(): Sound {
-		return Sound(id, source, minVolume, maxVolume, minPause, maxPause, isRandom)
+		return Sound(id, source, name, minVolume, maxVolume, minPause, maxPause)
 	}
 
 	/**
@@ -33,12 +32,12 @@ class Sound(
 	fun myCopy(
 		id: Int = this.id,
 		source: String = this.source,
+		name: String = this.name,
 		minVolume: Float = this.minVolume,
 		maxVolume: Float = this.maxVolume,
 		minPause: Int = this.minPause,
-		maxPause: Int = this.maxPause,
-		isRandom: Boolean = this.isRandom
+		maxPause: Int = this.maxPause
 	): Sound {
-		return Sound(id, source, minVolume, maxVolume, minPause, maxPause, isRandom)
+		return Sound(id, source, name, minVolume, maxVolume, minPause, maxPause)
 	}
 }

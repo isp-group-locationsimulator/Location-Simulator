@@ -106,9 +106,12 @@ fun EditConfigComponent(
 						modifier = Modifier.fillMaxWidth(),
 						horizontalArrangement = Arrangement.Center
 					) {
-						Text(
-							text = configComponent.source,
-							fontSize = 20.sp,
+						BasicTextField(
+							textStyle = TextStyle(textAlign = TextAlign.Center,fontSize = 20.sp),
+							value = configComponent.name,
+							onValueChange = { name ->
+								onConfigComponentNameChanged (name)
+							}
 						)
 					}
 				}
