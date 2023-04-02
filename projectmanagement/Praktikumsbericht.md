@@ -132,19 +132,20 @@ Wir haben diese Woche vor allem Bugfixes und UI-Probleme bearbeitet.
 Wir haben diese Woche nur Kleinigkeiten erledigt.
 
 ### Projektwoche 20 (03.03 – 09.03)
-
+Wir haben diese Woche die Soundauswahlseite und die Timeline überarbeitet und generelles Codecleanup betrieben.
 
 ### Projektwoche 21 (10.03 – 16.03)
-
+Wir haben die Möglichkeit hinzugefügt, aus der App heraus eine Soundaufnahme zu starten.
+Außerdem ist die Timeline jetzt zufällig abspielbar.
+Zudem hat die App nun Standardsounds.
 
 ### Projektwoche 22 (17.03 – 23.03)
+Wir haben uns mit den Kunden getroffen und Feedback zur aktuellen Version der App geholt.
+Außerdem wurde ein Darkmode hinzugefügt.
 
-
-### Projektwoche 23 (24.03 – 23.03)
-
-
-### Projektwoche 24 (24.03 – 30.03)
-
+### Projektwoche 23 (24.03 – 30.03)
+Wir haben diese Woche angefangen, das Feedback der Kunden umzusetzen.
+Außerdem haben wir angefangen, Integrationstests einzuführen.
 
 ### Projektwoche 25 (31.03 – 06.04)
 
