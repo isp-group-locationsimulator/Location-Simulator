@@ -73,7 +73,7 @@ class WunschfunktionalitaetenEndToEndTest {
 
         composeRule.onNodeWithTag(TestTags.HOME_DARKMODE_SLIDER).performClick()
 
-        //check if light theme is setted in prefs
+        //check if light theme is setted in prefs.
         isDarkTheme = composeRule.activity.getSharedPreferences("prefs", ComponentActivity.MODE_PRIVATE).getBoolean("isDarkTheme", false)
         assert(!isDarkTheme)
         //check if screen is light
