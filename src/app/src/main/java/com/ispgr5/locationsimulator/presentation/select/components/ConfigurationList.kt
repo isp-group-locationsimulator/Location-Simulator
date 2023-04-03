@@ -232,15 +232,14 @@ fun OneConfigurationListMember(
 						modifier = Modifier.testTag(TestTags.SELECT_CONFIG_BUTTON_DUPLICTAE_PREFIX + configuration.name),
 						colors = ButtonDefaults.buttonColors(
 							backgroundColor = Color.Transparent,
-							contentColor = MaterialTheme.colors.primary,
+							contentColor = MaterialTheme.colors.onSurface,
 							disabledBackgroundColor = Color.Transparent,
 							disabledContentColor = MaterialTheme.colors.primary.copy(alpha = ContentAlpha.disabled),
 						)
 					) {
 						Icon(
-							painter = painterResource(id = R.drawable.ic_baseline_call_split_24),
-							contentDescription = null,
-							tint = MaterialTheme.colors.onSurface
+							painter = painterResource(id = R.drawable.duplicate_icon_24),
+							contentDescription = null
 						)
 					}
 				}

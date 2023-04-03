@@ -38,8 +38,8 @@ class EditTimelineViewModel @Inject constructor(
                             var components = configuration.components
 
 
-                            savedStateHandle.get<String>("soundNameToAdd")?.let { soundName ->
-                                if (soundName != "") {
+                            savedStateHandle.get<String>("soundNameToAdd")?.let { soundSource ->
+                                if (soundSource != "") {
 
                                     val minVolume =  savedStateHandle.get<Float>("minVolume")
                                     val maxVolume =  savedStateHandle.get<Float>("maxVolume")
@@ -49,7 +49,7 @@ class EditTimelineViewModel @Inject constructor(
                                     val componentsCopy = configuration.components.toMutableList()
                                     newSound = Sound(
                                         (componentsCopy.maxByOrNull { it.id }?.id ?: 0) + 1,
-                                        soundName, minVolume!!, maxVolume!!, minPause!!, maxPause!!, false
+                                        soundSource,soundSource, minVolume!!, maxVolume!!, minPause!!, maxPause!!
                                     )
                                     componentsCopy.add(
                                         newSound!!
@@ -170,6 +170,11 @@ class EditTimelineViewModel @Inject constructor(
                     when (component) {
                         is Vibration -> {
                             component = (component as Vibration).myCopy(
+                                name = event.name
+                            )
+                        }
+                        is Sound -> {
+                            component = (component as Sound).myCopy(
                                 name = event.name
                             )
                         }

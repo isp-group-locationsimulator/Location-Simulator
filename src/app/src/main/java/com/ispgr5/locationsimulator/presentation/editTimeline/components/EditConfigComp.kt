@@ -106,9 +106,12 @@ fun EditConfigComponent(
 						modifier = Modifier.fillMaxWidth(),
 						horizontalArrangement = Arrangement.Center
 					) {
-						Text(
-							text = configComponent.source,
-							fontSize = 20.sp,
+						BasicTextField(
+							textStyle = TextStyle(textAlign = TextAlign.Center,fontSize = 20.sp),
+							value = configComponent.name,
+							onValueChange = { name ->
+								onConfigComponentNameChanged (name)
+							}
 						)
 					}
 				}
@@ -236,17 +239,27 @@ fun EditConfigComponent(
 		Column {
 			Row(
 				modifier = Modifier.fillMaxWidth(),
-				horizontalArrangement = Arrangement.Center
+				horizontalArrangement = Arrangement.SpaceAround
 			) {
-				//TODO: Is this a good position?
-				Button(onClick = { onCopyConfigComponent(configComponent) }, modifier = Modifier.fillMaxWidth()) {
-					Text(text = stringResource(id = R.string.DuplicateComponent))
+				Button(
+					onClick = { onCopyConfigComponent(configComponent) }, //show Confirm Dialog
+					contentPadding = PaddingValues(0.dp),
+					enabled = true,
+					shape = MaterialTheme.shapes.small,
+					border = null,
+					elevation = null,
+					colors = ButtonDefaults.buttonColors(
+						backgroundColor = androidx.compose.ui.graphics.Color.Transparent,
+						contentColor = MaterialTheme.colors.onSurface,
+						disabledBackgroundColor = androidx.compose.ui.graphics.Color.Transparent,
+						disabledContentColor = MaterialTheme.colors.primary.copy(alpha = ContentAlpha.disabled),
+					)
+				) {
+					Icon(
+						painter = painterResource(id = R.drawable.duplicate_icon_24),
+						contentDescription = null,
+					)
 				}
-			}
-			Row(
-				modifier = Modifier.fillMaxWidth(),
-				horizontalArrangement = Arrangement.Center
-			) {
 				Button(
 					onClick = { showDeleteConfirmDialog = true }, //show Confirm Dialog
 					contentPadding = PaddingValues(0.dp),
@@ -266,6 +279,7 @@ fun EditConfigComponent(
 						contentDescription = null,
 					)
 				}
+
 			}
 		}
 	}
