@@ -84,28 +84,23 @@ class SelectViewModel @Inject constructor(
 				event.configurationStorageManager.safeConfigurationToStorage(event.configuration)
 			}
 			is SelectEvent.FavoriteClicked -> {
-				if (!event.configuration.isFavorite && state.value.configurations.filter { conf -> conf.isFavorite }.size >= 2) {
-					//TODO Translate. Problem: We are not in a composable. Text is in String "selectscreen_favetoast"
-					event.toaster("Sie können maximal zwei Konfigurationen als Favoriten wählen.")
-				} else {
-					val configurationListCopy = state.value.configurations.toMutableList()
-					val confInList = Configuration(
-						name = event.configuration.name,
-						description = event.configuration.description,
-						randomOrderPlayback = event.configuration.randomOrderPlayback,
-						components = event.configuration.components,
-						isFavorite = !event.configuration.isFavorite,
-						id = event.configuration.id
-					)
-					configurationListCopy[configurationListCopy.indexOfFirst { conf -> conf.id == event.configuration.id }] =
-						confInList
+				val configurationListCopy = state.value.configurations.toMutableList()
+				val confInList = Configuration(
+					name = event.configuration.name,
+					description = event.configuration.description,
+					randomOrderPlayback = event.configuration.randomOrderPlayback,
+					components = event.configuration.components,
+					isFavorite = !event.configuration.isFavorite,
+					id = event.configuration.id
+				)
+				configurationListCopy[configurationListCopy.indexOfFirst { conf -> conf.id == event.configuration.id }] =
+					confInList
 
-					_state.value = _state.value.copy(
-						configurations = configurationListCopy
-					)
-					viewModelScope.launch {
-						configurationUseCases.addConfiguration(confInList)
-					}
+				_state.value = _state.value.copy(
+					configurations = configurationListCopy
+				)
+				viewModelScope.launch {
+					configurationUseCases.addConfiguration(confInList)
 				}
 			}
 			is SelectEvent.Duplicate -> {

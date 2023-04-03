@@ -11,6 +11,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.core.util.TestTags
 import com.ispgr5.locationsimulator.domain.model.Configuration
@@ -73,10 +74,16 @@ fun OneConfigurationListMember(
 
 				) {
 					Column {
-						Text(text = configuration.name)
+						Text(
+							text = configuration.name,
+							fontSize = 18.sp,
+						)
 						if (isToggled) {
 							Spacer(modifier = Modifier.height(3.dp))
-							Text(text = configuration.description)
+							Text(
+								text = configuration.description,
+								fontSize = 14.sp,
+							)
 						}
 					}
 				}

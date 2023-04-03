@@ -79,7 +79,7 @@ fun EditTimelineScreen(
 								Text(
 									text = stringResource(id = R.string.editTimeline_name) + ":",
 									fontWeight = FontWeight.Bold,
-									modifier = Modifier.width(115.dp),
+									modifier = Modifier.width(125.dp),
 									color = MaterialTheme.colors.onBackground
 								)
 								Divider(
@@ -117,7 +117,7 @@ fun EditTimelineScreen(
 								Text(
 									text = stringResource(id = R.string.editTimeline_description) + ":",
 									fontWeight = FontWeight.Bold,
-									modifier = Modifier.width(115.dp)
+									modifier = Modifier.width(125.dp)
 								)
 								Divider(
 									color = MaterialTheme.colors.background,
@@ -154,7 +154,7 @@ fun EditTimelineScreen(
 								Text(
 									text = stringResource(id = R.string.editTimeline_randomOrderPlayback) + ":",
 									fontWeight = FontWeight.Bold,
-									modifier = Modifier.width(100.dp)
+									modifier = Modifier.width(125.dp)
 								)
 								Column(
 									modifier = Modifier.fillMaxWidth(),

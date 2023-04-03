@@ -111,6 +111,7 @@ fun HomeScreenScreen(
 			Modifier
 				.padding(25.dp)
 				.fillMaxWidth()
+				.heightIn(max = 180.dp)
 		) {
 			items(state.favoriteConfigurations) { configuration ->
 				OneConfigurationListMember(
