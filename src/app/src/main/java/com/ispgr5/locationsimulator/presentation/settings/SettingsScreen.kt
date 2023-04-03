@@ -10,16 +10,12 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -101,7 +97,7 @@ fun SettingsScreen(
                             Column(
                                 modifier = Modifier
                                     .padding(20.dp)
-                                    .border(1.dp, Color.Black, RoundedCornerShape(5))
+                                    .border(1.dp, MaterialTheme.colors.onSurface, RoundedCornerShape(5))
                                     .let { it->
                                         if (isSmallScreen) it.fillMaxHeight(0.9f) else it
                                     }
@@ -134,6 +130,10 @@ fun SettingsScreen(
                                     label = { Text("Default Name") },
                                     placeholder = { Text(text = stringResource(id = R.string.PlaceholderDefaultName)) },
                                     singleLine = true,
+                                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                                        focusedBorderColor = MaterialTheme.colors.primary,
+                                        unfocusedBorderColor = MaterialTheme.colors.onSurface
+                                    ),
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .padding(16.dp)
@@ -229,7 +229,7 @@ fun SettingsScreen(
                             Column(
                                 modifier = Modifier
                                     .padding(20.dp)
-                                    .border(1.dp, Color.Black, RoundedCornerShape(5))
+                                    .border(1.dp, MaterialTheme.colors.onSurface, RoundedCornerShape(5))
                                     .let { it->
                                         if (isSmallScreen) it.fillMaxHeight(0.9f) else it
                                     }
@@ -313,7 +313,7 @@ fun SettingsScreen(
                 ) {
                     repeat(pageCount) { iteration ->
                         val color =
-                            if (pagerState.currentPage == iteration) Color.DarkGray else Color.LightGray
+                            if (pagerState.currentPage == iteration) MaterialTheme.colors.primary else MaterialTheme.colors.surface
                         Box(
                             modifier = Modifier
                                 .padding(2.dp)
