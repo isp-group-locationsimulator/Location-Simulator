@@ -2,9 +2,11 @@ package com.ispgr5.locationsimulator.presentation.select
 
 import android.annotation.SuppressLint
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -63,17 +65,6 @@ fun SelectScreen(
                             )
                         }
                     }
-                    //The Add Button
-                    IconButton(
-                        onClick = { navController.navigate(route = Screen.AddScreen.route) },
-                        modifier = Modifier.testTag(TestTags.SELECT_ADD_BUTTON)
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_baseline_add_24),
-                            contentDescription = null
-                        )
-
-                    }
                 })
         },
         content = {
@@ -91,7 +82,33 @@ fun SelectScreen(
 						.fillMaxSize()
                 }
             ) {
-
+                //The add button
+                item{
+                    Button(
+                        onClick = { navController.navigate(route = Screen.AddScreen.route) },
+                        contentPadding = PaddingValues(0.dp),
+                        enabled = true,
+                        shape = MaterialTheme.shapes.small,
+                        border = null,
+                        elevation = null,
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = Color.Transparent,
+                            disabledBackgroundColor = Color.Transparent,
+                            disabledContentColor = MaterialTheme.colors.primary.copy(alpha = ContentAlpha.disabled),
+                        ),
+                        modifier = Modifier
+                            .border(1.dp, MaterialTheme.colors.onSurface,RoundedCornerShape(6.dp))
+                            .fillMaxWidth()
+                            .heightIn(min = 55.dp)
+                            .testTag(TestTags.SELECT_ADD_BUTTON)
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_baseline_add_24),
+                            contentDescription = null
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(6.dp))
+                }
                 //for all configurations in state we create a Row
                 items(state.configurations) { configuration ->
                     Row(
