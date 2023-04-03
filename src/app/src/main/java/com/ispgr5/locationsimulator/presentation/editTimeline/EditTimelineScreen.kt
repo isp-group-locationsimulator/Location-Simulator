@@ -178,7 +178,7 @@ fun EditTimelineScreen(
 				}
 
 				Spacer(modifier = Modifier.size(4.dp))
-				Divider(color = MaterialTheme.colors.primary, thickness = 1.dp)
+				Divider(color = MaterialTheme.colors.onBackground, thickness = 1.dp)
 				Spacer(modifier = Modifier.size(7.dp))
 
 				/**
@@ -195,7 +195,7 @@ fun EditTimelineScreen(
 					onAddClicked = fun() { showCustomDialogWithResult = true }
 				)
 				Spacer(modifier = Modifier.size(7.dp))
-				Divider(color = MaterialTheme.colors.primary, thickness = 1.dp)
+				Divider(color = MaterialTheme.colors.onBackground, thickness = 1.dp)
 
 				/**
 				 * The Edit Options, like Slider

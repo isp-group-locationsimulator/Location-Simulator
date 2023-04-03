@@ -100,7 +100,7 @@ fun EditConfigComponent(
 			}
 
 			/**
-			 * Sound name
+			 * Sound and vibration name
 			 */
 			when (configComponent) {
 				is Sound -> {
@@ -110,7 +110,10 @@ fun EditConfigComponent(
 						horizontalArrangement = Arrangement.Center
 					) {
 						BasicTextField(
-							textStyle = TextStyle(textAlign = TextAlign.Center,fontSize = 20.sp),
+							textStyle = TextStyle(
+								textAlign = TextAlign.Center,
+								fontSize = 20.sp,
+								color = MaterialTheme.colors.onBackground),
 							value = configComponent.name,
 							onValueChange = { name ->
 								onConfigComponentNameChanged (name)
@@ -125,7 +128,10 @@ fun EditConfigComponent(
 						horizontalArrangement = Arrangement.Center
 					) {
 						BasicTextField(
-							textStyle = TextStyle(textAlign = TextAlign.Center,fontSize = 20.sp),
+							textStyle = TextStyle(
+								textAlign = TextAlign.Center,
+								fontSize = 20.sp,
+								color = MaterialTheme.colors.onBackground),
 							value = configComponent.name,
 							onValueChange = { name ->
 								onConfigComponentNameChanged (name)
