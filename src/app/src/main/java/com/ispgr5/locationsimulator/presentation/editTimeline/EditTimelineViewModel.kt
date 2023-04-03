@@ -134,8 +134,8 @@ class EditTimelineViewModel @Inject constructor(
                     when (component) {
                         is Vibration -> {
                             component = (component as Vibration).myCopy(
-                                minStrength = RangeConverter.floatTo8BitInt(event.range.start),
-                                maxStrength = RangeConverter.floatTo8BitInt(event.range.endInclusive)
+                                minStrength = RangeConverter.floatToEightBitInt(event.range.start),
+                                maxStrength = RangeConverter.floatToEightBitInt(event.range.endInclusive)
                             )
                         }
                     }

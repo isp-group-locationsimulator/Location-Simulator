@@ -27,7 +27,7 @@ class ConfigurationComponentConverterTest {
             maxVolume = 7f,
             minPause = 1,
             maxPause = 9,
-            isRandom = true
+            name = "name1"
         )
     )
 

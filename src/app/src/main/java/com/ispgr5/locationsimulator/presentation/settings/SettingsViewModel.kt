@@ -49,8 +49,8 @@ class SettingsViewModel @Inject constructor(
             is SettingsEvent.ChangedVibStrength -> {
                 viewModelScope.launch {
                     _state.value = _state.value.copy(
-                        minStrengthVibration = RangeConverter.floatTo8BitInt(event.range.start),
-                        maxStrengthVibration = RangeConverter.floatTo8BitInt(event.range.endInclusive)
+                        minStrengthVibration = RangeConverter.floatToEightBitInt(event.range.start),
+                        maxStrengthVibration = RangeConverter.floatToEightBitInt(event.range.endInclusive)
                     )
                     event.saveDefaultValuesFunction(state)
                 }

@@ -22,7 +22,7 @@ class RangeConverter {
 		/**
 		 * converts UI value in 0f..100f to 0..255
 		 */
-		fun floatTo8BitInt(input: Float): Int {
+		fun floatToEightBitInt(input: Float): Int {
 			return (input / 100f * 255).toInt()
 		}
 
