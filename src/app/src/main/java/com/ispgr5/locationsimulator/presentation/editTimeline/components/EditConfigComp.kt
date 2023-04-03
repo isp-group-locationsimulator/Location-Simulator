@@ -28,7 +28,10 @@ import com.ispgr5.locationsimulator.domain.model.RangeConverter
 import com.ispgr5.locationsimulator.presentation.universalComponents.ConfirmDeleteDialog
 import kotlin.properties.Delegates
 
-
+/**
+ * The composable for showing and Editing a ConfigComponent(Sound or Vibration).
+ * the corresponding functions get called if the user performed actions to edit
+ */
 @Composable
 fun EditConfigComponent(
 	configComponent: ConfigComponent?,

@@ -4,6 +4,9 @@ import androidx.navigation.NavController
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 import com.ispgr5.locationsimulator.presentation.settings.SettingsState
 
+/**
+ * Events which can happen in the Edit Screen
+ */
 sealed class EditTimelineEvent {
 	data class ChangedSoundVolume(val range: ClosedFloatingPointRange<Float>) : EditTimelineEvent()
 	data class ChangedPause(val range: ClosedFloatingPointRange<Float>) : EditTimelineEvent()

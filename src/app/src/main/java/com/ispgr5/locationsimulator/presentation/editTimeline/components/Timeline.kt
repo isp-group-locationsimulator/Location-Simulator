@@ -19,9 +19,12 @@ import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 import com.ispgr5.locationsimulator.domain.model.Sound
 
 /**
+ * Compose to show the Timeline of a Configuration
  * @param components all Configuration Components that the timeline should show
  * @param selectedComponent the Configuration Component that is currently selected
  * @param onSelectAComponent what should happen if a Time line Item gets clicked
+ * @param onAddClicked functions which gets called if the add button gets clicked
+ * @param showAddButton whether the AddButton should be drawn or not
  */
 @Composable
 fun Timeline(
@@ -65,6 +68,7 @@ fun Timeline(
 }
 
 /**
+ * Conmpose to draw a Item of the Timeline wich represents a ConfigComponent
  * @param isSelected is this Configuration Component currently selected?
  * @param configItem the Configuration Component that should showed
  * @param onSelect what should happen if this Time line Item gets clicked

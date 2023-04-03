@@ -16,7 +16,8 @@ import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.core.util.TestTags
 
 /**
- * Opens a Dialog which ask the user for pick between "Add Sound" or "Add Vibration"
+ * Opens a Dialog which ask the user for pick between "Add Sound" or "Add Vibration" and then
+ * runns the onVibrationClicked or onSoundClicked function. Or the onDismiss or onNegativeClick
  */
 @Composable
 fun AddConfigComponentDialog(

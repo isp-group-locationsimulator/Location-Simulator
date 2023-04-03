@@ -22,7 +22,10 @@ import com.ispgr5.locationsimulator.presentation.settings.SettingsState
 import com.ispgr5.locationsimulator.presentation.universalComponents.TopBar
 import com.ispgr5.locationsimulator.presentation.util.Screen
 
-
+/**
+ * The Edit Screen.
+ * Screen to Edit the Configuration
+ */
 @Composable
 fun EditTimelineScreen(
 	navController: NavController,

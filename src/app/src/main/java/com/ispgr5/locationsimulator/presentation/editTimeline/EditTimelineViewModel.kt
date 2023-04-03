@@ -1,8 +1,11 @@
 package com.ispgr5.locationsimulator.presentation.editTimeline
 
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -14,6 +17,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+/**
+ * View Model of the Edit Screen
+ */
 @HiltViewModel
 class EditTimelineViewModel @Inject constructor(
     private val configurationUseCases: ConfigurationUseCases,
@@ -221,16 +227,16 @@ class EditTimelineViewModel @Inject constructor(
             }
 
             is EditTimelineEvent.ChangedName -> {
-                //TODO limit
+                //Character limit of 50
                 _state.value = _state.value.copy(
-                    name = event.name
+                    name = event.name.take(50)
                 )
             }
 
             is EditTimelineEvent.ChangedDescription -> {
-                //TODO limit
+                //Character Limit of 300
                 _state.value = _state.value.copy(
-                    description = event.description
+                    description = event.description.take(300)
                 )
             }
             is EditTimelineEvent.DeleteConfigurationComponent -> {
@@ -298,6 +304,9 @@ class EditTimelineViewModel @Inject constructor(
         saveConfiguration()
     }
 
+    /**
+     * Returns the index a configComponent has in a list of ConfigComponents
+     */
     private fun getIndex(
         configComponents: List<ConfigComponent>,
         configComponent: ConfigComponent
@@ -310,7 +319,10 @@ class EditTimelineViewModel @Inject constructor(
         return -1
     }
 
-    private fun saveConfiguration() {
+    /**
+     * Save a Configuration
+     */
+    private fun saveConfiguration( ) {
         viewModelScope.launch {
             try {
                 configurationUseCases.addConfiguration(

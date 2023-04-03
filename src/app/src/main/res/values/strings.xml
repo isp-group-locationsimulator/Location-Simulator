@@ -66,4 +66,6 @@
 
     <string name="PlaceholderDefaultName"> "Enter a name" </string>
     <string name="homescreen_darkmode">Darkmode</string>
+
+    <string name="config_save_error">The Configuration has a Error</string>
 </resources>
