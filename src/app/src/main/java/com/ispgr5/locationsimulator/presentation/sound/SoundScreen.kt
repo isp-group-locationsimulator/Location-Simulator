@@ -27,7 +27,7 @@ fun SoundScreen(
 	navController: NavController,
 	viewModel: SoundViewModel = hiltViewModel(),
 	soundStorageManager: SoundStorageManager,
-	privateDirUri: String,
+	soundsDirUri: String,
 	recordAudio: () -> Unit,
 	getDefaultValuesFunction : () -> SettingsState
 ) {
@@ -132,7 +132,7 @@ fun SoundScreen(
 							onPlayClicked = {
 								viewModel.onEvent(
 									SoundEvent.TestPlaySound(
-										privateDirUri,
+										soundsDirUri,
 										soundName
 									)
 								)

@@ -235,7 +235,7 @@ class ConfigurationStorageManager(
 				//if this sound don't exist then write it to the private Folder
 				if (soundAlreadyExistHere == null) {
 					val outputStream =
-						FileOutputStream(soundStorageManager.getFileInPrivateDir(soundNameWithEnding))
+						FileOutputStream(soundStorageManager.getFileInSoundsDir(soundNameWithEnding))
 					outputStream.write(
 						soundHelpObject?.let {
 							SoundConverter().decodeBase64StringToByteArray(

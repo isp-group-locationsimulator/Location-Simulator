@@ -24,7 +24,7 @@ class InfinityService : Service() {
 	private var wakeLock: PowerManager.WakeLock? = null
 	private var config: List<ConfigComponent>? = null
 	private var soundPlayer: SoundPlayer = SoundPlayer()
-	private lateinit var filesDir: String
+	private lateinit var soundsDir: String
 
 	override fun onBind(p0: Intent?): IBinder? = null
 
@@ -38,7 +38,7 @@ class InfinityService : Service() {
 		if (intent != null) {
 			if (intent.action == "START") {
 				changeConfig(intent.getStringExtra("config"))
-				filesDir = intent.getStringExtra("filesDir").toString()
+				soundsDir = intent.getStringExtra("soundsDir").toString()
 				isConfigOrderRandom = intent.getStringExtra("randomOrderPlayback").toBoolean()
 				println(intent.getStringExtra("randomOrderPlayback"))
 				println(intent.getStringExtra("randomOrderPlayback").toBoolean())
@@ -149,7 +149,7 @@ class InfinityService : Service() {
 				val volume: Float =
 					(item.minVolume + Math.random() * (item.maxVolume - item.minVolume)).toFloat()
 				val duration =
-					soundPlayer.startSound(filesDir + "/" + item.source, volume)
+					soundPlayer.startSound(soundsDir + item.source, volume)
 				Log.d(
 					"Signal-Infinity",
 					"Creating Sound... Name: ${item.source} , Duration: $duration ms , Volume: $volume"

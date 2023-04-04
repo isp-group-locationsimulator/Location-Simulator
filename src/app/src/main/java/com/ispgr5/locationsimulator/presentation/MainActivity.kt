@@ -23,7 +23,6 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -53,7 +52,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.serialization.ExperimentalSerializationApi
 import java.io.FileOutputStream
 import java.io.InputStream
-import java.security.AccessController.getContext
 
 // TODO: Add KDoc to this class and methods.
 @AndroidEntryPoint
@@ -148,7 +146,7 @@ class MainActivity : ComponentActivity() {
 						navController = navController,
 						startServiceFunction = startService,
 						context = this@MainActivity,
-						privateDirUri = this@MainActivity.filesDir.toString(),
+						soundsDirUri = this@MainActivity.filesDir.toString()+"/Sounds/",
 					)
 				}
 				composable(Screen.RunScreen.route) {
@@ -202,7 +200,7 @@ class MainActivity : ComponentActivity() {
 					SoundScreen(
 						navController = navController,
 						soundStorageManager = soundStorageManager,
-						privateDirUri = this@MainActivity.filesDir.toString(),
+						soundsDirUri = this@MainActivity.filesDir.toString()+"/Sounds/",
 						recordAudio = { recordAudio() },
 						getDefaultValuesFunction = getDefaultValues
 					)
@@ -234,7 +232,7 @@ class MainActivity : ComponentActivity() {
 					"config",
 					ConfigurationComponentConverter().componentListToString(config)
 				)
-				it.putExtra("filesDir", filesDir.toString())
+				it.putExtra("soundsDir", "$filesDir/Sounds/")
 				it.putExtra("randomOrderPlayback", randomOrderPlayback.toString())
 				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 					startForegroundService(it)
@@ -299,7 +297,7 @@ class MainActivity : ComponentActivity() {
 	 */
 	private fun saveAudioFile(fileName: String) {
 		val inputStream = recordedAudioUri?.let { contentResolver.openInputStream(it) }
-		val file = soundStorageManager.getFileInPrivateDir(fileName)
+		val file = soundStorageManager.getFileInSoundsDir(fileName)
 		val outputStream = FileOutputStream(file)
 		inputStream?.copyTo(outputStream)
 		outputStream.close()

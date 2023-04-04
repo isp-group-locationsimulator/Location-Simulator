@@ -34,7 +34,7 @@ class SoundViewModel @Inject constructor(
 				_state.value = SoundState(event.soundStorageManager.getSoundFileNames())
 			}
 			is SoundEvent.TestPlaySound -> {
-				soundPlayer.startSound(event.privateDirUri + "/" + event.soundName, 1f)
+				soundPlayer.startSound(event.soundsDirUri + event.soundName, 1f)
 			}
 			is SoundEvent.StopPlayback -> {
 				soundPlayer.stopPlayback()
@@ -53,10 +53,10 @@ class SoundViewModel @Inject constructor(
 				}
 			}
 			is SoundEvent.ImportSound -> {
-				event.soundStorageManager.moveFileToPrivateFolder()
+				event.soundStorageManager.moveFileToSoundsFolder()
 			}
 			is SoundEvent.DeleteSound -> {
-				event.soundStorageManager.deleteFileFromPrivateDir(event.soundName)
+				event.soundStorageManager.deleteFileFromSoundsDir(event.soundName)
 				_state.value = SoundState(event.soundStorageManager.getSoundFileNames())
 			}
 		}

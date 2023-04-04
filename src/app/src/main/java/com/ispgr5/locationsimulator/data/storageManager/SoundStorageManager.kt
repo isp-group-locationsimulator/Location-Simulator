@@ -17,14 +17,14 @@ import java.net.URI
 class SoundStorageManager(private val mainActivity: MainActivity) {
 
 	/**
-	 * This variable lets us copy a file that we choose to our private dir.
+	 * This variable lets us copy a file that we choose to our sounds dir.
 	 */
 	private val copyFile =
 		mainActivity.registerForActivityResult(ActivityResultContracts.GetContent()) { result: Uri? ->
 			result?.let { fileUri ->
 				val inputStream = mainActivity.contentResolver.openInputStream(fileUri)
 				val outputStream = FileOutputStream(getFileNameFromUri(mainActivity, fileUri)?.let {
-					getFileInPrivateDir(
+					getFileInSoundsDir(
 						it
 					)
 				})
@@ -36,9 +36,9 @@ class SoundStorageManager(private val mainActivity: MainActivity) {
 
 	/**
 	 * This function launches the ActivityResultsLauncher that lets us select a audio file
-	 * that then will be moved into the private dir.
+	 * that then will be moved into the sounds dir.
 	 */
-	fun moveFileToPrivateFolder() {
+	fun moveFileToSoundsFolder() {
 		copyFile.launch("audio/*")
 	}
 
@@ -64,7 +64,7 @@ class SoundStorageManager(private val mainActivity: MainActivity) {
 //    }
 
 	/**
-	 * this function looks up all Sound files in our private dir and compare its Base64 String
+	 * this function looks up all Sound files in our sounds dir and compare its Base64 String
 	 * @return the filename of the file with the matching base64 String. null when no matching file exist
 	 */
 	fun soundAlreadyExist(soundsBase64String: String): String? {
@@ -74,7 +74,7 @@ class SoundStorageManager(private val mainActivity: MainActivity) {
 				SoundConverter().encodeByteArrayToBase64String(
 					File(
 						mainActivity.filesDir,
-						existingSoundName
+						"Sounds/$existingSoundName"
 					).readBytes()
 				)
 			if (existingSoundAsBase64 == soundsBase64String) {
@@ -86,16 +86,16 @@ class SoundStorageManager(private val mainActivity: MainActivity) {
 
 
 	/**
-	 * This function returns a File in our private dir with the name it is given.
+	 * This function returns a File in our sounds dir with the name it is given.
 	 * In case of a naming conflict, the new file gets a "_new" attached before the file extension.
 	 * @param fileName The name the file should have
 	 * @return The File
 	 */
-	fun getFileInPrivateDir(fileName: String): File {
-		val dir = File(mainActivity.filesDir, "")
+	fun getFileInSoundsDir(fileName: String): File {
+		val dir = File(mainActivity.filesDir, "Sounds")
 		val files = dir.listFiles()
 		return if (files == null) {
-			File(mainActivity.filesDir, fileName)
+			File(mainActivity.filesDir, "Sounds/$fileName")
 		} else {
 			val fileNames = files.map { it.name }
 			var fileNameReturnValue = fileName
@@ -118,22 +118,22 @@ class SoundStorageManager(private val mainActivity: MainActivity) {
 					areThereCopies = false
 				}
 			}
-			File(mainActivity.filesDir, fileNameReturnValue)
+			File(mainActivity.filesDir, "Sounds/$fileNameReturnValue")
 		}
 	}
 
 
 	/**
-	 * This function gets the names of the Sound Files from the private dir.
-	 * @return The List of Strings that hold the Filenames (incl. File Extension, exl. path) to the Sound Files in the private dir.
+	 * This function gets the names of the Sound Files from the sound dir.
+	 * @return The List of Strings that hold the Filenames (incl. File Extension, exl. path) to the Sound Files in the sounds dir.
 	 */
 	fun getSoundFileNames(): List<String> {
-		val dir = File(mainActivity.filesDir, "")
+		val dir = File(mainActivity.filesDir, "Sounds")
 		val files = dir.listFiles()
 		val names = mutableListOf<String>()
 		if (files != null) {
 			for (i in files.indices) {
-				names += files[i].path.substringAfter(mainActivity.filesDir.toString() + "/")
+				names += files[i].path.substringAfter(mainActivity.filesDir.toString() + "/Sounds/")
 			}
 		}
 		return names
@@ -155,23 +155,27 @@ class SoundStorageManager(private val mainActivity: MainActivity) {
 	}
 
 	/**
-	 * This function deletes a file from the private dir.
+	 * This function deletes a file from the sounds dir.
 	 * @param fileNameToDelete The file that should be deleted.
 	 */
-	fun deleteFileFromPrivateDir(fileNameToDelete: String) {
-		val pathToFile = File(mainActivity.filesDir.toString() + "/" + fileNameToDelete)
+	fun deleteFileFromSoundsDir(fileNameToDelete: String) {
+		val pathToFile = File(mainActivity.filesDir.toString() + "/Sounds/" + fileNameToDelete)
 		if (pathToFile.isFile) {
 			pathToFile.delete()
 		}
 	}
 
 	/**
-	 * This function adds a file to the privateDir that is gets as an InputStream.
+	 * This function adds a sound file to a newly created sounds directory inside the privateDir.
 	 * @param fileName The name the file should have.
 	 * @param inputStream The InputStream of the file.
 	 */
 	fun addSoundFile(fileName: String, inputStream: InputStream) {
-		val file = File(mainActivity.filesDir, fileName)
+		val soundDir = File(mainActivity.filesDir, "Sounds")
+		if (!soundDir.exists()) {
+			soundDir.mkdir()
+		}
+		val file = File(soundDir, fileName)
 		val outputStream = FileOutputStream(file)
 		val bytes = inputStream.readBytes() // This is not recommended, see https://www.baeldung.com/kotlin/inputstream-to-file . Should be changed.
 		outputStream.write(bytes)

@@ -16,7 +16,6 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ispgr5.locationsimulator.R
-import com.ispgr5.locationsimulator.data.storageManager.SoundStorageManager
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 import com.ispgr5.locationsimulator.presentation.editTimeline.components.Timeline
 import com.ispgr5.locationsimulator.presentation.universalComponents.TopBar
@@ -33,7 +32,7 @@ fun DelayScreen(
 	viewModel: DelayViewModel = hiltViewModel(),
 	startServiceFunction: (List<ConfigComponent>, Boolean) -> Unit,
 	context : Context, //context needed for calculating Sound Length
-	privateDirUri : String //the private Directory Uri  needed for calculating Sound Length
+	soundsDirUri : String //the sounds Directory Uri  needed for calculating Sound Length
 ) {
 	//The state from viewmodel
 	val state = viewModel.state.value
@@ -87,9 +86,9 @@ fun DelayScreen(
 				Spacer(modifier = Modifier.size(5.dp))
 
 				//extra runtime
-				Text( String.format("%.0f",	state.configuration?.getMinDuration( context,privateDirUri))
+				Text( String.format("%.0f",	state.configuration?.getMinDuration( context,soundsDirUri))
 						+ "s - " +
-						String.format("%.0f",	state.configuration?.getMaxDuration(context,privateDirUri))
+						String.format("%.0f",	state.configuration?.getMaxDuration(context,soundsDirUri))
 						+"s " + stringResource(id = R.string.ConfigInfoPerIteration) )
 
 				Spacer(modifier = Modifier.size(3.dp))
