@@ -42,10 +42,10 @@ class SoundViewModel @Inject constructor(
 				_isPlaying.value = event.soundName
 			}
 			is SoundEvent.StopPlayback -> {
-				soundPlayer.stopPlayback()
-				_isPlaying.value = ""
+				stopSound()
 			}
 			is SoundEvent.SelectSound -> {
+				stopSound()
 				val defaultValues = event.getDefaultValues()
 				savedStateHandle.get<Int>("configurationId")?.let { configurationId ->
 					event.navController.navigate(Screen.EditTimelineScreen.createRoute(
@@ -59,12 +59,19 @@ class SoundViewModel @Inject constructor(
 				}
 			}
 			is SoundEvent.ImportSound -> {
+				stopSound()
 				event.soundStorageManager.moveFileToSoundsFolder()
 			}
 			is SoundEvent.DeleteSound -> {
+				stopSound()
 				event.soundStorageManager.deleteFileFromSoundsDir(event.soundName)
 				_state.value = SoundState(event.soundStorageManager.getSoundFileNames())
 			}
 		}
+	}
+
+	private fun stopSound(){
+		soundPlayer.stopPlayback()
+		_isPlaying.value = ""
 	}
 }

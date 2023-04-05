@@ -99,7 +99,9 @@ fun SoundScreen(
 					 */
 					Button(
 						colors = ButtonDefaults.buttonColors(),
-						onClick = { recordAudio() },
+						onClick = {
+							viewModel.onEvent(SoundEvent.StopPlayback)
+							recordAudio() },
 						modifier = Modifier.padding(5.dp)
 					) {
 						Text(text = stringResource(id = R.string.soundscreen_record))
