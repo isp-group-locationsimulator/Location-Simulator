@@ -353,16 +353,16 @@ class MainActivity : ComponentActivity() {
 			val startDefaultName = "Vibration"
 			return SettingsState(
 				minPauseSound = preferences.getInt("minPauseSound",0),
-				maxPauseSound  = preferences.getInt("maxPauseSound",0),
+				maxPauseSound  = preferences.getInt("maxPauseSound",5000),
 				minVolumeSound  = preferences.getFloat("minVolumeSound",0f),
 				maxVolumeSound = preferences.getFloat("maxVolumeSound",1f),
 
 				minPauseVibration = preferences.getInt("minPauseVibration",0),
-				maxPauseVibration  = preferences.getInt("maxPauseVibration",0),
-				minStrengthVibration = preferences.getInt("minStrengthVibration",0),
-				maxStrengthVibration = preferences.getInt("maxStrengthVibration",0),
-				minDurationVibration = preferences.getInt("minDurationVibration",0),
-				maxDurationVibration = preferences.getInt("maxDurationVibration",0),
+				maxPauseVibration  = preferences.getInt("maxPauseVibration",5000),
+				minStrengthVibration = preferences.getInt("minStrengthVibration",3),
+				maxStrengthVibration = preferences.getInt("maxStrengthVibration",255),
+				minDurationVibration = preferences.getInt("minDurationVibration",100),
+				maxDurationVibration = preferences.getInt("maxDurationVibration",1000),
 				defaultNameVibration = preferences.getString("defaultNameVibration",startDefaultName).toString()
 			)
 		}

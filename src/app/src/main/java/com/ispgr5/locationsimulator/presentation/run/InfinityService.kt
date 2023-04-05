@@ -119,9 +119,9 @@ class InfinityService : Service() {
 		when (item) {
 			is Vibration -> {
 				val duration =
-					(Math.random() * (item.maxDuration  - item.minDuration  + 1) + item.minDuration ).toLong()
+					(Math.random() * (item.maxDuration  - item.minDuration  + 1) + item.minDuration ).toLong().coerceAtLeast(1)
 				val strength =
-					(Math.random() * (item.maxStrength - item.minStrength + 1) + item.minStrength).toInt()
+					(Math.random() * (item.maxStrength - item.minStrength + 1) + item.minStrength).toInt().coerceAtLeast(1)
 				val pause =
 					(Math.random() * (item.maxPause  - item.minPause  + 1) + item.minPause ).toLong()
 				if (Build.VERSION.SDK_INT >= 26) {
