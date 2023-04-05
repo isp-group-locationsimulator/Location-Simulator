@@ -5,13 +5,16 @@ import android.media.MediaPlayer
 /**
  * This class provides methods to manage the MediaPlayer and play audio with it.
  */
-class SoundPlayer {
+class SoundPlayer (private val onSoundFinish: () -> Unit) {
 	private val mediaPlayer: MediaPlayer = MediaPlayer()
 
 	init {
 		mediaPlayer.setOnErrorListener { mediaPlayer, _, _ ->
 			mediaPlayer.reset()
 			true
+		}
+		mediaPlayer.setOnCompletionListener {
+			onSoundFinish()
 		}
 	}
 

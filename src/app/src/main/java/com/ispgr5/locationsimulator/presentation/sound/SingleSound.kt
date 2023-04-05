@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.ispgr5.locationsimulator.R
@@ -19,8 +18,10 @@ import com.ispgr5.locationsimulator.R
 fun SingleSound(
 	soundName: String,
 	onPlayClicked: () -> Unit,
+	onStopClicked: () -> Unit,
 	onSelectClicked: () -> Unit,
-	onDeleteClicked: () -> Unit
+	onDeleteClicked: () -> Unit,
+	viewModel: SoundViewModel
 ) {
 	Row(Modifier.padding(horizontal = 5.dp)) {
 		/**
@@ -28,10 +29,12 @@ fun SingleSound(
 		 */
 		IconButton(
 			modifier = Modifier.height(intrinsicSize = IntrinsicSize.Max),
-			onClick = onPlayClicked
+			onClick = if(viewModel.isPlaying.value == soundName) onStopClicked else onPlayClicked
 		) {
 			Icon(
-				painter = painterResource(id = R.drawable.baseline_play_arrow_24),
+				painter = painterResource(
+					if(viewModel.isPlaying.value == soundName) R.drawable.ic_baseline_stop_24 else R.drawable.baseline_play_arrow_24
+				),
 				contentDescription = null
 			)
 		}

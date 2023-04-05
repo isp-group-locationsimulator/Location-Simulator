@@ -23,7 +23,7 @@ class InfinityService : Service() {
 	private var isConfigOrderRandom = false
 	private var wakeLock: PowerManager.WakeLock? = null
 	private var config: List<ConfigComponent>? = null
-	private var soundPlayer: SoundPlayer = SoundPlayer()
+	private var soundPlayer: SoundPlayer = SoundPlayer {}
 	private lateinit var soundsDir: String
 
 	override fun onBind(p0: Intent?): IBinder? = null

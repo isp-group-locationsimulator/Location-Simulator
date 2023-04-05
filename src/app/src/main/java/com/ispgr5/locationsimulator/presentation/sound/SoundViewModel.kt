@@ -23,7 +23,11 @@ class SoundViewModel @Inject constructor(
 	// The provided state for the View
 	private val _state = mutableStateOf(SoundState())
 	val state: State<SoundState> = _state
-	private val soundPlayer = SoundPlayer()
+	private val soundPlayer = SoundPlayer { _isPlaying.value = "" }
+
+	// Set to the name of the sound that currently plays
+	private val _isPlaying = mutableStateOf("")
+	val isPlaying: State<String> = _isPlaying
 
 	/**
 	 * Handles UI Events
@@ -35,9 +39,11 @@ class SoundViewModel @Inject constructor(
 			}
 			is SoundEvent.TestPlaySound -> {
 				soundPlayer.startSound(event.soundsDirUri + event.soundName, 1f)
+				_isPlaying.value = event.soundName
 			}
 			is SoundEvent.StopPlayback -> {
 				soundPlayer.stopPlayback()
+				_isPlaying.value = ""
 			}
 			is SoundEvent.SelectSound -> {
 				val defaultValues = event.getDefaultValues()
