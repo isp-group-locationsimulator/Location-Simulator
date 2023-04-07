@@ -1,3 +1,6 @@
+//@file:JvmName("TimerKt")
+
+import android.os.CountDownTimer
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -20,7 +23,6 @@ import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 import com.ispgr5.locationsimulator.presentation.delay.DelayEvent
 import com.ispgr5.locationsimulator.presentation.delay.DelayViewModel
 import com.ispgr5.locationsimulator.presentation.util.Screen
-import kotlinx.coroutines.delay
 
 /**
  * The Timer
@@ -37,21 +39,29 @@ fun Timer(
     var timerRunning by remember { mutableStateOf(false) }
 
     LaunchedEffect(timerRunning) {
-        while (timerRunning && (timerSeconds > 0 || timerMinutes > 0 || timerHours > 0)) {
-            delay(1000)
-            timerSeconds--
-            if(timerSeconds<0) {
-                timerSeconds = 59
-                timerMinutes--
-                if(timerMinutes<0) {
-                    timerHours--
-                    timerMinutes = 59
+        if(timerRunning) {
+            val duration =
+                (timerHours * 1000 * 60 * 60) + (timerMinutes * 1000 * 60) + (timerSeconds * 1000)
+
+            val timer = object : CountDownTimer(duration.toLong(), 1000L) {
+                override fun onTick(millisUntilFinished: Long) {
+                    if (timerRunning) {
+                        val remainingSeconds = (millisUntilFinished / 1000).toInt()
+                        timerSeconds = remainingSeconds % 60
+                        timerMinutes = (remainingSeconds / 60) % 60
+                        timerHours = remainingSeconds / (60 * 60)
+                    } else {
+                        this.cancel()
+                    }
+                }
+
+                override fun onFinish() {
+                    viewModel.onEvent(DelayEvent.StartClicked(startServiceFunction))
+                    navController.navigate(Screen.RunScreen.route)
                 }
             }
-        }
-        if(timerRunning) {
-            viewModel.onEvent(DelayEvent.StartClicked(startServiceFunction))
-            navController.navigate(Screen.RunScreen.route)
+
+            timer.start()
         }
     }
 
@@ -223,7 +233,6 @@ fun Timer(
         }
     }
 }
-
 
 private fun calculateValue(value:String):Int {
     var res:Int
