@@ -8,9 +8,11 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.ispgr5.locationsimulator.R
+import com.ispgr5.locationsimulator.core.util.TestTags
 
 /**
  * Shows a single Audio File and a button to play it.
@@ -43,7 +45,8 @@ fun SingleSound(
 			modifier = Modifier
 				.height(intrinsicSize = IntrinsicSize.Max)
 				.weight(1f)
-				.padding(2.dp),
+				.padding(2.dp)
+				.testTag(TestTags.SOUND_SELECT_BUTTON),
 			onClick = onSelectClicked
 		) {
 			Text(text = soundName)

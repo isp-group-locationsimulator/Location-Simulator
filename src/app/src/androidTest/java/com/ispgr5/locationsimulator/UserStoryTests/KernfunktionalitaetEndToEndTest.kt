@@ -46,13 +46,12 @@ class KernfunktionalitaetEndToEndTest {
     }
 
     /**
-     * Testing User Srory:
-     * -1.4.1.1 Als User möchte ich das Abspielen von Signalen starten können
-     * -1.4.1.5 Als User möchte ich die Dauer und Stärke der Vibration, sowie die Länge zwischen
-    Vibrationsintervallen einstellen können für mindestens ein Muster.
+     * Testing User Story K5:
+     * Der oder die User*in möchte die Dauer und Stärke der Vibration, sowie die Länge
+    zwischen Vibrationsintervallen einstellen können, für mindestens ein Muster
      */
     @Test
-    fun create_a_new_Configuration_with_one_vibration_change_duration_strength_and_pause_and_select_it_to_run(){
+    fun K5_create_and_play_Configuration(){
 
             //in Home Screen go to select Config page
             composeRule.onNodeWithTag(TestTags.HOME_APPNAME).assertIsDisplayed()
@@ -66,6 +65,8 @@ class KernfunktionalitaetEndToEndTest {
             //click on Add Config Button
             composeRule.onNodeWithTag(TestTags.SELECT_ADD_BUTTON).performClick()
 
+
+            /**Eine neue Konfiguration wird erstellt**/
             //in Add Screen
 
             //add Config
@@ -78,21 +79,23 @@ class KernfunktionalitaetEndToEndTest {
 
             //in Select Config Screen
 
+            /**Es wird überprüft, ob die erstellte Konfiguration korrekt zur Auswahl angezeigt wird.**/
              //select for editing
             composeRule.onNodeWithText(name).assertIsDisplayed()
             composeRule.onNodeWithTag(TestTags.SELECT_CONFIG_BUTTON_PREFIX + name).performClick()
             composeRule.onNodeWithText(description).assertIsDisplayed()
+            /** Die erstellte Konfiguration wird zum Bearbeiten ausgewählt.**/
             composeRule.onNodeWithTag(TestTags.SELECT_CONFIG_BUTTON_EDIT_PREFIX + name).performClick()
 
             //in Edit Screen
 
-            //click on a vibration
-            composeRule.onAllNodesWithTag(TestTags.EDIT_CONFIG_ITEM_VIBRATION)[0].performClick()
 
-            //TODO: Check if device can handle vibration strength
-            //edit Strength
-            //composeRule.onNodeWithTag(TestTags.EDIT_VIB_SLIDER_STRENGTH).performGesture { swipeRight() }
-            //composeRule.onNodeWithTag(TestTags.EDIT_VIB_SLIDER_STRENGTH).performGesture { swipeRight() }
+            /**Die erste Vibration wird in der Timeline ausgewählt.**/
+            composeRule.onAllNodesWithTag(TestTags.EDIT_CONFIG_ITEM)[0].performClick()
+
+
+            /**Die Länge der Vibration und der nachfolgende Pause der Vibration wird verändert.**/
+
             composeRule.onNodeWithTag(TestTags.EDIT_VIB_SLIDER_DURATION).performGesture { swipeRight() }
             composeRule.onNodeWithTag(TestTags.EDIT_VIB_SLIDER_DURATION).performGesture { swipeRight() }
             composeRule.onNodeWithTag(TestTags.EDIT_SLIDER_PAUSE).performGesture { swipeRight() }
@@ -101,14 +104,15 @@ class KernfunktionalitaetEndToEndTest {
             composeRule.onNodeWithTag(TestTags.TOP_BAR_BACK_BUTTON).performClick()
 
             // in select screen
+            /**Die erstellte Konfiguration wird zum Abspielen ausgwählt.**/
             composeRule.onNodeWithTag(TestTags.SELECT_CONFIG_BUTTON_SELECT_PREFIX + name).performClick()
 
             //in delay Screen
-            //start
+            /**Die Konfiguration wird gestartet.**/
             composeRule.onNodeWithTag(TestTags.DELAY_START_BUTTON).performClick()
 
             //in run screen
-            // stop
+            /** Das Abspielen wird gestoppt.**/
             composeRule.onNodeWithTag(TestTags.RUN_END_BUTTON).performClick()
     }
 

@@ -46,7 +46,7 @@ fun AddConfigComponentDialog(
 				/**
 				 * Sound and Vibration Select Buttons
 				 */
-				TextButton(onClick = onVibrationClicked) {
+				TextButton(onClick = onVibrationClicked, modifier = Modifier.testTag(TestTags.EDIT_TIMELINE_SCREEN_ADD_DIALOG_VIBRATION)) {
 					Icon(
 						painter = painterResource(id = R.drawable.ic_baseline_vibration_24),
 						contentDescription = null,
@@ -61,7 +61,7 @@ fun AddConfigComponentDialog(
 
 					)
 				}
-				TextButton(onClick = onSoundClicked) {
+				TextButton(onClick = onSoundClicked, modifier = Modifier.testTag(TestTags.EDIT_TIMELINE_SCREEN_ADD_DIALOG_SOUND)) {
 					Icon(
 						painter = painterResource(id = R.drawable.audionouse2),
 						contentDescription = null,

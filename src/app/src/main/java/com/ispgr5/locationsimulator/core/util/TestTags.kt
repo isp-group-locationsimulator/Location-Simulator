@@ -4,8 +4,7 @@ object TestTags {
 
     const val TOP_BAR_BACK_BUTTON = "TopBarBack"
 
-    const val EDIT_TIMELINE_SCREEN_ADD_BUTTON = "AddButton";
-    const val EDIT_TIMELINE_SCREEN_ADD_DIALOG = "AddDialog";
+
     const val HOME_SELECT_CONFIG_BUTTON ="SelectConfigButton";
     const val SELECT_ADD_BUTTON ="AddConfigButton";
 
@@ -23,16 +22,25 @@ object TestTags {
     const val SELECT_CONFIG_BUTTON_EDIT_PREFIX = "SelectConfigButtonEditWithName:"
     const val SELECT_CONFIG_BUTTON_DUPLICTAE_PREFIX = "SelectConfigButtonDUplicateWithName:"
 
-    const val EDIT_CONFIG_ITEM_VIBRATION= "ConfigItemVIB"
-    const val EDIT_CONFIG_ITEM_SOUND = "ConfigItemSOUND"
+    const val EDIT_CONFIG_ITEM= "ConfigItem"
     const val EDIT_VIB_SLIDER_STRENGTH_TEXT = "StrengthSliderText"
     const val EDIT_VIB_SLIDER_STRENGTH = "StrengthSlider"
     const val EDIT_VIB_SLIDER_DURATION = "DurationSlider"
     const val EDIT_SLIDER_PAUSE = "PauseSlider"
+    const val EDIT_NAME_TEXTINPUT = "NameTextInput"
+    const val EDIT_MOVE_LEFT = "MoveLeft"
+    const val EDIT_MOVE_RIGHT = "MoveRight"
+    const val EDIT_TIMELINE_SCREEN_ADD_BUTTON = "AddButton";
+    const val EDIT_TIMELINE_SCREEN_ADD_DIALOG = "AddDialog";
+    const val EDIT_TIMELINE_SCREEN_ADD_DIALOG_VIBRATION = "AddDialogVibration";
+    const val EDIT_TIMELINE_SCREEN_ADD_DIALOG_SOUND = "AddDialogSound";
+
 
     const val DELAY_START_BUTTON = "DelayStartButton"
 
     const val RUN_END_BUTTON = "RunEndButton"
+
+    const val SOUND_SELECT_BUTTON = "SoundSelectButton"
 
 
 }

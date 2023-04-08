@@ -71,7 +71,8 @@ fun EditConfigComponent(
 				horizontalArrangement = Arrangement.SpaceAround
 			) {
 				Column( horizontalAlignment = Alignment.CenterHorizontally) {
-					Button(onClick = { onMoveLeftClicked(configComponent) }) {
+					Button(onClick = { onMoveLeftClicked(configComponent) }
+					,modifier = Modifier.testTag(TestTags.EDIT_MOVE_LEFT)) {
 						Icon(
 							painter = painterResource(id = R.drawable.baseline_arrow_back_24),
 							contentDescription = null
@@ -84,7 +85,8 @@ fun EditConfigComponent(
 					)
 				}
 				Column( horizontalAlignment = Alignment.CenterHorizontally) {
-					Button(onClick = { onMoveRightClicked(configComponent) }) {
+					Button(onClick = { onMoveRightClicked(configComponent)}
+						, modifier = Modifier.testTag(TestTags.EDIT_MOVE_RIGHT)) {
 						Icon(
 							painter = painterResource(id = R.drawable.baseline_arrow_forward_24),
 							contentDescription = null
@@ -109,12 +111,14 @@ fun EditConfigComponent(
 						modifier = Modifier.fillMaxWidth(),
 						horizontalArrangement = Arrangement.Center
 					) {
+						//Name Text Input
 						BasicTextField(
 							textStyle = TextStyle(
 								textAlign = TextAlign.Center,
 								fontSize = 20.sp,
 								color = MaterialTheme.colors.onBackground),
 							value = configComponent.name,
+							modifier = Modifier.testTag(TestTags.EDIT_NAME_TEXTINPUT),
 							onValueChange = { name ->
 								onConfigComponentNameChanged (name)
 							}
@@ -133,6 +137,7 @@ fun EditConfigComponent(
 								fontSize = 20.sp,
 								color = MaterialTheme.colors.onBackground),
 							value = configComponent.name,
+							modifier = Modifier.testTag(TestTags.EDIT_NAME_TEXTINPUT),
 							onValueChange = { name ->
 								onConfigComponentNameChanged (name)
 							}
