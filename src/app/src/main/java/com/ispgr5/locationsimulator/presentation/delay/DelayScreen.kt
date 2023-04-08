@@ -92,10 +92,10 @@ fun DelayScreen(
 						+"s " + stringResource(id = R.string.ConfigInfoPerIteration) )
 
 				Spacer(modifier = Modifier.size(3.dp))
-
 				Divider(color = MaterialTheme.colors.primary, thickness = 1.dp)
 				Spacer(modifier = Modifier.size(8.dp))
 
+				//The timer component
 				Timer(viewModel, startServiceFunction, navController)
 			}
 		})

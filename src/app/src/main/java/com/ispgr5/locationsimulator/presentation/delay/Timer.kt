@@ -1,5 +1,3 @@
-//@file:JvmName("TimerKt")
-
 import android.os.CountDownTimer
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -40,13 +38,14 @@ fun Timer(
 
     LaunchedEffect(timerRunning) {
         if(timerRunning) {
+            //calculate the duration of the timer in milliseconds
             val duration =
                 (timerHours * 1000 * 60 * 60) + (timerMinutes * 1000 * 60) + (timerSeconds * 1000)
 
             val timer = object : CountDownTimer(duration.toLong(), 1000L) {
 
                 /**
-                 * Updting the timer when Timer is running
+                 * Update the timer when Timer is running
                  */
                 override fun onTick(millisUntilFinished: Long) {
                     if (timerRunning) {
@@ -55,6 +54,7 @@ fun Timer(
                         timerMinutes = (remainingSeconds / 60) % 60
                         timerHours = remainingSeconds / (60 * 60)
                     } else {
+                        // cancel the timer when the stop button was pressed
                         this.cancel()
                     }
                 }
@@ -78,6 +78,9 @@ fun Timer(
         horizontalArrangement = Arrangement.SpaceAround,
         modifier = Modifier.fillMaxWidth()
     ) {
+        /**
+         * The input for hours
+         */
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.weight(1f)
@@ -124,6 +127,10 @@ fun Timer(
                 )
             }
         }
+
+        /**
+         * The input for minutes
+         */
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.weight(1f)
@@ -171,6 +178,10 @@ fun Timer(
                 )
             }
         }
+
+        /**
+         * The input for hours
+         */
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.weight(1f)
@@ -220,7 +231,9 @@ fun Timer(
         }
     }
 
-    //Start/Stop Button
+    /**
+     * The button to start or stop the timer
+     */
     Button(
         onClick = {timerRunning = !timerRunning},
         enabled = true,
@@ -245,7 +258,7 @@ fun Timer(
 }
 
 /**
- * maps a string Input to a int between 0 and 59, with 0 ass the default/error value
+ * maps a string Input to a int between 0 and 59, with 0 as the default/error value
  */
 private fun calculateValue(value:String):Int {
     var res:Int
