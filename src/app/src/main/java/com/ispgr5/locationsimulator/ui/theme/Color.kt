@@ -2,9 +2,6 @@ package com.ispgr5.locationsimulator.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-
-
-
 val theBlue = Color(0xFF003399)
 val theBlueVeryLight = Color(0xFFe0e7f3)
 val theBlueLighter = Color(0xFF849ccc)

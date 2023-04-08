@@ -6,6 +6,9 @@ import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 
+/**
+ * Colors for the light Mode
+ */
 private val LightThemeColors = lightColors(
 	primary = theBlue,
 	primaryVariant = primaryLightVariant,
@@ -20,6 +23,9 @@ private val LightThemeColors = lightColors(
 	onSurface = black,
 	)
 
+/**
+ * Colors for the Dark Mode
+ */
 private val DarkThemeColors = darkColors(
 	primary = purple,
 	primaryVariant = primaryDarkVariant,
@@ -36,6 +42,9 @@ private val DarkThemeColors = darkColors(
 
 )
 
+/**
+ * Theme chooser for Light and Dark Mode
+ */
 @Composable
 fun LocationSimulatorTheme(
 	darkTheme: MutableState<ThemeState>,

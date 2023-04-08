@@ -25,7 +25,7 @@ import com.ispgr5.locationsimulator.presentation.delay.DelayViewModel
 import com.ispgr5.locationsimulator.presentation.util.Screen
 
 /**
- * The Timer
+ * The Timer Compose Element, to input and show the delay Time
 */
 @Composable
 fun Timer(
@@ -44,6 +44,10 @@ fun Timer(
                 (timerHours * 1000 * 60 * 60) + (timerMinutes * 1000 * 60) + (timerSeconds * 1000)
 
             val timer = object : CountDownTimer(duration.toLong(), 1000L) {
+
+                /**
+                 * Updting the timer when Timer is running
+                 */
                 override fun onTick(millisUntilFinished: Long) {
                     if (timerRunning) {
                         val remainingSeconds = (millisUntilFinished / 1000).toInt()
@@ -55,6 +59,9 @@ fun Timer(
                     }
                 }
 
+                /**
+                 * Go to Run Screen when Timer is finished
+                 */
                 override fun onFinish() {
                     viewModel.onEvent(DelayEvent.StartClicked(startServiceFunction))
                     navController.navigate(Screen.RunScreen.route)
@@ -64,6 +71,8 @@ fun Timer(
             timer.start()
         }
     }
+
+    //Timer Input
 
     Row(
         horizontalArrangement = Arrangement.SpaceAround,
@@ -211,6 +220,7 @@ fun Timer(
         }
     }
 
+    //Start/Stop Button
     Button(
         onClick = {timerRunning = !timerRunning},
         enabled = true,
@@ -234,6 +244,9 @@ fun Timer(
     }
 }
 
+/**
+ * maps a string Input to a int between 0 and 59, with 0 ass the default/error value
+ */
 private fun calculateValue(value:String):Int {
     var res:Int
     try {

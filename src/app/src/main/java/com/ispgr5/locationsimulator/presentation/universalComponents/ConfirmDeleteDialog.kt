@@ -7,7 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.ispgr5.locationsimulator.R
 
-/*
+/**
 Alert Dialog to Confirm the Deletion of an Item
  */
 @Composable
