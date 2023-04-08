@@ -8,6 +8,10 @@ import android.media.MediaPlayer
 class SoundPlayer (private val onSoundFinish: () -> Unit) {
 	private val mediaPlayer: MediaPlayer = MediaPlayer()
 
+	/**
+	 * when the MediaPlayer is created, the functions are set that should be called when the sound
+	 * that is played is finished or an error occurs
+	 */
 	init {
 		mediaPlayer.setOnErrorListener { mediaPlayer, _, _ ->
 			mediaPlayer.reset()
@@ -19,7 +23,7 @@ class SoundPlayer (private val onSoundFinish: () -> Unit) {
 	}
 
 	/**
-	 * This function starts a audio file.
+	 * This function starts an audio file.
 	 * @param uriAsString This is the Uri as a String to the Audio-File that should be played.
 	 * @param volume The Volume the sound should be played at.
 	 * The value should be in the range of 0 to 1, with 1 being the full volume and 0 being no volume.
@@ -35,6 +39,9 @@ class SoundPlayer (private val onSoundFinish: () -> Unit) {
 		// TODO: "MediaPlayer finalized without being released"
 	}
 
+	/**
+	 * stops the currently running audio file
+	 */
 	fun stopPlayback() {
 		mediaPlayer.stop()
 	}

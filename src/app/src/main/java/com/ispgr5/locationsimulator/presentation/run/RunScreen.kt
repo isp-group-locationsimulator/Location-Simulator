@@ -20,6 +20,7 @@ import com.ispgr5.locationsimulator.presentation.universalComponents.TopBar
 
 /**
  * The Run Screen.
+ * This screen is shown while the simulation is running
  */
 @ExperimentalAnimationApi
 @Composable
@@ -34,6 +35,9 @@ fun RunScreen(
 		content = {
 			Spacer(modifier = Modifier.height(it.calculateTopPadding()))
 
+			/**
+			 * The stop button
+			 */
 			Column(
 				modifier = Modifier.fillMaxSize(),
 				verticalArrangement = Arrangement.Center,

@@ -16,7 +16,9 @@ import com.ispgr5.locationsimulator.presentation.MainActivity
 import kotlinx.coroutines.*
 import kotlinx.serialization.ExperimentalSerializationApi
 
-// TODO: We need to add KDoc to this file!
+/**
+ * The service that plays the configured vibrations and sounds during the simulation
+ */
 class InfinityService : Service() {
 
 	private var isServiceStarted = false
@@ -26,22 +28,34 @@ class InfinityService : Service() {
 	private var soundPlayer: SoundPlayer = SoundPlayer {}
 	private lateinit var soundsDir: String
 
+	/**
+	 * set to null, because it must be defined, since it is abstract
+	 * in the superclass, but we don't need it
+	 */
 	override fun onBind(p0: Intent?): IBinder? = null
 
+	/**
+	 * called when the service is created
+	 */
 	override fun onCreate() {
 		super.onCreate()
 		val notification = createNotification()
 		startForeground(1, notification)
 	}
 
+	/**
+	 * called when the service receives an intent to start or stop the simulation
+	 */
 	override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 		if (intent != null) {
 			if (intent.action == "START") {
+				//set the received configuration, the sounds directory and whether the config should be played in random order
 				changeConfig(intent.getStringExtra("config"))
 				soundsDir = intent.getStringExtra("soundsDir").toString()
 				isConfigOrderRandom = intent.getStringExtra("randomOrderPlayback").toBoolean()
 				println(intent.getStringExtra("randomOrderPlayback"))
 				println(intent.getStringExtra("randomOrderPlayback").toBoolean())
+				//start the service if the config is defined
 				if (config != null) {
 					startService()
 				}
@@ -52,6 +66,9 @@ class InfinityService : Service() {
 		return START_STICKY
 	}
 
+	/**
+	 * changes the current configuration
+	 */
 	@OptIn(ExperimentalSerializationApi::class)
 	private fun changeConfig(config: String?) {
 		if (config != null) {
@@ -59,8 +76,12 @@ class InfinityService : Service() {
 		}
 	}
 
+	/**
+	 * starts the simulation
+	 */
 	@OptIn(DelicateCoroutinesApi::class)
 	private fun startService() {
+		//make sure the service starts only once
 		if (isServiceStarted) return
 		Toast.makeText(this, "Service starting its task", Toast.LENGTH_SHORT).show()
 		isServiceStarted = true
@@ -85,8 +106,10 @@ class InfinityService : Service() {
 		GlobalScope.launch(Dispatchers.Default) {
 			while (isServiceStarted) {
 				if (isConfigOrderRandom) {
+					//if the config should be played in random order play a random sound or vibration
 					playSoundOrVibration(config!!.random(), vibrator)
 				} else {
+					//else play the config in the defined order
 					for (item in config!!) {
 						playSoundOrVibration(item, vibrator)
 						if (!isServiceStarted) {
@@ -98,6 +121,7 @@ class InfinityService : Service() {
 		}
 		// TODO: Could possibly be overworked
 		GlobalScope.launch(Dispatchers.Default) {
+			//this coroutine stops the simulation when the stop button was pressed
 			var stop = false
 			while (!stop) {
 				if (!isServiceStarted) {
@@ -118,12 +142,15 @@ class InfinityService : Service() {
 		//duration and pause is in ms !
 		when (item) {
 			is Vibration -> {
+				//define the duration, strength and pause duration of the vibration
 				val duration =
 					(Math.random() * (item.maxDuration  - item.minDuration  + 1) + item.minDuration ).toLong().coerceAtLeast(1)
 				val strength =
 					(Math.random() * (item.maxStrength - item.minStrength + 1) + item.minStrength).toInt().coerceAtLeast(1)
 				val pause =
 					(Math.random() * (item.maxPause  - item.minPause  + 1) + item.minPause ).toLong()
+
+				//play the vibration depending on the used android version
 				if (Build.VERSION.SDK_INT >= 26) {
 					Log.d(
 						"Signal-Infinity",
@@ -140,10 +167,13 @@ class InfinityService : Service() {
 					@Suppress("DEPRECATION") // Needed for the support of older Android versions.
 					vibrator.vibrate(duration)
 				}
+
+				//wait for the vibration to finish and then pause for the defined time
 				Log.d("Signal-Infinity", "Starting sleep... Pause: $pause ms")
 				Thread.sleep(duration + pause)
 			}
 			is Sound -> {
+				//define the duration, volume and pause duration of the sound and plays it
 				val pause =
 					(Math.random() * (item.maxPause  - item.minPause  + 1) + item.minPause ).toLong()
 				val volume: Float =
@@ -155,14 +185,19 @@ class InfinityService : Service() {
 					"Creating Sound... Name: ${item.source} , Duration: $duration ms , Volume: $volume"
 				)
 				Log.d("Signal-Infinity", "Starting sleep... Pause: $pause ms")
+				//wait for the sound to finish and then pause for the defined time
 				Thread.sleep(duration + pause)
 			}
 		}
 	}
 
+	/**
+	 * stops the simulation
+	 */
 	private fun stopService() {
 		Toast.makeText(this, "Service stopping", Toast.LENGTH_SHORT).show()
 		try {
+			//release the wakeLock, since it is no longer needed
 			wakeLock?.let {
 				if (it.isHeld) {
 					it.release()
@@ -176,11 +211,16 @@ class InfinityService : Service() {
 		isServiceStarted = false
 	}
 
+	/**
+	 * sops the simulation if the service is destroyed
+	 */
 	override fun onDestroy() {
 		isServiceStarted = false
 	}
 
-
+	/**
+	 * creates the notification that is shown when the service is started
+	 */
 	private fun createNotification(): Notification {
 		val notificationChannelId = "ENDLESS SERVICE CHANNEL"
 
