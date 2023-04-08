@@ -37,11 +37,11 @@ Sollte dies nicht möglich sein, ist dies hinnehmbar.
 Unter den letzten Punkt, optionale Funktionalität, fallen Aspekte, die zusätzlich umgesetzt werden können.
 Die Umsetzung dieser wird jedoch nicht erwartet.
 ### Kernfunktionalität
-1. Als User möchte ich das Abspielen von Signalen starten können.
-2. Als User möchte ich die App mindestens eine Stunde lang im Hintergrund abspielen lassen, damit lange Übungen durchgeführt werden können.
-3. Als User möchte ich eine leicht bedienbare UI mit großen Elementen haben, um sie auch mit Handschuhen bedienen zu können.
-4. Als User möchte ich Funktionen und Anwendungen in einer User-Anleitung nachschlagen können.
-5. Als User möchte ich die Dauer und Stärke der Vibration, sowie die Länge zwischen Vibrationsintervallen einstellen können für mindestens ein Muster.
+K1: Der oder die User*in möchte das Abspielen von Konfigurationen starten können.
+K2: Der oder die User*in möchte die App mindestens eine Stunde lang im Hintergrund abspielen lassen, damit lange Übungen durchgeführt werden können.
+K3: Der oder die User*in möchte eine leicht bedienbare UI mit großen Elementen haben, um sie auch mit Handschuhen bedienen zu können.
+K4: Der oder die User*in möchte die Funktionen und Anwendungen in einer User-Anleitung nachschlagen können.
+K5: Der oder die User*in möchte die Dauer und Stärke der Vibration, sowie die Länge zwischen Vibrationsintervallen einstellen können, für mindestens ein Muster.
 ### Wunschfunktionalität
 1. Als User möchte ich MP3-Dateien importieren können, um diverse Töne aus anderen Quellen testen zu können.
 2. Als User möchte ich im Musterdialog einstellen können, mit welcher Frequenz eine Datei abgespielt werden soll, um verschiedene Frequenzen austesten zu können.
