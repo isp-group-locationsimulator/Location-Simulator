@@ -23,7 +23,11 @@ class SoundViewModel @Inject constructor(
 	// The provided state for the View
 	private val _state = mutableStateOf(SoundState())
 	val state: State<SoundState> = _state
-	private val soundPlayer = SoundPlayer()
+	private val soundPlayer = SoundPlayer { _isPlaying.value = "" }
+
+	// Set to the name of the sound that currently plays
+	private val _isPlaying = mutableStateOf("")
+	val isPlaying: State<String> = _isPlaying
 
 	/**
 	 * Handles UI Events
@@ -35,11 +39,13 @@ class SoundViewModel @Inject constructor(
 			}
 			is SoundEvent.TestPlaySound -> {
 				soundPlayer.startSound(event.soundsDirUri + event.soundName, 1f)
+				_isPlaying.value = event.soundName
 			}
 			is SoundEvent.StopPlayback -> {
-				soundPlayer.stopPlayback()
+				stopSound()
 			}
 			is SoundEvent.SelectSound -> {
+				stopSound()
 				val defaultValues = event.getDefaultValues()
 				savedStateHandle.get<Int>("configurationId")?.let { configurationId ->
 					event.navController.navigate(Screen.EditTimelineScreen.createRoute(
@@ -53,12 +59,19 @@ class SoundViewModel @Inject constructor(
 				}
 			}
 			is SoundEvent.ImportSound -> {
+				stopSound()
 				event.soundStorageManager.moveFileToSoundsFolder()
 			}
 			is SoundEvent.DeleteSound -> {
+				stopSound()
 				event.soundStorageManager.deleteFileFromSoundsDir(event.soundName)
 				_state.value = SoundState(event.soundStorageManager.getSoundFileNames())
 			}
 		}
+	}
+
+	private fun stopSound(){
+		soundPlayer.stopPlayback()
+		_isPlaying.value = ""
 	}
 }

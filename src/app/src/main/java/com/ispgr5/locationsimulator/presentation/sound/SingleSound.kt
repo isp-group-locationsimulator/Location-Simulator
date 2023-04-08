@@ -21,8 +21,10 @@ import com.ispgr5.locationsimulator.core.util.TestTags
 fun SingleSound(
 	soundName: String,
 	onPlayClicked: () -> Unit,
+	onStopClicked: () -> Unit,
 	onSelectClicked: () -> Unit,
-	onDeleteClicked: () -> Unit
+	onDeleteClicked: () -> Unit,
+	viewModel: SoundViewModel
 ) {
 	Row(Modifier.padding(horizontal = 5.dp)) {
 		/**
@@ -30,10 +32,12 @@ fun SingleSound(
 		 */
 		IconButton(
 			modifier = Modifier.height(intrinsicSize = IntrinsicSize.Max),
-			onClick = onPlayClicked
+			onClick = if(viewModel.isPlaying.value == soundName) onStopClicked else onPlayClicked
 		) {
 			Icon(
-				painter = painterResource(id = R.drawable.baseline_play_arrow_24),
+				painter = painterResource(
+					if(viewModel.isPlaying.value == soundName) R.drawable.ic_baseline_stop_24 else R.drawable.baseline_play_arrow_24
+				),
 				contentDescription = null
 			)
 		}

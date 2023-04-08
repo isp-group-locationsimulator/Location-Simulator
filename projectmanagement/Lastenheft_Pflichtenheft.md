@@ -37,23 +37,22 @@ Sollte dies nicht möglich sein, ist dies hinnehmbar.
 Unter den letzten Punkt, optionale Funktionalität, fallen Aspekte, die zusätzlich umgesetzt werden können.
 Die Umsetzung dieser wird jedoch nicht erwartet.
 ### Kernfunktionalität
-1. Als User möchte ich das Abspielen von Signalen starten können.
-2. Als User möchte ich die App mindestens eine Stunde lang im Hintergrund abspielen lassen, damit lange Übungen durchgeführt werden können.
-3. Als User möchte ich eine leicht bedienbare UI mit großen Elementen haben, um sie auch mit Handschuhen bedienen zu können.
-4. Als User möchte ich Funktionen und Anwendungen in einer User-Anleitung nachschlagen können.
-5. Als User möchte ich die Dauer und Stärke der Vibration, sowie die Länge zwischen Vibrationsintervallen einstellen können für mindestens ein Muster.
+1. (K1): Der oder die User*in möchte das Abspielen von Konfigurationen starten können.
+2. (K2): Der oder die User*in möchte die App mindestens eine Stunde lang im Hintergrund abspielen lassen, damit lange Übungen durchgeführt werden können.
+3. (K3): Der oder die User*in möchte eine leicht bedienbare UI mit großen Elementen haben, um sie auch mit Handschuhen bedienen zu können.
+4. (K4): Der oder die User*in möchte die Funktionen und Anwendungen in einer User-Anleitung nachschlagen können.
+5. (K5): Der oder die User*in möchte die Dauer und Stärke der Vibration, sowie die Länge zwischen Vibrationsintervallen einstellen können, für mindestens ein Muster.
 ### Wunschfunktionalität
-1. Als User möchte ich MP3-Dateien importieren können, um diverse Töne aus anderen Quellen testen zu können.
-2. Als User möchte ich im Musterdialog einstellen können, mit welcher Frequenz eine Datei abgespielt werden soll, um verschiedene Frequenzen austesten zu können.
-3. Als User möchte ich ein Randomisierungsintervall im Musterdialog einstellen können, um verschiedene Vibrationsmuster nutzen und speichern zu können.
-4. Als User möchte ich Einstellungsprofile speichern, importieren und exportieren können, um Einstellungen mit anderen Nutzern und Geräten zu teilen.
-5. Als User möchte ich das Design zwischen Hell und Dunkel wechseln können oder die App mit ausgeschaltetem Bildschirm laufen zu lassen, um eine Übung in dunkler Umgebung durchführen zu können.    
-6. Als User möchte ich eine Audioaufnahme mit der App machen. Diese Aufnahme möchte ich dann passend zurechtschneiden können, um sie anschließend als MP3-Dateien speichern zu können.
-7. Als User möchte ich die App sowohl auf Deutsch, als auch auf Englisch nutzen können.
+1. (W1): Der oder die User*in möchte MP3-Dateien importieren können, um diverse Töne aus anderen Quellen testen zu können.
+2. (W2): Der oder die User*in möchte Vibrationen und Sounds in einer Timeline anordnen können, um so vielfältige Konfigurationen erstellen zu können.
+3. (W3): Der oder die User*in möchte Konfigurationsprofile speichern, importieren und exportieren können, um Konfigurationen mit anderen Nutzern und Geräten zu teilen.
+4. (W4): Der oder die User*in möchte das Design zwischen Hell und Dunkel wechseln können 
+5. (W5): Der oder die User*in möchte ich eine Audioaufnahme mit einer externen App machen können und diese dann direkt in die App importieren.
+6. (W6): Der oder die User*in möchte die App sowohl auf Deutsch, als auch auf Englisch nutzen können.
 ### Optionale Funktionalität
-1. Als User möchte ich die App per TCP/IP oder Bluetooth fernsteuern können, um über die App später starten und stoppen zu können und das Muster steuern zu können.
-2. Als User möchte ich im Musterdialog, verschiedene Wellenformen für die Vibration einstellen können, um diverse Vibrationen testen zu können
-3. Als User möchte ich einen Timer stellen können, um Zeit zu haben, das Handy zu verstecken, bevor die Übung beginnt.
+1. (O1): Der oder die User*in möchte die App per TCP/IP oder Bluetooth fernsteuern können, um über die App später starten und stoppen zu können und das Muster steuern zu können. (nicht erfüllt)
+2. (O2): Der oder die User*in möchte im Musterdialog, verschiedene Wellenformen für die Vibration einstellen können, um diverse Vibrationen testen zu können (nicht erfüllt)
+3. (O3): Der oder die User*in möchte einen Timer stellen können, um Zeit zu haben, das Handy zu verstecken, bevor die Übung beginnt. 
 ## Lieferumfang
 - Android App:  
 Es wird die fertig entwickelte Android-App geliefert.

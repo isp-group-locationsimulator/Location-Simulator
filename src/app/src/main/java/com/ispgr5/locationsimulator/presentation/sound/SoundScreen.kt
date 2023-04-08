@@ -99,25 +99,13 @@ fun SoundScreen(
 					 */
 					Button(
 						colors = ButtonDefaults.buttonColors(),
-						onClick = { recordAudio() },
+						onClick = {
+							viewModel.onEvent(SoundEvent.StopPlayback)
+							recordAudio() },
 						modifier = Modifier.padding(5.dp)
 					) {
 						Text(text = stringResource(id = R.string.soundscreen_record))
 					}
-
-					/**
-					 * The Stop Playback button
-					 */
-					Button(
-						colors = ButtonDefaults.buttonColors(),
-						onClick = {
-							viewModel.onEvent(SoundEvent.StopPlayback)
-						},
-						modifier = Modifier.padding(5.dp)
-					) {
-						Text(text = stringResource(id = R.string.soundscreen_stopplayback))
-					}
-
 				}
 
 				Spacer(modifier = Modifier.height(20.dp))
@@ -129,6 +117,10 @@ fun SoundScreen(
 					items(state.soundNames) { soundName ->
 						SingleSound(
 							soundName,
+							viewModel = viewModel,
+							onStopClicked = {
+								viewModel.onEvent(SoundEvent.StopPlayback)
+							},
 							onPlayClicked = {
 								viewModel.onEvent(
 									SoundEvent.TestPlaySound(
