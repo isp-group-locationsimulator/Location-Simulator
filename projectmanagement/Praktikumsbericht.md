@@ -26,7 +26,7 @@ Siehe im [Moodlekurs](https://moodle.uni-luebeck.de/mod/forum/discuss.php?d=6074
 | ------ | ------ |
 | Juljan Bouchagiar | juljan.bouchagiar@isp.uni-luebeck.de |
 
-## Teilnehmende
+## Teilnehmer
 Tabellarische Auflistung aller Gruppenmitglieder inklusive des angestrebten Moduls
 
 | Name | Modul |
@@ -49,7 +49,7 @@ Die App soll mindestens eine Stunde lang laufen, ohne, dass mit dem Handy intera
 
 
 ## Projektplan
-Ausgehend vom Lasten- bzw. Pflichtenheft soll eine zeitliche Einteilung der Arbeitspakete über die Projektlaufzeit erfolgen. Diese soll in der Gantt Chart Vorlage aus Moodle erfolgen. Dies kann zum Ende des Projektes im Git-Lab mit Hochgeladen, sowie hier als Screenshot hier eingefügt werden.
+Ausgehend vom Lasten- bzw. Pflichtenheft soll eine zeitliche Einteilung der Arbeitspakete über die Projektlaufzeit erfolgen. Diese soll in der Gantt Chart Vorlage aus Moodle erfolgen. Dies kann zum Ende des Projektes im Git-Lab mit Hochgeladen, sowie hier als Screenshot eingefügt werden.
 
 ## Arbeitsbericht
 Hier soll in kurzen Absätzen beschreiben werden, was alles pro Woche für das Projekt gemacht wurde.
@@ -148,7 +148,8 @@ Wir haben diese Woche angefangen, das Feedback der Kunden umzusetzen.
 Außerdem haben wir angefangen, Integrationstests einzuführen.
 
 ### Projektwoche 25 (31.03 – 06.04)
-
+Wir haben diese Woche weiter an den Tests gearbeitet.
+Außerdem haben wir generelles Bugfixing betrieben und kleinere Issues abgearbeitet.
 
 ### Projektwoche 26 (07.04 – 13.04)
 
