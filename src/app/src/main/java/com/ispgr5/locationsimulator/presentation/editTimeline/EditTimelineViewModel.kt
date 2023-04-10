@@ -337,8 +337,6 @@ class EditTimelineViewModel @Inject constructor(
                 )
             } catch (e: InvalidConfigurationException) {
                 print("Configuration Input is wrong")
-                //TODO say User that Configuration is has errors
-                //TODO configuration will be deleted if configuration is wrong
             }
         }
     }

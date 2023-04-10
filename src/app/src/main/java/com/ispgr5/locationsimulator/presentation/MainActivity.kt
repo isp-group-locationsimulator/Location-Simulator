@@ -329,6 +329,10 @@ class MainActivity : ComponentActivity() {
 		editor.apply()
 	}
 
+	/**
+	 * function which saves the setted default values for Config Components
+	 * (in Main Activity because it needs the context)
+	 */
 	private val saveDefaultValues : (state : State<SettingsState>) -> Unit =
 		fun (state : State<SettingsState>) {
 			val preferences: SharedPreferences = getSharedPreferences("prefs", MODE_PRIVATE)
@@ -347,6 +351,10 @@ class MainActivity : ComponentActivity() {
 			editor.apply()
 		}
 
+	/**
+	 * function which returns the setted default values for Config Componments
+	 * (in Main Activity because it needs the context)
+	 */
 	private val getDefaultValues : () -> SettingsState =
 		fun(): SettingsState {
 			val preferences: SharedPreferences = getSharedPreferences("prefs", MODE_PRIVATE)

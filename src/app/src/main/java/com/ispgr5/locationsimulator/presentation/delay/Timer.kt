@@ -104,7 +104,7 @@ fun Timer(
             }
             TextField(
                 value = timerHours.toString(),
-                onValueChange = {newVal:String -> timerHours = calculateValue(newVal) },
+                onValueChange = {newVal:String -> timerHours = calculateTimerValue(newVal) },
                 keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
                 modifier = Modifier.padding(horizontal = 16.dp),
                 readOnly = timerRunning,
@@ -154,7 +154,7 @@ fun Timer(
             }
             TextField(
                 value = timerMinutes.toString(),
-                onValueChange = {newVal:String -> timerMinutes = calculateValue(newVal) },
+                onValueChange = {newVal:String -> timerMinutes = calculateTimerValue(newVal) },
                 keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
                 modifier = Modifier
                     .padding(horizontal = 16.dp),
@@ -205,7 +205,7 @@ fun Timer(
             }
             TextField(
                 value = timerSeconds.toString(),
-                onValueChange = {newVal:String -> timerSeconds = calculateValue(newVal) },
+                onValueChange = {newVal:String -> timerSeconds = calculateTimerValue(newVal) },
                 keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
                 modifier = Modifier
                     .padding(horizontal = 16.dp),
@@ -260,7 +260,7 @@ fun Timer(
 /**
  * maps a string Input to a int between 0 and 59, with 0 as the default/error value
  */
-private fun calculateValue(value:String):Int {
+fun calculateTimerValue(value:String):Int {
     var res:Int
     try {
         res = value.toInt()

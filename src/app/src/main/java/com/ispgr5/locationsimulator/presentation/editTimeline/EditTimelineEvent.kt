@@ -17,9 +17,7 @@ sealed class EditTimelineEvent {
 	data class ChangedDescription(val description: String) : EditTimelineEvent()
 	data class AddSound(val navController: NavController) : EditTimelineEvent()
 	class AddVibration(val getDefaultValuesFunction: () -> SettingsState) : EditTimelineEvent()
-	data class DeleteConfigurationComponent(val configComponent: ConfigComponent) :
-		EditTimelineEvent()
-
+	data class DeleteConfigurationComponent(val configComponent: ConfigComponent) : EditTimelineEvent()
 	data class MoveConfCompLeft(val configComponent: ConfigComponent) : EditTimelineEvent()
 	data class MoveConfCompRight(val configComponent: ConfigComponent) : EditTimelineEvent()
 	data class ChangedRandomOrderPlayback(val randomOrderPlayback: Boolean) : EditTimelineEvent()
