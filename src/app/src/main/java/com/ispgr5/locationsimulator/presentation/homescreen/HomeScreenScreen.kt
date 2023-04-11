@@ -44,7 +44,7 @@ fun HomeScreenScreen(
 	soundStorageManager: SoundStorageManager,
 	toaster: (String) -> Unit,
 	activity: MainActivity,
-	darkTheme: MutableState<ThemeState>
+	darkTheme: MutableState<ThemeState>,
 ) {
 	viewModel.updateConfigurationWithErrorsState(soundStorageManager = soundStorageManager)
 	val state = viewModel.state.value
@@ -69,14 +69,14 @@ fun HomeScreenScreen(
 			Column(
 				modifier = Modifier
 					.fillMaxSize()
-					.padding(30.dp),
+					.padding(5.dp),
 				verticalArrangement = Arrangement.Top,
 				horizontalAlignment = Alignment.CenterHorizontally
 			) {
 				Spacer(modifier = Modifier.height(25.dp))
 				Text(
 					text = stringResource(id = R.string.homescreen_appname),
-					fontSize = 35.sp,
+					fontSize = 30.sp,
 					fontWeight = FontWeight.Bold,
 					color = MaterialTheme.colors.onBackground,
 					modifier = Modifier.testTag(TestTags.HOME_APPNAME)
@@ -94,7 +94,7 @@ fun HomeScreenScreen(
 					navController.navigate(Screen.SelectScreen.route)
 
 				} , modifier = Modifier
-					.height(100.dp)
+					.height(60.dp)
 					.width(300.dp)
 					.testTag(TestTags.HOME_SELECT_CONFIG_BUTTON)) {
 					Text(
@@ -102,7 +102,7 @@ fun HomeScreenScreen(
 						fontSize = 30.sp
 					)
 				}
-				Spacer(modifier = Modifier.height(50.dp))
+				Spacer(modifier = Modifier.height(10.dp))
 
 		/**
 		 * The Favorite Configurations
@@ -145,14 +145,19 @@ fun HomeScreenScreen(
 					isFavorite = configuration.isFavorite,
 					onFavoriteClicked = {}
 				)
-				Spacer(modifier = Modifier.height(20.dp))
+				Spacer(modifier = Modifier.height(10.dp))
 			}
-
 		}
+		}
+			Column(
+				modifier = Modifier.fillMaxSize(),
+				verticalArrangement = Arrangement.SpaceBetween,
+				horizontalAlignment = Alignment.CenterHorizontally)
+				{
 		Row(
 			Modifier
 				.fillMaxWidth()
-				.padding(16.dp),
+				.padding(1.dp),
 			verticalAlignment = Alignment.CenterVertically,
 			horizontalArrangement = Arrangement.Center
 
