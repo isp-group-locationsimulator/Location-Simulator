@@ -56,7 +56,7 @@ class SoundViewModel @Inject constructor(
 						minPause = defaultValues.minPauseSound,
 						maxPause = defaultValues.maxPauseSound
 					)){
-						popUpTo(Screen.SoundScreen.route){ inclusive = true }
+						popUpTo(Screen.EditTimelineScreen.route){ inclusive = true }
 					}
 				}
 			}
