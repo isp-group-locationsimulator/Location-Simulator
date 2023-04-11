@@ -55,7 +55,9 @@ class SoundViewModel @Inject constructor(
 						maxVolume = defaultValues.maxVolumeSound,
 						minPause = defaultValues.minPauseSound,
 						maxPause = defaultValues.maxPauseSound
-					))
+					)){
+						popUpTo(Screen.SoundScreen.route){ inclusive = true }
+					}
 				}
 			}
 			is SoundEvent.ImportSound -> {
