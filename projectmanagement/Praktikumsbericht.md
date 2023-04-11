@@ -51,6 +51,71 @@ Die App soll mindestens eine Stunde lang laufen, ohne, dass mit dem Handy intera
 ## Projektplan
 Ausgehend vom Lasten- bzw. Pflichtenheft soll eine zeitliche Einteilung der Arbeitspakete über die Projektlaufzeit erfolgen. Diese soll in der Gantt Chart Vorlage aus Moodle erfolgen. Dies kann zum Ende des Projektes im Git-Lab mit Hochgeladen, sowie hier als Screenshot eingefügt werden.
 
+
+## Vorgehen
+Im Nachgang an das Projekt haben sich aus unserem Vorgehen zwei größere, übergreifende Arbeitsphasen herauskristallisiert.
+In diesen Arbeitsphasen sind wir unterschiedlich vorgegangen.
+Über das komplette Projekt hinweg haben wir uns wöchentlich donnerstags abends zu einer teaminternen Onlinebesprechung getroffen.
+Das Protokoll der Arbeitswochen orientiert sich dementsprechend an diesem Rhythmus.
+Als Plattform haben wir hierfür einen Discord-Server genutzt.
+Rückblickend hat sich Discord für uns als geeignete Plattform und sehr hilfreich erwiesen.
+Auch außerhalb des wöchentlichen Meetings haben wir uns per Chat ausgetauscht.
+Wenn mehrere Personen zusammen an einem Issue gearbeitet haben, so geschah dies via Discord über Sprachkanäle.
+Mit den Kunden haben wir uns zu größeren Meilensteinen getroffen.
+Hier haben wir den Fortschritt besprochen und umfangreiches Feedback eingeholt.
+Außerdem waren die Kunden auch auf dem Discord-Server vertreten, sodass wir uns auch außerhalb von Meetings mit ihnen austauschen konnten.
+Diese Chance hätten wir rückblickend noch häufiger nutzen sollen.
+Ebenso haben wir uns alle zwei Wochen mit unserem Betreuer getroffen.
+
+Die erste Phase beinhaltet die Projektplanung, inkl. der Vorarbeit für die Entwicklung und dem Entwurf der Architektur.
+Die zweite Phase beinhaltet die tatsächliche Implementierung des Systems.
+In der ersten Phase sind wir keinem bestimmten System gefolgt.
+Wir haben zwar wie gefordert Lastenheft, Pflichtenheft und Gantt-Chart erstellt.
+Dies geschah aber nur aus den Anforderungen heraus und spiegelte sich nicht in unserer Arbeitsweise wider.
+In unseren Meetings haben wir gesammelt, was zu tun ist und diese Aufgaben dann erledigt.
+Dabei haben wir recht schnell Verantwortlichkeiten geklärt, mit dem Ziel, dass keine Aspekte liegen bleiben.
+Dies hat auch zu Problemen geführt.
+Nicht jeder hatte immer einen Überblick über das, was die Anderen aktuell tun.
+Dadurch ist „Silowissen“ entstanden.
+
+In der zweiten Phase der Entwicklung sind wir strukturierter vorgegangen.
+Unser Vorgehen war agil orientiert.
+Hierbei haben wir die Tools von Gitlab genutzt.
+Aus den Anforderungen haben wir in unseren wöchentlichen Meetings Issues erstellt.
+Diese haben wir um weitere Issues ergänzt, wenn uns Dinge aufgefallen sind, wie Bugs etc.
+Auch Aspekte der Dokumentation und des Projektmanagements wurden als Issues abgebildet.
+Größere Issues, an denen alle gearbeitet haben, haben wir in kleinere Tasks unterteilt.
+Die Issues waren auf dem Issue Board in Listen strukturiert.
+Wir haben die Listen genutzt Open, Doing, Feedback und Closed genutzt.
+
+![Zustandsdiagramm unserer Issue-Listen](Zustandsdiagramm-Issue-Listen.svg)
+
+Die Liste Open war unser Backlog.
+Meistens haben wir uns die Woche über selbst die Issues zugewiesen, an denen wir diese Woche arbeiten wollten.
+Dies hatte den Vorteil, dass jeder entsprechend seiner zeitlichen Verfügbarkeit und Präferenzen entscheiden konnte, was er erledigen kann.
+Wir haben mittels Tags wie „Critical“ unverbindliche Prioritäten kommuniziert. 
+Vor Deadlines sind wir dazu übergegangen, die wichtigsten Issues im wöchentlichen Meeting direkt zuzuweisen.
+Damit haben wir sichergestellt, dass jedes wichtige Issue erledigt wird, da die Verantwortung geklärt war.
+Hat sich jemand eines Issues angenommen, so wurde dieses auf Doing verschoben.
+Für größere Issues und Breaking Changes haben wir Branches und Merge Request eingesetzt.
+Bei kleineren Issues haben wir auf dies meist verzichtet.
+Dies haben wir nicht rigoros durchgesetzt, weshalb es in der Entwicklung zwischendurch zu überflüssigen Merge-Konflikten gekommen ist.
+Auch haben sich dabei manchmal nicht funktionierende Commits in den Master-Branch eingeschlichen, was in der Entwicklung zusätzlich störend war.
+Hat jemand ein Issue umgesetzt, so wurde dieses auf Feedback verschoben.
+Mindestens eine weitere Person sollte kontrollieren, ob das Issue korrekt umgesetzt wurde und ob sich keine Bugs eingeschlichen haben.
+Auch hier waren wir nicht rigoros genug in der Durchsetzung.
+Vor allem bei kleineren Issues wurde dies manchmal übergangen oder nur oberflächlich erledigt.
+Dies hat dazu geführt, dass wir später mehr Bugs zu fixen hatten.
+Auch haben wir beim Feedback nicht kontrolliert, ob das Feature ausreichend kommentiert war.
+Dies hat am Ende vom Projekt für zusätzlichen Aufwand gesorgt, um diese Dokumentationslücken zu schließen.
+Gleiches gilt für Unittests.
+Diese haben wir erst am Ende des Projekts eingeführt, wodurch ein Mehraufwand entstanden ist.
+Wurde das Issue nun als erledigt akzeptiert, so wurde es auf Done verschoben.
+Wenn nicht, kam es zurück zu Doing.
+
+TODO: Planung (Gantt) vs Realität, warum, Deadlineverschiebung?
+
+
 ## Arbeitsbericht
 Hier soll in kurzen Absätzen beschreiben werden, was alles pro Woche für das Projekt gemacht wurde.
 Als Hilfestellung können folgende Fragen dienen:
@@ -158,7 +223,7 @@ Außerdem haben wir generelles Bugfixing betrieben und kleinere Issues abgearbei
 
 
 ## Abgabetermin Dokumentation
-Abgabetermin ist zur Abschlusspräsentation bei Herr Prof. M. Leucker in KW 10-11 (6.-19.März 2023).
+Abgabetermin ist zur Abschlusspräsentation bei Herr Prof. M. Leucker 17. April 2023.
 
 Der Praktikumsbericht soll **maximal** 5 Seiten (oder 8250 Wörter) umfassen.
 
