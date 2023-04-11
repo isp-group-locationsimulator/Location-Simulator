@@ -1,20 +1,4 @@
 # Praktikumsbericht
-
-## Getting started
-
-In diesem Ordner sollen alle Projektmanagementarbeiten abgelegt werden. Dazu gehört:
-1. Lastenheft
-2. Pflichtenheft
-3. Projektplan (Vorlage siehe Moodle)
-4. Praktikumsbericht (siehe unten)
-
-_Die Beschreibungen unten in den Kapiteln dienen als Hilfestellungen und können zu Projektende gelöscht werden._
-
-# Deadlines
-
-Siehe im [Moodlekurs](https://moodle.uni-luebeck.de/mod/forum/discuss.php?d=60748).
-
-# Bericht
 ## Kunden
 | Name | E-Mailadresse |
 | ------ | ------ |
@@ -112,8 +96,6 @@ Gleiches gilt für Unittests.
 Diese haben wir erst am Ende des Projekts eingeführt, wodurch ein Mehraufwand entstanden ist.
 Wurde das Issue nun als erledigt akzeptiert, so wurde es auf Done verschoben.
 Wenn nicht, kam es zurück zu Doing.
-
-TODO: Planung (Gantt) vs Realität, warum, Deadlineverschiebung?
 
 
 ## Arbeitsbericht
