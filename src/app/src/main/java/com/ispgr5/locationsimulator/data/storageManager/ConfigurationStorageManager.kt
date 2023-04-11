@@ -120,7 +120,7 @@ class ConfigurationStorageManager(
 					}
 					//safe the sound name and the Base64 String to the soundList
 					if (!alreadyExist) {
-						val byteArray = File(mainActivity.filesDir, confComp.source).readBytes()
+						val byteArray = File(mainActivity.filesDir,"/Sounds/" + confComp.source).readBytes()
 						val audioAsBase64String =
 							SoundConverter().encodeByteArrayToBase64String(byteArray)
 						soundList.add(SoundHelp(confComp.source, audioAsBase64String))
