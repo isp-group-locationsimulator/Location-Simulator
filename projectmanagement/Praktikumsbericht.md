@@ -54,6 +54,8 @@ Ebenso haben wir uns alle zwei Wochen mit unserem Betreuer getroffen.
 Die erste Phase beinhaltet die Projektplanung, inkl. der Vorarbeit für die Entwicklung und dem Entwurf der Architektur.
 Die zweite Phase beinhaltet die tatsächliche Implementierung des Systems.
 In der ersten Phase sind wir keinem bestimmten System gefolgt.
+Dies lag auch daran, dass wir keine alle im Team keine Ahnung von Androidentwicklung hatten.
+Zunächst mussten wir uns auf ein Framework einigen, dann musste sich jeder auch in dieses einarbeiten.
 Wir haben zwar wie gefordert Lastenheft, Pflichtenheft und Gantt-Chart erstellt.
 Dies geschah aber nur aus den Anforderungen heraus und spiegelte sich nicht in unserer Arbeitsweise wider.
 In unseren Meetings haben wir gesammelt, was zu tun ist und diese Aufgaben dann erledigt.
