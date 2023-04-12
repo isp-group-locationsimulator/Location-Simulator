@@ -126,6 +126,7 @@ class InfinityService : Service() {
 			while (!stop) {
 				if (!isServiceStarted) {
 					vibrator.cancel()
+					soundPlayer.stopPlayback()
 					stop = true
 				}
 			}
