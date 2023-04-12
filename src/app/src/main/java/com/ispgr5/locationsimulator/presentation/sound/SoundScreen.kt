@@ -9,7 +9,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ispgr5.locationsimulator.R
@@ -54,29 +53,6 @@ fun SoundScreen(
 				modifier = Modifier.fillMaxSize(),
 				horizontalAlignment = Alignment.CenterHorizontally
 			) {
-/*
-				/**
-				 * The refresh Button
-				 */
-				IconButton(
-					onClick = {
-						viewModel.onEvent(SoundEvent.RefreshPage(soundStorageManager = soundStorageManager))
-					}
-				) {
-					Icon(
-						painter = painterResource(id = R.drawable.baseline_refresh_24),
-						contentDescription = null
-					)
-				}
-*/
-				/**
-				 * Header Text
-				 */
-				Text(
-					text = stringResource(id = R.string.soundscreen_soundselection),
-					fontSize = 30.sp
-				)
-
 				Row(
 					horizontalArrangement = Arrangement.Center
 				) {

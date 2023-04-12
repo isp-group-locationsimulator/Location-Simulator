@@ -53,7 +53,7 @@
     <string name="ScreenSelect">Select Configuration</string>
     <string name="ScreenSound">Select Sound</string>
     <string name="ScreenAdd">Add Configuration</string>
-    <string name="ScreenDelay"> Configuration Info</string>
+    <string name="ScreenDelay">Start Configuration</string>
     <string name="ScreenEdit"> Edit Configuration</string>
     <string name="ScreenSettings"> Default Settings </string>
     <string name="DuplicateComponent"> Duplicate </string>
@@ -70,4 +70,6 @@
     <string name="config_save_error">The Configuration has a Error</string>
     <string name="vibrationStrengthNotSupported">This device doesn\'t support adjusting the vibration strength</string>
     <string name="DialogConfirmation">OK</string>
+    <string name="DefaultVibration">Default Vibration</string>
+    <string name="DefaultSound">Default Sound</string>
 </resources>

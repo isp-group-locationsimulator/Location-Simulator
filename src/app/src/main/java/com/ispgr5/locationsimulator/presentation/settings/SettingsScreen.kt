@@ -97,8 +97,12 @@ fun SettingsScreen(
                             Column(
                                 modifier = Modifier
                                     .padding(20.dp)
-                                    .border(1.dp, MaterialTheme.colors.onSurface, RoundedCornerShape(5))
-                                    .let { it->
+                                    .border(
+                                        1.dp,
+                                        MaterialTheme.colors.onSurface,
+                                        RoundedCornerShape(5)
+                                    )
+                                    .let { it ->
                                         if (isSmallScreen) it.fillMaxHeight(0.9f) else it
                                     }
                                     .padding(20.dp)
@@ -109,7 +113,7 @@ fun SettingsScreen(
                                  * The Vibration Heading
                                  */
                                 Text(
-                                    text = "Default Vibration",
+                                    text = stringResource(id = R.string.DefaultVibration),
                                     style = MaterialTheme.typography.h5,
                                     fontWeight = FontWeight.Bold,
                                     modifier = Modifier
@@ -229,18 +233,22 @@ fun SettingsScreen(
                             Column(
                                 modifier = Modifier
                                     .padding(20.dp)
-                                    .border(1.dp, MaterialTheme.colors.onSurface, RoundedCornerShape(5))
-                                    .let { it->
+                                    .border(
+                                        1.dp,
+                                        MaterialTheme.colors.onSurface,
+                                        RoundedCornerShape(5)
+                                    )
+                                    .let { it ->
                                         if (isSmallScreen) it.fillMaxHeight(0.9f) else it
                                     }
                                     .padding(20.dp)
                                     .verticalScroll(rememberScrollState())
                             ) {
                                 /**
-                                 * The Vibration Heading
+                                 * The Sound Heading
                                  */
                                 Text(
-                                    text = "Default Sound",
+                                    text = stringResource(id = R.string.DefaultSound),
                                     style = MaterialTheme.typography.h5,
                                     fontWeight = FontWeight.Bold,
                                     modifier = Modifier

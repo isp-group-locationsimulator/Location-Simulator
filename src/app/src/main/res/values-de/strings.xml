@@ -51,12 +51,12 @@
     <string name="ScreenInfo">Info</string>
     <string name="ScreenHome">Start</string>
     <string name="ScreenRun">Konfiguration wird abgespielt</string>
-    <string name="ScreenSelect">Konfigurations Auswahl</string>
-    <string name="ScreenSound">Audio Auswahl</string>
+    <string name="ScreenSelect">Konfiguration auswählen</string>
+    <string name="ScreenSound">Sound auswählen</string>
     <string name="ScreenAdd">Konfiguration erstellen</string>
-    <string name="ScreenDelay"> Konfiguration Übersicht</string>
+    <string name="ScreenDelay">" Konfiguration starten"</string>
     <string name="ScreenEdit"> Konfiguration bearbeiten</string>
-    <string name="ScreenSettings"> Default Einstellungen </string>
+    <string name="ScreenSettings">" Standard Einstellungen "</string>
     <string name="DuplicateComponent"> Duplizieren </string>
     <string name="TimerHours">Stunden</string>
     <string name="TimerMinutes">Minuten</string>
@@ -69,4 +69,6 @@
     <string name="config_save_error">Die Konfiguration hat einen fehler</string>
     <string name="vibrationStrengthNotSupported">Das Anpassen der Vibrationsstärke wird auf diesem Gerät nicht unterstützt</string>
     <string name="DialogConfirmation">OK</string>
+    <string name="DefaultVibration">Standard Vibration</string>
+    <string name="DefaultSound">Standard Sound</string>
 </resources>

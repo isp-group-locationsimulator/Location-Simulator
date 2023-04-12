@@ -51,7 +51,7 @@ fun HomeScreenScreen(
 	val notFound: String = stringResource(id = R.string.not_found)
 
 	Scaffold(
-		topBar = { TopBar(navController, stringResource(id = R.string.ScreenHome),false,
+		topBar = { TopBar(navController, "",false,
 		extraActions = {IconButton(onClick = {
 			navController.navigate(Screen.InfoScreen.route)
 		}, modifier = Modifier.padding(5.dp)) {
