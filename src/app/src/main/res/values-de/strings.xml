@@ -67,4 +67,6 @@
     <string name="PlaceholderDefaultName"> "Geben Sie einen Namen ein" </string>
     <string name="homescreen_darkmode">Darkmode</string>
     <string name="config_save_error">Die Konfiguration hat einen fehler</string>
+    <string name="vibrationStrengthNotSupported">Das Anpassen der Vibrationsstärke wird auf diesem Gerät nicht unterstützt</string>
+    <string name="DialogConfirmation">OK</string>
 </resources>

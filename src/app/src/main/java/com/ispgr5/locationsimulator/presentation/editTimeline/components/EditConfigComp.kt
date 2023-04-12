@@ -55,7 +55,7 @@ fun EditConfigComponent(
 
 	//Delete Confirm Dialog
 	var showDeleteConfirmDialog by remember { mutableStateOf(false) }
-
+	var showStrengthNotSupportedDialog by remember { mutableStateOf(false) }
 
 	Column(
 		modifier = Modifier
@@ -179,42 +179,63 @@ fun EditConfigComponent(
 					/**
 					 * The Vibration Strength
 					 */
-					val vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-						// Use the recommended method to get the Vibrator service
-						LocalContext.current.getSystemService(Vibrator::class.java)
-					} else {
-						// Use the deprecated method to get the Vibrator service
-						LocalContext.current.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-					}
-					if (Build.VERSION.SDK_INT >= 26 && vibrator.hasAmplitudeControl()) {
-						Text(text = stringResource(id = R.string.editTimeline_Vibration_Strength))
-						Text(
-							RangeConverter.eightBitIntToPercentageFloat(configComponent.minStrength)
-								.toInt().toString() + "% "
-									+ stringResource(id = R.string.editTimeline_range) + RangeConverter.eightBitIntToPercentageFloat(
-								configComponent.maxStrength
-							)
-								.toInt()
-								.toString() + "%"
-						, modifier = Modifier.testTag(TestTags.EDIT_VIB_SLIDER_STRENGTH_TEXT)
-						)
-						/**
-						 * The Vibration Strength
-						 */
-						SliderForRange(
-							modifier = Modifier.testTag(TestTags.EDIT_VIB_SLIDER_STRENGTH),
-							value = RangeConverter.eightBitIntToPercentageFloat(configComponent.minStrength)..RangeConverter.eightBitIntToPercentageFloat(
-								configComponent.maxStrength
-							),
-							func = { value: ClosedFloatingPointRange<Float> ->
-								onVibStrengthChanged(
-									value
+					Row(
+						modifier = Modifier.fillMaxWidth(),
+						horizontalArrangement = Arrangement.SpaceBetween
+					) {
+						Column {
+							Text(text = stringResource(id = R.string.editTimeline_Vibration_Strength))
+							Text(
+								RangeConverter.eightBitIntToPercentageFloat(configComponent.minStrength)
+									.toInt().toString() + "% "
+										+ stringResource(id = R.string.editTimeline_range) + RangeConverter.eightBitIntToPercentageFloat(
+									configComponent.maxStrength
 								)
-							},
-							range = 0f..100f,
-
-						)
+									.toInt()
+									.toString() + "%"
+								, modifier = Modifier.testTag(TestTags.EDIT_VIB_SLIDER_STRENGTH_TEXT)
+							)
+						}
+						val vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+							// Use the recommended method to get the Vibrator service
+							LocalContext.current.getSystemService(Vibrator::class.java)
+						} else {
+							// Use the deprecated method to get the Vibrator service
+							LocalContext.current.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+						}
+						if (Build.VERSION.SDK_INT < 26 || !vibrator.hasAmplitudeControl()) {
+							Button(
+								onClick = {showStrengthNotSupportedDialog=true}, //show Confirm Dialog
+								shape = MaterialTheme.shapes.small,
+								colors = ButtonDefaults.buttonColors(
+									backgroundColor = androidx.compose.ui.graphics.Color.Transparent,
+									contentColor = androidx.compose.ui.graphics.Color.Red,
+									disabledBackgroundColor = androidx.compose.ui.graphics.Color.Transparent,
+									disabledContentColor = MaterialTheme.colors.primary.copy(alpha = ContentAlpha.disabled),
+								),
+								elevation = null
+							) {
+								Icon(
+									painter = painterResource(id = R.drawable.baseline_info_24),
+									contentDescription = null,
+								)
+							}
+						}
 					}
+
+					SliderForRange(
+						modifier = Modifier.testTag(TestTags.EDIT_VIB_SLIDER_STRENGTH),
+						value = RangeConverter.eightBitIntToPercentageFloat(configComponent.minStrength)..RangeConverter.eightBitIntToPercentageFloat(
+							configComponent.maxStrength
+						),
+						func = { value: ClosedFloatingPointRange<Float> ->
+							onVibStrengthChanged(
+								value
+							)
+						},
+						range = 0f..100f,
+
+					)
 
 					/**
 					 * The Vibration duration
@@ -304,6 +325,22 @@ fun EditConfigComponent(
 			revShowDialog
 			onDeleteClicked(configComponent)
 		})
+	}
+
+	if(showStrengthNotSupportedDialog) {
+		AlertDialog(
+			onDismissRequest = {showStrengthNotSupportedDialog=false},
+			text = {
+				Text(
+					text = stringResource(id = R.string.vibrationStrengthNotSupported),
+				)
+			},
+			confirmButton = {
+				TextButton(onClick = {showStrengthNotSupportedDialog=false}){
+					Text(text = stringResource(id = R.string.DialogConfirmation))
+				}
+			}
+		)
 	}
 }
 
