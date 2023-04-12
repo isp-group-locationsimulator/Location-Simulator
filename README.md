@@ -44,4 +44,4 @@ In Absprache mit dem Kunden soll hier eine Dokumentation der gelösten Aufgabe e
 Abgabetermin ist zur Abschlusspräsentation bei Herr Prof. M. Leucker in KW 10-11 (6.-19.März 2023).
 
 ## License
-[MIT](https://choosealicense.com/licenses/mit/)
+[Apache 2.0](https://choosealicense.com/licenses/apache-2.0/)
