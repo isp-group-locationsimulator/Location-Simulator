@@ -1,5 +1,6 @@
 package com.ispgr5.locationsimulator.presentation.run
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
@@ -29,6 +30,10 @@ fun RunScreen(
 	stopServiceFunction: () -> Unit,
 	viewModel: RunViewModel = hiltViewModel()
 ) {
+	BackHandler{
+		viewModel.onEvent(RunEvent.StopClicked(stopServiceFunction))
+		navController.popBackStack()
+	}
 
 	Scaffold(
 		topBar = { TopBar(navController, stringResource(id = R.string.ScreenRun),false) },
