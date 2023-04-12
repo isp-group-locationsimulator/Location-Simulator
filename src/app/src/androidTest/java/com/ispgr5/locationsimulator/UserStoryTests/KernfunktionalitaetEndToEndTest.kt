@@ -23,9 +23,11 @@ import org.junit.Test
 class KernfunktionalitaetEndToEndTest {
 
     // copy before every Integration or End-to-End-Test
+    //Hilt Rule for Hilt Injections
     @get:Rule(order = 0)
     val hiltRule = HiltAndroidRule(this)
 
+    //Compose Rule for Compose interactions
     @get:Rule(order = 1)
     val composeRule = createAndroidComposeRule<MainActivity>()
 
@@ -34,6 +36,7 @@ class KernfunktionalitaetEndToEndTest {
     fun setUp() {
         hiltRule.inject() //always needed for dependencies
 
+        //set Content
         composeRule.activity.runOnUiThread {
             composeRule.activity.setContent {
                 val navController = rememberNavController()

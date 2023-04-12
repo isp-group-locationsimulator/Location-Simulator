@@ -10,6 +10,7 @@ import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.navigation.compose.rememberNavController
+import androidx.test.filters.SdkSuppress
 import com.ispgr5.locationsimulator.core.util.TestTags
 import com.ispgr5.locationsimulator.di.AppModule
 import com.ispgr5.locationsimulator.presentation.MainActivity
@@ -148,6 +149,7 @@ class WunschfunktionalitaetenEndToEndTest {
     * Testing User Story W4:
     * Der oder die User*in möchte das Design zwischen Hell und Dunkel wechseln können.
     */
+    @SdkSuppress(minSdkVersion = 26) //Screenshots are only available on API 26 and up
     @Test
     fun W4_testDarkAndLightMode(){
         /**Der Dark-Mode-Slider wird gedrückt.**/
@@ -185,6 +187,42 @@ class WunschfunktionalitaetenEndToEndTest {
     }
 
     /**
+     * Identisch zum vorherigen Test nur dass keine Screenshots gemacht werden, da dies nur ab
+     * Android API 26 möglich ist.
+     */
+    @SdkSuppress(maxSdkVersion = 26)
+    @Test
+    fun W4_testDarkAndLightMode_withoutScreenshot(){
+        /**Der Dark-Mode-Slider wird gedrückt.**/
+        //switch to dark mode
+        composeRule.onNodeWithTag(TestTags.HOME_DARKMODE_SLIDER).performClick()
+
+        /**Es wird überprüft, dass nun im Sytem der Darkmode gesetzt ist.**/
+        //check if dark theme is setted in prefs
+        var isDarkTheme = composeRule.activity.getSharedPreferences("prefs", ComponentActivity.MODE_PRIVATE).getBoolean("isDarkTheme", false)
+        assert(isDarkTheme)
+
+        /**Wechsel in den Select Screen.**/
+        composeRule.onNodeWithTag(TestTags.HOME_SELECT_CONFIG_BUTTON).performClick()
+
+
+        /** Wechsel in den Home Screen.**/
+        composeRule.onNodeWithTag(TestTags.TOP_BAR_BACK_BUTTON).performClick()
+
+        /**Der Dark-Mode-Slider wird gedrückt.**/
+        composeRule.onNodeWithTag(TestTags.HOME_DARKMODE_SLIDER).performClick()
+
+        /**Es wird überprüft, dass nun im System der Lightmdoe gesetzt ist.**/
+        //check if light theme is setted in prefs.
+        isDarkTheme = composeRule.activity.getSharedPreferences("prefs", ComponentActivity.MODE_PRIVATE).getBoolean("isDarkTheme", false)
+        assertFalse(isDarkTheme)
+        //check if screen is light
+
+        /**Es wird überprüft, dass der Bildschirm nicht mehr dunkel ist.**/
+        assertFalse(isDark( composeRule.onNodeWithTag(TestTags.HOME_SELECT_CONFIG_BUTTON).onParent().captureToImage().asAndroidBitmap()))
+    }
+
+            /**
      * checks if a given bitmap has more than 60% of the Pixels with a luminance below 150
      */
     fun isDark(bitmap: Bitmap): Boolean {

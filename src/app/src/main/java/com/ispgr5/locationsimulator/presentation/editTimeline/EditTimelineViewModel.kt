@@ -211,7 +211,7 @@ class EditTimelineViewModel @Inject constructor(
                     )
                     val listC = state.value.components.toMutableList()
                     listC.add(vibration)
-                    currentConfigurationId = vibration.id
+
                     _state.value = _state.value.copy(
                         components = listC, current = vibration
                     )
