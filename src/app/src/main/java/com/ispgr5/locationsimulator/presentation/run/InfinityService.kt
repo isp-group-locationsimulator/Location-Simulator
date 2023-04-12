@@ -83,7 +83,7 @@ class InfinityService : Service() {
 	private fun startService() {
 		//make sure the service starts only once
 		if (isServiceStarted) return
-		Toast.makeText(this, "Service starting its task", Toast.LENGTH_SHORT).show()
+		Toast.makeText(this, "Start", Toast.LENGTH_SHORT).show()
 		isServiceStarted = true
 
 		// we need this lock so our service gets not affected by Doze Mode
@@ -196,7 +196,7 @@ class InfinityService : Service() {
 	 * stops the simulation
 	 */
 	private fun stopService() {
-		Toast.makeText(this, "Service stopping", Toast.LENGTH_SHORT).show()
+		Toast.makeText(this, "Stop", Toast.LENGTH_SHORT).show()
 		try {
 			//release the wakeLock, since it is no longer needed
 			wakeLock?.let {
