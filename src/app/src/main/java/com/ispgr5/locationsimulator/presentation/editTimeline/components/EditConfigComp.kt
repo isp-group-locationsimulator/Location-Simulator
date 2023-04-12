@@ -155,7 +155,7 @@ fun EditConfigComponent(
 					/**
 					 * Volume
 					 */
-					Text(text = stringResource(id = R.string.editTimeline_SoundVolume) + ":")
+					Text(text = stringResource(id = R.string.editTimeline_SoundVolume))
 					Text(
 						RangeConverter.transformFactorToPercentage(configComponent.minVolume)
 							.toInt().toString() + "% "

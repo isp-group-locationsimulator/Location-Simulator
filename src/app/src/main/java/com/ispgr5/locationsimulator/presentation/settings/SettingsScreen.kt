@@ -250,7 +250,7 @@ fun SettingsScreen(
                                 /**
                                  * The Sound Volume
                                  */
-                                Text(text = stringResource(id = R.string.editTimeline_SoundVolume) + ":")
+                                Text(text = stringResource(id = R.string.editTimeline_SoundVolume))
                                 Text(
                                     RangeConverter.transformFactorToPercentage(state.minVolumeSound)
                                         .toInt().toString() + "% "
