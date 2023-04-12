@@ -4,7 +4,8 @@ import Timer
 import android.content.Context
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -42,7 +43,9 @@ fun DelayScreen(
 		content = {
 			Spacer(modifier = Modifier.height(it.calculateTopPadding()))
 			Column(
-				Modifier.fillMaxWidth(),
+				Modifier
+					.fillMaxWidth()
+					.verticalScroll(rememberScrollState()),
 				horizontalAlignment = Alignment.CenterHorizontally
 			) {
 				Spacer(modifier = Modifier.size(8.dp))
@@ -69,8 +72,7 @@ fun DelayScreen(
 				Divider(color = MaterialTheme.colors.primary, thickness = 1.dp)
 				Spacer(modifier = Modifier.size(8.dp))
 
-				LazyColumn {
-					items(1) {
+				Column {
 						state.configuration?.components?.let {
 							Timeline(
 								components = it,
@@ -79,7 +81,6 @@ fun DelayScreen(
 								onAddClicked = fun() {},
 								showAddButton = false
 							)
-						}
 					}
 				}
 
