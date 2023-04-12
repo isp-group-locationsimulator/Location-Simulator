@@ -1,6 +1,9 @@
 package com.ispgr5.locationsimulator.presentation.homescreen
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -28,7 +31,8 @@ fun InfoScreen(
 			Column(
 				modifier = Modifier
 					.fillMaxSize()
-					.padding(30.dp + it.calculateTopPadding()),
+					.padding(30.dp + it.calculateTopPadding())
+					.verticalScroll(rememberScrollState()),
 				verticalArrangement = Arrangement.Center,
 				horizontalAlignment = Alignment.CenterHorizontally
 			) {
@@ -44,7 +48,13 @@ fun InfoScreen(
 				Text(text = stringResource(id = R.string.isp), textAlign = TextAlign.Center)
 				Text(text = stringResource(id = R.string.university))
 				Text(text = "Juljan Bouchagiar")
+				Spacer(modifier = Modifier.height(30.dp))
+				Image(
+					painter = painterResource(id = R.drawable.logo_isp),
+					contentDescription = "ISP Logo"
+				)
 			}
+
 		}
 	)
 
