@@ -1,4 +1,4 @@
-# Thema V Ortungssimulator THW
+# Thema V Ortungssimulator
 
 
 ## Getting started
@@ -16,8 +16,10 @@ Bei Fragen wendet euch gerne an euren Mentor Juljan Bouchagiar (juljan.bouchagia
 
 
 ## Beschreibung
-Hier soll das Projekt kurz in einem Fließtext beschreiben werden.
-Maximal 100 Wörter.
+Dieses Projekt befasst sich mit der Entwicklung eines Ortungssimulators als App.
+Genau bedeutet dies, dass die App in der Lage sein soll, Vibrationen und Töne abzugeben, mit denen die Bergung von Personen geübt werden kann.
+Diese Geräusche sollen eingerichtet und randomisiert werden können, um die Realität möglichst gut wiederzugeben.
+Die App soll mindestens eine Stunde lang laufen, ohne, dass mit dem Handy interagiert wird.
 
 ## Ziele
 Eine sehr kurze allgemeine Beschreibung der Ziele die zum Projektende bestanden. 
@@ -41,7 +43,7 @@ In Absprache mit dem Kunden soll hier eine Dokumentation der gelösten Aufgabe e
 In Absprache mit dem Kunden soll hier eine Dokumentation der gelösten Aufgabe erfolgen.
 
 ## Abgabetermin Dokumentation
-Abgabetermin ist zur Abschlusspräsentation bei Herr Prof. M. Leucker in KW 10-11 (6.-19.März 2023).
+Abgabetermin ist zur Abschlusspräsentation bei Herr Prof. M. Leucker am 17. März 2023.
 
 ## License
 Copyright 2023 StudiProjekteWS22
