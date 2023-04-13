@@ -21,6 +21,9 @@ class Sound(
 	val maxPause: Int
 ) : ConfigComponent() {
 
+	/**
+	 * simple copy function to copy a Sound
+	 */
 	override fun copy(): Sound {
 		return Sound(id, source, name, minVolume, maxVolume, minPause, maxPause)
 	}

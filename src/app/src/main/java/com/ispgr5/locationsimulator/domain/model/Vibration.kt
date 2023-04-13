@@ -22,6 +22,10 @@ data class Vibration(
 	val minDuration: Int,
 	val maxDuration: Int
 ) : ConfigComponent() {
+
+	/**
+	 * simple copy function to copy a Vibration
+	 */
 	override fun copy(): Vibration {
 		return Vibration(id, name, minStrength, maxStrength, minPause, maxPause, minDuration, maxDuration)
 	}

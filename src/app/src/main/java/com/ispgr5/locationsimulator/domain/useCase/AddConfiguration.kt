@@ -11,6 +11,9 @@ class AddConfiguration(
 	private val repository: ConfigurationRepository
 ) {
 
+	/**
+	 * calls the matching Configurations Repository function
+	 */
 	@Throws(InvalidConfigurationException::class)
 	suspend operator fun invoke(configuration: Configuration) {
 		//TODO throw an error if the Configuration can't be valid

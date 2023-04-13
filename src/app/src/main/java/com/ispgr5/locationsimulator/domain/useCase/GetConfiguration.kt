@@ -10,6 +10,9 @@ class GetConfiguration(
 	private val repository: ConfigurationRepository
 ) {
 
+	/**
+	 * calls the matching Configurations Repository function
+	 */
 	suspend operator fun invoke(id: Int): Configuration? {
 		return repository.getConfigurationById(id)
 	}

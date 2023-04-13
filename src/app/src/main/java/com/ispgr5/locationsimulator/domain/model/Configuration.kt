@@ -5,8 +5,6 @@ import android.media.MediaMetadataRetriever
 import android.net.Uri
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.ispgr5.locationsimulator.data.storageManager.SoundStorageManager
-import com.ispgr5.locationsimulator.presentation.MainActivity
 
 
 
@@ -21,14 +19,12 @@ data class Configuration(
 	val components: List<ConfigComponent>,
 	val isFavorite: Boolean = false,
 	@PrimaryKey val id: Int? = null
-
-
 ){
 	/**
 	 * returns the minimal duration the configuration can take per iteration in seconds
 	 */
 	fun getMinDuration(context : Context, privateDirUri : String) : Float{
-		var sum =0f;
+		var sum =0f
 		for( configComponent in components){
 			when (configComponent) {
 				is Sound -> {
@@ -62,7 +58,7 @@ data class Configuration(
 	 * returns the maximal duration the configuration can take per iteration in seconds
 	 */
 	fun getMaxDuration(context : Context, privateDirUri : String) : Float{
-		var sum =0f;
+		var sum =0f
 		for( configComponent in components){
 			when (configComponent) {
 				is Sound -> {
@@ -79,4 +75,7 @@ data class Configuration(
 	}
 }
 
+/**
+ * Exception thrown, when a invalid Configuration is created
+ */
 class InvalidConfigurationException(message: String) : Exception(message)

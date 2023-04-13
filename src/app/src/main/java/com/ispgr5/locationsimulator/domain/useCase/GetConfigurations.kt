@@ -11,6 +11,9 @@ class GetConfigurations(
 	private val repository: ConfigurationRepository
 ) {
 
+	/**
+	 * calls the matching Configurations Repository function
+	 */
 	operator fun invoke(): Flow<List<Configuration>> {
 		return repository.getConfigurations()
 	}
