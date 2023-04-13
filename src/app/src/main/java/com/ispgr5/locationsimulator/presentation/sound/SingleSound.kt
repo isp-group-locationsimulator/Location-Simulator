@@ -36,7 +36,7 @@ fun SingleSound(
 		) {
 			Icon(
 				painter = painterResource(
-					if(viewModel.isPlaying.value == soundName) R.drawable.ic_baseline_stop_24 else R.drawable.baseline_play_arrow_24
+					if(viewModel.isPlaying.value == soundName) R.drawable.ic_baseline_stop_24 else R.drawable.ic_baseline_play_arrow_24
 				),
 				contentDescription = null
 			)
