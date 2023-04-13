@@ -6,6 +6,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -14,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ispgr5.locationsimulator.R
+import com.ispgr5.locationsimulator.core.util.TestTags
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 import com.ispgr5.locationsimulator.presentation.editTimeline.components.AddConfigComponentDialog
 import com.ispgr5.locationsimulator.presentation.editTimeline.components.EditConfigComponent
@@ -94,6 +96,7 @@ fun EditTimelineScreen(
 								) {
 									BasicTextField(
 										value = state.name,
+										modifier = Modifier.testTag(TestTags.EDIT_CONFIG_NAME_TEXTINPUT),
 										onValueChange = { name ->
 											viewModel.onEvent(
 												EditTimelineEvent.ChangedName(
@@ -131,6 +134,7 @@ fun EditTimelineScreen(
 								) {
 									BasicTextField(
 										value = state.description,
+										modifier = Modifier.testTag(TestTags.EDIT_CONFIG_DESCRIPTION_TEXTINPUT),
 										onValueChange = { description ->
 											viewModel.onEvent(
 												EditTimelineEvent.ChangedDescription(

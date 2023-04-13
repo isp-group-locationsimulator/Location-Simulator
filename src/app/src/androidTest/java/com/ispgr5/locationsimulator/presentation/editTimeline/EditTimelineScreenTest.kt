@@ -3,10 +3,8 @@ package com.ispgr5.locationsimulator.presentation.editTimeline
 import android.annotation.SuppressLint
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.performClick
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -25,8 +23,8 @@ import org.junit.Rule
 import org.junit.Test
 
 /**
- * @deprecated
- * Class to show Integration testing
+ * Testing the Edit Screen
+ * The Timeline already gets tested engough in automatic User Story Test W2
  */
 
 @HiltAndroidTest
@@ -77,6 +75,24 @@ class EditTimelineScreenTest{
         composeRule.onNodeWithTag(TestTags.EDIT_TIMELINE_SCREEN_ADD_DIALOG).assertDoesNotExist()
         composeRule.onNodeWithTag(TestTags.EDIT_TIMELINE_SCREEN_ADD_BUTTON).performClick();
         composeRule.onNodeWithTag(TestTags.EDIT_TIMELINE_SCREEN_ADD_DIALOG).assertIsDisplayed();
+    }
+
+    /**
+     * Testing the changing of the name and description
+     */
+    @Test
+    fun changeNameAndDescription(){
+        val name = "testName123"
+        val description = "testDescription123"
+
+        //change Name and Description
+        composeRule.onNodeWithTag(TestTags.EDIT_CONFIG_NAME_TEXTINPUT).performTextReplacement(name)
+        composeRule.onNodeWithTag(TestTags.EDIT_CONFIG_DESCRIPTION_TEXTINPUT).performTextReplacement(description)
+
+        //check if Name and Description were changed correctly
+        composeRule.onNodeWithTag(TestTags.EDIT_CONFIG_NAME_TEXTINPUT).assertTextEquals(name)
+        composeRule.onNodeWithTag(TestTags.EDIT_CONFIG_DESCRIPTION_TEXTINPUT).assertTextEquals(description)
+
     }
 
 }

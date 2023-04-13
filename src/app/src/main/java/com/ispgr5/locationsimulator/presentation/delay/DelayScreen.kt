@@ -10,6 +10,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
@@ -17,6 +18,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ispgr5.locationsimulator.R
+import com.ispgr5.locationsimulator.core.util.TestTags
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 import com.ispgr5.locationsimulator.presentation.editTimeline.components.Timeline
 import com.ispgr5.locationsimulator.presentation.universalComponents.TopBar
@@ -45,7 +47,8 @@ fun DelayScreen(
 			Column(
 				Modifier
 					.fillMaxWidth()
-					.verticalScroll(rememberScrollState()),
+					.verticalScroll(rememberScrollState())
+					.testTag(TestTags.DELAY_MAIN_COLUMN),
 				horizontalAlignment = Alignment.CenterHorizontally
 			) {
 				Spacer(modifier = Modifier.size(8.dp))

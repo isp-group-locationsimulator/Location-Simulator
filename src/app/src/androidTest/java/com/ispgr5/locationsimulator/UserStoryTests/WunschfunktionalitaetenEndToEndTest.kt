@@ -20,7 +20,6 @@ import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.UninstallModules
 import junit.framework.Assert.assertFalse
-import okhttp3.internal.wait
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -90,15 +89,15 @@ class WunschfunktionalitaetenEndToEndTest {
 
         //Die erste Vibration wird in der Timeline ausgewählt.
         composeRule.onAllNodesWithTag(TestTags.EDIT_CONFIG_ITEM)[0].performClick()
-        composeRule.onNodeWithTag(TestTags.EDIT_NAME_TEXTINPUT).performTextReplacement("Vibration1")
+        composeRule.onNodeWithTag(TestTags.EDIT_ITEM_NAME_TEXTINPUT).performTextReplacement("Vibration1")
 
         composeRule.onAllNodesWithTag(TestTags.EDIT_CONFIG_ITEM)[1].performClick()
-        composeRule.onNodeWithTag(TestTags.EDIT_NAME_TEXTINPUT).performTextReplacement("Vibration2")
+        composeRule.onNodeWithTag(TestTags.EDIT_ITEM_NAME_TEXTINPUT).performTextReplacement("Vibration2")
 
         /**Eine Vibration mit Namen Vibration3 wird hinzugefügt.**/
         composeRule.onNodeWithTag(TestTags.EDIT_TIMELINE_SCREEN_ADD_BUTTON).performClick()
         composeRule.onNodeWithTag(TestTags.EDIT_TIMELINE_SCREEN_ADD_DIALOG_VIBRATION).performClick()
-        composeRule.onNodeWithTag(TestTags.EDIT_NAME_TEXTINPUT).performTextReplacement("Vibration3")
+        composeRule.onNodeWithTag(TestTags.EDIT_ITEM_NAME_TEXTINPUT).performTextReplacement("Vibration3")
 
 
         /**Ein Sound mit Namen Sound wird hinzugefügt.**/
@@ -106,7 +105,7 @@ class WunschfunktionalitaetenEndToEndTest {
         composeRule.onNodeWithTag(TestTags.EDIT_TIMELINE_SCREEN_ADD_DIALOG_SOUND).performClick()
         //select first sound
         composeRule.onAllNodesWithTag(TestTags.SOUND_SELECT_BUTTON)[0].performClick()
-        composeRule.onNodeWithTag(TestTags.EDIT_NAME_TEXTINPUT).performTextReplacement("Sound")
+        composeRule.onNodeWithTag(TestTags.EDIT_ITEM_NAME_TEXTINPUT).performTextReplacement("Sound")
 
         /**Der Sound wird nach links in der Timeline geschoben.**/
         composeRule.onNodeWithTag(TestTags.EDIT_MOVE_LEFT).performClick()
@@ -131,16 +130,16 @@ class WunschfunktionalitaetenEndToEndTest {
          * Sound, Vibration1, Vibration3, Vibration2**/
 
         composeRule.onAllNodesWithTag(TestTags.EDIT_CONFIG_ITEM)[0].performClick()
-        composeRule.onNodeWithTag(TestTags.EDIT_NAME_TEXTINPUT).assertTextEquals("Sound")
+        composeRule.onNodeWithTag(TestTags.EDIT_ITEM_NAME_TEXTINPUT).assertTextEquals("Sound")
         composeRule.onAllNodesWithTag(TestTags.EDIT_CONFIG_ITEM)[1].performClick()
-        composeRule.onNodeWithTag(TestTags.EDIT_NAME_TEXTINPUT).assertTextEquals("Vibration1")
+        composeRule.onNodeWithTag(TestTags.EDIT_ITEM_NAME_TEXTINPUT).assertTextEquals("Vibration1")
         composeRule.onAllNodesWithTag(TestTags.EDIT_CONFIG_ITEM)[2].performClick()
 
        // composeRule.onNodeWithTag(TestTags.EDIT_NAME_TEXTINPUT).assertTextEquals("Vibration3")
 
         composeRule.onAllNodesWithTag(TestTags.EDIT_CONFIG_ITEM)[3].performClick()
 
-        composeRule.onNodeWithTag(TestTags.EDIT_NAME_TEXTINPUT).assertTextEquals("Vibration2")
+        composeRule.onNodeWithTag(TestTags.EDIT_ITEM_NAME_TEXTINPUT).assertTextEquals("Vibration2")
 
     }
 

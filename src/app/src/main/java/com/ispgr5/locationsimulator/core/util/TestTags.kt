@@ -27,7 +27,9 @@ object TestTags {
     const val EDIT_VIB_SLIDER_STRENGTH = "StrengthSlider"
     const val EDIT_VIB_SLIDER_DURATION = "DurationSlider"
     const val EDIT_SLIDER_PAUSE = "PauseSlider"
-    const val EDIT_NAME_TEXTINPUT = "NameTextInput"
+    const val EDIT_ITEM_NAME_TEXTINPUT = "ItemNameTextInput"
+    const val EDIT_CONFIG_NAME_TEXTINPUT = "ConfigNameTextInput"
+    const val EDIT_CONFIG_DESCRIPTION_TEXTINPUT = "ConfigDescriptionTextInput"
     const val EDIT_MOVE_LEFT = "MoveLeft"
     const val EDIT_MOVE_RIGHT = "MoveRight"
     const val EDIT_TIMELINE_SCREEN_ADD_BUTTON = "AddButton";
@@ -37,6 +39,7 @@ object TestTags {
 
 
     const val DELAY_START_BUTTON = "DelayStartButton"
+    const val DELAY_MAIN_COLUMN = "DelayMainCOLUMN"
 
     const val RUN_END_BUTTON = "RunEndButton"
 

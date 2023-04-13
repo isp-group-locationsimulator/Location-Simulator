@@ -118,7 +118,7 @@ fun EditConfigComponent(
 								fontSize = 20.sp,
 								color = MaterialTheme.colors.onBackground),
 							value = configComponent.name,
-							modifier = Modifier.testTag(TestTags.EDIT_NAME_TEXTINPUT),
+							modifier = Modifier.testTag(TestTags.EDIT_ITEM_NAME_TEXTINPUT),
 							onValueChange = { name ->
 								onConfigComponentNameChanged (name)
 							}
@@ -137,7 +137,7 @@ fun EditConfigComponent(
 								fontSize = 20.sp,
 								color = MaterialTheme.colors.onBackground),
 							value = configComponent.name,
-							modifier = Modifier.testTag(TestTags.EDIT_NAME_TEXTINPUT),
+							modifier = Modifier.testTag(TestTags.EDIT_ITEM_NAME_TEXTINPUT),
 							onValueChange = { name ->
 								onConfigComponentNameChanged (name)
 							}

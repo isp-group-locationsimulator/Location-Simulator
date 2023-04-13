@@ -14,6 +14,7 @@ import com.ispgr5.locationsimulator.ui.theme.ThemeState
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.UninstallModules
+import okhttp3.internal.wait
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -112,6 +113,8 @@ class KernfunktionalitaetEndToEndTest {
 
             //in delay Screen
             /**Die Konfiguration wird gestartet.**/
+            //swipe to bottom of Delay Screen so that Start Button is visible on smaller devices
+            composeRule.onNodeWithTag(TestTags.DELAY_MAIN_COLUMN).performGesture { swipeUp() }
             composeRule.onNodeWithTag(TestTags.DELAY_START_BUTTON).performClick()
 
             //in run screen
