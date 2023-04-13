@@ -201,7 +201,7 @@ Wir haben diese Woche weiter an den Tests gearbeitet.
 Außerdem haben wir generelles Bugfixing betrieben und kleinere Issues abgearbeitet.
 
 ### Projektwoche 26 (07.04 – 13.04)
-
+Wir haben das Projekt in einen auslieferbaren Stand gebracht und die Endpräsentation mit den Kunden abgeliefert.
 
 ### Projektwoche 26 (14.04 – 20.04)
 
