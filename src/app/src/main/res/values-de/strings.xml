@@ -71,4 +71,7 @@
     <string name="DialogConfirmation">OK</string>
     <string name="DefaultVibration">Standard Vibration</string>
     <string name="DefaultSound">Standard Sound</string>
+    <string name="infoscreen_license">Lizenz</string>
+    <string name="infoscreen_ownLicense">Diese App ist unter der Apache 2.0 Lizenz veröffentlicht.</string>
+    <string name="infoscreen_usingLicense">Diese App nutzt Icons, die unter der Apache 2.0 Lizenz und unter der MIT Lizenz veröffentlich wurden.</string>
 </resources>

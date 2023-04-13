@@ -72,4 +72,7 @@
     <string name="DialogConfirmation">OK</string>
     <string name="DefaultVibration">Default Vibration</string>
     <string name="DefaultSound">Default Sound</string>
+    <string name="infoscreen_license">License</string>
+    <string name="infoscreen_ownLicense">This app is published under the Apache 2.0 license.</string>
+    <string name="infoscreen_usingLicense">This app uses icons that were published under the Apache 2.0 license and under the MIT license.</string>
 </resources>
