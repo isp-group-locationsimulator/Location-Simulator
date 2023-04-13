@@ -180,7 +180,7 @@ fun OneConfigurationListMember(
 						)
 					) {
 						Icon(
-							painter = painterResource(id = R.drawable.baseline_play_arrow_24),
+							painter = painterResource(id = R.drawable.ic_baseline_play_arrow_24),
 							contentDescription = null,
 							tint = MaterialTheme.colors.onSurface
 						)
