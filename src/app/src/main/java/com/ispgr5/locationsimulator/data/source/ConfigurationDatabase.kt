@@ -18,6 +18,9 @@ import com.ispgr5.locationsimulator.domain.model.ConfigurationComponentConverter
 abstract class ConfigurationDatabase : RoomDatabase() {
 	abstract val configurationDao: ConfigurationDao
 
+	/**
+	 * The name of the Database
+	 */
 	companion object {
 		const val DATABASE_NAME = "configuration_db"
 	}
