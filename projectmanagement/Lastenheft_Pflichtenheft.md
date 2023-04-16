@@ -27,7 +27,7 @@ Bedient werden wird die App von Personen, die nicht unbedingt erfahren sind in d
 Weiterhin ist es zu erwarten, dass die App auch mit Handschuhen bedient werden wird. 
 
 ## User Storys
-Die User Storys sind unterteilt in die Kategorien \textit{Kernfunktionalität}, \textit{Wunschfunktionalität} und \textit{Optionale Funktionalität}.
+Die User Storys sind unterteilt in die Kategorien _Kernfunktionalität_, _Wunschfunktionalität_ und _Optionale Funktionalität_.
 Die Kernfunktionalität umfasst die User-Storys, deren Erreichen unabdingbar ist für das Funktionieren des Produktes und dementsprechend für die Abnahme des Projektes.
 Sie müssen umgesetzt werden.
 Hierunter fallen tatsächlich nur die wichtigsten Aspekte.
@@ -37,22 +37,22 @@ Sollte dies nicht möglich sein, ist dies hinnehmbar.
 Unter den letzten Punkt, optionale Funktionalität, fallen Aspekte, die zusätzlich umgesetzt werden können.
 Die Umsetzung dieser wird jedoch nicht erwartet.
 ### Kernfunktionalität
-1. (K1): Der oder die User*in möchte das Abspielen von Konfigurationen starten können.
-2. (K2): Der oder die User*in möchte die App mindestens eine Stunde lang im Hintergrund abspielen lassen, damit lange Übungen durchgeführt werden können.
-3. (K3): Der oder die User*in möchte eine leicht bedienbare UI mit großen Elementen haben, um sie auch mit Handschuhen bedienen zu können.
-4. (K4): Der oder die User*in möchte die Funktionen und Anwendungen in einer User-Anleitung nachschlagen können.
-5. (K5): Der oder die User*in möchte die Dauer und Stärke der Vibration, sowie die Länge zwischen Vibrationsintervallen einstellen können, für mindestens ein Muster.
+1. (K1): Der User möchte das Abspielen von Konfigurationen starten können.
+2. (K2): Der User möchte die App mindestens eine Stunde lang im Hintergrund abspielen lassen, damit lange Übungen durchgeführt werden können.
+3. (K3): Der User möchte eine leicht bedienbare UI mit großen Elementen haben, um sie auch mit Handschuhen bedienen zu können.
+4. (K4): Der User möchte die Funktionen und Anwendungen in einer User-Anleitung nachschlagen können.
+5. (K5): Der User möchte die Dauer und Stärke der Vibration, sowie die Länge zwischen Vibrationsintervallen einstellen können, für mindestens ein Muster.
 ### Wunschfunktionalität
-1. (W1): Der oder die User*in möchte MP3-Dateien importieren können, um diverse Töne aus anderen Quellen testen zu können.
-2. (W2): Der oder die User*in möchte Vibrationen und Sounds in einer Timeline anordnen können, um so vielfältige Konfigurationen erstellen zu können.
-3. (W3): Der oder die User*in möchte Konfigurationsprofile speichern, importieren und exportieren können, um Konfigurationen mit anderen Nutzern und Geräten zu teilen.
-4. (W4): Der oder die User*in möchte das Design zwischen Hell und Dunkel wechseln können 
-5. (W5): Der oder die User*in möchte ich eine Audioaufnahme mit einer externen App machen können und diese dann direkt in die App importieren.
-6. (W6): Der oder die User*in möchte die App sowohl auf Deutsch, als auch auf Englisch nutzen können.
+1. (W1): Der User möchte MP3-Dateien importieren können, um diverse Töne aus anderen Quellen testen zu können.
+2. (W2): Der User möchte Vibrationen und Sounds in einer Timeline anordnen können, um so vielfältige Konfigurationen erstellen zu können.
+3. (W3): Der User möchte Konfigurationsprofile speichern, importieren und exportieren können, um Konfigurationen mit anderen Nutzern und Geräten zu teilen.
+4. (W4): Der User möchte das Design zwischen Hell und Dunkel wechseln können 
+5. (W5): Der User möchte ich eine Audioaufnahme mit einer externen App machen können und diese dann direkt in die App importieren.
+6. (W6): Der User möchte die App sowohl auf Deutsch, als auch auf Englisch nutzen können.
 ### Optionale Funktionalität
-1. (O1): Der oder die User*in möchte die App per TCP/IP oder Bluetooth fernsteuern können, um über die App später starten und stoppen zu können und das Muster steuern zu können. (nicht erfüllt)
-2. (O2): Der oder die User*in möchte im Musterdialog, verschiedene Wellenformen für die Vibration einstellen können, um diverse Vibrationen testen zu können (nicht erfüllt)
-3. (O3): Der oder die User*in möchte einen Timer stellen können, um Zeit zu haben, das Handy zu verstecken, bevor die Übung beginnt. 
+1. (O1): Der User möchte die App per TCP/IP oder Bluetooth fernsteuern können, um über die App später starten und stoppen zu können und das Muster steuern zu können. (nicht erfüllt)
+2. (O2): Der User möchte im Musterdialog, verschiedene Wellenformen für die Vibration einstellen können, um diverse Vibrationen testen zu können (nicht erfüllt)
+3. (O3): Der User möchte einen Timer stellen können, um Zeit zu haben, das Handy zu verstecken, bevor die Übung beginnt. 
 ## Lieferumfang
 - Android App:  
 Es wird die fertig entwickelte Android-App geliefert.
@@ -84,17 +84,6 @@ Sie endet mit der positiven Abnahme des Produktes durch den Kunden.
 Abnahmekriterium ist die Erfüllung der Kernfunktionalität und des Lieferumfangs innerhalb des vorgegebenen Zeitfensters.  
 Qualitätsanforderung ist die Verwendung von Unit-Tests und User Story Tests.
 
-# Pflichtenheft - Vorgaben
-
-Ausgehend vom Lastenheft sollen die zu erbringenden Leistungen von euch definiert werden. Ebenfalls sollen im Pflichtenheft die Use Cases, die damit verbunden Arbeitspakete und Unterarbeitspakete definiert werden.
-Eine gute Erklärung wie man ein Pflichtenheft schreiben könnte sind [hier](https://wiki.induux.de/Pflichtenheft) zu finden.
-Inhalt sollte sein:
-- Dokumentation der Ausgangslage, Definition der Ziele und Scope des Projekts
-- Beschreiben der Prozessabläufe und Vorgehensweisen
-- Erstellung einer Soll-Konzeption, das die Anforderungen des Auftraggebers beschreibt
-- Beschreibung des Lösungsweges beginnend mit der technischen Struktur
-
-Tipp: Es können die Use Cases mit den Arbeitspakten tabellarisch aufgelistet werden. Diese können dann im Projektplan (Gantt Chart) wiederverwendet werden.
 
 # Pflichtenheft
 Dieses Pflichtenheft umfasst die Anforderungen für das Projekt Ortungssimulator.
