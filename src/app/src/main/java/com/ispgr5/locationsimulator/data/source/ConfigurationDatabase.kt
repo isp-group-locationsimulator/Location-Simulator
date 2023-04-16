@@ -10,15 +10,18 @@ import com.ispgr5.locationsimulator.domain.model.ConfigurationComponentConverter
  * The Room Database, that stores Configurations
  */
 @Database(
-    entities = [Configuration::class],
-    version = 4,
-    exportSchema = false
+	entities = [Configuration::class],
+	version = 7,
+	exportSchema = false
 )
 @TypeConverters(ConfigurationComponentConverter::class)
 abstract class ConfigurationDatabase : RoomDatabase() {
-    abstract val configurationDao: ConfigurationDao
+	abstract val configurationDao: ConfigurationDao
 
-    companion object {
-        const val DATABASE_NAME = "configuration_db"
-    }
+	/**
+	 * The name of the Database
+	 */
+	companion object {
+		const val DATABASE_NAME = "configuration_db"
+	}
 }

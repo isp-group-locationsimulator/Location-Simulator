@@ -4,13 +4,16 @@ import com.ispgr5.locationsimulator.domain.model.Configuration
 import com.ispgr5.locationsimulator.domain.repository.ConfigurationRepository
 
 /**
- * Interface to delete a Configuration to Database
+ * Interface to delete a Configuration from Database
  */
 class DeleteConfiguration(
-    private val repository: ConfigurationRepository
+	private val repository: ConfigurationRepository
 ) {
 
-    suspend operator fun invoke(configuration: Configuration) {
-        repository.deleteConfiguration(configuration = configuration)
-    }
+	/**
+	 * calls the matching Configurations Repository function
+	 */
+	suspend operator fun invoke(configuration: Configuration) {
+		repository.deleteConfiguration(configuration = configuration)
+	}
 }

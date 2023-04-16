@@ -15,38 +15,41 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class DelayViewModel @Inject constructor(
-    private val configurationUseCases: ConfigurationUseCases,
-    //saveStateHandle is required to get the navigation Arguments like configurationId
-    savedStateHandle: SavedStateHandle
+	private val configurationUseCases: ConfigurationUseCases,
+	//saveStateHandle is required to get the navigation Arguments like configurationId
+	savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val _state = mutableStateOf(DelayScreenState())
-    val state: State<DelayScreenState> = _state
+	private val _state = mutableStateOf(DelayScreenState())
+	val state: State<DelayScreenState> = _state
 
-    /**
-     * Get the selected Configuration from Database
-     */
-    init {
-        savedStateHandle.get<Int>("configurationId")?.let { configurationId ->
-            viewModelScope.launch {
-                configurationUseCases.getConfiguration(configurationId)?.also { configuration ->
-                    _state.value = _state.value.copy(
-                        configuration = configuration
-                    )
-                }
-            }
-        }
-    }
+	/**
+	 * Get the selected Configuration from Database
+	 */
+	init {
+		savedStateHandle.get<Int>("configurationId")?.let { configurationId ->
+			viewModelScope.launch {
+				configurationUseCases.getConfiguration(configurationId)?.also { configuration ->
+					_state.value = _state.value.copy(
+						configuration = configuration
+					)
+				}
+			}
+		}
+	}
 
-    /**
-     * handles ui Events
-     */
-    fun onEvent(event: DelayEvent) {
-        when (event){
-            is DelayEvent.StartClicked -> {
-                if(state.value.configuration != null)
-                    event.startServiceFunction(state.value.configuration!!.components)
-            }
-        }
-    }
+	/**
+	 * Handles UI Events
+	 */
+	fun onEvent(event: DelayEvent) {
+		when (event) {
+			is DelayEvent.StartClicked -> {
+				if (state.value.configuration != null)
+					event.startServiceFunction(
+						state.value.configuration!!.components,
+						state.value.configuration!!.randomOrderPlayback
+					)
+			}
+		}
+	}
 }

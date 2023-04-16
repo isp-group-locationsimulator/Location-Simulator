@@ -4,43 +4,54 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 
-private val DarkColorPalette = darkColors(
-    primary = Purple200,
-    primaryVariant = Purple700,
-    secondary = Teal200
+/**
+ * Colors for the light Mode
+ */
+private val LightThemeColors = lightColors(
+	primary = theBlue,
+	primaryVariant = primaryLightVariant,
+	onPrimary = white,
+	secondary = secondaryLight,
+	secondaryVariant = secondaryDark,
+	onSecondary = black,
+	error = RedErrorDark,
+	onError = RedErrorLight,
+	onBackground = black,
+	surface = theBlueVeryLight,
+	onSurface = black,
+	)
+
+/**
+ * Colors for the Dark Mode
+ */
+private val DarkThemeColors = darkColors(
+	primary = purple,
+	primaryVariant = primaryDarkVariant,
+	onPrimary = black,
+	secondary = secondaryLight,
+	secondaryVariant = secondaryDark,
+	onSecondary = white,
+	error = RedErrorLight,
+	onError = RedErrorLight,
+	onBackground = white,
+	surface = LighterBlack,
+	onSurface = white
+
+
 )
 
-private val LightColorPalette = lightColors(
-    primary = Purple500,
-    primaryVariant = Purple700,
-    secondary = Teal200
-
-    /* Other default colors to override
-    background = Color.White,
-    surface = Color.White,
-    onPrimary = Color.White,
-    onSecondary = Color.Black,
-    onBackground = Color.Black,
-    onSurface = Color.Black,
-    */
-)
-
+/**
+ * Theme chooser for Light and Dark Mode
+ */
 @Composable
 fun LocationSimulatorTheme(
-    darkTheme: Boolean = false,//isSystemInDarkTheme(),
-    content: @Composable () -> Unit
+	darkTheme: MutableState<ThemeState>,
+	content: @Composable () -> Unit,
 ) {
-    val colors = if (darkTheme) {
-        DarkColorPalette
-    } else {
-        LightColorPalette
-    }
-
-    MaterialTheme(
-        colors = colors,
-        typography = Typography,
-        shapes = Shapes,
-        content = content
-    )
+	MaterialTheme(
+		colors = if (darkTheme.value.isDarkTheme) DarkThemeColors else LightThemeColors,
+		content= content
+	)
 }

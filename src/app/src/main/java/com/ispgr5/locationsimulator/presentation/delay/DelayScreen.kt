@@ -1,16 +1,27 @@
 package com.ispgr5.locationsimulator.presentation.delay
 
+import Timer
+import android.content.Context
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.Button
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.ispgr5.locationsimulator.R
+import com.ispgr5.locationsimulator.core.util.TestTags
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
+import com.ispgr5.locationsimulator.presentation.editTimeline.components.Timeline
+import com.ispgr5.locationsimulator.presentation.universalComponents.TopBar
 
 /**
  * The Delay Screen.
@@ -20,33 +31,76 @@ import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 @ExperimentalAnimationApi
 @Composable
 fun DelayScreen(
-    navController: NavController,
-    viewModel: DelayViewModel = hiltViewModel(),
-    startServiceFunction : (List<ConfigComponent>) -> Unit,
+	navController: NavController,
+	viewModel: DelayViewModel = hiltViewModel(),
+	startServiceFunction: (List<ConfigComponent>, Boolean) -> Unit,
+	context : Context, //context needed for calculating Sound Length
+	soundsDirUri : String //the sounds Directory Uri  needed for calculating Sound Length
 ) {
-    //The state from viewmodel
-    val state = viewModel.state.value
+	//The state from viewmodel
+	val state = viewModel.state.value
 
-    Column(
-        Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        if (state.configuration == null) {
-            Text(text = "Configuration is null")
-            //TODO should not happen can you guarantee that?
-        } else {
-            Text(text = state.configuration.name)
-            Text(text = state.configuration.description)
-        }
-        Button(onClick = {
-            if (state.configuration == null){
-                //Don't start
-            }else{
-                viewModel.onEvent(DelayEvent.StartClicked(startServiceFunction))
-                navController.navigate("runScreen")
-            }
-        }) {
-            Text(text = "START")
-        }
-    }
+	Scaffold(
+		topBar = { TopBar(navController, stringResource(id = R.string.ScreenDelay)) },
+		content = {
+			Spacer(modifier = Modifier.height(it.calculateTopPadding()))
+			Column(
+				Modifier
+					.fillMaxWidth()
+					.verticalScroll(rememberScrollState())
+					.testTag(TestTags.DELAY_MAIN_COLUMN),
+				horizontalAlignment = Alignment.CenterHorizontally
+			) {
+				Spacer(modifier = Modifier.size(8.dp))
+
+				if (state.configuration == null) {
+					Text(text = "Configuration is null")
+				} else {
+					Text(
+						text = state.configuration.name,
+						style = TextStyle(fontSize = 24.sp)
+					)
+
+					Spacer(modifier = Modifier.size(8.dp))
+					Divider(color = MaterialTheme.colors.primary, thickness = 1.dp)
+					Spacer(modifier = Modifier.size(8.dp))
+
+					Text(text = state.configuration.description)
+				}
+
+				/**
+				 * The Timeline
+				 */
+				Spacer(modifier = Modifier.size(8.dp))
+				Divider(color = MaterialTheme.colors.primary, thickness = 1.dp)
+				Spacer(modifier = Modifier.size(8.dp))
+
+				Column {
+						state.configuration?.components?.let {
+							Timeline(
+								components = it,
+								selectedComponent = null,
+								onSelectAComponent = fun(_: ConfigComponent) {},
+								onAddClicked = fun() {},
+								showAddButton = false
+							)
+					}
+				}
+
+				Spacer(modifier = Modifier.size(5.dp))
+
+				//extra runtime
+				Text( String.format("%.0f",	state.configuration?.getMinDuration( context,soundsDirUri))
+						+ "s - " +
+						String.format("%.0f",	state.configuration?.getMaxDuration(context,soundsDirUri))
+						+"s " + stringResource(id = R.string.ConfigInfoPerIteration) )
+
+				Spacer(modifier = Modifier.size(3.dp))
+				Divider(color = MaterialTheme.colors.primary, thickness = 1.dp)
+				Spacer(modifier = Modifier.size(8.dp))
+
+				//The timer component
+				Timer(viewModel, startServiceFunction, navController)
+			}
+		})
 }

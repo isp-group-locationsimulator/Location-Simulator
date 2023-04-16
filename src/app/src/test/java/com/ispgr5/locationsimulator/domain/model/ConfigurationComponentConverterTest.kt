@@ -11,23 +11,28 @@ class ConfigurationComponentConverterTest {
 
     private val testCompList: List<ConfigComponent> = listOf(
         Vibration(
+            id = 2,
+            name = "testVib",
             minStrength = 2,
             maxStrength = 5,
             minPause = 3,
             maxPause = 8,
+            minDuration = 3,
+            maxDuration = 4
         ),
         Sound(
+            id = 3,
             source = "soundSource",
-            minVolume = 3,
-            maxVolume = 7,
+            minVolume = 3f,
+            maxVolume = 7f,
             minPause = 1,
             maxPause = 9,
-            isRandom = true
+            name = "name1"
         )
     )
 
     private val testCompListStr: String = "[" +
-            "{\"comp_type\":\"Vibration\",\"minStrength\":2,\"maxStrength\":5,\"minPause\":3,\"maxPause\":8}," +
+            "{\"comp_type\":\"Vibration\",\"minStrength\":2,\"maxStrength\":5,\"minPause\":3,\"maxPause\":8,\"minDuration\":3,\"maxDuration\":4}," +
             "{\"comp_type\":\"Sound\",\"source\":\"soundSource\",\"minVolume\":3,\"maxVolume\":7,\"minPause\":1,\"maxPause\":9,\"isRandom\":true}" +
             "]"
 
@@ -37,7 +42,10 @@ class ConfigurationComponentConverterTest {
     @ExperimentalSerializationApi
     @Test
     fun componentListToString() {
-        assertEquals(testCompListStr, ConfigurationComponentConverter().componentListToString(testCompList))
+        assertEquals(
+            testCompListStr,
+            ConfigurationComponentConverter().componentListToString(testCompList)
+        )
     }
 
     /**
@@ -46,6 +54,9 @@ class ConfigurationComponentConverterTest {
     @ExperimentalSerializationApi
     @Test
     fun componentStrToComponentList() {
-        assertEquals(testCompList, ConfigurationComponentConverter().componentStrToComponentList(testCompListStr))
+        assertEquals(
+            testCompList,
+            ConfigurationComponentConverter().componentStrToComponentList(testCompListStr)
+        )
     }
 }

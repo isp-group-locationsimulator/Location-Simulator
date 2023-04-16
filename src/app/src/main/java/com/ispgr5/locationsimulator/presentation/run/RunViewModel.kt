@@ -10,14 +10,14 @@ import javax.inject.Inject
 @HiltViewModel
 class RunViewModel @Inject constructor() : ViewModel() {
 
-    /**
-     * handles ui Events
-     */
-    fun onEvent(event: RunEvent) {
-        when (event) {
-            is RunEvent.StopClicked -> {
-                event.stopServiceFunction()
-            }
-        }
-    }
+	/**
+	 * Handles UI Events
+	 */
+	fun onEvent(event: RunEvent) {
+		when (event) {
+			is RunEvent.StopClicked -> {
+				event.stopServiceFunction()
+			}
+		}
+	}
 }

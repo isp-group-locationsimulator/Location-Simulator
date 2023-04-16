@@ -7,8 +7,9 @@ import com.ispgr5.locationsimulator.domain.model.Configuration
  * A list of Configurations, that is empty by default
  */
 data class SelectScreenState(
-    val configurations: List<Configuration> = emptyList(),
-    val toggledConfiguration : Configuration? = null,
-    val isInDeleteMode: Boolean = false,
-    val selectedConfigurationForDeletion: Configuration? = null
+	val configurations: List<Configuration> = emptyList(),
+	val toggledConfiguration: Configuration? = null,
+	val isInDeleteMode: Boolean = false,
+	val selectedConfigurationForDeletion: Configuration? = null,
+	val configurationsWithErrors: List<Configuration> = emptyList()
 )

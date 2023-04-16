@@ -1,5 +1,6 @@
 package com.ispgr5.locationsimulator.domain.model
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
@@ -7,4 +8,7 @@ import kotlinx.serialization.Serializable
  * just here to create List<ConfigComponent>
  */
 @Serializable
-abstract class ConfigComponent
+abstract class ConfigComponent {
+	@SerialName("id") abstract val id: Int
+	abstract fun copy(): ConfigComponent
+}

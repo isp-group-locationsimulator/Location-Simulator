@@ -7,5 +7,5 @@ import com.ispgr5.locationsimulator.domain.model.Configuration
  * The Selected Configuration
  */
 data class DelayScreenState(
-    val configuration: Configuration? = null
+	val configuration: Configuration? = null
 )

@@ -9,11 +9,28 @@ import kotlinx.coroutines.flow.Flow
  */
 interface ConfigurationRepository {
 
-    fun getConfigurations(): Flow<List<Configuration>>
+	/**
+	 * reads the Database and return the List of Configurations
+	 */
+	fun getConfigurations(): Flow<List<Configuration>>
 
-    suspend fun getConfigurationById(id: Int): Configuration?
+	/**
+	 * reads the Database und returns the Configuration with the given id else null will be returned
+	 */
+	suspend fun getConfigurationById(id: Int): Configuration?
 
-    suspend fun insertConfiguration(configuration: Configuration)
+	/**
+	 * inserts a Configuration into the Database
+	 */
+	suspend fun insertConfiguration(configuration: Configuration)
 
-    suspend fun deleteConfiguration(configuration: Configuration)
+	/**
+	 * deletes the provided Configuration from Database
+	 */
+	suspend fun deleteConfiguration(configuration: Configuration)
+
+	/**
+	 * reads the Database and returns the Configurations, that are marked as favorite
+	 */
+	fun getFavoriteConfigurations(): Flow<List<Configuration>>
 }
