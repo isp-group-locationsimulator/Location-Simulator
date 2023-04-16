@@ -98,15 +98,6 @@ Wenn nicht, kam es zurück zu Doing.
 
 
 ## Arbeitsbericht
-Hier soll in kurzen Absätzen beschreiben werden, was alles pro Woche für das Projekt gemacht wurde.
-Als Hilfestellung können folgende Fragen dienen:
-- Was wurde gemacht?
-- Wie wurde dabei vorgegangen?
-- Gab es Erkenntnisse?
-- Gab es Fehlschläge?
-
-Die Beschreibung erfolgt gemeinsam in der Gruppe und soll Einblicke in die Fortschritte des Projektes geben.
-Als mögliche Unterteilung habe ich die einzelnen Kalenderwochen vorgeschlagen, dies kann aber beliebig abgeändert werden.
 
 ### Projektwoche 1 (21.10 - 27.10)
 Wir haben uns als Team kennengelernt und erste Termine geplant.
