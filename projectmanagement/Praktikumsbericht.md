@@ -23,9 +23,6 @@ Tabellarische Auflistung aller Gruppenmitglieder inklusive des angestrebten Modu
 | Steffen Marbach | Erweitertes Bachelorprojekt |
 
 ## Beschreibung
-Hier soll das Projekt kurz in einem Fließtext beschreiben werden.
-Maximal 100 Wörter.
-
 Dieses Projekt befasst sich mit der Entwicklung eines Ortungssimulators als App.
 Genau bedeutet dies, dass die App in der Lage sein soll, Vibrationen und Töne abzugeben, mit denen die Bergung von Personen geübt werden kann.
 Diese Geräusche sollen eingerichtet und randomisiert werden können, um die Realität möglichst gut wiederzugeben.
@@ -204,10 +201,7 @@ Außerdem haben wir generelles Bugfixing betrieben und kleinere Issues abgearbei
 Wir haben das Projekt in einen auslieferbaren Stand gebracht und die Endpräsentation mit den Kunden abgeliefert.
 
 ### Projektwoche 26 (14.04 – 20.04)
-
+Wir haben das die Abschlusspräsentation mit Leucker vorbereitet und gehalten.
 
 ## Abgabetermin Dokumentation
 Abgabetermin ist zur Abschlusspräsentation bei Herr Prof. M. Leucker 17. April 2023.
-
-Der Praktikumsbericht soll **maximal** 5 Seiten (oder 8250 Wörter) umfassen.
-
