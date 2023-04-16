@@ -33,7 +33,7 @@ Die App soll mindestens eine Stunde lang laufen, ohne, dass mit dem Handy intera
 
 
 ## Projektplan
-Ausgehend vom Lasten- bzw. Pflichtenheft soll eine zeitliche Einteilung der Arbeitspakete über die Projektlaufzeit erfolgen. Diese soll in der Gantt Chart Vorlage aus Moodle erfolgen. Dies kann zum Ende des Projektes im Git-Lab mit Hochgeladen, sowie hier als Screenshot eingefügt werden.
+![Gantt-Chart des Projekts](Gantt.png)
 
 
 ## Vorgehen
