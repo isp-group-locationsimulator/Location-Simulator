@@ -53,7 +53,10 @@ fun InfoScreen(
 				Text(text = stringResource(id = R.string.infoscreen_support), fontSize = 30.sp)
 				Text(text = stringResource(id = R.string.isp), textAlign = TextAlign.Center)
 				Text(text = stringResource(id = R.string.university))
+				Spacer(modifier = Modifier.height(5.dp))
 				Text(text = "Juljan Bouchagiar")
+				Text(text = "Joshua Wiedenkopf")
+				Text(text = "Jan Matyssek")
 				Image(
 					painter = painterResource(id = R.drawable.logo_isp),
 					contentDescription = "ISP Logo"
