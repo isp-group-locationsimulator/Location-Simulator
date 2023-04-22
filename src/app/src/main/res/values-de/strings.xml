@@ -73,5 +73,6 @@
     <string name="DefaultSound">Standard Sound</string>
     <string name="infoscreen_license">Lizenz</string>
     <string name="infoscreen_ownLicense">Diese App ist unter der Apache 2.0 Lizenz veröffentlicht.</string>
-    <string name="infoscreen_usingLicense">Diese App nutzt Icons, die unter der Apache 2.0 Lizenz und unter der MIT Lizenz veröffentlich wurden.</string>
+    <string name="infoscreen_usingLicense">Diese App nutzt Icons, die unter der Apache 2.0 Lizenz und unter der MIT Lizenz veröffentlicht wurden.</string>
+    <string name="Disclaimer">Diese Anwendung ist nur für übungszwecke gedacht. Sie ist für keinerlei realen Einsatz gedacht und es wird keinerlei Haftung für eventuell aufgetretene Schäden übernommen.</string>
 </resources>

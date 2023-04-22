@@ -65,6 +65,10 @@ fun InfoScreen(
 				Text(text = stringResource(id = R.string.infoscreen_license), fontSize = 30.sp)
 				Text(text = stringResource(id = R.string.infoscreen_ownLicense), textAlign = TextAlign.Center)
 				Text(text = stringResource(id = R.string.infoscreen_usingLicense), textAlign = TextAlign.Center)
+
+				Spacer(modifier = Modifier.height(30.dp))
+				Text(text = "Disclaimer", fontSize = 30.sp)
+				Text(text = stringResource(id = R.string.Disclaimer), textAlign = TextAlign.Center)
 			}
 
 		}
