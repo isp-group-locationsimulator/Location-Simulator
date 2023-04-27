@@ -55,7 +55,7 @@ fun InfoScreen(
 				Text(text = stringResource(id = R.string.university))
 				Spacer(modifier = Modifier.height(5.dp))
 				Text(text = "Juljan Bouchagiar")
-				Text(text = "Joshua Wiedenkopf")
+				Text(text = "Joshua Wiedekopf")
 				Text(text = "Jan Matyssek")
 				Image(
 					painter = painterResource(id = R.drawable.logo_isp),

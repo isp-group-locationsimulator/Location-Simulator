@@ -2,7 +2,7 @@
 ## Kunden
 | Name | E-Mailadresse |
 | ------ | ------ |
-| Joshua Wiedenkopf | j.wiedekopf@uni-luebeck.de |
+| Joshua Wiedekopf | j.wiedekopf@uni-luebeck.de |
 | Jan Matyssek | jan.matyssek@rwth-aachen.de |
 
 ## Mentor
