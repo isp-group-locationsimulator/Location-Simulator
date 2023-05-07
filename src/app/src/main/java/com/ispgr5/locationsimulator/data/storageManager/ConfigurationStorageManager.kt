@@ -3,6 +3,7 @@ package com.ispgr5.locationsimulator.data.storageManager
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ShareCompat
@@ -49,7 +50,16 @@ class ConfigurationStorageManager(
      * replace special characters in the configuration name (limiting to ASCII), and limit it to 8 chars, so the filename doesn't get too long
      */
     private fun slugifyConfigurationName(configuration: Configuration) =
-        Slugify.builder().build().slugify(configuration.name).take(8).trimEnd('-').trim()
+        when (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            // Slugify uses the Optional class, added only in API 24
+            true -> Slugify.builder().build().slugify(configuration.name).take(8).trimEnd('-')
+                .trim()
+
+            else -> configuration.name.filter { c ->
+                c >= 0x20.toChar() && c < 0x7F.toChar()
+            }.take(8)
+        }
+
 
     /**
      * This function safes the given configuration into the external download folder
@@ -74,10 +84,15 @@ class ConfigurationStorageManager(
             .setType("text/json")
             .intent.apply {
                 action = Intent.ACTION_SEND
-                setDataAndType(contentUri, "text/json" )
+                setDataAndType(contentUri, "text/json")
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             }
-        context.startActivity(Intent.createChooser(shareIntent, context.getString(R.string.share_export_using)));
+        context.startActivity(
+            Intent.createChooser(
+                shareIntent,
+                context.getString(R.string.share_export_using)
+            )
+        );
     }
 
     private fun getConfigString(configuration: Configuration): String {
