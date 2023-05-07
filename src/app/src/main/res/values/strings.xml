@@ -3,7 +3,7 @@
     <string name="homescreen_btn_quickstart">quickstart</string>
     <string name="homescreen_btn_select_profile">Select Profile</string>
     <string name="select_btn_import_audio">Import Audio</string>
-    <string name="select_btn_profile_export">EXPORT</string>
+    <string name="select_btn_profile_share">SHARE</string>
     <string name="select_btn_profile_select">SELECT</string>
     <string name="select_btn_profile_delete">Delete</string>
     <string name="editTimeline_AddConfigComponentDialog_Question">What do you want to add?</string>
@@ -76,4 +76,5 @@
     <string name="infoscreen_ownLicense">This app is published under the Apache 2.0 license.</string>
     <string name="infoscreen_usingLicense">This app uses icons that were published under the Apache 2.0 license and under the MIT license.</string>
     <string name="Disclaimer">This application is intended for training purposes only. It is not intended for any real-world use and no liability is assumed for any damage that may occur.</string>
+    <string name="share_export_using">Share export using…</string>
 </resources>

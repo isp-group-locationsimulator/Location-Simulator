@@ -1,5 +1,6 @@
 package com.ispgr5.locationsimulator.presentation.select
 
+import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
@@ -81,7 +82,7 @@ class SelectViewModel @Inject constructor(
 				}
 			}
 			is SelectEvent.SelectedExportConfiguration -> {
-				event.configurationStorageManager.safeConfigurationToStorage(event.configuration)
+				event.configurationStorageManager.saveConfigurationToStorage(event.context, event.configuration)
 			}
 			is SelectEvent.FavoriteClicked -> {
 				val configurationListCopy = state.value.configurations.toMutableList()

@@ -38,7 +38,7 @@ android {
         jvmTarget = '1.8'
         //for OptIn ExperimentalAnimationApi
         freeCompilerArgs += [
-                "-Xopt-in=kotlin.RequiresOptIn"
+                "-opt-in=kotlin.RequiresOptIn"
         ]
     }
     buildFeatures {
@@ -134,4 +134,9 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.4.1'
     implementation 'androidx.preference:preference:1.2.0'
 
+    //date time handling on android <=26
+    implementation 'net.danlew:android.joda:2.12.5'
+
+    //transform strings to they can be exported in a filename
+    implementation 'com.github.slugify:slugify:3.0.4'
 }
