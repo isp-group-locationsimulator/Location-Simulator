@@ -18,7 +18,6 @@ import com.ispgr5.locationsimulator.core.util.TestTags
 import com.ispgr5.locationsimulator.data.storageManager.ConfigurationStorageManager
 import com.ispgr5.locationsimulator.presentation.settings.SettingsState
 import com.ispgr5.locationsimulator.presentation.universalComponents.TopBar
-import com.ispgr5.locationsimulator.presentation.util.Screen
 
 /**
  * The Edit Screen.

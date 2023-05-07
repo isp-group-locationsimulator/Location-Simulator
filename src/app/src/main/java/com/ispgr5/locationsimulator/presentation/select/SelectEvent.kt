@@ -1,5 +1,6 @@
 package com.ispgr5.locationsimulator.presentation.select
 
+import android.content.Context
 import com.ispgr5.locationsimulator.data.storageManager.ConfigurationStorageManager
 import com.ispgr5.locationsimulator.domain.model.Configuration
 
@@ -14,7 +15,8 @@ sealed class SelectEvent {
 	object SelectDeleteMode : SelectEvent()
 	data class SelectedExportConfiguration(
 		val configuration: Configuration,
-		val configurationStorageManager: ConfigurationStorageManager
+		val configurationStorageManager: ConfigurationStorageManager,
+		val context: Context
 	) : SelectEvent()
 
 	data class FavoriteClicked(val configuration: Configuration, val toaster: (String) -> Unit) :

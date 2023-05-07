@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -48,6 +49,8 @@ fun SelectScreen(
     var sizeOfDeletionConfiguration by remember { mutableStateOf(IntSize.Zero) }
     val notFound: String = stringResource(id = R.string.not_found)
 
+    val context = LocalContext.current
+
     Scaffold(
         topBar = {
             TopBar(navController, stringResource(id = R.string.ScreenSelect),
@@ -70,12 +73,11 @@ fun SelectScreen(
                     }
                 })
         },
-        content = {
-            Spacer(modifier = Modifier.height(it.calculateTopPadding()))
+        content = { padding ->
+            Spacer(modifier = Modifier.height(padding.calculateTopPadding()))
 
             Column(
-                modifier = Modifier
-                    .fillMaxSize()
+                modifier = Modifier.fillMaxSize()
             ) {
                 /**
                  * The add button
@@ -93,7 +95,7 @@ fun SelectScreen(
                         disabledContentColor = MaterialTheme.colors.primary.copy(alpha = ContentAlpha.disabled),
                     ),
                     modifier = Modifier
-                        .padding(15.dp,15.dp,15.dp,0.dp)
+                        .padding(15.dp, 15.dp, 15.dp, 0.dp)
                         .border(1.dp, MaterialTheme.colors.onSurface, RoundedCornerShape(6.dp))
                         .fillMaxWidth()
                         .heightIn(min = 55.dp)
@@ -173,7 +175,6 @@ fun SelectScreen(
                                             sizeOfDeletionConfiguration = it
                                         }
                                     }) {
-                                val toastString = stringResource(id = R.string.export_toast_message)
                                 OneConfigurationListMember(
                                     configuration = configuration,
                                     isToggled = configuration.id == state.toggledConfiguration?.id,
@@ -184,16 +185,28 @@ fun SelectScreen(
                                             )
                                         )
                                     },
-                                    onEditClicked = { navController.navigate(Screen.EditTimelineScreen.createRoute(configuration.id!!)) },
-                                    onSelectClicked = { navController.navigate(Screen.DelayScreen.createRoute(configuration.id!!))},
+                                    onEditClicked = {
+                                        navController.navigate(
+                                            Screen.EditTimelineScreen.createRoute(
+                                                configuration.id!!
+                                            )
+                                        )
+                                    },
+                                    onSelectClicked = {
+                                        navController.navigate(
+                                            Screen.DelayScreen.createRoute(
+                                                configuration.id!!
+                                            )
+                                        )
+                                    },
                                     onExportClicked = {
                                         viewModel.onEvent(
                                             SelectEvent.SelectedExportConfiguration(
                                                 configuration = configuration,
-                                                configurationStorageManager = configurationStorageManager
+                                                configurationStorageManager = configurationStorageManager,
+                                                context = context
                                             )
                                         )
-                                        toaster(toastString)
                                     },
                                     onDuplicateClicked = {
                                         viewModel.onEvent(
@@ -254,7 +267,7 @@ fun SelectScreen(
                         }
                         Spacer(modifier = Modifier.height(6.dp))
                     }
+                }
             }
-		}
-	})
+        })
 }
