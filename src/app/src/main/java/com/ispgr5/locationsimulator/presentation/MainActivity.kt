@@ -32,7 +32,7 @@ import androidx.navigation.navArgument
 import com.ispgr5.locationsimulator.data.storageManager.ConfigurationStorageManager
 import com.ispgr5.locationsimulator.data.storageManager.SoundStorageManager
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
-import com.ispgr5.locationsimulator.domain.model.ConfigurationComponentConverter
+import com.ispgr5.locationsimulator.domain.model.ConfigurationComponentRoomConverter
 import com.ispgr5.locationsimulator.presentation.delay.DelayScreen
 import com.ispgr5.locationsimulator.presentation.add.AddScreen
 import com.ispgr5.locationsimulator.presentation.editTimeline.EditTimelineScreen
@@ -230,7 +230,7 @@ class MainActivity : ComponentActivity() {
 				it.action = "START"
 				it.putExtra(
 					"config",
-					ConfigurationComponentConverter().componentListToString(config)
+					ConfigurationComponentRoomConverter().componentListToString(config)
 				)
 				it.putExtra("soundsDir", "$filesDir/Sounds/")
 				it.putExtra("randomOrderPlayback", randomOrderPlayback.toString())

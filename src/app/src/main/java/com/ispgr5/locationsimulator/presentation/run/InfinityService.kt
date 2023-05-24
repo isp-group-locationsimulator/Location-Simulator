@@ -9,7 +9,7 @@ import android.util.Log
 import android.widget.Toast
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
-import com.ispgr5.locationsimulator.domain.model.ConfigurationComponentConverter
+import com.ispgr5.locationsimulator.domain.model.ConfigurationComponentRoomConverter
 import com.ispgr5.locationsimulator.domain.model.Sound
 import com.ispgr5.locationsimulator.domain.model.Vibration
 import com.ispgr5.locationsimulator.presentation.MainActivity
@@ -72,7 +72,7 @@ class InfinityService : Service() {
 	@OptIn(ExperimentalSerializationApi::class)
 	private fun changeConfig(config: String?) {
 		if (config != null) {
-			this.config = ConfigurationComponentConverter().componentStrToComponentList(config)
+			this.config = ConfigurationComponentRoomConverter().componentStrToComponentList(config)
 		}
 	}
 

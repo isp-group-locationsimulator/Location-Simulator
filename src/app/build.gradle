@@ -5,6 +5,7 @@ plugins {
     id 'dagger.hilt.android.plugin'
     //kotlin-kapt should be the last plugin in list for no warning with dagger plugin
     id 'kotlin-kapt'
+    id 'com.google.devtools.ksp'
 }
 
 android {
@@ -104,11 +105,11 @@ dependencies {
 
 
     //room
-    implementation "androidx.room:room-runtime:2.5.0"
-    kapt "androidx.room:room-compiler:2.5.0"
-    implementation "androidx.room:room-ktx:2.5.0"
+    implementation "androidx.room:room-runtime:2.5.1"
+    ksp "androidx.room:room-compiler:2.5.1"
+    implementation "androidx.room:room-ktx:2.5.1"
     // serialization to store subclasses in database
-    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.2"
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1"
 
     //Dagger - Hilt
     implementation "com.google.dagger:hilt-android:2.44"
@@ -126,7 +127,7 @@ dependencies {
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
 
-    implementation 'com.google.code.gson:gson:2.10.1'
+    //implementation 'com.google.code.gson:gson:2.10.1'
 
     //for Base64 de and encoding
     implementation 'com.google.guava:guava:29.0-jre'
@@ -137,6 +138,6 @@ dependencies {
     //date time handling on android <=26
     implementation 'net.danlew:android.joda:2.12.5'
 
-    //transform strings to they can be exported in a filename
+    //transform strings to they can be safely exported in a filename
     implementation 'com.github.slugify:slugify:3.0.4'
 }

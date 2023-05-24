@@ -7,7 +7,7 @@ import org.junit.Test
 /**
  * Test class for the Configuration Component Converter
  */
-class ConfigurationComponentConverterTest {
+class ConfigurationComponentRoomConverterTest {
 
     private val testCompList: List<ConfigComponent> = listOf(
         Vibration(
@@ -44,7 +44,7 @@ class ConfigurationComponentConverterTest {
     fun componentListToString() {
         assertEquals(
             testCompListStr,
-            ConfigurationComponentConverter().componentListToString(testCompList)
+            ConfigurationComponentRoomConverter().componentListToString(testCompList)
         )
     }
 
@@ -56,7 +56,7 @@ class ConfigurationComponentConverterTest {
     fun componentStrToComponentList() {
         assertEquals(
             testCompList,
-            ConfigurationComponentConverter().componentStrToComponentList(testCompListStr)
+            ConfigurationComponentRoomConverter().componentStrToComponentList(testCompListStr)
         )
     }
 }
