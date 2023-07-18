@@ -9,19 +9,24 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ShareCompat
 import androidx.core.content.FileProvider
 import com.github.slugify.Slugify
-import com.google.gson.GsonBuilder
 import com.ispgr5.locationsimulator.R
-import com.ispgr5.locationsimulator.domain.model.*
+import com.ispgr5.locationsimulator.domain.model.ConfigComponent
+import com.ispgr5.locationsimulator.domain.model.Configuration
+import com.ispgr5.locationsimulator.domain.model.SoundConverter
 import com.ispgr5.locationsimulator.domain.useCase.ConfigurationUseCases
 import com.ispgr5.locationsimulator.presentation.MainActivity
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import org.joda.time.Instant
 import org.joda.time.format.DateTimeFormatterBuilder
-import java.io.*
+import java.io.BufferedReader
+import java.io.File
+import java.io.FileOutputStream
+import java.io.InputStreamReader
 
 const val TAG = "ConfStorageManager"
 const val EXPORT_INTERNAL_PATH = "exports"
@@ -50,12 +55,10 @@ class ConfigurationStorageManager(
     private val mainActivity: MainActivity, private val soundStorageManager: SoundStorageManager
 ) {
 
-    private val gson by lazy {
-        GsonBuilder().apply {
-            setPrettyPrinting()
-            registerTypeAdapter(Sound::class.java, ConfigurationComponentGsonConverter())
-            registerTypeAdapter(Vibration::class.java, ConfigurationComponentGsonConverter())
-        }.create()
+    private val prettyJson by lazy {
+        Json {
+            prettyPrint = true
+        }
     }
 
     /***********************************************\
@@ -113,9 +116,10 @@ class ConfigurationStorageManager(
             }
         context.startActivity(
             Intent.createChooser(
-                shareIntent, context.getString(R.string.share_export_using)
+                shareIntent,
+                context.getString(R.string.share_export_using)
             )
-        );
+        )
     }
 
     private fun getConfigString(configuration: Configuration): String {
@@ -126,14 +130,14 @@ class ConfigurationStorageManager(
             configurationComponents = configuration.components,
             sounds = serializeSounds(configuration)
         )
-        return gson.toJson(serializer)
+        return prettyJson.encodeToString(serializer)
     }
 
     private fun serializeSounds(configuration: Configuration): List<ConfigurationSerializer.SoundHelp> {
         val mappedNames = mutableListOf<String>()
         return configuration.components.mapNotNull { confComp ->
             when (confComp) {
-                is Sound -> {
+                is ConfigComponent.Sound -> {
                     //look up if this sound is already in the soundList
                     if (mappedNames.contains(confComp.source)) {
                         return@mapNotNull null
@@ -148,6 +152,7 @@ class ConfigurationStorageManager(
                         audioAsBase64String
                     )
                 }
+
                 else -> null
             }
         }
@@ -169,40 +174,30 @@ class ConfigurationStorageManager(
      */
     fun pickFileAndSafeToDatabase(configurationUseCases: ConfigurationUseCases) {
         this.configurationUseCases = configurationUseCases
-        readFile.launch(listOf("*/*").toTypedArray())
+        readFile.launch(listOf("application/*").toTypedArray())
     }
 
     /**
      * This variable lets us read a file that we choose and store the read Configuration into Database
      */
-    @OptIn(DelicateCoroutinesApi::class, ExperimentalSerializationApi::class)
+    @OptIn(DelicateCoroutinesApi::class)
     private val readFile =
         //open file picker
         mainActivity.registerForActivityResult(ActivityResultContracts.OpenDocument()) { result: Uri? ->
             result?.let { fileUri ->
 
-                val fileContent: String? = try {
+                val fileContent: String = try {
                     readFileFromUri(fileUri)
                 } catch (exception: Exception) {
                     //TODO tell user there was a problem by reading the file
                     return@let
                 }
 
-                val deserialized = gson.fromJson(fileContent, ConfigurationSerializer::class.java)
-                /*val jsonObj = JSONObject(fileContent)
-
-                //read the soundList(Sounds that are needed for this configuration)
-                val soundListJsonString: String = jsonObj.get("sounds") as String
-                val soundList = Gson().fromJson(soundListJsonString, Array<ConfigurationSerializer.SoundHelp>::class.java)
-
-                //read the configuration components(Sounds and Vibrations)
-                var components: List<ConfigComponent> =
-                    ConfigurationComponentConverter().componentStrToComponentList(
-                        jsonObj.get("configurationComponents") as String
-                    )*/
+                val deserialized = Json.decodeFromString<ConfigurationSerializer>(fileContent)
 
                 //Edit the sound names in configuration components List, when the Sound already exist
-                val components = editComponentList(deserialized.configurationComponents, deserialized.sounds)
+                val components =
+                    editComponentList(deserialized.configurationComponents, deserialized.sounds)
 
                 //Store to Database
                 GlobalScope.launch {
@@ -237,8 +232,8 @@ class ConfigurationStorageManager(
         //not the name. To avoid identical names being present in the configuration screen, the app could
         //handle name collisions by adding a (1) suffix or something.
         for (i in compList.indices) {
-            if (compList[i] is Sound) {
-                val soundComp = compList[i] as Sound
+            if (compList[i] is ConfigComponent.Sound) {
+                val soundComp = compList[i] as ConfigComponent.Sound
                 //extract this sound name and find it in the sound list
                 val soundNameWithEnding: String = soundComp.source
                 val soundHelpObject: ConfigurationSerializer.SoundHelp? =

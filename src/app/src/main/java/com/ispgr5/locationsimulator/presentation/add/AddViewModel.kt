@@ -4,9 +4,9 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 import com.ispgr5.locationsimulator.domain.model.Configuration
 import com.ispgr5.locationsimulator.domain.model.InvalidConfigurationException
-import com.ispgr5.locationsimulator.domain.model.Vibration
 import com.ispgr5.locationsimulator.domain.useCase.ConfigurationUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -53,7 +53,7 @@ class AddViewModel @Inject constructor(
 								randomOrderPlayback = _state.value.randomOrderPlayback,
 								description = _state.value.description,
 								components = listOf(
-									Vibration(
+									ConfigComponent.Vibration(
 										id = 1,
 										name = defaultValues.defaultNameVibration,
 										minStrength = defaultValues.minStrengthVibration,
@@ -63,7 +63,7 @@ class AddViewModel @Inject constructor(
 										minDuration = defaultValues.minDurationVibration,
 										maxDuration = defaultValues.maxDurationVibration
 									),
-									Vibration(
+									ConfigComponent.Vibration(
 										id = 2,
 										name = defaultValues.defaultNameVibration,
 										minStrength = defaultValues.minStrengthVibration,

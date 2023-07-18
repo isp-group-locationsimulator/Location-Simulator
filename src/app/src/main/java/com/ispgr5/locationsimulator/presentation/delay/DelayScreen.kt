@@ -34,13 +34,15 @@ fun DelayScreen(
 	navController: NavController,
 	viewModel: DelayViewModel = hiltViewModel(),
 	startServiceFunction: (List<ConfigComponent>, Boolean) -> Unit,
-	context : Context, //context needed for calculating Sound Length
-	soundsDirUri : String //the sounds Directory Uri  needed for calculating Sound Length
+	context: Context, //context needed for calculating Sound Length
+	soundsDirUri: String, //the sounds Directory Uri  needed for calculating Sound Length
+	scaffoldState: ScaffoldState
 ) {
 	//The state from viewmodel
 	val state = viewModel.state.value
 
 	Scaffold(
+		scaffoldState = scaffoldState,
 		topBar = { TopBar(navController, stringResource(id = R.string.ScreenDelay)) },
 		content = {
 			Spacer(modifier = Modifier.height(it.calculateTopPadding()))

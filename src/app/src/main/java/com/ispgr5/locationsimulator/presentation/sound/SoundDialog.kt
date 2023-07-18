@@ -2,6 +2,7 @@ package com.ispgr5.locationsimulator.presentation.sound
 
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
+import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
@@ -15,7 +16,11 @@ import com.ispgr5.locationsimulator.R
  * Dialog for giving the recorded audio file a name
  */
 @Composable
-fun SoundDialog(popUpState: State<Boolean>, onDismiss: (String) -> Unit) {
+fun SoundDialog(
+    popUpState: State<Boolean>,
+    scaffoldState: ScaffoldState,
+    onDismiss: (String) -> Unit
+) {
 	if (popUpState.value) {
 		val text = remember { mutableStateOf("") }
 		val textLength = remember { mutableStateOf(0) }

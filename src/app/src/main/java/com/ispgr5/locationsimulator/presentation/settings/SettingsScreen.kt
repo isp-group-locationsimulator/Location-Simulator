@@ -39,6 +39,7 @@ import com.ispgr5.locationsimulator.presentation.universalComponents.TopBar
 fun SettingsScreen(
     navController: NavController,
     viewModel: SettingsViewModel = hiltViewModel(),
+    scaffoldState: ScaffoldState,
     saveDefaultValuesFunction: (state : State<SettingsState>) -> Unit,
     getDefaultValuesFunction : () -> SettingsState
 ) {
@@ -61,6 +62,7 @@ fun SettingsScreen(
     state.defaultNameVibration = getDefaultValuesFunction().defaultNameVibration
 
     Scaffold(
+        scaffoldState = scaffoldState,
         topBar = { TopBar(navController, stringResource(id = R.string.ScreenSettings)) },
         content = {
             Spacer(modifier = Modifier.height(it.calculateTopPadding()))
@@ -150,6 +152,7 @@ fun SettingsScreen(
                                     LocalContext.current.getSystemService(Vibrator::class.java)
                                 } else {
                                     // Use the deprecated method to get the Vibrator service
+                                    @Suppress("DEPRECATION")
                                     LocalContext.current.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
                                 }
                                 if (Build.VERSION.SDK_INT >= 26 && vibrator.hasAmplitudeControl()) {

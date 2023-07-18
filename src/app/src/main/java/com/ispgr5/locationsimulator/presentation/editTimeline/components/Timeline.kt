@@ -16,7 +16,6 @@ import androidx.compose.ui.unit.dp
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.core.util.TestTags
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
-import com.ispgr5.locationsimulator.domain.model.Sound
 
 /**
  * Compose to show the Timeline of a Configuration
@@ -104,7 +103,7 @@ fun TimelineItem(
 			modifier = Modifier.padding(2.dp)
 		) {
 			Icon(
-				painter = if (configItem is Sound) {
+				painter = if (configItem is ConfigComponent.Sound) {
 					painterResource(id = R.drawable.audionouse2)
 				} else {
 					painterResource(id = R.drawable.ic_baseline_vibration_24)

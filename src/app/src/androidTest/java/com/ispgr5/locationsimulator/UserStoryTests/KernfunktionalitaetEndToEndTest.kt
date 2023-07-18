@@ -2,6 +2,7 @@ package com.ispgr5.locationsimulator.UserStoryTests
 
 import android.annotation.SuppressLint
 import androidx.activity.compose.setContent
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
@@ -14,7 +15,6 @@ import com.ispgr5.locationsimulator.ui.theme.ThemeState
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.UninstallModules
-import okhttp3.internal.wait
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -42,8 +42,15 @@ class KernfunktionalitaetEndToEndTest {
             composeRule.activity.setContent {
                 val navController = rememberNavController()
                 val themeState = mutableStateOf(ThemeState(isDarkTheme = false))
+                val scaffoldState = rememberScaffoldState()
+
                 LocationSimulatorTheme(themeState) {
-                    composeRule.activity.NavigationAppHost(navController,themeState)
+                    composeRule.activity.NavigationAppHost(
+                        navController = navController,
+                        themeState = themeState,
+                        scaffoldState = scaffoldState,
+                        makeSnackbar = {}
+                    )
                 }
             }
         }
@@ -55,71 +62,71 @@ class KernfunktionalitaetEndToEndTest {
     zwischen Vibrationsintervallen einstellen können, für mindestens ein Muster
      */
     @Test
-    fun K5_create_and_play_Configuration(){
+    fun K5_create_and_play_Configuration() {
 
-            //in Home Screen go to select Config page
-            composeRule.onNodeWithTag(TestTags.HOME_APPNAME).assertIsDisplayed()
-            composeRule.onNodeWithTag(TestTags.HOME_SELECT_CONFIG_BUTTON).assertIsDisplayed()
-            composeRule.onNodeWithTag(TestTags.HOME_SELECT_CONFIG_BUTTON).performClick()
+        //in Home Screen go to select Config page
+        composeRule.onNodeWithTag(TestTags.HOME_APPNAME).assertIsDisplayed()
+        composeRule.onNodeWithTag(TestTags.HOME_SELECT_CONFIG_BUTTON).assertIsDisplayed()
+        composeRule.onNodeWithTag(TestTags.HOME_SELECT_CONFIG_BUTTON).performClick()
 
-            //in Select Config Screen
+        //in Select Config Screen
 
-            //Check if add config Button exists
-            composeRule.onNodeWithTag(TestTags.SELECT_ADD_BUTTON).assertIsDisplayed()
-            //click on Add Config Button
-            composeRule.onNodeWithTag(TestTags.SELECT_ADD_BUTTON).performClick()
-
-
-            /**Eine neue Konfiguration wird erstellt**/
-            //in Add Screen
-
-            //add Config
-            val name = "TestName1"
-            val description = "TestDescription1"
-
-            composeRule.onNodeWithTag(TestTags.ADD_NAME_TEXTINPUT).performTextInput(name)
-            composeRule.onNodeWithTag(TestTags.ADD_DESCRIPTION_TEXTINPUT).performTextInput(description)
-            composeRule.onNodeWithTag(TestTags.ADD_SAVE_BUTTON).performClick()
-
-            //in Select Config Screen
-
-            /**Es wird überprüft, ob die erstellte Konfiguration korrekt zur Auswahl angezeigt wird.**/
-             //select for editing
-            composeRule.onNodeWithText(name).assertIsDisplayed()
-            composeRule.onNodeWithTag(TestTags.SELECT_CONFIG_BUTTON_PREFIX + name).performClick()
-            composeRule.onNodeWithText(description).assertIsDisplayed()
-            /** Die erstellte Konfiguration wird zum Bearbeiten ausgewählt.**/
-            composeRule.onNodeWithTag(TestTags.SELECT_CONFIG_BUTTON_EDIT_PREFIX + name).performClick()
-
-            //in Edit Screen
+        //Check if add config Button exists
+        composeRule.onNodeWithTag(TestTags.SELECT_ADD_BUTTON).assertIsDisplayed()
+        //click on Add Config Button
+        composeRule.onNodeWithTag(TestTags.SELECT_ADD_BUTTON).performClick()
 
 
-            /**Die erste Vibration wird in der Timeline ausgewählt.**/
-            composeRule.onAllNodesWithTag(TestTags.EDIT_CONFIG_ITEM)[0].performClick()
+        /**Eine neue Konfiguration wird erstellt**/
+        //in Add Screen
+
+        //add Config
+        val name = "TestName1"
+        val description = "TestDescription1"
+
+        composeRule.onNodeWithTag(TestTags.ADD_NAME_TEXTINPUT).performTextInput(name)
+        composeRule.onNodeWithTag(TestTags.ADD_DESCRIPTION_TEXTINPUT).performTextInput(description)
+        composeRule.onNodeWithTag(TestTags.ADD_SAVE_BUTTON).performClick()
+
+        //in Select Config Screen
+
+        /**Es wird überprüft, ob die erstellte Konfiguration korrekt zur Auswahl angezeigt wird.**/
+        //select for editing
+        composeRule.onNodeWithText(name).assertIsDisplayed()
+        composeRule.onNodeWithTag(TestTags.SELECT_CONFIG_BUTTON_PREFIX + name).performClick()
+        composeRule.onNodeWithText(description).assertIsDisplayed()
+        /** Die erstellte Konfiguration wird zum Bearbeiten ausgewählt.**/
+        composeRule.onNodeWithTag(TestTags.SELECT_CONFIG_BUTTON_EDIT_PREFIX + name).performClick()
+
+        //in Edit Screen
 
 
-            /**Die Länge der Vibration und der nachfolgende Pause der Vibration wird verändert.**/
+        /**Die erste Vibration wird in der Timeline ausgewählt.**/
+        composeRule.onAllNodesWithTag(TestTags.EDIT_CONFIG_ITEM)[0].performClick()
 
-            composeRule.onNodeWithTag(TestTags.EDIT_VIB_SLIDER_DURATION).performGesture { swipeRight() }
-            composeRule.onNodeWithTag(TestTags.EDIT_VIB_SLIDER_DURATION).performGesture { swipeRight() }
-            composeRule.onNodeWithTag(TestTags.EDIT_SLIDER_PAUSE).performGesture { swipeRight() }
-            composeRule.onNodeWithTag(TestTags.EDIT_SLIDER_PAUSE).performGesture { swipeRight() }
 
-            composeRule.onNodeWithTag(TestTags.TOP_BAR_BACK_BUTTON).performClick()
+        /**Die Länge der Vibration und der nachfolgende Pause der Vibration wird verändert.**/
 
-            // in select screen
-            /**Die erstellte Konfiguration wird zum Abspielen ausgwählt.**/
-            composeRule.onNodeWithTag(TestTags.SELECT_CONFIG_BUTTON_SELECT_PREFIX + name).performClick()
+        composeRule.onNodeWithTag(TestTags.EDIT_VIB_SLIDER_DURATION).performTouchInput { swipeRight() }
+        composeRule.onNodeWithTag(TestTags.EDIT_VIB_SLIDER_DURATION).performTouchInput { swipeRight() }
+        composeRule.onNodeWithTag(TestTags.EDIT_SLIDER_PAUSE).performTouchInput { swipeRight() }
+        composeRule.onNodeWithTag(TestTags.EDIT_SLIDER_PAUSE).performTouchInput { swipeRight() }
 
-            //in delay Screen
-            /**Die Konfiguration wird gestartet.**/
-            //swipe to bottom of Delay Screen so that Start Button is visible on smaller devices
-            composeRule.onNodeWithTag(TestTags.DELAY_MAIN_COLUMN).performGesture { swipeUp() }
-            composeRule.onNodeWithTag(TestTags.DELAY_START_BUTTON).performClick()
+        composeRule.onNodeWithTag(TestTags.TOP_BAR_BACK_BUTTON).performClick()
 
-            //in run screen
-            /** Das Abspielen wird gestoppt.**/
-            composeRule.onNodeWithTag(TestTags.RUN_END_BUTTON).performClick()
+        // in select screen
+        /**Die erstellte Konfiguration wird zum Abspielen ausgwählt.**/
+        composeRule.onNodeWithTag(TestTags.SELECT_CONFIG_BUTTON_SELECT_PREFIX + name).performClick()
+
+        //in delay Screen
+        /**Die Konfiguration wird gestartet.**/
+        //swipe to bottom of Delay Screen so that Start Button is visible on smaller devices
+        composeRule.onNodeWithTag(TestTags.DELAY_MAIN_COLUMN).performTouchInput { swipeUp() }
+        composeRule.onNodeWithTag(TestTags.DELAY_START_BUTTON).performClick()
+
+        //in run screen
+        /** Das Abspielen wird gestoppt.**/
+        composeRule.onNodeWithTag(TestTags.RUN_END_BUTTON).performClick()
     }
 
 

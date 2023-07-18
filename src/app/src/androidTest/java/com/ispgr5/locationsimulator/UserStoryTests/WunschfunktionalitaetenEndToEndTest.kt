@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.test.*
@@ -19,7 +20,6 @@ import com.ispgr5.locationsimulator.ui.theme.ThemeState
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.UninstallModules
-import junit.framework.Assert.assertFalse
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -44,8 +44,14 @@ class WunschfunktionalitaetenEndToEndTest {
             composeRule.activity.setContent {
                 val navController = rememberNavController()
                 val themeState = mutableStateOf(ThemeState(isDarkTheme = false))
+                val scaffoldState = rememberScaffoldState()
                 LocationSimulatorTheme(themeState) {
-                    composeRule.activity.NavigationAppHost(navController,themeState);
+                    composeRule.activity.NavigationAppHost(
+                        navController = navController,
+                        themeState = themeState,
+                        scaffoldState = scaffoldState,
+                        makeSnackbar = {}
+                    )
                 }
             }
         }
@@ -178,11 +184,13 @@ class WunschfunktionalitaetenEndToEndTest {
         /**Es wird überprüft, dass nun im System der Lightmdoe gesetzt ist.**/
         //check if light theme is setted in prefs.
         isDarkTheme = composeRule.activity.getSharedPreferences("prefs", ComponentActivity.MODE_PRIVATE).getBoolean("isDarkTheme", false)
-        assertFalse(isDarkTheme)
+        assert(!isDarkTheme)
         //check if screen is light
 
         /**Es wird überprüft, dass der Bildschirm nicht mehr dunkel ist.**/
-        assertFalse(isDark( composeRule.onNodeWithTag(TestTags.HOME_SELECT_CONFIG_BUTTON).onParent().captureToImage().asAndroidBitmap()))
+        isDark( composeRule.onNodeWithTag(TestTags.HOME_SELECT_CONFIG_BUTTON).onParent().captureToImage().asAndroidBitmap()).let { dark ->
+            assert(!dark)
+        }
     }
 
     /**
@@ -214,11 +222,13 @@ class WunschfunktionalitaetenEndToEndTest {
         /**Es wird überprüft, dass nun im System der Lightmdoe gesetzt ist.**/
         //check if light theme is setted in prefs.
         isDarkTheme = composeRule.activity.getSharedPreferences("prefs", ComponentActivity.MODE_PRIVATE).getBoolean("isDarkTheme", false)
-        assertFalse(isDarkTheme)
+        assert(!isDarkTheme)
         //check if screen is light
 
         /**Es wird überprüft, dass der Bildschirm nicht mehr dunkel ist.**/
-        assertFalse(isDark( composeRule.onNodeWithTag(TestTags.HOME_SELECT_CONFIG_BUTTON).onParent().captureToImage().asAndroidBitmap()))
+        isDark( composeRule.onNodeWithTag(TestTags.HOME_SELECT_CONFIG_BUTTON).onParent().captureToImage().asAndroidBitmap()).let { dark ->
+            assert(!dark)
+        }
     }
 
             /**

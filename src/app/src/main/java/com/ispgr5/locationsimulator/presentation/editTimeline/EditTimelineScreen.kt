@@ -30,14 +30,16 @@ import com.ispgr5.locationsimulator.presentation.util.Screen
  */
 @Composable
 fun EditTimelineScreen(
-	navController: NavController,
-	viewModel: EditTimelineViewModel = hiltViewModel() ,
-	getDefaultValuesFunction : () -> SettingsState
+    navController: NavController,
+    viewModel: EditTimelineViewModel = hiltViewModel(),
+    getDefaultValuesFunction: () -> SettingsState,
+    scaffoldState: ScaffoldState
 ) {
 	val state = viewModel.state.value
 	var showCustomDialogWithResult by remember { mutableStateOf(false) }
 
 	Scaffold(
+		scaffoldState = scaffoldState,
 		topBar = { TopBar(navController, stringResource(id = R.string.ScreenEdit),
 			extraActions = {
 				//The Add Button

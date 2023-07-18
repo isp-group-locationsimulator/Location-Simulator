@@ -7,8 +7,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ispgr5.locationsimulator.data.storageManager.SoundStorageManager
+import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 import com.ispgr5.locationsimulator.domain.model.Configuration
-import com.ispgr5.locationsimulator.domain.model.Sound
 import com.ispgr5.locationsimulator.domain.useCase.ConfigurationUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -21,7 +21,7 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
-	private val configurationUseCases: ConfigurationUseCases
+	configurationUseCases: ConfigurationUseCases
 ) : ViewModel() {
 
 	// The provided state for the View
@@ -80,7 +80,7 @@ class HomeScreenViewModel @Inject constructor(
 		for (conf in _state.value.favoriteConfigurations) {
 			var hasErrors = false
 			for (comp in conf.components) {
-				if (comp is Sound) {
+				if (comp is ConfigComponent.Sound) {
 					var existInKnownSounds = false
 					for (knownSound in knownSounds) {
 						if (comp.source == knownSound) {
@@ -116,7 +116,7 @@ class HomeScreenViewModel @Inject constructor(
 		val errors = mutableListOf<String>()
 		val knownSounds = soundStorageManager.getSoundFileNames()
 		for (comp in configuration.components) {
-			if (comp is Sound) {
+			if (comp is ConfigComponent.Sound) {
 				var exist = false
 				for (sound in knownSounds) {
 					if (comp.source == sound) {

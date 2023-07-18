@@ -4,6 +4,7 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
 import androidx.compose.material.Scaffold
+import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
@@ -26,15 +27,17 @@ import com.ispgr5.locationsimulator.presentation.universalComponents.TopBar
 @ExperimentalAnimationApi
 @Composable
 fun AddScreen(
-	navController: NavController,
-	viewModel: AddViewModel = hiltViewModel(),
-	configurationStorageManager: ConfigurationStorageManager,
-	getDefaultValuesFunction : () -> SettingsState
+    navController: NavController,
+    viewModel: AddViewModel = hiltViewModel(),
+    configurationStorageManager: ConfigurationStorageManager,
+    getDefaultValuesFunction: () -> SettingsState,
+    scaffoldState: ScaffoldState
 ) {
 	//The state from viewmodel
 	val state = viewModel.state.value
 
 	Scaffold(
+		scaffoldState = scaffoldState,
 		topBar = { TopBar(navController, stringResource(id = R.string.ScreenAdd)) },
 		content = {
 			Spacer(modifier = Modifier.height(it.calculateTopPadding()))

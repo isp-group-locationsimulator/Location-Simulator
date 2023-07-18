@@ -27,6 +27,7 @@ import com.ispgr5.locationsimulator.core.util.TestTags
 import com.ispgr5.locationsimulator.data.storageManager.ConfigurationStorageManager
 import com.ispgr5.locationsimulator.data.storageManager.SoundStorageManager
 import com.ispgr5.locationsimulator.presentation.select.components.OneConfigurationListMember
+import com.ispgr5.locationsimulator.presentation.universalComponents.SnackbarContent
 import com.ispgr5.locationsimulator.presentation.universalComponents.TopBar
 import com.ispgr5.locationsimulator.presentation.util.Screen
 
@@ -42,16 +43,21 @@ fun SelectScreen(
     viewModel: SelectViewModel = hiltViewModel(),
     configurationStorageManager: ConfigurationStorageManager,
     soundStorageManager: SoundStorageManager,
-    toaster: (String) -> Unit
+    scaffoldState: ScaffoldState,
+    makeSnackbar: (SnackbarContent) -> Unit
 ) {
     viewModel.updateConfigurationWithErrorsState(soundStorageManager = soundStorageManager)
     val state = viewModel.state.value
     var sizeOfDeletionConfiguration by remember { mutableStateOf(IntSize.Zero) }
     val notFound: String = stringResource(id = R.string.not_found)
+    val ok = stringResource(id = android.R.string.ok)
 
     val context = LocalContext.current
 
+
+
     Scaffold(
+        scaffoldState = scaffoldState,
         topBar = {
             TopBar(navController, stringResource(id = R.string.ScreenSelect),
                 extraActions = {
@@ -221,7 +227,13 @@ fun SelectScreen(
                                             configuration = configuration,
                                             soundStorageManager = soundStorageManager
                                         )) {
-                                            toaster("$error $notFound")
+                                            makeSnackbar(
+                                                SnackbarContent(
+                                                    text = "$error $notFound",
+                                                    actionLabel = ok,
+                                                    snackbarDuration = SnackbarDuration.Indefinite
+                                                )
+                                            )
                                         }
                                     },
                                     isFavorite = configuration.isFavorite,
@@ -229,7 +241,7 @@ fun SelectScreen(
                                         viewModel.onEvent(
                                             SelectEvent.FavoriteClicked(
                                                 configuration,
-                                                toaster
+                                                makeSnackbar
                                             )
                                         )
                                     }

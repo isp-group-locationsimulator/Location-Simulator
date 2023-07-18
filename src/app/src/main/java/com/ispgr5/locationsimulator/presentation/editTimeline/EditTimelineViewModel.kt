@@ -1,15 +1,14 @@
 package com.ispgr5.locationsimulator.presentation.editTimeline
 
-
-import android.content.Context
-import android.widget.Toast
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ispgr5.locationsimulator.domain.model.*
+import com.ispgr5.locationsimulator.domain.model.ConfigComponent
+import com.ispgr5.locationsimulator.domain.model.Configuration
+import com.ispgr5.locationsimulator.domain.model.InvalidConfigurationException
+import com.ispgr5.locationsimulator.domain.model.RangeConverter
 import com.ispgr5.locationsimulator.domain.useCase.ConfigurationUseCases
 import com.ispgr5.locationsimulator.presentation.settings.SettingsState
 import com.ispgr5.locationsimulator.presentation.util.Screen
@@ -40,7 +39,7 @@ class EditTimelineViewModel @Inject constructor(
                 viewModelScope.launch {
                     configurationUseCases.getConfiguration(configurationId)
                         ?.also { configuration ->
-                            var newSound: Sound? = null
+                            var newSound: ConfigComponent.Sound? = null
                             var components = configuration.components
 
 
@@ -53,9 +52,14 @@ class EditTimelineViewModel @Inject constructor(
                                     val maxPause =  savedStateHandle.get<Int>("maxPause")
 
                                     val componentsCopy = configuration.components.toMutableList()
-                                    newSound = Sound(
+                                    newSound = ConfigComponent.Sound(
                                         (componentsCopy.maxByOrNull { it.id }?.id ?: 0) + 1,
-                                        soundSource,soundSource, minVolume!!, maxVolume!!, minPause!!, maxPause!!
+                                        soundSource,
+                                        soundSource,
+                                        minVolume!!,
+                                        maxVolume!!,
+                                        minPause!!,
+                                        maxPause!!
                                     )
                                     componentsCopy.add(
                                         newSound!!
@@ -96,12 +100,13 @@ class EditTimelineViewModel @Inject constructor(
                 viewModelScope.launch {
                     var component = state.value.current!!.copy()
                     when (component) {
-                        is Sound -> {
+                        is ConfigComponent.Sound -> {
                             component = component.myCopy(
                                 minVolume = RangeConverter.transformPercentageToFactor(event.range.start),
                                 maxVolume = RangeConverter.transformPercentageToFactor(event.range.endInclusive)
                             )
                         }
+                        else -> return@launch
                     }
                     _state.value = _state.value.copy(
                         components = state.value.components.map { if (it === state.value.current) component else it },
@@ -113,15 +118,15 @@ class EditTimelineViewModel @Inject constructor(
                 if (state.value.current == null){return}
                 viewModelScope.launch {
                     var component = state.value.current!!.copy()
-                    when (component) {
-                        is Sound -> {
-                            component = (component as Sound).myCopy(
+                    component = when (component) {
+                        is ConfigComponent.Sound -> {
+                            (component as ConfigComponent.Sound).myCopy(
                                 minPause = RangeConverter.sToMs(event.range.start),
                                 maxPause = RangeConverter.sToMs(event.range.endInclusive)
                             )
                         }
-                        is Vibration -> {
-                            component = (component as Vibration).myCopy(
+                        is ConfigComponent.Vibration -> {
+                            (component as ConfigComponent.Vibration).myCopy(
                                 minPause = RangeConverter.sToMs(event.range.start),
                                 maxPause = RangeConverter.sToMs(event.range.endInclusive)
                             )
@@ -138,12 +143,13 @@ class EditTimelineViewModel @Inject constructor(
                 viewModelScope.launch {
                     var component = state.value.current!!.copy()
                     when (component) {
-                        is Vibration -> {
-                            component = (component as Vibration).myCopy(
+                        is ConfigComponent.Vibration -> {
+                            component = (component as ConfigComponent.Vibration).myCopy(
                                 minStrength = RangeConverter.floatToEightBitInt(event.range.start),
                                 maxStrength = RangeConverter.floatToEightBitInt(event.range.endInclusive)
                             )
                         }
+                        else -> return@launch
                     }
                     _state.value = _state.value.copy(
                         components = state.value.components.map { if (it === state.value.current) component else it },
@@ -156,12 +162,13 @@ class EditTimelineViewModel @Inject constructor(
                 viewModelScope.launch {
                     var component = state.value.current!!.copy()
                     when (component) {
-                        is Vibration -> {
-                            component = (component as Vibration).myCopy(
+                        is ConfigComponent.Vibration -> {
+                            component = (component as ConfigComponent.Vibration).myCopy(
                                 minDuration = RangeConverter.sToMs(event.range.start),
                                 maxDuration = RangeConverter.sToMs(event.range.endInclusive)
                             )
                         }
+                        else -> return@launch
                     }
                     _state.value = _state.value.copy(
                         components = state.value.components.map { if (it === state.value.current) component else it },
@@ -173,14 +180,15 @@ class EditTimelineViewModel @Inject constructor(
                 if (state.value.current == null){return}
                 viewModelScope.launch {
                     var component = state.value.current!!.copy()
-                    when (component) {
-                        is Vibration -> {
-                            component = (component as Vibration).myCopy(
+                    component = when (component) {
+                        is ConfigComponent.Vibration -> {
+                            (component as ConfigComponent.Vibration).myCopy(
                                 name = event.name
                             )
                         }
-                        is Sound -> {
-                            component = (component as Sound).myCopy(
+
+                        is ConfigComponent.Sound -> {
+                            (component as ConfigComponent.Sound).myCopy(
                                 name = event.name
                             )
                         }
@@ -199,7 +207,7 @@ class EditTimelineViewModel @Inject constructor(
             is EditTimelineEvent.AddVibration -> {
                 viewModelScope.launch {
                     val defaultValues: SettingsState = event.getDefaultValuesFunction()
-                    val vibration = Vibration(
+                    val vibration = ConfigComponent.Vibration(
                         id = (state.value.components.maxByOrNull { it.id }?.id ?: 0) + 1,
                         name = defaultValues.defaultNameVibration,
                         minStrength = defaultValues.minStrengthVibration,
@@ -282,14 +290,15 @@ class EditTimelineViewModel @Inject constructor(
                 viewModelScope.launch {
                     val componentsListCopy = state.value.components.toMutableList()
                     var component = state.value.current!!.copy()
-                    when (component) {
-                        is Vibration -> {
-                            component = (component as Vibration).myCopy(
+                    component = when (component) {
+                        is ConfigComponent.Vibration -> {
+                            (component as ConfigComponent.Vibration).myCopy(
                                 id = (componentsListCopy.maxByOrNull { it.id }?.id ?: 0) + 1
                             )
                         }
-                        is Sound -> {
-                            component = (component as Sound).myCopy(
+
+                        is ConfigComponent.Sound -> {
+                            (component as ConfigComponent.Sound).myCopy(
                                 id = (componentsListCopy.maxByOrNull { it.id }?.id ?: 0) + 1
                             )
                         }

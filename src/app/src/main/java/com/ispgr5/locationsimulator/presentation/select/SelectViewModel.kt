@@ -1,14 +1,13 @@
 package com.ispgr5.locationsimulator.presentation.select
 
-import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ispgr5.locationsimulator.data.storageManager.SoundStorageManager
+import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 import com.ispgr5.locationsimulator.domain.model.Configuration
-import com.ispgr5.locationsimulator.domain.model.Sound
 import com.ispgr5.locationsimulator.domain.useCase.ConfigurationUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -154,7 +153,7 @@ class SelectViewModel @Inject constructor(
 		for (conf in _state.value.configurations) {
 			var hasErrors = false
 			for (comp in conf.components) {
-				if (comp is Sound) {
+				if (comp is ConfigComponent.Sound) {
 					var existInKnownSounds = false
 					for (knownSound in knownSounds) {
 						if (comp.source == knownSound) {
@@ -189,7 +188,7 @@ class SelectViewModel @Inject constructor(
 		val errors = mutableListOf<String>()
 		val knownSounds = soundStorageManager.getSoundFileNames()
 		for (comp in configuration.components) {
-			if (comp is Sound) {
+			if (comp is ConfigComponent.Sound) {
 				var exist = false
 				for (sound in knownSounds) {
 					if (comp.source == sound) {
