@@ -78,12 +78,13 @@ fun SettingsScreen(
 
                 // The Pager
                 val pageCount = 2
-                val pagerState = rememberPagerState()
+                val pagerState = rememberPagerState {
+                    pageCount
+                }
 
                 HorizontalPager(
                     modifier = Modifier
                         .fillMaxSize(),
-                    pageCount = pageCount,
                     state = pagerState,
                 ) { page ->
 
