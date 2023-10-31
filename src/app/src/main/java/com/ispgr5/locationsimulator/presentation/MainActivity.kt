@@ -21,10 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -36,8 +33,8 @@ import com.ispgr5.locationsimulator.data.storageManager.ConfigurationStorageMana
 import com.ispgr5.locationsimulator.data.storageManager.SoundStorageManager
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 import com.ispgr5.locationsimulator.domain.model.ConfigurationComponentRoomConverter
-import com.ispgr5.locationsimulator.presentation.delay.DelayScreen
 import com.ispgr5.locationsimulator.presentation.add.AddScreen
+import com.ispgr5.locationsimulator.presentation.delay.DelayScreen
 import com.ispgr5.locationsimulator.presentation.editTimeline.EditTimelineScreen
 import com.ispgr5.locationsimulator.presentation.homescreen.HomeScreenScreen
 import com.ispgr5.locationsimulator.presentation.homescreen.InfoScreen
@@ -67,11 +64,19 @@ class MainActivity : ComponentActivity() {
     private var popUpState = mutableStateOf(false)
     private var recordedAudioUri: Uri? = null
 
+    companion object {
+        var snackbarContent: MutableState<SnackbarContent?> = mutableStateOf(null)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         soundStorageManager = SoundStorageManager(this@MainActivity)
         installFilesOnFirstStartup()
         configurationStorageManager =
-            ConfigurationStorageManager(this, soundStorageManager = soundStorageManager)
+            ConfigurationStorageManager(
+                mainActivity = this,
+                soundStorageManager = soundStorageManager,
+                context = this
+            )
         super.onCreate(savedInstanceState)
         val themeState = mutableStateOf(
             ThemeState(
@@ -90,24 +95,26 @@ class MainActivity : ComponentActivity() {
                 ) {
                     val navController = rememberNavController()
                     val scaffoldState = rememberScaffoldState()
-
-                    var snackbarContent by remember {
-                        mutableStateOf<SnackbarContent?>(null)
-                    }
                     LaunchedEffect(key1 = snackbarContent) {
-                        if (snackbarContent != null) {
-                            scaffoldState.snackbarHostState.showSnackbar(
-                                snackbarContent!!.text,
-                                snackbarContent!!.actionLabel,
-                                snackbarContent!!.snackbarDuration
+                        when (val snackbarValue = snackbarContent.value) {
+                            null -> return@LaunchedEffect
+                            else -> scaffoldState.snackbarHostState.showSnackbar(
+                                snackbarValue.text,
+                                snackbarValue.actionLabel,
+                                snackbarValue.snackbarDuration
                             )
                         }
 
                     }
                     val makeSnackbar: (SnackbarContent) -> Unit = { content ->
-                        snackbarContent = content
+                        snackbarContent.value = content
                     }
-                    NavigationAppHost(navController = navController, themeState, scaffoldState, makeSnackbar)
+                    NavigationAppHost(
+                        navController = navController,
+                        themeState,
+                        scaffoldState,
+                        makeSnackbar
+                    )
                 }
             }
         }
@@ -342,10 +349,6 @@ class MainActivity : ComponentActivity() {
         outputStream.close()
         inputStream?.close()
     }
-    /*
-        private val toastAMessage: (message: String) -> Unit = fun(message: String) {
-            Toast.makeText(this.applicationContext, message, Toast.LENGTH_SHORT).show()
-        }*/
 
     /**
      * This function installs the audio files that come with the app.

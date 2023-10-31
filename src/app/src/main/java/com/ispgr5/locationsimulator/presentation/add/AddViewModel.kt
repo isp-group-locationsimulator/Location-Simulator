@@ -17,73 +17,80 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class AddViewModel @Inject constructor(
-	private val configurationUseCases: ConfigurationUseCases,
+    private val configurationUseCases: ConfigurationUseCases,
 ) : ViewModel() {
 
-	//The provided state for the View
-	private val _state = mutableStateOf(AddScreenState())
-	val state: State<AddScreenState> = _state
+    //The provided state for the View
+    private val _state = mutableStateOf(AddScreenState())
+    val state: State<AddScreenState> = _state
 
-	/**
-	 * Handles UI Events
-	 */
-	fun onEvent(event: AddEvent) {
-		when (event) {
-			is AddEvent.EnteredName -> {
-				viewModelScope.launch {
-					_state.value = _state.value.copy(
-						name = event.name
-					)
-				}
-			}
-			is AddEvent.EnteredDescription -> {
-				viewModelScope.launch {
-					_state.value = _state.value.copy(
-						description = event.description
-					)
-				}
-			}
-			is AddEvent.SaveConfiguration -> {
-				viewModelScope.launch {
-					try {
-						val defaultValues = event.getDefaultValues()
-						configurationUseCases.addConfiguration(
-							Configuration(
-								name = _state.value.name,
-								randomOrderPlayback = _state.value.randomOrderPlayback,
-								description = _state.value.description,
-								components = listOf(
-									ConfigComponent.Vibration(
-										id = 1,
-										name = defaultValues.defaultNameVibration,
-										minStrength = defaultValues.minStrengthVibration,
-										maxStrength = defaultValues.maxStrengthVibration,
-										minPause = defaultValues.minPauseVibration,
-										maxPause = defaultValues.maxPauseVibration,
-										minDuration = defaultValues.minDurationVibration,
-										maxDuration = defaultValues.maxDurationVibration
-									),
-									ConfigComponent.Vibration(
-										id = 2,
-										name = defaultValues.defaultNameVibration,
-										minStrength = defaultValues.minStrengthVibration,
-										maxStrength = defaultValues.maxStrengthVibration,
-										minPause = defaultValues.minPauseVibration,
-										maxPause = defaultValues.maxPauseVibration,
-										minDuration = defaultValues.minDurationVibration,
-										maxDuration = defaultValues.maxDurationVibration
-									),
-								)
-							)
-						)
-					} catch (e: InvalidConfigurationException) {
-						print("Configuration Input is wrong")
-					}
-				}
-			}
-			is AddEvent.SelectedImportConfiguration -> {
-				event.configurationStorageManager.pickFileAndSafeToDatabase(configurationUseCases = configurationUseCases)
-			}
-		}
-	}
+    /**
+     * Handles UI Events
+     */
+    fun onEvent(
+        event: AddEvent
+    ) {
+        when (event) {
+            is AddEvent.EnteredName -> {
+                viewModelScope.launch {
+                    _state.value = _state.value.copy(
+                        name = event.name
+                    )
+                }
+            }
+
+            is AddEvent.EnteredDescription -> {
+                viewModelScope.launch {
+                    _state.value = _state.value.copy(
+                        description = event.description
+                    )
+                }
+            }
+
+            is AddEvent.SaveConfiguration -> {
+                viewModelScope.launch {
+                    try {
+                        val defaultValues = event.getDefaultValues()
+                        configurationUseCases.addConfiguration(
+                            Configuration(
+                                name = _state.value.name,
+                                randomOrderPlayback = _state.value.randomOrderPlayback,
+                                description = _state.value.description,
+                                components = listOf(
+                                    ConfigComponent.Vibration(
+                                        id = 1,
+                                        name = defaultValues.defaultNameVibration,
+                                        minStrength = defaultValues.minStrengthVibration,
+                                        maxStrength = defaultValues.maxStrengthVibration,
+                                        minPause = defaultValues.minPauseVibration,
+                                        maxPause = defaultValues.maxPauseVibration,
+                                        minDuration = defaultValues.minDurationVibration,
+                                        maxDuration = defaultValues.maxDurationVibration
+                                    ),
+                                    ConfigComponent.Vibration(
+                                        id = 2,
+                                        name = defaultValues.defaultNameVibration,
+                                        minStrength = defaultValues.minStrengthVibration,
+                                        maxStrength = defaultValues.maxStrengthVibration,
+                                        minPause = defaultValues.minPauseVibration,
+                                        maxPause = defaultValues.maxPauseVibration,
+                                        minDuration = defaultValues.minDurationVibration,
+                                        maxDuration = defaultValues.maxDurationVibration
+                                    ),
+                                )
+                            )
+                        )
+                    } catch (e: InvalidConfigurationException) {
+                        print("Configuration Input is wrong")
+                    }
+                }
+            }
+
+            is AddEvent.SelectedImportConfiguration -> {
+                event.configurationStorageManager.pickFileAndSafeToDatabase(
+                    configurationUseCases = configurationUseCases
+                )
+            }
+        }
+    }
 }

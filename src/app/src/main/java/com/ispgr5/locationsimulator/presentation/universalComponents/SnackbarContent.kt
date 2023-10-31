@@ -4,6 +4,6 @@ import androidx.compose.material.SnackbarDuration
 
 data class SnackbarContent(
     val text: String,
-    val actionLabel: String?,
-    val snackbarDuration: SnackbarDuration
+    val snackbarDuration: SnackbarDuration,
+    val actionLabel: String? = null
 )

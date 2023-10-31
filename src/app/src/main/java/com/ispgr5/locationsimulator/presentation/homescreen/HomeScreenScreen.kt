@@ -147,9 +147,9 @@ fun HomeScreenScreen(
                                             )) {
                                                 makeSnackbar(
                                                     SnackbarContent(
-                                                        "$error $notFound",
-                                                        ok,
-                                                        SnackbarDuration.Indefinite
+                                                        text = "$error $notFound",
+                                                        snackbarDuration = SnackbarDuration.Indefinite,
+                                                        actionLabel = ok,
                                                     )
                                                 )
                                             }

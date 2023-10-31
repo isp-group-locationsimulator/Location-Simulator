@@ -69,12 +69,19 @@
     <string name="config_save_error">Die Konfiguration hat einen fehler</string>
     <string name="vibrationStrengthNotSupported">Das Anpassen der Vibrationsstärke wird auf diesem Gerät nicht unterstützt</string>
     <string name="DialogConfirmation">OK</string>
-    <string name="DefaultVibration">Standard Vibration</string>
-    <string name="DefaultSound">Standard Sound</string>
+    <string name="DefaultVibration">Standard-Vibration</string>
+    <string name="DefaultSound">Standard-Sound</string>
     <string name="infoscreen_license">Lizenz</string>
     <string name="infoscreen_ownLicense">Diese App ist unter der Apache 2.0 Lizenz veröffentlicht.</string>
     <string name="infoscreen_usingLicense">Diese App nutzt Icons, die unter der Apache 2.0 Lizenz und unter der MIT Lizenz veröffentlicht wurden.</string>
     <string name="Disclaimer">Diese Anwendung ist nur für übungszwecke gedacht. Sie ist für keinerlei realen Einsatz gedacht und es wird keinerlei Haftung für eventuell aufgetretene Schäden übernommen.</string>
     <string name="share_export_using">Export teilen mit…</string>
-    <string name="error_reading_file">Fehler beim Lesen der Datei</string>
+    <string name="error_reading_file">Fehler beim Lesen der Datei \'%s\'</string>
+    <string name="unknown_error_loading_from_uri_exceptionname">Unbekannter Fehler beim Lesen der URI \'%s\' (%s)</string>
+    <string name="file_not_found">Datei nicht gefunden: \'%s\'</string>
+    <string name="unknown_error">Ein unbekannter Fehler ist aufgetreten, sorry!</string>
+    <string name="unsupported_media_type_provided">Unsupported media type provided: \'%s\'</string>
+    <string name="invalid_file_provided">Ungültige Datei ausgewählt: %s</string>
+    <string name="unknown_error_loading_from_uri">Unbekannter Fehler beim Lesen der URI \'%s\'</string>
+    <string name="success_reading_configuration_name">Konfiguration \'%s\' erfolgreich importiert</string>
 </resources>

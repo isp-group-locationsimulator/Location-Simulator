@@ -8,7 +8,7 @@
     <string name="select_btn_profile_delete">Delete</string>
     <string name="editTimeline_AddConfigComponentDialog_Question">What do you want to add?</string>
     <string name="editTimeline_addConfigComponentDialog_AddSound">Add Sound</string>
-    <string name="editTimeline_AddConfigComponentDialog_Cancel">CANCEL</string>
+    <string name="editTimeline_AddConfigComponentDialog_Cancel">Cancel</string>
     <string name="editTimeline_AddConfigComponentDialog_addVibration">Add Vibration</string>
     <string name="delay_btn_start">START</string>
     <string name="editTimeline_name">Name</string>
@@ -65,7 +65,7 @@
     <string name="TimelineMoveRight">move right in Timeline</string>
 
     <string name="PlaceholderDefaultName">" Enter a name "</string>
-    <string name="homescreen_darkmode">Darkmode</string>
+    <string name="homescreen_darkmode">Dark mode</string>
 
     <string name="config_save_error">The Configuration has a Error</string>
     <string name="vibrationStrengthNotSupported">This device doesn\'t support adjusting the vibration strength</string>
@@ -77,5 +77,12 @@
     <string name="infoscreen_usingLicense">This app uses icons that were published under the Apache 2.0 license and under the MIT license.</string>
     <string name="Disclaimer">This application is intended for training purposes only. It is not intended for any real-world use and no liability is assumed for any damage that may occur.</string>
     <string name="share_export_using">Share export using…</string>
-    <string name="error_reading_file">Error reading file</string>
+    <string name="error_reading_file">Error reading file \'%s\'</string>
+    <string name="unknown_error_loading_from_uri_exceptionname">Unknown error loading from URI \'%s\' (%s)</string>
+    <string name="unknown_error_loading_from_uri">Unknown error loading from URI \'%s\'</string>
+    <string name="file_not_found">File not found: \'%s\'</string>
+    <string name="unknown_error">An unknown error has occurred. Sorry about that!</string>
+    <string name="unsupported_media_type_provided">Unsupported media type provided: \'%s\'</string>
+    <string name="invalid_file_provided">Invalid file provided: %s</string>
+    <string name="success_reading_configuration_name">Success reading configuration \'%s\'</string>
 </resources>

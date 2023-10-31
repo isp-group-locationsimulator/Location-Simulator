@@ -81,7 +81,7 @@ class SelectViewModel @Inject constructor(
 				}
 			}
 			is SelectEvent.SelectedExportConfiguration -> {
-				event.configurationStorageManager.saveConfigurationToStorage(event.context, event.configuration)
+				event.configurationStorageManager.exportConfigurationUsingShareSheet(event.context, event.configuration)
 			}
 			is SelectEvent.FavoriteClicked -> {
 				val configurationListCopy = state.value.configurations.toMutableList()
