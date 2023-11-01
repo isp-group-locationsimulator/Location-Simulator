@@ -18,7 +18,6 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
@@ -64,9 +63,7 @@ class MainActivity : ComponentActivity() {
     private var popUpState = mutableStateOf(false)
     private var recordedAudioUri: Uri? = null
 
-    companion object {
-        var snackbarContent: MutableState<SnackbarContent?> = mutableStateOf(null)
-    }
+    private val snackbarContent: MutableState<SnackbarContent?> = mutableStateOf(null)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         soundStorageManager = SoundStorageManager(this@MainActivity)
@@ -75,7 +72,8 @@ class MainActivity : ComponentActivity() {
             ConfigurationStorageManager(
                 mainActivity = this,
                 soundStorageManager = soundStorageManager,
-                context = this
+                context = this,
+                snackbarContent = snackbarContent
             )
         super.onCreate(savedInstanceState)
         val themeState = mutableStateOf(
@@ -95,25 +93,11 @@ class MainActivity : ComponentActivity() {
                 ) {
                     val navController = rememberNavController()
                     val scaffoldState = rememberScaffoldState()
-                    LaunchedEffect(key1 = snackbarContent) {
-                        when (val snackbarValue = snackbarContent.value) {
-                            null -> return@LaunchedEffect
-                            else -> scaffoldState.snackbarHostState.showSnackbar(
-                                snackbarValue.text,
-                                snackbarValue.actionLabel,
-                                snackbarValue.snackbarDuration
-                            )
-                        }
-
-                    }
-                    val makeSnackbar: (SnackbarContent) -> Unit = { content ->
-                        snackbarContent.value = content
-                    }
                     NavigationAppHost(
                         navController = navController,
-                        themeState,
-                        scaffoldState,
-                        makeSnackbar
+                        themeState = themeState,
+                        scaffoldState = scaffoldState,
+                        snackbarContent = snackbarContent
                     )
                 }
             }
@@ -130,7 +114,7 @@ class MainActivity : ComponentActivity() {
         navController: NavHostController,
         themeState: MutableState<ThemeState>,
         scaffoldState: ScaffoldState,
-        makeSnackbar: (SnackbarContent) -> Unit,
+        snackbarContent: MutableState<SnackbarContent?>,
     ) {
         NavHost(navController = navController, startDestination = Screen.HomeScreen.route) {
             composable(Screen.HomeScreen.route) {
@@ -141,7 +125,7 @@ class MainActivity : ComponentActivity() {
                     activity = this@MainActivity,
                     darkTheme = themeState,
                     scaffoldState = scaffoldState,
-                    makeSnackbar = makeSnackbar
+                    snackbarContent = snackbarContent
                 )
             }
             composable(Screen.InfoScreen.route) {
@@ -156,7 +140,7 @@ class MainActivity : ComponentActivity() {
                     configurationStorageManager = configurationStorageManager,
                     soundStorageManager = soundStorageManager,
                     scaffoldState = scaffoldState,
-                    makeSnackbar = makeSnackbar,
+                    snackbarContent = snackbarContent
                 )
             }
             composable(Screen.AddScreen.route) {

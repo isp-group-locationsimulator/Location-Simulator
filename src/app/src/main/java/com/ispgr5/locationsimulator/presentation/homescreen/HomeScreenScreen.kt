@@ -4,10 +4,27 @@ import android.os.Build
 import android.os.PowerManager
 import androidx.activity.ComponentActivity
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.*
+import androidx.compose.material.Button
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
+import androidx.compose.material.ScaffoldState
+import androidx.compose.material.SnackbarDuration
+import androidx.compose.material.Switch
+import androidx.compose.material.SwitchDefaults
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
@@ -29,6 +46,7 @@ import com.ispgr5.locationsimulator.presentation.MainActivity
 import com.ispgr5.locationsimulator.presentation.select.components.OneConfigurationListMember
 import com.ispgr5.locationsimulator.presentation.universalComponents.SnackbarContent
 import com.ispgr5.locationsimulator.presentation.universalComponents.TopBar
+import com.ispgr5.locationsimulator.presentation.util.MakeSnackbar
 import com.ispgr5.locationsimulator.presentation.util.Screen
 import com.ispgr5.locationsimulator.ui.theme.ThemeState
 
@@ -46,12 +64,14 @@ fun HomeScreenScreen(
     activity: MainActivity,
     darkTheme: MutableState<ThemeState>,
     scaffoldState: ScaffoldState,
-    makeSnackbar: (SnackbarContent) -> Unit,
+    snackbarContent: MutableState<SnackbarContent?>,
 ) {
     viewModel.updateConfigurationWithErrorsState(soundStorageManager = soundStorageManager)
     val state = viewModel.state.value
     val notFound: String = stringResource(id = R.string.not_found)
     val ok = stringResource(id = android.R.string.ok)
+
+    MakeSnackbar(scaffoldState = scaffoldState, snackbarContent = snackbarContent)
 
     Scaffold(
         scaffoldState = scaffoldState,
@@ -145,13 +165,12 @@ fun HomeScreenScreen(
                                                 configuration = configuration,
                                                 soundStorageManager = soundStorageManager
                                             )) {
-                                                makeSnackbar(
-                                                    SnackbarContent(
-                                                        text = "$error $notFound",
-                                                        snackbarDuration = SnackbarDuration.Indefinite,
-                                                        actionLabel = ok,
-                                                    )
+                                                snackbarContent.value = SnackbarContent(
+                                                    text = "$error $notFound",
+                                                    snackbarDuration = SnackbarDuration.Indefinite,
+                                                    actionLabel = ok,
                                                 )
+
                                             }
                                         }
                                     },

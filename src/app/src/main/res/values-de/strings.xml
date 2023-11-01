@@ -22,7 +22,7 @@
     <string name="editTimeline_Vibration_duration">Dauer</string>
     <string name="edit_name">Name</string>
     <string name="edit_Description">Beschreibung</string>
-    <string name="edit_Save">Save</string>
+    <string name="edit_Save">Speichern</string>
     <string name="edit_Import">Importieren</string>
     <string name="run_stop">STOPP</string>
     <string name="infoscreen_developer">Entwickler</string>
@@ -77,11 +77,12 @@
     <string name="Disclaimer">Diese Anwendung ist nur für übungszwecke gedacht. Sie ist für keinerlei realen Einsatz gedacht und es wird keinerlei Haftung für eventuell aufgetretene Schäden übernommen.</string>
     <string name="share_export_using">Export teilen mit…</string>
     <string name="error_reading_file">Fehler beim Lesen der Datei \'%s\'</string>
-    <string name="unknown_error_loading_from_uri_exceptionname">Unbekannter Fehler beim Lesen der URI \'%s\' (%s)</string>
     <string name="file_not_found">Datei nicht gefunden: \'%s\'</string>
     <string name="unknown_error">Ein unbekannter Fehler ist aufgetreten, sorry!</string>
     <string name="unsupported_media_type_provided">Unsupported media type provided: \'%s\'</string>
     <string name="invalid_file_provided">Ungültige Datei ausgewählt: %s</string>
-    <string name="unknown_error_loading_from_uri">Unbekannter Fehler beim Lesen der URI \'%s\'</string>
     <string name="success_reading_configuration_name">Konfiguration \'%s\' erfolgreich importiert</string>
+    <string name="unknown_error_loading_exceptionname">Unbekannter Fehler beim Lesen der Datei (%s)</string>
+    <string name="json_load_exception">Die JSON-Datei war nicht lesbar.</string>
+    <string name="migration_version_not_supported">Die angegebe Datei wurde mit der App-Version %s generiert, aber Du benutzt Version %s. Eine Migration ist noch nicht implementiert.</string>
 </resources>

@@ -1,6 +1,7 @@
 package com.ispgr5.locationsimulator.presentation.select
 
 import android.content.Context
+import androidx.compose.runtime.MutableState
 import com.ispgr5.locationsimulator.data.storageManager.ConfigurationStorageManager
 import com.ispgr5.locationsimulator.domain.model.Configuration
 import com.ispgr5.locationsimulator.presentation.universalComponents.SnackbarContent
@@ -20,7 +21,7 @@ sealed class SelectEvent {
 		val context: Context
 	) : SelectEvent()
 
-	data class FavoriteClicked(val configuration: Configuration, val makeSnackbar: (SnackbarContent) -> Unit) :
+	data class FavoriteClicked(val configuration: Configuration, val snackbarContent: MutableState<SnackbarContent?>) :
 		SelectEvent()
 	data class Duplicate(val id:Int?) : SelectEvent()
 }

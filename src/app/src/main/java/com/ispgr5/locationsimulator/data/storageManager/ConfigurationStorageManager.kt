@@ -8,6 +8,7 @@ import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.StringRes
 import androidx.compose.material.SnackbarDuration
+import androidx.compose.runtime.MutableState
 import androidx.core.app.ShareCompat
 import androidx.core.content.FileProvider
 import com.github.slugify.Slugify
@@ -23,12 +24,12 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.joda.time.Instant
 import org.joda.time.format.DateTimeFormatterBuilder
 import java.io.File
-import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.InputStream
 import java.util.zip.GZIPInputStream
@@ -66,7 +67,8 @@ data class ConfigurationSerializer(
 class ConfigurationStorageManager(
     private val mainActivity: MainActivity,
     private val soundStorageManager: SoundStorageManager,
-    private val context: Context
+    private val context: Context,
+    val snackbarContent: MutableState<SnackbarContent?>
 ) {
 
     private val prettyJson by lazy {
@@ -205,15 +207,17 @@ class ConfigurationStorageManager(
     private fun loadErrorCallback(exception: LoadException) {
         val formattedMessage = exception.formatMessage(context)
         Log.e(TAG, formattedMessage)
-        MainActivity.snackbarContent.value =
+        snackbarContent.value =
             SnackbarContent(text = formattedMessage, snackbarDuration = SnackbarDuration.Long)
     }
 
     private fun loadSuccessCallback(configurationName: String) {
-        MainActivity.snackbarContent.value =
+        snackbarContent.value =
             SnackbarContent(
-                text = context.getString(R.string.success_reading_configuration_name).format(configurationName),
-                snackbarDuration = SnackbarDuration.Short)
+                text = context.getString(R.string.success_reading_configuration_name)
+                    .format(configurationName),
+                snackbarDuration = SnackbarDuration.Short
+            )
     }
 
     @OptIn(DelicateCoroutinesApi::class)
@@ -222,9 +226,16 @@ class ConfigurationStorageManager(
     ) {
         try {
             val fileContent = readFileStringFromContentUri(contentUri = uri)
-            // if required, add a migration routine for backwards compatibility here
-            // we now serialize the app version into the JSON, so migrations can be implemented from this
             val deserialized = Json.decodeFromString<ConfigurationSerializer>(fileContent)
+            if (deserialized.appVersion != BuildConfig.VERSION_NAME) {
+                // if required, add a migration routine for backwards compatibility here
+                // we now serialize the app version into the JSON, so migrations can be implemented from this
+                throw LoadException(
+                    R.string.migration_version_not_supported,
+                    deserialized.appVersion,
+                    BuildConfig.VERSION_NAME
+                )
+            }
             //Edit the sound names in configuration components List, when the Sound already exist
             val components =
                 editComponentList(deserialized.configurationComponents, deserialized.sounds)
@@ -243,13 +254,15 @@ class ConfigurationStorageManager(
             }
             loadSuccessCallback(deserialized.name)
         } catch (exception: Exception) {
-            loadErrorCallback(
-                LoadException(
-                    R.string.unknown_error_loading_from_uri_exceptionname,
-                    uri.toString(), exception::class.simpleName!!
-
+            val exceptionForCallback = when (exception) {
+                is SerializationException -> LoadException(R.string.json_load_exception)
+                is LoadException -> exception
+                else -> LoadException(
+                    R.string.unknown_error_loading_exceptionname,
+                    Exception::class.simpleName!!
                 )
-            )
+            }
+            loadErrorCallback(exceptionForCallback)
         }
     }
 
@@ -315,7 +328,7 @@ class ConfigurationStorageManager(
      * This function reads the File Content from a file behind the given uri
      * @return a uri form a file u want to read
      */
-    @Throws(FileNotFoundException::class)
+    @Throws(LoadException::class)
     private fun readFileStringFromContentUri(contentUri: Uri): String {
         try {
             val loadFromRawJson: (InputStream) -> String = { ins ->
@@ -333,6 +346,7 @@ class ConfigurationStorageManager(
                     R.string.invalid_file_provided,
                     contentUri.toString()
                 )
+
                 else -> throw LoadException(
                     R.string.unsupported_media_type_provided,
                     contentType
@@ -344,13 +358,10 @@ class ConfigurationStorageManager(
             }
         } catch (exception: Exception) {
             throw LoadException(
-                R.string.unknown_error_loading_from_uri_exceptionname,
-                contentUri.toString(), exception::class.simpleName!!
+                R.string.unknown_error_loading_exceptionname, exception::class.simpleName!!
             )
         }
-        throw LoadException(
-            R.string.unknown_error_loading_from_uri_exceptionname,
-            contentUri.toString())
+        throw LoadException(R.string.unknown_error)
     }
 
 }

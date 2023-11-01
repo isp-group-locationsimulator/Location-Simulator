@@ -78,11 +78,12 @@
     <string name="Disclaimer">This application is intended for training purposes only. It is not intended for any real-world use and no liability is assumed for any damage that may occur.</string>
     <string name="share_export_using">Share export using…</string>
     <string name="error_reading_file">Error reading file \'%s\'</string>
-    <string name="unknown_error_loading_from_uri_exceptionname">Unknown error loading from URI \'%s\' (%s)</string>
-    <string name="unknown_error_loading_from_uri">Unknown error loading from URI \'%s\'</string>
+    <string name="unknown_error_loading_exceptionname">Unknown error loading the provided file (%s)</string>
     <string name="file_not_found">File not found: \'%s\'</string>
     <string name="unknown_error">An unknown error has occurred. Sorry about that!</string>
     <string name="unsupported_media_type_provided">Unsupported media type provided: \'%s\'</string>
     <string name="invalid_file_provided">Invalid file provided: %s</string>
     <string name="success_reading_configuration_name">Success reading configuration \'%s\'</string>
+    <string name="json_load_exception">Could not parse the JSON file provided.</string>
+    <string name="migration_version_not_supported">The provided file was generated from app version %s, but you are running %s; migration is not yet supported</string>
 </resources>

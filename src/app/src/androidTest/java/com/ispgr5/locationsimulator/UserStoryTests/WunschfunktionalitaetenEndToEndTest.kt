@@ -6,6 +6,7 @@ import android.graphics.Color
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material.rememberScaffoldState
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.test.*
@@ -15,6 +16,7 @@ import androidx.test.filters.SdkSuppress
 import com.ispgr5.locationsimulator.core.util.TestTags
 import com.ispgr5.locationsimulator.di.AppModule
 import com.ispgr5.locationsimulator.presentation.MainActivity
+import com.ispgr5.locationsimulator.presentation.universalComponents.SnackbarContent
 import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
 import com.ispgr5.locationsimulator.ui.theme.ThemeState
 import dagger.hilt.android.testing.HiltAndroidRule
@@ -45,12 +47,13 @@ class WunschfunktionalitaetenEndToEndTest {
                 val navController = rememberNavController()
                 val themeState = mutableStateOf(ThemeState(isDarkTheme = false))
                 val scaffoldState = rememberScaffoldState()
+                val snackbarContent: MutableState<SnackbarContent?> = mutableStateOf(null)
                 LocationSimulatorTheme(themeState) {
                     composeRule.activity.NavigationAppHost(
                         navController = navController,
                         themeState = themeState,
                         scaffoldState = scaffoldState,
-                        makeSnackbar = {}
+                        snackbarContent = snackbarContent
                     )
                 }
             }
