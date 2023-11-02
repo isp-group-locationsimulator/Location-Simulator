@@ -18,21 +18,25 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.data.storageManager.ConfigurationStorageManager
 import com.ispgr5.locationsimulator.data.storageManager.SoundStorageManager
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 import com.ispgr5.locationsimulator.domain.model.ConfigurationComponentRoomConverter
 import com.ispgr5.locationsimulator.presentation.add.AddScreen
+import com.ispgr5.locationsimulator.presentation.add.AddViewModel
 import com.ispgr5.locationsimulator.presentation.delay.DelayScreen
 import com.ispgr5.locationsimulator.presentation.editTimeline.EditTimelineScreen
 import com.ispgr5.locationsimulator.presentation.homescreen.HomeScreenScreen
@@ -49,9 +53,12 @@ import com.ispgr5.locationsimulator.presentation.util.Screen
 import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
 import com.ispgr5.locationsimulator.ui.theme.ThemeState
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.serialization.ExperimentalSerializationApi
 import java.io.FileOutputStream
 import java.io.InputStream
+
+private const val TAG = "MainActivity"
 
 // TODO: Add KDoc to this class and methods.
 @AndroidEntryPoint
@@ -65,7 +72,9 @@ class MainActivity : ComponentActivity() {
 
     private val snackbarContent: MutableState<SnackbarContent?> = mutableStateOf(null)
 
+    @OptIn(DelicateCoroutinesApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         soundStorageManager = SoundStorageManager(this@MainActivity)
         installFilesOnFirstStartup()
         configurationStorageManager =
@@ -75,7 +84,6 @@ class MainActivity : ComponentActivity() {
                 context = this,
                 snackbarContent = snackbarContent
             )
-        super.onCreate(savedInstanceState)
         val themeState = mutableStateOf(
             ThemeState(
                 getSharedPreferences(
@@ -84,6 +92,7 @@ class MainActivity : ComponentActivity() {
                 ).getBoolean("isDarkTheme", false)
             )
         )
+
         setContent {
             LocationSimulatorTheme(themeState) {
                 // A surface container using the 'background' color from the theme
@@ -93,12 +102,33 @@ class MainActivity : ComponentActivity() {
                 ) {
                     val navController = rememberNavController()
                     val scaffoldState = rememberScaffoldState()
+                    HandleIncomingIntent(intent)
                     NavigationAppHost(
                         navController = navController,
                         themeState = themeState,
                         scaffoldState = scaffoldState,
                         snackbarContent = snackbarContent
                     )
+                }
+            }
+        }
+    }
+
+    @OptIn(DelicateCoroutinesApi::class)
+    @Composable
+    private fun HandleIncomingIntent(intent: Intent?) {
+        if (intent?.action == Intent.ACTION_SEND) {
+            Log.i(TAG, "Received intent with MIME ${intent.type}")
+            val viewModel : AddViewModel = hiltViewModel()
+            LaunchedEffect(key1 = intent){
+                val newConfigurationName =
+                    configurationStorageManager.handleImportFromIntent(intent, viewModel.configurationUseCases)
+                if (newConfigurationName != null) {
+                    val feedbackMessage =
+                        getString(R.string.success_reading_configuration_name).format(
+                            newConfigurationName
+                        )
+                    snackbarContent.value = SnackbarContent(feedbackMessage, SnackbarDuration.Short)
                 }
             }
         }

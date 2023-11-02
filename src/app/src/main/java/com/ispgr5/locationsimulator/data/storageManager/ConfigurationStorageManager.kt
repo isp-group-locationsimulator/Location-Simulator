@@ -39,7 +39,7 @@ private const val TAG = "ConfStorageManager"
 private const val EXPORT_INTERNAL_PATH = "exports"
 private const val AUTHORITY_STORAGE_PROVIDER = "com.ispgr5.locationsimulator.fileprovider"
 private const val MEDIA_TYPE_EXPORT = "application/json+gzip"
-private val MEDIA_TYPE_IMPORT = listOf("application/x-gzip", "application/json", "application/gzip")
+private val MEDIA_TYPE_IMPORT = listOf("application/x-gzip", "application/gzip")
 private const val OUTPUT_TOKEN = "locsim"
 
 @Serializable
@@ -220,10 +220,8 @@ class ConfigurationStorageManager(
             )
     }
 
-    @OptIn(DelicateCoroutinesApi::class)
-    private fun loadConfigFromUri(
-        uri: Uri
-    ) {
+
+    private suspend fun suspendingReadFileFromContentUri(uri: Uri, useCallback: Boolean): String? {
         try {
             val fileContent = readFileStringFromContentUri(contentUri = uri)
             val deserialized = Json.decodeFromString<ConfigurationSerializer>(fileContent)
@@ -239,20 +237,20 @@ class ConfigurationStorageManager(
             //Edit the sound names in configuration components List, when the Sound already exist
             val components =
                 editComponentList(deserialized.configurationComponents, deserialized.sounds)
-            //Store to database; there is no really good solution to avoid GlobalScope here...
-            GlobalScope.launch {
-                configurationUseCases?.addConfiguration?.let {
-                    it(
-                        Configuration(
-                            name = deserialized.name,
-                            description = deserialized.description ?: "",
-                            randomOrderPlayback = deserialized.randomOrderPlayback,
-                            components = components
-                        )
+            configurationUseCases?.addConfiguration?.let { addConfiguration ->
+                addConfiguration(
+                    Configuration(
+                        name = deserialized.name,
+                        description = deserialized.description ?: "",
+                        randomOrderPlayback = deserialized.randomOrderPlayback,
+                        components = components
                     )
-                }
+                )
             }
-            loadSuccessCallback(deserialized.name)
+            if (useCallback) {
+                loadSuccessCallback(deserialized.name)
+            }
+            return deserialized.name
         } catch (exception: Exception) {
             val exceptionForCallback = when (exception) {
                 is SerializationException -> LoadException(R.string.json_load_exception)
@@ -262,7 +260,19 @@ class ConfigurationStorageManager(
                     Exception::class.simpleName!!
                 )
             }
-            loadErrorCallback(exceptionForCallback)
+            if (useCallback) {
+                loadErrorCallback(exceptionForCallback)
+            } else {
+                throw exceptionForCallback
+            }
+        }
+        return null
+    }
+
+    @OptIn(DelicateCoroutinesApi::class)
+    private fun loadConfigFromUri(uri: Uri, useCallback: Boolean = true) {
+        GlobalScope.launch {
+            suspendingReadFileFromContentUri(uri, useCallback)
         }
     }
 
@@ -338,9 +348,7 @@ class ConfigurationStorageManager(
                 GZIPInputStream(ins).let(loadFromRawJson)
 
             }
-
             val loader = when (val contentType = mainActivity.contentResolver.getType(contentUri)) {
-                "application/json" -> loadFromRawJson
                 "application/x-gzip", "application/gzip" -> loadFromGzip
                 null -> throw LoadException(
                     R.string.invalid_file_provided,
@@ -364,6 +372,38 @@ class ConfigurationStorageManager(
         throw LoadException(R.string.unknown_error)
     }
 
+    suspend fun handleImportFromIntent(intent: Intent, configurationUseCases: ConfigurationUseCases): String? {
+        try {
+            if (this.configurationUseCases == null) {
+                this.configurationUseCases = configurationUseCases
+            }
+            when (intent.type) {
+                in MEDIA_TYPE_IMPORT -> {
+                    val extraUri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        intent.getParcelableExtra(Intent.EXTRA_STREAM, Uri::class.java)
+                    } else {
+                        @Suppress("DEPRECATION")
+                        intent.getParcelableExtra(Intent.EXTRA_STREAM) as? Uri?
+                    }
+                    Log.i(TAG, "Received intent with media type '${intent.type} and URI $extraUri")
+                    if (extraUri != null) {
+                        val newConfName =
+                            suspendingReadFileFromContentUri(uri = extraUri, useCallback = false)
+                        Log.i(TAG, "loaded conf '$newConfName' from intent")
+                        return newConfName
+                    } else {
+                        throw LoadException(R.string.null_uri)
+                    }
+                }
+
+                null -> throw LoadException(R.string.unsupported_media_type_provided, "null")
+                else -> throw LoadException(R.string.unsupported_media_type_provided, intent.type!!)
+            }
+        } catch (e: LoadException) {
+            loadErrorCallback(e)
+        }
+        return null
+    }
 }
 
 class LoadException(@StringRes val messageStringRes: Int, vararg formatArgs: String) :

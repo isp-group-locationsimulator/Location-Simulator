@@ -17,7 +17,7 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class AddViewModel @Inject constructor(
-    private val configurationUseCases: ConfigurationUseCases,
+    val configurationUseCases: ConfigurationUseCases,
 ) : ViewModel() {
 
     //The provided state for the View
