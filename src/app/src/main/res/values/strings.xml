@@ -87,4 +87,5 @@
     <string name="json_load_exception">Could not parse the JSON file provided.</string>
     <string name="migration_version_not_supported">The provided file was generated from app version %s, but you are running %s; migration is not yet supported</string>
     <string name="null_uri">Received null URI in intent.</string>
+    <string name="choose_an_audio_recorder_app">Choose an audio recorder app.</string>
 </resources>

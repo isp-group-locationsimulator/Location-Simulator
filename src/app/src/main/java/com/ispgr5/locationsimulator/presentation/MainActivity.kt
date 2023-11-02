@@ -2,6 +2,7 @@ package com.ispgr5.locationsimulator.presentation
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
@@ -14,6 +15,7 @@ import android.view.WindowManager
 import android.webkit.MimeTypeMap
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContract
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.*
@@ -72,23 +74,26 @@ class MainActivity : ComponentActivity() {
 
     private val snackbarContent: MutableState<SnackbarContent?> = mutableStateOf(null)
 
+    private val recordAudioIntent = registerForActivityResult(RecordAudioContract()) {
+        popUpState.value = true
+        recordedAudioUri = it
+    }
+
     @OptIn(DelicateCoroutinesApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         soundStorageManager = SoundStorageManager(this@MainActivity)
         installFilesOnFirstStartup()
-        configurationStorageManager =
-            ConfigurationStorageManager(
-                mainActivity = this,
-                soundStorageManager = soundStorageManager,
-                context = this,
-                snackbarContent = snackbarContent
-            )
+        configurationStorageManager = ConfigurationStorageManager(
+            mainActivity = this,
+            soundStorageManager = soundStorageManager,
+            context = this,
+            snackbarContent = snackbarContent
+        )
         val themeState = mutableStateOf(
             ThemeState(
                 getSharedPreferences(
-                    "prefs",
-                    MODE_PRIVATE
+                    "prefs", MODE_PRIVATE
                 ).getBoolean("isDarkTheme", false)
             )
         )
@@ -97,8 +102,7 @@ class MainActivity : ComponentActivity() {
             LocationSimulatorTheme(themeState) {
                 // A surface container using the 'background' color from the theme
                 Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
+                    modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background
                 ) {
                     val navController = rememberNavController()
                     val scaffoldState = rememberScaffoldState()
@@ -119,10 +123,11 @@ class MainActivity : ComponentActivity() {
     private fun HandleIncomingIntent(intent: Intent?) {
         if (intent?.action == Intent.ACTION_SEND) {
             Log.i(TAG, "Received intent with MIME ${intent.type}")
-            val viewModel : AddViewModel = hiltViewModel()
-            LaunchedEffect(key1 = intent){
-                val newConfigurationName =
-                    configurationStorageManager.handleImportFromIntent(intent, viewModel.configurationUseCases)
+            val viewModel: AddViewModel = hiltViewModel()
+            LaunchedEffect(key1 = intent) {
+                val newConfigurationName = configurationStorageManager.handleImportFromIntent(
+                    intent, viewModel.configurationUseCases
+                )
                 if (newConfigurationName != null) {
                     val feedbackMessage =
                         getString(R.string.success_reading_configuration_name).format(
@@ -160,8 +165,7 @@ class MainActivity : ComponentActivity() {
             }
             composable(Screen.InfoScreen.route) {
                 InfoScreen(
-                    navController = navController,
-                    scaffoldState = scaffoldState
+                    navController = navController, scaffoldState = scaffoldState
                 )
             }
             composable(route = Screen.SelectScreen.route) {
@@ -189,14 +193,13 @@ class MainActivity : ComponentActivity() {
                     getDefaultValuesFunction = getDefaultValues
                 )
             }
-            composable(route = Screen.DelayScreen.route,
-                arguments = listOf(navArgument(
+            composable(
+                route = Screen.DelayScreen.route, arguments = listOf(navArgument(
                     name = "configurationId"
                 ) {
                     type = NavType.IntType
                     defaultValue = -1
-                }
-                )
+                })
             ) {
                 DelayScreen(
                     navController = navController,
@@ -217,32 +220,25 @@ class MainActivity : ComponentActivity() {
                 navController.navigateUp()    //Todo not needed
             }
             composable(Screen.EditTimelineScreen.route,
-                arguments = listOf(
-                    navArgument(name = "configurationId") {
-                        type = NavType.IntType
-                        defaultValue = -1
-                    },
-                    navArgument(name = "soundNameToAdd") {
-                        type = NavType.StringType
-                        defaultValue = ""
-                    },
-                    navArgument(name = "minVolume") {
-                        type = NavType.FloatType
-                        defaultValue = 0f
-                    },
-                    navArgument(name = "maxVolume") {
-                        type = NavType.FloatType
-                        defaultValue = 1f
-                    },
-                    navArgument(name = "minPause") {
-                        type = NavType.IntType
-                        defaultValue = 0
-                    },
-                    navArgument(name = "maxPause") {
-                        type = NavType.IntType
-                        defaultValue = 1000
-                    }
-                )
+                arguments = listOf(navArgument(name = "configurationId") {
+                    type = NavType.IntType
+                    defaultValue = -1
+                }, navArgument(name = "soundNameToAdd") {
+                    type = NavType.StringType
+                    defaultValue = ""
+                }, navArgument(name = "minVolume") {
+                    type = NavType.FloatType
+                    defaultValue = 0f
+                }, navArgument(name = "maxVolume") {
+                    type = NavType.FloatType
+                    defaultValue = 1f
+                }, navArgument(name = "minPause") {
+                    type = NavType.IntType
+                    defaultValue = 0
+                }, navArgument(name = "maxPause") {
+                    type = NavType.IntType
+                    defaultValue = 1000
+                })
             ) {
                 EditTimelineScreen(
                     navController = navController,
@@ -250,14 +246,13 @@ class MainActivity : ComponentActivity() {
                     scaffoldState = scaffoldState
                 )
             }
-            composable(Screen.SoundScreen.route,
-                arguments = listOf(navArgument(
+            composable(
+                Screen.SoundScreen.route, arguments = listOf(navArgument(
                     name = "configurationId"
                 ) {
                     type = NavType.IntType
                     defaultValue = -1
-                }
-                )
+                })
             ) {
                 SoundScreen(
                     navController = navController,
@@ -268,8 +263,7 @@ class MainActivity : ComponentActivity() {
                     scaffoldState = scaffoldState
                 )
                 SoundDialog(
-                    popUpState = popUpState,
-                    scaffoldState = scaffoldState
+                    popUpState = popUpState, scaffoldState = scaffoldState
                 ) { fileName ->
                     saveAudioFile(fileName)
                     popUpState.value = false
@@ -289,8 +283,7 @@ class MainActivity : ComponentActivity() {
             Intent(this, InfinityService::class.java).also {
                 it.action = "START"
                 it.putExtra(
-                    "config",
-                    ConfigurationComponentRoomConverter().componentListToString(config)
+                    "config", ConfigurationComponentRoomConverter().componentListToString(config)
                 )
                 it.putExtra("soundsDir", "$filesDir/Sounds/")
                 it.putExtra("randomOrderPlayback", randomOrderPlayback.toString())
@@ -333,23 +326,26 @@ class MainActivity : ComponentActivity() {
      * Creates an intent to open the default recording app
      */
     private fun recordAudio() {
-        val intent = Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION)
-        val uri = MediaStore.Audio.Media.INTERNAL_CONTENT_URI
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, uri)
-        //TODO translate
-        val chooserIntent = Intent.createChooser(intent, "Choose an audio recorder app")
-        startActivityForResult(chooserIntent, 0)
+        recordAudioIntent.launch(Unit)
     }
 
-    @Deprecated("Deprecated in Java")
-    /**
-     * Sets the Uri of the recorded audio file
-     */
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode != 0 || resultCode != Activity.RESULT_OK) return
-        popUpState.value = true
-        recordedAudioUri = data?.data
+    private class RecordAudioContract : ActivityResultContract<Unit, Uri?>() {
+        override fun createIntent(context: Context, input: Unit): Intent {
+            val intent = Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION)
+            val uri = MediaStore.Audio.Media.INTERNAL_CONTENT_URI
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, uri)
+            return Intent.createChooser(
+                intent, context.getString(R.string.choose_an_audio_recorder_app)
+            )
+        }
+
+        override fun parseResult(resultCode: Int, intent: Intent?): Uri? {
+            if (resultCode != Activity.RESULT_OK) {
+                return null
+            }
+            return intent?.data
+        }
+
     }
 
     /**
@@ -395,17 +391,19 @@ class MainActivity : ComponentActivity() {
         fun(state: State<SettingsState>) {
             val preferences: SharedPreferences = getSharedPreferences("prefs", MODE_PRIVATE)
             val editor: SharedPreferences.Editor = preferences.edit()
-            editor.putInt("minPauseSound", state.value.minPauseSound)
-            editor.putInt("maxPauseSound", state.value.maxPauseSound)
-            editor.putFloat("minVolumeSound", state.value.minVolumeSound)
-            editor.putFloat("maxVolumeSound", state.value.maxVolumeSound)
-            editor.putInt("minPauseVibration", state.value.minPauseVibration)
-            editor.putInt("maxPauseVibration", state.value.maxPauseVibration)
-            editor.putInt("minStrengthVibration", state.value.minStrengthVibration)
-            editor.putInt("maxStrengthVibration", state.value.maxStrengthVibration)
-            editor.putInt("minDurationVibration", state.value.minDurationVibration)
-            editor.putInt("maxDurationVibration", state.value.maxDurationVibration)
-            editor.putString("defaultNameVibration", state.value.defaultNameVibration)
+            editor.putInt(PreferencesKeys.MIN_PAUSE_SOUND.name, state.value.minPauseSound)
+            editor.putInt(PreferencesKeys.MAX_PAUSE_SOUND.name, state.value.maxPauseSound)
+            editor.putFloat(PreferencesKeys.MIN_VOL_SOUND.name, state.value.minVolumeSound)
+            editor.putFloat(PreferencesKeys.MAX_VOL_SOUND.name, state.value.maxVolumeSound)
+            editor.putInt(PreferencesKeys.MIN_PAUSE_VIB.name, state.value.minPauseVibration)
+            editor.putInt(PreferencesKeys.MAX_PAUSE_VIB.name, state.value.maxPauseVibration)
+            editor.putInt(PreferencesKeys.MIN_STRENGTH_VIB.name, state.value.minStrengthVibration)
+            editor.putInt(PreferencesKeys.MAX_STRENGTH_VIB.name, state.value.maxStrengthVibration)
+            editor.putInt(PreferencesKeys.MIN_DURATION_VIB.name, state.value.minDurationVibration)
+            editor.putInt(PreferencesKeys.MAX_DURATION_VIB.name, state.value.maxDurationVibration)
+            editor.putString(
+                PreferencesKeys.DEFAULT_NAME_VIB.name, state.value.defaultNameVibration
+            )
             editor.apply()
         }
 
@@ -413,26 +411,34 @@ class MainActivity : ComponentActivity() {
      * function which returns the setted default values for Config Componments
      * (in Main Activity because it needs the context)
      */
-    private val getDefaultValues: () -> SettingsState =
-        fun(): SettingsState {
-            val preferences: SharedPreferences = getSharedPreferences("prefs", MODE_PRIVATE)
-            val startDefaultName = "Vibration"
-            return SettingsState(
-                minPauseSound = preferences.getInt("minPauseSound", 0),
-                maxPauseSound = preferences.getInt("maxPauseSound", 5000),
-                minVolumeSound = preferences.getFloat("minVolumeSound", 0f),
-                maxVolumeSound = preferences.getFloat("maxVolumeSound", 1f),
+    private val getDefaultValues: () -> SettingsState = fun(): SettingsState {
+        val preferences: SharedPreferences = getSharedPreferences("prefs", MODE_PRIVATE)
+        val startDefaultName = "Vibration"
+        return SettingsState(
+            minPauseSound = preferences.getInt(PreferencesKeys.MIN_PAUSE_SOUND.name, 0),
+            maxPauseSound = preferences.getInt(PreferencesKeys.MAX_PAUSE_SOUND.name, 5000),
+            minVolumeSound = preferences.getFloat(PreferencesKeys.MIN_VOL_SOUND.name, 0f),
+            maxVolumeSound = preferences.getFloat(PreferencesKeys.MAX_VOL_SOUND.name, 1f),
 
-                minPauseVibration = preferences.getInt("minPauseVibration", 0),
-                maxPauseVibration = preferences.getInt("maxPauseVibration", 5000),
-                minStrengthVibration = preferences.getInt("minStrengthVibration", 3),
-                maxStrengthVibration = preferences.getInt("maxStrengthVibration", 255),
-                minDurationVibration = preferences.getInt("minDurationVibration", 100),
-                maxDurationVibration = preferences.getInt("maxDurationVibration", 1000),
-                defaultNameVibration = preferences.getString(
-                    "defaultNameVibration",
-                    startDefaultName
-                ).toString()
-            )
-        }
+            minPauseVibration = preferences.getInt(PreferencesKeys.MIN_PAUSE_VIB.name, 0),
+            maxPauseVibration = preferences.getInt(PreferencesKeys.MAX_PAUSE_VIB.name, 5000),
+            minStrengthVibration = preferences.getInt(PreferencesKeys.MIN_STRENGTH_VIB.name, 3),
+            maxStrengthVibration = preferences.getInt(
+                PreferencesKeys.MAX_STRENGTH_VIB.name, 255
+            ),
+            minDurationVibration = preferences.getInt(
+                PreferencesKeys.MIN_DURATION_VIB.name, 100
+            ),
+            maxDurationVibration = preferences.getInt(
+                PreferencesKeys.MAX_DURATION_VIB.name, 1000
+            ),
+            defaultNameVibration = preferences.getString(
+                PreferencesKeys.DEFAULT_NAME_VIB.name, startDefaultName
+            ).toString()
+        )
+    }
+}
+
+enum class PreferencesKeys {
+    MIN_PAUSE_SOUND, MAX_PAUSE_SOUND, MIN_VOL_SOUND, MAX_VOL_SOUND, MIN_PAUSE_VIB, MAX_PAUSE_VIB, MIN_STRENGTH_VIB, MAX_STRENGTH_VIB, MIN_DURATION_VIB, MAX_DURATION_VIB, DEFAULT_NAME_VIB,
 }

@@ -86,4 +86,5 @@
     <string name="json_load_exception">Die JSON-Datei war nicht lesbar.</string>
     <string name="migration_version_not_supported">Die angegebe Datei wurde mit der App-Version %s generiert, aber Du benutzt Version %s. Eine Migration ist noch nicht implementiert.</string>
     <string name="null_uri">Eine Null-URI wurde im Intent übergeben.</string>
+    <string name="choose_an_audio_recorder_app">Wähle eine Aufnahme-App.</string>
 </resources>
