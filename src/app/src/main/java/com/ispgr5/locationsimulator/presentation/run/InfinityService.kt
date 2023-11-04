@@ -264,7 +264,7 @@ class InfinityService : Service() {
 			.setContentTitle("Endless Vibration")
 			.setContentText("I hope this will vibrate forever!")
 			.setContentIntent(pendingIntent)
-			.setSmallIcon(R.mipmap.ic_launcher)
+			.setSmallIcon(R.mipmap.ic_launcher2)
 			.setTicker("Ticker text")
 			.setPriority(Notification.PRIORITY_HIGH) // for under android 26 compatibility
 			.build()
