@@ -1,4 +1,4 @@
-package com.ispgr5.locationsimulator.UserStoryTests
+package com.ispgr5.locationsimulator.userStoryTests
 
 import android.annotation.SuppressLint
 import androidx.activity.compose.setContent
@@ -65,7 +65,7 @@ class KernfunktionalitaetEndToEndTest {
     zwischen Vibrationsintervallen einstellen können, für mindestens ein Muster
      */
     @Test
-    fun K5_create_and_play_Configuration() {
+    fun k5_create_and_play_Configuration() {
 
         //in Home Screen go to select Config page
         composeRule.onNodeWithTag(TestTags.HOME_APPNAME).assertIsDisplayed()

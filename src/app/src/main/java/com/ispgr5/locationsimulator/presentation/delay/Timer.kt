@@ -1,3 +1,5 @@
+package com.ispgr5.locationsimulator.presentation.delay
+
 import android.os.CountDownTimer
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -18,8 +20,6 @@ import androidx.navigation.NavController
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.core.util.TestTags
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
-import com.ispgr5.locationsimulator.presentation.delay.DelayEvent
-import com.ispgr5.locationsimulator.presentation.delay.DelayViewModel
 import com.ispgr5.locationsimulator.presentation.util.Screen
 
 /**
@@ -31,9 +31,9 @@ fun Timer(
     startServiceFunction: (List<ConfigComponent>, Boolean) -> Unit,
     navController: NavController
 ) {
-    var timerSeconds by remember { mutableStateOf(0) }
-    var timerMinutes by remember { mutableStateOf(0) }
-    var timerHours by remember { mutableStateOf(0) }
+    var timerSeconds by remember { mutableLongStateOf(0) }
+    var timerMinutes by remember { mutableLongStateOf(0) }
+    var timerHours by remember { mutableLongStateOf(0) }
     var timerRunning by remember { mutableStateOf(false) }
 
     LaunchedEffect(timerRunning) {
@@ -42,14 +42,14 @@ fun Timer(
             val duration =
                 (timerHours * 1000 * 60 * 60) + (timerMinutes * 1000 * 60) + (timerSeconds * 1000)
 
-            val timer = object : CountDownTimer(duration.toLong(), 1000L) {
+            val timer = object : CountDownTimer(duration, 1000L) {
 
                 /**
-                 * Update the timer when Timer is running
+                 * Update the timer when com.ispgr5.locationsimulator.presentation.delay.Timer is running
                  */
                 override fun onTick(millisUntilFinished: Long) {
                     if (timerRunning) {
-                        val remainingSeconds = (millisUntilFinished / 1000).toInt()
+                        val remainingSeconds = (millisUntilFinished / 1000)
                         timerSeconds = remainingSeconds % 60
                         timerMinutes = (remainingSeconds / 60) % 60
                         timerHours = remainingSeconds / (60 * 60)
@@ -60,7 +60,7 @@ fun Timer(
                 }
 
                 /**
-                 * Go to Run Screen when Timer is finished
+                 * Go to Run Screen when com.ispgr5.locationsimulator.presentation.delay.Timer is finished
                  */
                 override fun onFinish() {
                     viewModel.onEvent(DelayEvent.StartClicked(startServiceFunction))
@@ -72,7 +72,7 @@ fun Timer(
         }
     }
 
-    //Timer Input
+    //com.ispgr5.locationsimulator.presentation.delay.Timer Input
 
     Row(
         horizontalArrangement = Arrangement.SpaceAround,
@@ -258,12 +258,12 @@ fun Timer(
 }
 
 /**
- * maps a string Input to a int between 0 and 59, with 0 as the default/error value
+ * maps a string Input to a Long between 0 and 59, with 0 as the default/error value
  */
-fun calculateTimerValue(value:String):Int {
-    var res:Int
+fun calculateTimerValue(value: String): Long {
+    var res: Long
     try {
-        res = value.toInt()
+        res = value.toLong()
         if(res < 0) {
             res = 0
         } else if(res > 59) {

@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package com.ispgr5.locationsimulator.ui.theme
 
 import androidx.compose.ui.graphics.Color

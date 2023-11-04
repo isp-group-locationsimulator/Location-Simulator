@@ -41,6 +41,7 @@ private const val AUTHORITY_STORAGE_PROVIDER = "com.ispgr5.locationsimulator.fil
 private const val MEDIA_TYPE_EXPORT = "application/json+gzip"
 private val MEDIA_TYPE_IMPORT = listOf("application/x-gzip", "application/gzip")
 private const val OUTPUT_TOKEN = "locsim"
+private const val LIMIT_CONF_NAME_FOR_EXPORT = 12
 
 @Serializable
 data class ConfigurationSerializer(
@@ -86,7 +87,7 @@ class ConfigurationStorageManager(
     /**
      * replace special characters in the configuration name (limiting to ASCII), and limit it to n chars, so the filename doesn't get too long
      */
-    private fun slugifyConfigurationName(configuration: Configuration, limit: Int = 12) =
+    private fun slugifyConfigurationName(configuration: Configuration, limit: Int = LIMIT_CONF_NAME_FOR_EXPORT) =
         when (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             // Slugify uses the Optional class, added only in API 24
             true -> Slugify.builder().build().slugify(configuration.name).trim()
@@ -270,9 +271,9 @@ class ConfigurationStorageManager(
     }
 
     @OptIn(DelicateCoroutinesApi::class)
-    private fun loadConfigFromUri(uri: Uri, useCallback: Boolean = true) {
+    private fun loadConfigFromUriWithGlobalScope(uri: Uri) {
         GlobalScope.launch {
-            suspendingReadFileFromContentUri(uri, useCallback)
+            suspendingReadFileFromContentUri(uri, true)
         }
     }
 
@@ -283,7 +284,7 @@ class ConfigurationStorageManager(
         //open file picker
         mainActivity.registerForActivityResult(ActivityResultContracts.OpenDocument()) { result: Uri? ->
             result?.let { fileUri ->
-                loadConfigFromUri(fileUri)
+                loadConfigFromUriWithGlobalScope(fileUri)
             }
         }
 

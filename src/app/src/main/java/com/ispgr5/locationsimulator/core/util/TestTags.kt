@@ -5,8 +5,8 @@ object TestTags {
     const val TOP_BAR_BACK_BUTTON = "TopBarBack"
 
 
-    const val HOME_SELECT_CONFIG_BUTTON ="SelectConfigButton";
-    const val SELECT_ADD_BUTTON ="AddConfigButton";
+    const val HOME_SELECT_CONFIG_BUTTON ="SelectConfigButton"
+    const val SELECT_ADD_BUTTON ="AddConfigButton"
 
 
     const val HOME_APPNAME ="HomeAppName"
@@ -32,10 +32,10 @@ object TestTags {
     const val EDIT_CONFIG_DESCRIPTION_TEXTINPUT = "ConfigDescriptionTextInput"
     const val EDIT_MOVE_LEFT = "MoveLeft"
     const val EDIT_MOVE_RIGHT = "MoveRight"
-    const val EDIT_TIMELINE_SCREEN_ADD_BUTTON = "AddButton";
-    const val EDIT_TIMELINE_SCREEN_ADD_DIALOG = "AddDialog";
-    const val EDIT_TIMELINE_SCREEN_ADD_DIALOG_VIBRATION = "AddDialogVibration";
-    const val EDIT_TIMELINE_SCREEN_ADD_DIALOG_SOUND = "AddDialogSound";
+    const val EDIT_TIMELINE_SCREEN_ADD_BUTTON = "AddButton"
+    const val EDIT_TIMELINE_SCREEN_ADD_DIALOG = "AddDialog"
+    const val EDIT_TIMELINE_SCREEN_ADD_DIALOG_VIBRATION = "AddDialogVibration"
+    const val EDIT_TIMELINE_SCREEN_ADD_DIALOG_SOUND = "AddDialogSound"
 
 
     const val DELAY_START_BUTTON = "DelayStartButton"

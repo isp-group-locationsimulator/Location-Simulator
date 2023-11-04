@@ -55,7 +55,6 @@ import com.ispgr5.locationsimulator.presentation.util.Screen
 import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
 import com.ispgr5.locationsimulator.ui.theme.ThemeState
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.serialization.ExperimentalSerializationApi
 import java.io.FileOutputStream
 import java.io.InputStream
@@ -79,7 +78,6 @@ class MainActivity : ComponentActivity() {
         recordedAudioUri = it
     }
 
-    @OptIn(DelicateCoroutinesApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         soundStorageManager = SoundStorageManager(this@MainActivity)
@@ -118,7 +116,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    @OptIn(DelicateCoroutinesApi::class)
     @Composable
     private fun HandleIncomingIntent(intent: Intent?) {
         if (intent?.action == Intent.ACTION_SEND) {
@@ -263,7 +260,7 @@ class MainActivity : ComponentActivity() {
                     scaffoldState = scaffoldState
                 )
                 SoundDialog(
-                    popUpState = popUpState, scaffoldState = scaffoldState
+                    popUpState = popUpState
                 ) { fileName ->
                     saveAudioFile(fileName)
                     popUpState.value = false

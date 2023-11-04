@@ -40,8 +40,8 @@ fun SettingsScreen(
     navController: NavController,
     viewModel: SettingsViewModel = hiltViewModel(),
     scaffoldState: ScaffoldState,
-    saveDefaultValuesFunction: (state : State<SettingsState>) -> Unit,
-    getDefaultValuesFunction : () -> SettingsState
+    saveDefaultValuesFunction: (state: State<SettingsState>) -> Unit,
+    getDefaultValuesFunction: () -> SettingsState
 ) {
     //The state from viewmodel
     val state = viewModel.state.value
@@ -111,7 +111,7 @@ fun SettingsScreen(
                                     .padding(20.dp)
                                     .verticalScroll(rememberScrollState()),
 
-                            ) {
+                                ) {
                                 /**
                                  * The Vibration Heading
                                  */
@@ -123,15 +123,18 @@ fun SettingsScreen(
                                         .padding(16.dp)
                                         .align(Alignment.CenterHorizontally),
                                     textAlign = TextAlign.Center,
-                                    )
+                                )
                                 /**
                                  * The Vibration Default Name
                                  */
                                 OutlinedTextField(
                                     value = state.defaultNameVibration,
-                                    onValueChange = {
+                                    onValueChange = { newText ->
                                         viewModel.onEvent(
-                                            SettingsEvent.EnteredName(it,saveDefaultValuesFunction)
+                                            SettingsEvent.EnteredName(
+                                                newText,
+                                                saveDefaultValuesFunction
+                                            )
                                         )
                                     },
                                     label = { Text("Default Name") },

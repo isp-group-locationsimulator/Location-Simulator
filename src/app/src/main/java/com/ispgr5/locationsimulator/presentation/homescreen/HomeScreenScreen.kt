@@ -220,10 +220,10 @@ fun HomeScreenScreen(
                         )
                         Switch(
                             checked = darkTheme.value.isDarkTheme,
-                            onCheckedChange = {
+                            onCheckedChange = { isChecked ->
                                 viewModel.onEvent(
                                     HomeScreenEvent.ChangedAppTheme(
-                                        it,
+                                        isChecked,
                                         activity,
                                         darkTheme
                                     )

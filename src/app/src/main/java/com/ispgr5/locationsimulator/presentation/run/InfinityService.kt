@@ -1,5 +1,6 @@
 package com.ispgr5.locationsimulator.presentation.run
 
+import android.annotation.SuppressLint
 import android.app.*
 import android.content.Context
 import android.content.Intent
@@ -77,6 +78,7 @@ class InfinityService : Service() {
 	/**
 	 * starts the simulation
 	 */
+	@SuppressLint("WakelockTimeout")
 	@OptIn(DelicateCoroutinesApi::class)
 	private fun startService() {
 		//make sure the service starts only once
