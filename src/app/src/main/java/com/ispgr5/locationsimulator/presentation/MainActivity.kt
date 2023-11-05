@@ -57,7 +57,6 @@ import com.ispgr5.locationsimulator.ui.theme.ThemeState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.serialization.ExperimentalSerializationApi
 import java.io.FileOutputStream
-import java.io.InputStream
 
 private const val TAG = "MainActivity"
 
@@ -364,15 +363,14 @@ class MainActivity : ComponentActivity() {
         val preferences: SharedPreferences = getSharedPreferences("prefs", MODE_PRIVATE)
         val firstStart: Boolean = preferences.getBoolean("firstStart", true)
         if (!firstStart) return
-        assets.list("sounds")?.forEach {
-            val extension = MimeTypeMap.getFileExtensionFromUrl(it)
+        assets.list("sounds")?.forEach { soundName ->
+            val extension = MimeTypeMap.getFileExtensionFromUrl(soundName)
                 ?: return@forEach // Those ifs shall catch files that we didn't put into assets ourself. Will fail, if there somehow are audio files not from us.
             val type =
                 MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension) ?: return@forEach
             val isTypeAudio = type.startsWith("audio")
             if (isTypeAudio) {
-                val inputStream: InputStream = assets.open("sounds/$it")
-                soundStorageManager.addSoundFile(it, inputStream)
+                soundStorageManager.addSoundFile(soundName, assets)
             }
         }
         val editor: SharedPreferences.Editor = preferences.edit()

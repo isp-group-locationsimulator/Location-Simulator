@@ -20,6 +20,8 @@ import com.ispgr5.locationsimulator.domain.model.SoundConverter
 import com.ispgr5.locationsimulator.domain.useCase.ConfigurationUseCases
 import com.ispgr5.locationsimulator.presentation.MainActivity
 import com.ispgr5.locationsimulator.presentation.universalComponents.SnackbarContent
+import com.vdurmont.semver4j.Semver
+import com.vdurmont.semver4j.SemverException
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -29,6 +31,7 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.joda.time.Instant
 import org.joda.time.format.DateTimeFormatterBuilder
+import org.json.JSONObject
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
@@ -42,6 +45,11 @@ private const val MEDIA_TYPE_EXPORT = "application/json+gzip"
 private val MEDIA_TYPE_IMPORT = listOf("application/x-gzip", "application/gzip")
 private const val OUTPUT_TOKEN = "locsim"
 private const val LIMIT_CONF_NAME_FOR_EXPORT = 12
+
+private object JsonTokens {
+    const val appId = "appId"
+    const val appVersion = "appVersion"
+}
 
 @Serializable
 data class ConfigurationSerializer(
@@ -87,12 +95,15 @@ class ConfigurationStorageManager(
     /**
      * replace special characters in the configuration name (limiting to ASCII), and limit it to n chars, so the filename doesn't get too long
      */
-    private fun slugifyConfigurationName(configuration: Configuration, limit: Int = LIMIT_CONF_NAME_FOR_EXPORT) =
+    private fun slugifyConfigurationName(
+        configuration: Configuration,
+        limit: Int = LIMIT_CONF_NAME_FOR_EXPORT
+    ) =
         when (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             // Slugify uses the Optional class, added only in API 24
             true -> Slugify.builder().build().slugify(configuration.name).trim()
             else -> {
-                // do it ourselves, except not as nicely
+                // do it ourselves, except not quite as nicely
                 val legalCharRegex = Regex("[0-9A-Za-z ]")
                 configuration.name.mapNotNull { c: Char ->
                     when (legalCharRegex.matches(c.toString())) {
@@ -225,16 +236,8 @@ class ConfigurationStorageManager(
     private suspend fun suspendingReadFileFromContentUri(uri: Uri, useCallback: Boolean): String? {
         try {
             val fileContent = readFileStringFromContentUri(contentUri = uri)
+            verifyAppVersion(fileContent)
             val deserialized = Json.decodeFromString<ConfigurationSerializer>(fileContent)
-            if (deserialized.appVersion != BuildConfig.VERSION_NAME) {
-                // if required, add a migration routine for backwards compatibility here
-                // we now serialize the app version into the JSON, so migrations can be implemented from this
-                throw LoadException(
-                    R.string.migration_version_not_supported,
-                    deserialized.appVersion,
-                    BuildConfig.VERSION_NAME
-                )
-            }
             //Edit the sound names in configuration components List, when the Sound already exist
             val components =
                 editComponentList(deserialized.configurationComponents, deserialized.sounds)
@@ -268,6 +271,55 @@ class ConfigurationStorageManager(
             }
         }
         return null
+    }
+
+    private fun verifyAppVersion(fileContent: String): Semver.VersionDiff? {
+        val jsonObject = JSONObject(fileContent)
+        when {
+            !jsonObject.has(JsonTokens.appId) -> throw LoadException(
+                R.string.configuration_doesnt_have_element,
+                JsonTokens.appId
+            )
+
+            !jsonObject.has(JsonTokens.appVersion) -> throw LoadException(
+                R.string.configuration_doesnt_have_element,
+                JsonTokens.appVersion
+            )
+
+            jsonObject.getString(JsonTokens.appId) != BuildConfig.APPLICATION_ID -> throw LoadException(
+                R.string.configuration_app_id_mismatch,
+                JsonTokens.appId, BuildConfig.APPLICATION_ID, jsonObject.getString(JsonTokens.appId)
+            )
+        }
+        val serializedVersion = jsonObject.getString(JsonTokens.appVersion)
+        try {
+            val serializedSemVer = Semver(serializedVersion)
+            val appSemVer = Semver(BuildConfig.VERSION_NAME)
+            val diff = serializedSemVer.diff(appSemVer)
+            when (diff) {
+                Semver.VersionDiff.MAJOR -> {
+                    //TODO apply version migrations here
+                    throw LoadException(
+                        R.string.migration_version_not_supported,
+                        serializedVersion,
+                        appSemVer.toString()
+                    )
+                }
+
+                Semver.VersionDiff.NONE -> {
+                    Log.i(TAG, "No version difference")
+                }
+
+                else -> Log.i(
+                    TAG,
+                    "Serialized version '$serializedSemVer' vs. App version '$appSemVer' (diff: $diff)"
+                )
+            }
+            return diff
+        } catch (e: SemverException) {
+            Log.e(TAG, "Exception thrown during verification of SemVer $serializedVersion", e)
+            throw LoadException(R.string.could_not_verify_version, serializedVersion)
+        }
     }
 
     @OptIn(DelicateCoroutinesApi::class)
@@ -373,7 +425,10 @@ class ConfigurationStorageManager(
         throw LoadException(R.string.unknown_error)
     }
 
-    suspend fun handleImportFromIntent(intent: Intent, configurationUseCases: ConfigurationUseCases): String? {
+    suspend fun handleImportFromIntent(
+        intent: Intent,
+        configurationUseCases: ConfigurationUseCases
+    ): String? {
         try {
             if (this.configurationUseCases == null) {
                 this.configurationUseCases = configurationUseCases

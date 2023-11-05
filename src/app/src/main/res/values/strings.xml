@@ -25,7 +25,6 @@
     <string name="soundscreen_import">Import</string>
     <string name="soundscreen_record">Record</string>
     <string name="not_found">Not Found</string>
-    <string name="homescreen_appname">Locationsimulator</string>
     <string name="battery_opt_recommendation">We recommend excluding the app from battery optimization to make sure the simulation doesn\'t randomly stop:</string>
     <string name="battery_opt_button">disable battery optimization</string>
     <string name="soundscreen_dialog_title">Enter a name:</string>
@@ -68,7 +67,10 @@
     <string name="invalid_file_provided">Invalid file provided: %s</string>
     <string name="success_reading_configuration_name">Success reading configuration \'%s\'</string>
     <string name="json_load_exception">Could not parse the JSON file provided.</string>
-    <string name="migration_version_not_supported">The provided file was generated from app version %1$s, but you are running %2$s; migration is not yet supported</string>
+    <string name="migration_version_not_supported">The provided file was generated from app version %1$s, but you are running %2$s; migration between these major versions is not yet supported!</string>
     <string name="null_uri">Received null URI in intent.</string>
     <string name="choose_an_audio_recorder_app">Choose an audio recorder app.</string>
+    <string name="configuration_doesnt_have_element">Configuration doesn\'t have the \"%s\" element set.</string>
+    <string name="configuration_app_id_mismatch">The provided configuration has a wrong \'%1$s\' key. Expected the App ID \'%2$s\', but got \'%3$s\'.</string>
+    <string name="could_not_verify_version">Could not verify version: %s.</string>
 </resources>

@@ -26,18 +26,18 @@ android {
     }
 
     buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
 //        release {
-//            minifyEnabled true
-//            debuggable false
+//            minifyEnabled false
 //            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 //        }
-//        debug {
-//            debuggable = true
-//        }
+        release {
+            minifyEnabled true
+            debuggable false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            debuggable = true
+        }
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
@@ -141,4 +141,6 @@ dependencies {
 
     //transform strings to they can be safely exported in a filename
     implementation 'com.github.slugify:slugify:3.0.4'
+
+    implementation 'com.vdurmont:semver4j:3.1.0'
 }

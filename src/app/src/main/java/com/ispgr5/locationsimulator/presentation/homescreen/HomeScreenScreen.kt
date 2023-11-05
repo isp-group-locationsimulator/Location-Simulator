@@ -105,7 +105,7 @@ fun HomeScreenScreen(
                     verticalArrangement = Arrangement.Center
                 ) {
                     Text(
-                        text = stringResource(id = R.string.homescreen_appname),
+                        text = stringResource(id = R.string.app_name),
                         fontSize = 30.sp,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colors.onBackground,

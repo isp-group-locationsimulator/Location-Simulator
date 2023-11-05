@@ -26,7 +26,6 @@
     <string name="soundscreen_import">Import</string>
     <string name="soundscreen_record">Aufnahme</string>
     <string name="not_found">Nicht Gefunden</string>
-    <string name="homescreen_appname">Ortungssimulator</string>
     <string name="battery_opt_recommendation">Wir empfehlen, die App von der Akkuoptimierung auszuschließen, damit die Simulation nicht ungewollt beendet wird:</string>
     <string name="battery_opt_button">Akkuoptimierung deaktivieren</string>
     <string name="soundscreen_dialog_title">Geben Sie einen Namen ein:</string>
@@ -67,7 +66,10 @@
     <string name="success_reading_configuration_name">Konfiguration \'%s\' erfolgreich importiert</string>
     <string name="unknown_error_loading_exceptionname">Unbekannter Fehler beim Lesen der Datei (%s)</string>
     <string name="json_load_exception">Die JSON-Datei war nicht lesbar.</string>
-    <string name="migration_version_not_supported">Die angegebe Datei wurde mit der App-Version %s generiert, aber Du benutzt Version %s. Eine Migration ist noch nicht implementiert.</string>
+    <string name="migration_version_not_supported">Die angegebe Datei wurde mit der App-Version %1$s generiert, aber Du benutzt Version %2$s. Eine Migration zwischen diesen Versionen ist noch nicht implementiert.</string>
     <string name="null_uri">Eine Null-URI wurde im Intent übergeben.</string>
     <string name="choose_an_audio_recorder_app">Wähle eine Aufnahme-App.</string>
+    <string name="configuration_doesnt_have_element">Configuration doesn\'t have the \"%s\" element set.</string>
+    <string name="configuration_app_id_mismatch">Die Konfiguration hat einen falschen Wert für den Schlüssel \'%1$s\'. Erwartet wurde die App-ID \'%2$s\', aber \'%3$s\' wurde gelesen.</string>
+    <string name="could_not_verify_version">Konnte die Version \'%s\' nicht prüfen.</string>
 </resources>
