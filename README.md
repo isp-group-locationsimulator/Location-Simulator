@@ -1,15 +1,17 @@
-# Thema V Ortungssimulator
-## Beschreibung
-Dieses Projekt befasst sich mit der Entwicklung eines Ortungssimulators als App.
-Genau bedeutet dies, dass die App in der Lage sein soll, Vibrationen und Töne abzugeben, mit denen die Bergung von Personen geübt werden kann.
-Diese Geräusche sollen eingerichtet und randomisiert werden können, um die Realität möglichst gut wiederzugeben.
-Die App soll mindestens eine Stunde lang laufen, ohne, dass mit dem Handy interagiert wird.
+# Location Simulator
 
-## Abgabetermin Dokumentation
-Abgabetermin ist zur Abschlusspräsentation bei Herr Prof. M. Leucker am 17. März 2023.
+## Project overview
+
+This project contains the source code and documentation for the _Location Simulator_ app, an Android application for training of USAR personnel.
+
+Using _Location Simulator_, personnel can be trained in the operation of acoustic location equiment for the search and rescue of persons from collapsed structures. This is accomplished by placing an Android smartphone into a rubble structure. The phone will periodically vibrate using the vibration motor and/or generate audible signals from audio recording, so that the personnel being trained can precisely locate the phone within the structure. This app can thus replace existing training aids such as automatic "knocking devices" or cell phones numbers being dialled by the trainers.
+
+## Changelog
+
+- Version 1.1.1: initial public release
 
 ## License
-Copyright 2023 StudiProjekteWS22
+Copyright 2023 Location Simulator team
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
