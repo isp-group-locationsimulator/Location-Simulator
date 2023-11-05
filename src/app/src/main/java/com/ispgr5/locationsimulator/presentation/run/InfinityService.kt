@@ -1,5 +1,6 @@
 package com.ispgr5.locationsimulator.presentation.run
 
+import android.annotation.SuppressLint
 import android.app.*
 import android.content.Context
 import android.content.Intent
@@ -9,9 +10,7 @@ import android.util.Log
 import android.widget.Toast
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
-import com.ispgr5.locationsimulator.domain.model.ConfigurationComponentConverter
-import com.ispgr5.locationsimulator.domain.model.Sound
-import com.ispgr5.locationsimulator.domain.model.Vibration
+import com.ispgr5.locationsimulator.domain.model.ConfigurationComponentRoomConverter
 import com.ispgr5.locationsimulator.presentation.MainActivity
 import kotlinx.coroutines.*
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -72,13 +71,14 @@ class InfinityService : Service() {
 	@OptIn(ExperimentalSerializationApi::class)
 	private fun changeConfig(config: String?) {
 		if (config != null) {
-			this.config = ConfigurationComponentConverter().componentStrToComponentList(config)
+			this.config = ConfigurationComponentRoomConverter().componentStrToComponentList(config)
 		}
 	}
 
 	/**
 	 * starts the simulation
 	 */
+	@SuppressLint("WakelockTimeout")
 	@OptIn(DelicateCoroutinesApi::class)
 	private fun startService() {
 		//make sure the service starts only once
@@ -142,7 +142,7 @@ class InfinityService : Service() {
 	private fun playSoundOrVibration(item: ConfigComponent, vibrator: Vibrator) {
 		//duration and pause is in ms !
 		when (item) {
-			is Vibration -> {
+			is ConfigComponent.Vibration -> {
 				//define the duration, strength and pause duration of the vibration
 				val duration =
 					(Math.random() * (item.maxDuration  - item.minDuration  + 1) + item.minDuration ).toLong().coerceAtLeast(1)
@@ -173,7 +173,7 @@ class InfinityService : Service() {
 				Log.d("Signal-Infinity", "Starting sleep... Pause: $pause ms")
 				Thread.sleep(duration + pause)
 			}
-			is Sound -> {
+			is ConfigComponent.Sound -> {
 				//define the duration, volume and pause duration of the sound and plays it
 				val pause =
 					(Math.random() * (item.maxPause  - item.minPause  + 1) + item.minPause ).toLong()
@@ -204,6 +204,7 @@ class InfinityService : Service() {
 					it.release()
 				}
 			}
+			@Suppress("DEPRECATION")
 			stopForeground(true) // TODO: Deprecated. Replace with stopForeground(0)?
 			stopSelf()
 		} catch (e: Exception) {
@@ -258,11 +259,12 @@ class InfinityService : Service() {
 				notificationChannelId
 			) else Notification.Builder(this)
 
+		@Suppress("DEPRECATION")
 		return builder
 			.setContentTitle("Endless Vibration")
 			.setContentText("I hope this will vibrate forever!")
 			.setContentIntent(pendingIntent)
-			.setSmallIcon(R.mipmap.ic_launcher)
+			.setSmallIcon(R.mipmap.ic_launcher2)
 			.setTicker("Ticker text")
 			.setPriority(Notification.PRIORITY_HIGH) // for under android 26 compatibility
 			.build()

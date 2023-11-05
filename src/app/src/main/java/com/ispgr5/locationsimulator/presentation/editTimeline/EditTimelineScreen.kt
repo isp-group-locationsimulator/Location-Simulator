@@ -1,9 +1,29 @@
 package com.ispgr5.locationsimulator.presentation.editTimeline
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.Divider
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.Scaffold
+import androidx.compose.material.ScaffoldState
+import androidx.compose.material.Switch
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -30,14 +50,16 @@ import com.ispgr5.locationsimulator.presentation.util.Screen
  */
 @Composable
 fun EditTimelineScreen(
-	navController: NavController,
-	viewModel: EditTimelineViewModel = hiltViewModel() ,
-	getDefaultValuesFunction : () -> SettingsState
+    navController: NavController,
+    viewModel: EditTimelineViewModel = hiltViewModel(),
+    getDefaultValuesFunction: () -> SettingsState,
+    scaffoldState: ScaffoldState
 ) {
 	val state = viewModel.state.value
 	var showCustomDialogWithResult by remember { mutableStateOf(false) }
 
 	Scaffold(
+		scaffoldState = scaffoldState,
 		topBar = { TopBar(navController, stringResource(id = R.string.ScreenEdit),
 			extraActions = {
 				//The Add Button
@@ -94,7 +116,7 @@ fun EditTimelineScreen(
 									horizontalAlignment = Alignment.CenterHorizontally,
 									verticalArrangement = Arrangement.Center
 								) {
-									BasicTextField(
+									OutlinedTextField(
 										value = state.name,
 										modifier = Modifier.testTag(TestTags.EDIT_CONFIG_NAME_TEXTINPUT),
 										onValueChange = { name ->
@@ -132,7 +154,7 @@ fun EditTimelineScreen(
 									horizontalAlignment = Alignment.CenterHorizontally,
 									verticalArrangement = Arrangement.Center
 								) {
-									BasicTextField(
+									OutlinedTextField(
 										value = state.description,
 										modifier = Modifier.testTag(TestTags.EDIT_CONFIG_DESCRIPTION_TEXTINPUT),
 										onValueChange = { description ->

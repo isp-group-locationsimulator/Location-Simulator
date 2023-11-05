@@ -201,7 +201,7 @@ fun OneConfigurationListMember(
 						)
 					) {
 						Icon(
-							painter = painterResource(id = R.drawable.ic_baseline_download_24),
+							painter = painterResource(id = R.drawable.ic_ios_share_24),
 							contentDescription = null,
 							tint = MaterialTheme.colors.onSurface
 						)

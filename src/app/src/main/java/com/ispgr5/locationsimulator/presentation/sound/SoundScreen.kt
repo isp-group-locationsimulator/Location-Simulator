@@ -23,12 +23,13 @@ import kotlinx.coroutines.delay
  */
 @Composable
 fun SoundScreen(
-	navController: NavController,
-	viewModel: SoundViewModel = hiltViewModel(),
-	soundStorageManager: SoundStorageManager,
-	soundsDirUri: String,
-	recordAudio: () -> Unit,
-	getDefaultValuesFunction : () -> SettingsState
+    navController: NavController,
+    viewModel: SoundViewModel = hiltViewModel(),
+    soundStorageManager: SoundStorageManager,
+    soundsDirUri: String,
+    recordAudio: () -> Unit,
+    getDefaultValuesFunction: () -> SettingsState,
+    scaffoldState: ScaffoldState
 ) {
 	val state = viewModel.state.value
 
@@ -45,6 +46,7 @@ fun SoundScreen(
 	var soundNameToDelete  by remember { mutableStateOf("")}  //String to store which sound should be deleted
 
 	Scaffold(
+		scaffoldState = scaffoldState,
 		topBar = { TopBar(navController, stringResource(id = R.string.ScreenSound)) },
 		content = {
 			Spacer(modifier = Modifier.height(it.calculateTopPadding()))

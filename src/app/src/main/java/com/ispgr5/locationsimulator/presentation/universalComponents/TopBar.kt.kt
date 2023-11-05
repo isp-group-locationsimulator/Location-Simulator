@@ -1,12 +1,14 @@
 package com.ispgr5.locationsimulator.presentation.universalComponents
 
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.material.*
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.core.util.TestTags
@@ -18,7 +20,7 @@ import com.ispgr5.locationsimulator.core.util.TestTags
 fun TopBar(navController : NavController,
            title: String,  //title of Screen
            backPossible : Boolean = true,  // Whether going back should be possible or not
-           extraActions : @Composable()(RowScope.() -> Unit) = {},
+           extraActions : @Composable (RowScope.() -> Unit) = {},
 ) {
     if(backPossible) {
         // with back button

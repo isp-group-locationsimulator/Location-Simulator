@@ -3,12 +3,12 @@ package com.ispgr5.locationsimulator.domain.model
 import androidx.room.ProvidedTypeConverter
 import androidx.room.TypeConverter
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
+
 
 /**
  * Type Converter Class for a Vibration Object.
@@ -17,8 +17,7 @@ import kotlinx.serialization.modules.subclass
  * Room will automatically call the @TypeConverter functions to Convert the data
  */
 @ProvidedTypeConverter
-class ConfigurationComponentConverter {
-
+class ConfigurationComponentRoomConverter {
 	/**
 	 * The json en- and decoder with the Information of hierarchy and Class type names
 	 */
@@ -26,8 +25,8 @@ class ConfigurationComponentConverter {
 		//The class hierarchy
 		serializersModule = SerializersModule {
 			polymorphic(ConfigComponent::class) {
-				subclass(Vibration::class)
-				subclass(Sound::class)
+				subclass(ConfigComponent.Vibration::class)
+				subclass(ConfigComponent.Sound::class)
 			}
 		}
 		//under this name the Class Type is stored in json for example{"comp_type":"Vibration"}

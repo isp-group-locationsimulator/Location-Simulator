@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Scaffold
+import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -28,11 +29,12 @@ import com.ispgr5.locationsimulator.presentation.universalComponents.TopBar
  */
 @Composable
 fun InfoScreen(
-	navController: NavController
+	navController: NavController,
+	scaffoldState: ScaffoldState
 ) {
 	Scaffold(
+		scaffoldState = scaffoldState,
 		topBar = { TopBar(navController, stringResource(id = R.string.ScreenInfo)) },
-
 		content = {
 			Column(
 				modifier = Modifier

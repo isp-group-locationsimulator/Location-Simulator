@@ -5,6 +5,7 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
 import androidx.compose.material.Scaffold
+import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -28,7 +29,8 @@ import com.ispgr5.locationsimulator.presentation.universalComponents.TopBar
 fun RunScreen(
 	navController: NavController,
 	stopServiceFunction: () -> Unit,
-	viewModel: RunViewModel = hiltViewModel()
+	viewModel: RunViewModel = hiltViewModel(),
+	scaffoldState: ScaffoldState
 ) {
 	BackHandler{
 		viewModel.onEvent(RunEvent.StopClicked(stopServiceFunction))
@@ -36,6 +38,7 @@ fun RunScreen(
 	}
 
 	Scaffold(
+		scaffoldState = scaffoldState,
 		topBar = { TopBar(navController, stringResource(id = R.string.ScreenRun),false) },
 		content = {
 			Spacer(modifier = Modifier.height(it.calculateTopPadding()))

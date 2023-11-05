@@ -27,11 +27,11 @@ data class Configuration(
 		var sum =0f
 		for( configComponent in components){
 			when (configComponent) {
-				is Sound -> {
+				is ConfigComponent.Sound -> {
 					sum += RangeConverter.msToS(configComponent.minPause)
 					sum += getAudioFileLength(configComponent,context,privateDirUri)
 				}
-				is Vibration -> {
+				is ConfigComponent.Vibration -> {
 					sum += RangeConverter.msToS(configComponent.minPause)
 					sum += RangeConverter.msToS(configComponent.minDuration)
 				}
@@ -43,7 +43,7 @@ data class Configuration(
 	/**
 	 * calculates the length of a Sound
 	 */
-	private fun getAudioFileLength(sound : Sound, context : Context, privateDirUri : String) : Float{
+	private fun getAudioFileLength(sound : ConfigComponent.Sound, context : Context, privateDirUri : String) : Float{
 		//Get audio file length
 		val uri: Uri = Uri.parse(privateDirUri + "/" + sound.source)
 		val mmr = MediaMetadataRetriever()
@@ -61,11 +61,11 @@ data class Configuration(
 		var sum =0f
 		for( configComponent in components){
 			when (configComponent) {
-				is Sound -> {
+				is ConfigComponent.Sound -> {
 					sum += RangeConverter.msToS(configComponent.maxPause)
 					sum += getAudioFileLength(configComponent,context,privateDirUri)
 				}
-				is Vibration -> {
+				is ConfigComponent.Vibration -> {
 					sum += RangeConverter.msToS(configComponent.maxPause)
 					sum += RangeConverter.msToS(configComponent.maxDuration)
 				}

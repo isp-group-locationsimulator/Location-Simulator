@@ -39,8 +39,9 @@ import com.ispgr5.locationsimulator.presentation.universalComponents.TopBar
 fun SettingsScreen(
     navController: NavController,
     viewModel: SettingsViewModel = hiltViewModel(),
-    saveDefaultValuesFunction: (state : State<SettingsState>) -> Unit,
-    getDefaultValuesFunction : () -> SettingsState
+    scaffoldState: ScaffoldState,
+    saveDefaultValuesFunction: (state: State<SettingsState>) -> Unit,
+    getDefaultValuesFunction: () -> SettingsState
 ) {
     //The state from viewmodel
     val state = viewModel.state.value
@@ -61,6 +62,7 @@ fun SettingsScreen(
     state.defaultNameVibration = getDefaultValuesFunction().defaultNameVibration
 
     Scaffold(
+        scaffoldState = scaffoldState,
         topBar = { TopBar(navController, stringResource(id = R.string.ScreenSettings)) },
         content = {
             Spacer(modifier = Modifier.height(it.calculateTopPadding()))
@@ -76,12 +78,13 @@ fun SettingsScreen(
 
                 // The Pager
                 val pageCount = 2
-                val pagerState = rememberPagerState()
+                val pagerState = rememberPagerState {
+                    pageCount
+                }
 
                 HorizontalPager(
                     modifier = Modifier
                         .fillMaxSize(),
-                    pageCount = pageCount,
                     state = pagerState,
                 ) { page ->
 
@@ -108,7 +111,7 @@ fun SettingsScreen(
                                     .padding(20.dp)
                                     .verticalScroll(rememberScrollState()),
 
-                            ) {
+                                ) {
                                 /**
                                  * The Vibration Heading
                                  */
@@ -120,15 +123,18 @@ fun SettingsScreen(
                                         .padding(16.dp)
                                         .align(Alignment.CenterHorizontally),
                                     textAlign = TextAlign.Center,
-                                    )
+                                )
                                 /**
                                  * The Vibration Default Name
                                  */
                                 OutlinedTextField(
                                     value = state.defaultNameVibration,
-                                    onValueChange = {
+                                    onValueChange = { newText ->
                                         viewModel.onEvent(
-                                            SettingsEvent.EnteredName(it,saveDefaultValuesFunction)
+                                            SettingsEvent.EnteredName(
+                                                newText,
+                                                saveDefaultValuesFunction
+                                            )
                                         )
                                     },
                                     label = { Text("Default Name") },
@@ -150,6 +156,7 @@ fun SettingsScreen(
                                     LocalContext.current.getSystemService(Vibrator::class.java)
                                 } else {
                                     // Use the deprecated method to get the Vibrator service
+                                    @Suppress("DEPRECATION")
                                     LocalContext.current.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
                                 }
                                 if (Build.VERSION.SDK_INT >= 26 && vibrator.hasAmplitudeControl()) {

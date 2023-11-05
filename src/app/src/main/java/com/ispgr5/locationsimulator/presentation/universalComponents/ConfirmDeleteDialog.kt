@@ -14,17 +14,20 @@ Alert Dialog to Confirm the Deletion of an Item
 fun ConfirmDeleteDialog(
     onDismiss: () -> Unit,
     onConfirm: () -> Unit
-){
+) {
     AlertDialog(
-        onDismissRequest = { onDismiss},
-        text = {Text(stringResource(id = R.string.confirmDeleteDialogText))},
-        title = {Text(stringResource(id = R.string.confirmDeleteDialogTitle))},
+        onDismissRequest = { onDismiss() },
+        text = { Text(stringResource(id = R.string.confirmDeleteDialogText)) },
+        title = { Text(stringResource(id = R.string.confirmDeleteDialogTitle)) },
         confirmButton = {
-            TextButton(onClick = onConfirm){
-              Text(text = stringResource(id = R.string.confirmDeleteDialogConfirmBtn))
-            } },
-        dismissButton = {TextButton(onClick = onDismiss){
-            Text(text = stringResource(id = R.string.confirmDeleteDialogDismissBtn))
-        }}
+            TextButton(onClick = onConfirm) {
+                Text(text = stringResource(id = R.string.confirmDeleteDialogConfirmBtn))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(text = stringResource(id = R.string.confirmDeleteDialogDismissBtn))
+            }
+        }
     )
 }

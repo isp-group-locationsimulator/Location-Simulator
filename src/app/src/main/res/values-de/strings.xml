@@ -1,12 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Ortungssimulator</string>
-    <string name="homescreen_btn_quickstart">Schnellstart</string>
     <string name="homescreen_btn_select_profile">Musterauswahl</string>
-    <string name="select_btn_import_audio">Audio Importieren</string>
-    <string name="select_btn_profile_export">EXPORTIEREN</string>
-    <string name="select_btn_profile_select">WÄHLEN</string>
-    <string name="select_btn_profile_delete">Löschen</string>
     <string name="editTimeline_AddConfigComponentDialog_Question">Was wollen Sie hinzufügen?</string>
     <string name="editTimeline_AddConfigComponentDialog_addVibration">Vibration hinzufügen</string>
     <string name="editTimeline_AddConfigComponentDialog_Cancel">ABBRECHEN</string>
@@ -14,7 +9,6 @@
     <string name="delay_btn_start">START</string>
     <string name="editTimeline_name">Name</string>
     <string name="editTimeline_description">Beschreibung</string>
-    <string name="editTimeline_add">Hinzufügen</string>
     <string name="editTimeline_SoundVolume">Lautstärke</string>
     <string name="editTimeline_Pause">Pause</string>
     <string name="editTimeline_range">"bis "</string>
@@ -29,27 +23,19 @@
     <string name="university">Universität zu Lübeck</string>
     <string name="isp">Institut für Softwaretechnik und Programmiersprachen</string>
     <string name="infoscreen_support">Unterstützt von</string>
-    <string name="editTimeline_addSound">Sound hinzufügen</string>
-    <string name="soundscreen_soundselection">Sound Auswählen</string>
     <string name="soundscreen_import">Import</string>
     <string name="soundscreen_record">Aufnahme</string>
-    <string name="finish_deletion">Fertig</string>
     <string name="not_found">Nicht Gefunden</string>
-    <string name="homescreen_appname">Ortungssimulator</string>
     <string name="battery_opt_recommendation">Wir empfehlen, die App von der Akkuoptimierung auszuschließen, damit die Simulation nicht ungewollt beendet wird:</string>
     <string name="battery_opt_button">Akkuoptimierung deaktivieren</string>
-    <string name="soundscreen_stopplayback">Abspielen Stoppen</string>
     <string name="soundscreen_dialog_title">Geben Sie einen Namen ein:</string>
     <string name="soundscreen_dialog_button">Bestätigen</string>
     <string name="editTimeline_randomOrderPlayback">Zufällige Reihenfolge</string>
-    <string name="selectscreen_favetoast">Sie können maximal zwei Konfigurationen als Favoriten wählen.</string>
-    <string name="export_toast_message">Die Konfiguration wurde im Download Ordner gespeichert</string>
     <string name="confirmDeleteDialogTitle">Löschen</string>
     <string name="confirmDeleteDialogText">Sind sie sicher, dass sie Löschen möchten?</string>
     <string name="confirmDeleteDialogDismissBtn">Abbrechen</string>
     <string name="confirmDeleteDialogConfirmBtn">Löschen</string>
     <string name="ScreenInfo">Info</string>
-    <string name="ScreenHome">Start</string>
     <string name="ScreenRun">Konfiguration wird abgespielt</string>
     <string name="ScreenSelect">Konfiguration auswählen</string>
     <string name="ScreenSound">Sound auswählen</string>
@@ -57,7 +43,6 @@
     <string name="ScreenDelay">" Konfiguration starten"</string>
     <string name="ScreenEdit"> Konfiguration bearbeiten</string>
     <string name="ScreenSettings">" Standard Einstellungen "</string>
-    <string name="DuplicateComponent"> Duplizieren </string>
     <string name="TimerHours">Stunden</string>
     <string name="TimerMinutes">Minuten</string>
     <string name="TimerSeconds">Sekunden</string>
@@ -66,13 +51,25 @@
     <string name="TimelineMoveRight">nach rechts in Zeitleiste</string>
     <string name="PlaceholderDefaultName"> "Geben Sie einen Namen ein" </string>
     <string name="homescreen_darkmode">Darkmode</string>
-    <string name="config_save_error">Die Konfiguration hat einen fehler</string>
     <string name="vibrationStrengthNotSupported">Das Anpassen der Vibrationsstärke wird auf diesem Gerät nicht unterstützt</string>
     <string name="DialogConfirmation">OK</string>
-    <string name="DefaultVibration">Standard Vibration</string>
-    <string name="DefaultSound">Standard Sound</string>
+    <string name="DefaultVibration">Standard-Vibration</string>
+    <string name="DefaultSound">Standard-Sound</string>
     <string name="infoscreen_license">Lizenz</string>
     <string name="infoscreen_ownLicense">Diese App ist unter der Apache 2.0 Lizenz veröffentlicht.</string>
     <string name="infoscreen_usingLicense">Diese App nutzt Icons, die unter der Apache 2.0 Lizenz und unter der MIT Lizenz veröffentlicht wurden.</string>
     <string name="Disclaimer">Diese Anwendung ist nur für übungszwecke gedacht. Sie ist für keinerlei realen Einsatz gedacht und es wird keinerlei Haftung für eventuell aufgetretene Schäden übernommen.</string>
+    <string name="share_export_using">Export teilen mit…</string>
+    <string name="unknown_error">Ein unbekannter Fehler ist aufgetreten, sorry!</string>
+    <string name="unsupported_media_type_provided">Unsupported media type provided: \'%s\'</string>
+    <string name="invalid_file_provided">Ungültige Datei ausgewählt: %s</string>
+    <string name="success_reading_configuration_name">Konfiguration \'%s\' erfolgreich importiert</string>
+    <string name="unknown_error_loading_exceptionname">Unbekannter Fehler beim Lesen der Datei (%s)</string>
+    <string name="json_load_exception">Die JSON-Datei war nicht lesbar.</string>
+    <string name="migration_version_not_supported">Die angegebe Datei wurde mit der App-Version %1$s generiert, aber Du benutzt Version %2$s. Eine Migration zwischen diesen Versionen ist noch nicht implementiert.</string>
+    <string name="null_uri">Eine Null-URI wurde im Intent übergeben.</string>
+    <string name="choose_an_audio_recorder_app">Wähle eine Aufnahme-App.</string>
+    <string name="configuration_doesnt_have_element">Configuration doesn\'t have the \"%s\" element set.</string>
+    <string name="configuration_app_id_mismatch">Die Konfiguration hat einen falschen Wert für den Schlüssel \'%1$s\'. Erwartet wurde die App-ID \'%2$s\', aber \'%3$s\' wurde gelesen.</string>
+    <string name="could_not_verify_version">Konnte die Version \'%s\' nicht prüfen.</string>
 </resources>

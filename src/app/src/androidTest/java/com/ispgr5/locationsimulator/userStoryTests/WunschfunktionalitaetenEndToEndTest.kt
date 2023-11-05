@@ -1,10 +1,12 @@
-package com.ispgr5.locationsimulator.UserStoryTests
+package com.ispgr5.locationsimulator.userStoryTests
 
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.graphics.Color
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.material.rememberScaffoldState
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.test.*
@@ -14,12 +16,12 @@ import androidx.test.filters.SdkSuppress
 import com.ispgr5.locationsimulator.core.util.TestTags
 import com.ispgr5.locationsimulator.di.AppModule
 import com.ispgr5.locationsimulator.presentation.MainActivity
+import com.ispgr5.locationsimulator.presentation.universalComponents.SnackbarContent
 import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
 import com.ispgr5.locationsimulator.ui.theme.ThemeState
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.UninstallModules
-import junit.framework.Assert.assertFalse
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -32,6 +34,7 @@ class WunschfunktionalitaetenEndToEndTest {
     // copy before every Integration or End-to-End-Test
     @get:Rule(order = 0)
     val hiltRule = HiltAndroidRule(this)
+
     @get:Rule(order = 1)
     val composeRule = createAndroidComposeRule<MainActivity>()
 
@@ -44,8 +47,15 @@ class WunschfunktionalitaetenEndToEndTest {
             composeRule.activity.setContent {
                 val navController = rememberNavController()
                 val themeState = mutableStateOf(ThemeState(isDarkTheme = false))
+                val scaffoldState = rememberScaffoldState()
+                val snackbarContent: MutableState<SnackbarContent?> = mutableStateOf(null)
                 LocationSimulatorTheme(themeState) {
-                    composeRule.activity.NavigationAppHost(navController,themeState);
+                    composeRule.activity.NavigationAppHost(
+                        navController = navController,
+                        themeState = themeState,
+                        scaffoldState = scaffoldState,
+                        snackbarContent = snackbarContent
+                    )
                 }
             }
         }
@@ -58,15 +68,14 @@ class WunschfunktionalitaetenEndToEndTest {
     um so vielfältige Konfigurationen erstellen zu können.
      */
     @Test
-    fun W2_test_Timeline(){
+    fun w2_test_Timeline() {
 
         //in Home Screen
         composeRule.onNodeWithTag(TestTags.HOME_SELECT_CONFIG_BUTTON).performClick()
 
 
-
-       /** Eine neu Konfiguration wird erstellt (inkl. der zwei Standardvibrationen denen der
-                Name Vibration1 und Vibration2 ) gegeben wird. **/
+        /** Eine neu Konfiguration wird erstellt (inkl. der zwei Standardvibrationen denen der
+        Name Vibration1 und Vibration2 ) gegeben wird. **/
         composeRule.onNodeWithTag(TestTags.SELECT_ADD_BUTTON).performClick()
 
         //in Add Screen
@@ -89,15 +98,18 @@ class WunschfunktionalitaetenEndToEndTest {
 
         //Die erste Vibration wird in der Timeline ausgewählt.
         composeRule.onAllNodesWithTag(TestTags.EDIT_CONFIG_ITEM)[0].performClick()
-        composeRule.onNodeWithTag(TestTags.EDIT_ITEM_NAME_TEXTINPUT).performTextReplacement("Vibration1")
+        composeRule.onNodeWithTag(TestTags.EDIT_ITEM_NAME_TEXTINPUT)
+            .performTextReplacement("Vibration1")
 
         composeRule.onAllNodesWithTag(TestTags.EDIT_CONFIG_ITEM)[1].performClick()
-        composeRule.onNodeWithTag(TestTags.EDIT_ITEM_NAME_TEXTINPUT).performTextReplacement("Vibration2")
+        composeRule.onNodeWithTag(TestTags.EDIT_ITEM_NAME_TEXTINPUT)
+            .performTextReplacement("Vibration2")
 
         /**Eine Vibration mit Namen Vibration3 wird hinzugefügt.**/
         composeRule.onNodeWithTag(TestTags.EDIT_TIMELINE_SCREEN_ADD_BUTTON).performClick()
         composeRule.onNodeWithTag(TestTags.EDIT_TIMELINE_SCREEN_ADD_DIALOG_VIBRATION).performClick()
-        composeRule.onNodeWithTag(TestTags.EDIT_ITEM_NAME_TEXTINPUT).performTextReplacement("Vibration3")
+        composeRule.onNodeWithTag(TestTags.EDIT_ITEM_NAME_TEXTINPUT)
+            .performTextReplacement("Vibration3")
 
 
         /**Ein Sound mit Namen Sound wird hinzugefügt.**/
@@ -135,7 +147,7 @@ class WunschfunktionalitaetenEndToEndTest {
         composeRule.onNodeWithTag(TestTags.EDIT_ITEM_NAME_TEXTINPUT).assertTextEquals("Vibration1")
         composeRule.onAllNodesWithTag(TestTags.EDIT_CONFIG_ITEM)[2].performClick()
 
-       // composeRule.onNodeWithTag(TestTags.EDIT_NAME_TEXTINPUT).assertTextEquals("Vibration3")
+        // composeRule.onNodeWithTag(TestTags.EDIT_NAME_TEXTINPUT).assertTextEquals("Vibration3")
 
         composeRule.onAllNodesWithTag(TestTags.EDIT_CONFIG_ITEM)[3].performClick()
 
@@ -145,29 +157,41 @@ class WunschfunktionalitaetenEndToEndTest {
 
 
     /**
-    * Testing User Story W4:
-    * Der oder die User*in möchte das Design zwischen Hell und Dunkel wechseln können.
-    */
+     * Testing User Story W4:
+     * Der oder die User*in möchte das Design zwischen Hell und Dunkel wechseln können.
+     */
     @SdkSuppress(minSdkVersion = 26) //Screenshots are only available on API 26 and up
     @Test
-    fun W4_testDarkAndLightMode(){
+    fun w4_testDarkAndLightMode() {
         /**Der Dark-Mode-Slider wird gedrückt.**/
         //switch to dark mode
         composeRule.onNodeWithTag(TestTags.HOME_DARKMODE_SLIDER).performClick()
 
         /**Es wird überprüft, dass nun im Sytem der Darkmode gesetzt ist.**/
         //check if dark theme is setted in prefs
-        var isDarkTheme = composeRule.activity.getSharedPreferences("prefs", ComponentActivity.MODE_PRIVATE).getBoolean("isDarkTheme", false)
+        var isDarkTheme =
+            composeRule.activity.getSharedPreferences("prefs", ComponentActivity.MODE_PRIVATE)
+                .getBoolean("isDarkTheme", false)
         assert(isDarkTheme)
         //check if screen is dark
         /**Es wird überprüft, dass der Bildschirm dunkel ist.**/
-        assert(isDark( composeRule.onNodeWithTag(TestTags.HOME_SELECT_CONFIG_BUTTON).onParent().captureToImage().asAndroidBitmap()))
+        assert(
+            isDark(
+                composeRule.onNodeWithTag(TestTags.HOME_SELECT_CONFIG_BUTTON).onParent()
+                    .captureToImage().asAndroidBitmap()
+            )
+        )
 
         /**Wechsel in den Select Screen.**/
         composeRule.onNodeWithTag(TestTags.HOME_SELECT_CONFIG_BUTTON).performClick()
 
         /**Es wird überprüft, dass der Bildschirm dunkel ist.**/
-        assert(isDark( composeRule.onNodeWithTag(TestTags.SELECT_ADD_BUTTON).onParent().captureToImage().asAndroidBitmap()))
+        assert(
+            isDark(
+                composeRule.onNodeWithTag(TestTags.SELECT_ADD_BUTTON).onParent().captureToImage()
+                    .asAndroidBitmap()
+            )
+        )
 
         /** Wechsel in den Home Screen.**/
         composeRule.onNodeWithTag(TestTags.TOP_BAR_BACK_BUTTON).performClick()
@@ -177,12 +201,19 @@ class WunschfunktionalitaetenEndToEndTest {
 
         /**Es wird überprüft, dass nun im System der Lightmdoe gesetzt ist.**/
         //check if light theme is setted in prefs.
-        isDarkTheme = composeRule.activity.getSharedPreferences("prefs", ComponentActivity.MODE_PRIVATE).getBoolean("isDarkTheme", false)
-        assertFalse(isDarkTheme)
+        isDarkTheme =
+            composeRule.activity.getSharedPreferences("prefs", ComponentActivity.MODE_PRIVATE)
+                .getBoolean("isDarkTheme", false)
+        assert(!isDarkTheme)
         //check if screen is light
 
         /**Es wird überprüft, dass der Bildschirm nicht mehr dunkel ist.**/
-        assertFalse(isDark( composeRule.onNodeWithTag(TestTags.HOME_SELECT_CONFIG_BUTTON).onParent().captureToImage().asAndroidBitmap()))
+        isDark(
+            composeRule.onNodeWithTag(TestTags.HOME_SELECT_CONFIG_BUTTON).onParent()
+                .captureToImage().asAndroidBitmap()
+        ).let { dark ->
+            assert(!dark)
+        }
     }
 
     /**
@@ -191,14 +222,16 @@ class WunschfunktionalitaetenEndToEndTest {
      */
     @SdkSuppress(maxSdkVersion = 26)
     @Test
-    fun W4_testDarkAndLightMode_withoutScreenshot(){
+    fun w4_testDarkAndLightMode_withoutScreenshot() {
         /**Der Dark-Mode-Slider wird gedrückt.**/
         //switch to dark mode
         composeRule.onNodeWithTag(TestTags.HOME_DARKMODE_SLIDER).performClick()
 
         /**Es wird überprüft, dass nun im Sytem der Darkmode gesetzt ist.**/
         //check if dark theme is setted in prefs
-        var isDarkTheme = composeRule.activity.getSharedPreferences("prefs", ComponentActivity.MODE_PRIVATE).getBoolean("isDarkTheme", false)
+        var isDarkTheme =
+            composeRule.activity.getSharedPreferences("prefs", ComponentActivity.MODE_PRIVATE)
+                .getBoolean("isDarkTheme", false)
         assert(isDarkTheme)
 
         /**Wechsel in den Select Screen.**/
@@ -213,29 +246,35 @@ class WunschfunktionalitaetenEndToEndTest {
 
         /**Es wird überprüft, dass nun im System der Lightmdoe gesetzt ist.**/
         //check if light theme is setted in prefs.
-        isDarkTheme = composeRule.activity.getSharedPreferences("prefs", ComponentActivity.MODE_PRIVATE).getBoolean("isDarkTheme", false)
-        assertFalse(isDarkTheme)
+        isDarkTheme =
+            composeRule.activity.getSharedPreferences("prefs", ComponentActivity.MODE_PRIVATE)
+                .getBoolean("isDarkTheme", false)
+        assert(!isDarkTheme)
         //check if screen is light
 
         /**Es wird überprüft, dass der Bildschirm nicht mehr dunkel ist.**/
-        assertFalse(isDark( composeRule.onNodeWithTag(TestTags.HOME_SELECT_CONFIG_BUTTON).onParent().captureToImage().asAndroidBitmap()))
+        isDark(
+            composeRule.onNodeWithTag(TestTags.HOME_SELECT_CONFIG_BUTTON).onParent()
+                .captureToImage().asAndroidBitmap()
+        ).let { dark ->
+            assert(!dark)
+        }
     }
 
-            /**
+    /**
      * checks if a given bitmap has more than 60% of the Pixels with a luminance below 150
      */
-    fun isDark(bitmap: Bitmap): Boolean {
+    private fun isDark(bitmap: Bitmap): Boolean {
         var dark = false
         val darkThreshold = bitmap.width * bitmap.height * 0.6f
         var darkPixels = 0
         val pixels = IntArray(bitmap.width * bitmap.height)
         bitmap.getPixels(pixels, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
         for (pixel in pixels) {
-            val color = pixel
-            val r: Int = Color.red(color)
-            val g: Int = Color.green(color)
-            val b: Int = Color.blue(color)
-            //luminacne formula
+            val r: Int = Color.red(pixel)
+            val g: Int = Color.green(pixel)
+            val b: Int = Color.blue(pixel)
+            //luminance formula
             val luminance = 0.299 * r + 0.0f + 0.587 * g + 0.0f + 0.114 * b + 0.0f
             if (luminance < 150) {
                 darkPixels++

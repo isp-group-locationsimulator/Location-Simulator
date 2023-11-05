@@ -2,6 +2,7 @@ package com.ispgr5.locationsimulator.presentation.editTimeline
 
 import android.annotation.SuppressLint
 import androidx.activity.compose.setContent
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
@@ -53,7 +54,8 @@ class EditTimelineScreenTest{
                         composable("testEditTimeline") {
                             EditTimelineScreen(
                                 navController = navController,
-                                getDefaultValuesFunction = getDefaultValuesTest
+                                getDefaultValuesFunction = getDefaultValuesTest,
+                                scaffoldState = rememberScaffoldState()
                             )
                         }
                     }
@@ -73,8 +75,8 @@ class EditTimelineScreenTest{
     @Test
     fun clickAddButtonAddConfigComponentDialog_isVisible(){
         composeRule.onNodeWithTag(TestTags.EDIT_TIMELINE_SCREEN_ADD_DIALOG).assertDoesNotExist()
-        composeRule.onNodeWithTag(TestTags.EDIT_TIMELINE_SCREEN_ADD_BUTTON).performClick();
-        composeRule.onNodeWithTag(TestTags.EDIT_TIMELINE_SCREEN_ADD_DIALOG).assertIsDisplayed();
+        composeRule.onNodeWithTag(TestTags.EDIT_TIMELINE_SCREEN_ADD_BUTTON).performClick()
+        composeRule.onNodeWithTag(TestTags.EDIT_TIMELINE_SCREEN_ADD_DIALOG).assertIsDisplayed()
     }
 
     /**

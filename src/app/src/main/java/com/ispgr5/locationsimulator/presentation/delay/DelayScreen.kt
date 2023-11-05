@@ -1,6 +1,5 @@
 package com.ispgr5.locationsimulator.presentation.delay
 
-import Timer
 import android.content.Context
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.*
@@ -34,13 +33,15 @@ fun DelayScreen(
 	navController: NavController,
 	viewModel: DelayViewModel = hiltViewModel(),
 	startServiceFunction: (List<ConfigComponent>, Boolean) -> Unit,
-	context : Context, //context needed for calculating Sound Length
-	soundsDirUri : String //the sounds Directory Uri  needed for calculating Sound Length
+	context: Context, //context needed for calculating Sound Length
+	soundsDirUri: String, //the sounds Directory Uri  needed for calculating Sound Length
+	scaffoldState: ScaffoldState
 ) {
 	//The state from viewmodel
 	val state = viewModel.state.value
 
 	Scaffold(
+		scaffoldState = scaffoldState,
 		topBar = { TopBar(navController, stringResource(id = R.string.ScreenDelay)) },
 		content = {
 			Spacer(modifier = Modifier.height(it.calculateTopPadding()))
@@ -76,9 +77,9 @@ fun DelayScreen(
 				Spacer(modifier = Modifier.size(8.dp))
 
 				Column {
-						state.configuration?.components?.let {
+						state.configuration?.components?.let { components ->
 							Timeline(
-								components = it,
+								components = components,
 								selectedComponent = null,
 								onSelectAComponent = fun(_: ConfigComponent) {},
 								onAddClicked = fun() {},
