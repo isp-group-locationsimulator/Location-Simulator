@@ -31,6 +31,7 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.joda.time.Instant
 import org.joda.time.format.DateTimeFormatterBuilder
+import org.json.JSONException
 import org.json.JSONObject
 import java.io.File
 import java.io.FileOutputStream
@@ -257,7 +258,7 @@ class ConfigurationStorageManager(
             return deserialized.name
         } catch (exception: Exception) {
             val exceptionForCallback = when (exception) {
-                is SerializationException -> LoadException(R.string.json_load_exception)
+                is SerializationException, is JSONException -> LoadException(R.string.json_load_exception)
                 is LoadException -> exception
                 else -> LoadException(
                     R.string.unknown_error_loading_exceptionname,
@@ -407,7 +408,6 @@ class ConfigurationStorageManager(
                     R.string.invalid_file_provided,
                     contentUri.toString()
                 )
-
                 else -> throw LoadException(
                     R.string.unsupported_media_type_provided,
                     contentType
@@ -435,16 +435,23 @@ class ConfigurationStorageManager(
             }
             when (intent.type) {
                 in MEDIA_TYPE_IMPORT -> {
+                    Log.i(TAG, "handleImportFromIntent: ${intent.clipData}")
                     val extraUri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                         intent.getParcelableExtra(Intent.EXTRA_STREAM, Uri::class.java)
                     } else {
                         @Suppress("DEPRECATION")
                         intent.getParcelableExtra(Intent.EXTRA_STREAM) as? Uri?
                     }
-                    Log.i(TAG, "Received intent with media type '${intent.type} and URI $extraUri")
-                    if (extraUri != null) {
+                    val dataUri = intent.data
+                    val clipDataUri = when (intent.clipData?.itemCount) {
+                        1 -> intent.clipData?.getItemAt(0)?.uri
+                        else -> null
+                    }
+                    val theUri = listOfNotNull(extraUri, dataUri, clipDataUri).firstOrNull()
+                    Log.i(TAG, "Received ${intent.action} intent with media type '${intent.type}' and URI $theUri")
+                    if (theUri != null) {
                         val newConfName =
-                            suspendingReadFileFromContentUri(uri = extraUri, useCallback = false)
+                            suspendingReadFileFromContentUri(uri = theUri, useCallback = false)
                         Log.i(TAG, "loaded conf '$newConfName' from intent")
                         return newConfName
                     } else {
