@@ -58,8 +58,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.serialization.ExperimentalSerializationApi
 import java.io.FileOutputStream
 
-private const val TAG = "MainActivity"
-
 // TODO: Add KDoc to this class and methods.
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -117,8 +115,8 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     private fun HandleIncomingIntent(intent: Intent?) {
-        if (intent?.action == Intent.ACTION_SEND) {
-            Log.i(TAG, "Received intent with MIME ${intent.type}")
+        if (intent == null) return
+        if (intent.action in listOf(Intent.ACTION_SEND, Intent.ACTION_VIEW)) {
             val viewModel: AddViewModel = hiltViewModel()
             LaunchedEffect(key1 = intent) {
                 val newConfigurationName = configurationStorageManager.handleImportFromIntent(
