@@ -73,4 +73,5 @@
     <string name="configuration_doesnt_have_element">Configuration doesn\'t have the \"%s\" element set.</string>
     <string name="configuration_app_id_mismatch">The provided configuration has a wrong \'%1$s\' key. Expected the App ID \'%2$s\', but got \'%3$s\'.</string>
     <string name="could_not_verify_version">Could not verify version: %s.</string>
+    <string name="app_name_version">LocationSimulator, version %s</string>
 </resources>
