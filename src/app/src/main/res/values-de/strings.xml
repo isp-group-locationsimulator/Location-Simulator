@@ -73,4 +73,10 @@
     <string name="configuration_app_id_mismatch">Die Konfiguration hat einen falschen Wert für den Schlüssel \'%1$s\'. Erwartet wurde die App-ID \'%2$s\', aber \'%3$s\' wurde gelesen.</string>
     <string name="could_not_verify_version">Konnte die Version \'%s\' nicht prüfen.</string>
     <string name="app_name_version">LocationSimulator, Version %s</string>
+    <string name="running_configuration">Running configuration:</string>
+    <string name="unknown_configuration">Unbekannte Konfiguration</string>
+    <string name="service_notification_channel_name">LocationSimulator-Dienst</string>
+    <string name="service_notification_channel_description">Dienstbenachrichtigungen, während die Simulation läuft</string>
+    <string name="service_notification_title">LocationSimulator läuft</string>
+    <string name="service_notification_contentText">LocationSimulator läuft mit dem Muster \'%s\'</string>
 </resources>

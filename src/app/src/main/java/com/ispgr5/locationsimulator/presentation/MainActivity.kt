@@ -45,6 +45,7 @@ import com.ispgr5.locationsimulator.presentation.homescreen.HomeScreenScreen
 import com.ispgr5.locationsimulator.presentation.homescreen.InfoScreen
 import com.ispgr5.locationsimulator.presentation.run.InfinityService
 import com.ispgr5.locationsimulator.presentation.run.RunScreen
+import com.ispgr5.locationsimulator.presentation.run.ServiceIntentKeys
 import com.ispgr5.locationsimulator.presentation.select.SelectScreen
 import com.ispgr5.locationsimulator.presentation.settings.SettingsScreen
 import com.ispgr5.locationsimulator.presentation.settings.SettingsState
@@ -158,9 +159,7 @@ class MainActivity : ComponentActivity() {
                 )
             }
             composable(Screen.InfoScreen.route) {
-                InfoScreen(
-                    navController = navController, scaffoldState = scaffoldState
-                )
+                InfoScreen(navController = navController, scaffoldState = scaffoldState)
             }
             composable(route = Screen.SelectScreen.route) {
                 SelectScreen(
@@ -188,12 +187,8 @@ class MainActivity : ComponentActivity() {
                 )
             }
             composable(
-                route = Screen.DelayScreen.route, arguments = listOf(navArgument(
-                    name = "configurationId"
-                ) {
-                    type = NavType.IntType
-                    defaultValue = -1
-                })
+                route = Screen.DelayScreen.route,
+                arguments = listOf(NavigationArguments.configurationId)
             ) {
                 DelayScreen(
                     navController = navController,
@@ -213,26 +208,9 @@ class MainActivity : ComponentActivity() {
             composable(Screen.StopService.route) {
                 navController.navigateUp()    //Todo not needed
             }
-            composable(Screen.EditTimelineScreen.route,
-                arguments = listOf(navArgument(name = "configurationId") {
-                    type = NavType.IntType
-                    defaultValue = -1
-                }, navArgument(name = "soundNameToAdd") {
-                    type = NavType.StringType
-                    defaultValue = ""
-                }, navArgument(name = "minVolume") {
-                    type = NavType.FloatType
-                    defaultValue = 0f
-                }, navArgument(name = "maxVolume") {
-                    type = NavType.FloatType
-                    defaultValue = 1f
-                }, navArgument(name = "minPause") {
-                    type = NavType.IntType
-                    defaultValue = 0
-                }, navArgument(name = "maxPause") {
-                    type = NavType.IntType
-                    defaultValue = 1000
-                })
+            composable(
+                Screen.EditTimelineScreen.route,
+                arguments = NavigationArguments.allNavArguments
             ) {
                 EditTimelineScreen(
                     navController = navController,
@@ -241,12 +219,7 @@ class MainActivity : ComponentActivity() {
                 )
             }
             composable(
-                Screen.SoundScreen.route, arguments = listOf(navArgument(
-                    name = "configurationId"
-                ) {
-                    type = NavType.IntType
-                    defaultValue = -1
-                })
+                Screen.SoundScreen.route, arguments = listOf(NavigationArguments.configurationId)
             ) {
                 SoundScreen(
                     navController = navController,
@@ -271,21 +244,23 @@ class MainActivity : ComponentActivity() {
      * Starts the background service, which plays the audio and vibration
      */
     @OptIn(ExperimentalSerializationApi::class)
-    val startService: (List<ConfigComponent>, Boolean) -> Unit =
-        fun(config: List<ConfigComponent>, randomOrderPlayback: Boolean) {
+    val startService: (String, List<ConfigComponent>, Boolean) -> Unit =
+        fun(patternName: String, config: List<ConfigComponent>, randomOrderPlayback: Boolean) {
             window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-            Intent(this, InfinityService::class.java).also {
-                it.action = "START"
-                it.putExtra(
-                    "config", ConfigurationComponentRoomConverter().componentListToString(config)
+            val intent = Intent(this, InfinityService::class.java).apply {
+                action = "START"
+                putExtra(
+                    ServiceIntentKeys.CONFIG_JSON_STRING,
+                    ConfigurationComponentRoomConverter().componentListToString(config)
                 )
-                it.putExtra("soundsDir", "$filesDir/Sounds/")
-                it.putExtra("randomOrderPlayback", randomOrderPlayback.toString())
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    startForegroundService(it)
-                } else {
-                    startService(it)
-                }
+                putExtra(ServiceIntentKeys.PATTERN_NAME_STRING, patternName)
+                putExtra(ServiceIntentKeys.SOUNDS_DIR_STRING, "$filesDir/Sounds/")
+                putExtra(ServiceIntentKeys.RANODM_ORDER_PLAYBACK_BOOLEAN, randomOrderPlayback.toString())
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startForegroundService(intent)
+            } else {
+                startService(intent)
             }
         }
 
@@ -434,4 +409,48 @@ class MainActivity : ComponentActivity() {
 
 enum class PreferencesKeys {
     MIN_PAUSE_SOUND, MAX_PAUSE_SOUND, MIN_VOL_SOUND, MAX_VOL_SOUND, MIN_PAUSE_VIB, MAX_PAUSE_VIB, MIN_STRENGTH_VIB, MAX_STRENGTH_VIB, MIN_DURATION_VIB, MAX_DURATION_VIB, DEFAULT_NAME_VIB,
+}
+
+object NavigationArguments {
+    val configurationId = navArgument(
+        name = "configurationId"
+    ) {
+        type = NavType.IntType
+        defaultValue = -1
+    }
+
+    val soundNameToAdd = navArgument(name = "soundNameToAdd") {
+        type = NavType.StringType
+        defaultValue = ""
+    }
+
+    val minVolume = navArgument(name = "minVolume") {
+        type = NavType.FloatType
+        defaultValue = 0f
+    }
+
+    val maxVolume = navArgument(name = "maxVolume") {
+        type = NavType.FloatType
+        defaultValue = 1f
+    }
+
+    val minPause = navArgument(name = "minPause") {
+        type = NavType.IntType
+        defaultValue = 0
+    }
+
+    val maxPause = navArgument(name = "maxPause") {
+        type = NavType.IntType
+        defaultValue = 1000
+    }
+
+    val allNavArguments = listOf(
+        configurationId,
+        soundNameToAdd,
+        minVolume,
+        maxVolume,
+        minPause,
+        maxPause
+
+    )
 }

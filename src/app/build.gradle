@@ -16,8 +16,8 @@ android {
         applicationId "com.ispgr5.locationsimulator"
         minSdk 21
         targetSdk 34
-        versionCode 5
-        versionName "1.1.1-beta2"
+        versionCode 6
+        versionName "1.1.1-beta3"
 
         testInstrumentationRunner "com.ispgr5.locationsimulator.HiltTestRunner"
         vectorDrawables {
@@ -70,6 +70,7 @@ dependencies {
     implementation 'androidx.core:core-ktx:1.12.0'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.2'
 
+
     // the BOM dependency is responsible for the version of compose we use
     implementation platform('androidx.compose:compose-bom:2023.10.01')
     implementation 'androidx.activity:activity-compose'
@@ -78,7 +79,9 @@ dependencies {
     implementation 'androidx.compose.material:material'
     implementation 'androidx.compose.foundation:foundation'
     //for predictive back gesture
-    implementation "androidx.activity:activity-ktx:1.8.0"
+    implementation "androidx.activity:activity-ktx:1.8.1"
+    implementation "androidx.compose.runtime:runtime-livedata:1.5.4"
+    implementation 'androidx.lifecycle:lifecycle-service:2.6.2'
 
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
@@ -109,9 +112,9 @@ dependencies {
     androidTestImplementation 'androidx.test:runner:1.5.2'
 
     //room
-    implementation "androidx.room:room-runtime:2.6.0"
-    ksp "androidx.room:room-compiler:2.6.0"
-    implementation "androidx.room:room-ktx:2.6.0"
+    implementation "androidx.room:room-runtime:2.6.1"
+    ksp "androidx.room:room-compiler:2.6.1"
+    implementation "androidx.room:room-ktx:2.6.1"
     // serialization to store subclasses in database
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1"
 

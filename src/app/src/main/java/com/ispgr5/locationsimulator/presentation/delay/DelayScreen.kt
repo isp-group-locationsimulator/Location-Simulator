@@ -32,13 +32,14 @@ import com.ispgr5.locationsimulator.presentation.universalComponents.TopBar
 fun DelayScreen(
 	navController: NavController,
 	viewModel: DelayViewModel = hiltViewModel(),
-	startServiceFunction: (List<ConfigComponent>, Boolean) -> Unit,
+	startServiceFunction: (String, List<ConfigComponent>, Boolean) -> Unit,
 	context: Context, //context needed for calculating Sound Length
-	soundsDirUri: String, //the sounds Directory Uri  needed for calculating Sound Length
+	soundsDirUri: String, //the sounds Directory Uri needed for calculating Sound Length
 	scaffoldState: ScaffoldState
 ) {
 	//The state from viewmodel
 	val state = viewModel.state.value
+
 
 	Scaffold(
 		scaffoldState = scaffoldState,
@@ -101,6 +102,7 @@ fun DelayScreen(
 				Spacer(modifier = Modifier.size(8.dp))
 
 				//The timer component
+				//val configuration by viewModel.state
 				Timer(viewModel, startServiceFunction, navController)
 			}
 		})

@@ -1,11 +1,24 @@
 package com.ispgr5.locationsimulator.presentation.delay
 
 import android.os.CountDownTimer
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.material.Button
+import androidx.compose.material.Icon
+import androidx.compose.material.Text
+import androidx.compose.material.TextField
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -24,11 +37,11 @@ import com.ispgr5.locationsimulator.presentation.util.Screen
 
 /**
  * The Timer Compose Element, to input and show the delay Time
-*/
+ */
 @Composable
 fun Timer(
     viewModel: DelayViewModel,
-    startServiceFunction: (List<ConfigComponent>, Boolean) -> Unit,
+    startServiceFunction: (String, List<ConfigComponent>, Boolean) -> Unit,
     navController: NavController
 ) {
     var timerSeconds by remember { mutableLongStateOf(0) }
@@ -36,8 +49,10 @@ fun Timer(
     var timerHours by remember { mutableLongStateOf(0) }
     var timerRunning by remember { mutableStateOf(false) }
 
+    val state by viewModel.state
+
     LaunchedEffect(timerRunning) {
-        if(timerRunning) {
+        if (timerRunning) {
             //calculate the duration of the timer in milliseconds
             val duration =
                 (timerHours * 1000 * 60 * 60) + (timerMinutes * 1000 * 60) + (timerSeconds * 1000)
@@ -59,20 +74,20 @@ fun Timer(
                     }
                 }
 
+                val configurationId = state.configuration?.id ?: throw NullPointerException("null ID in Timer")
+
                 /**
                  * Go to Run Screen when com.ispgr5.locationsimulator.presentation.delay.Timer is finished
                  */
                 override fun onFinish() {
                     viewModel.onEvent(DelayEvent.StartClicked(startServiceFunction))
-                    navController.navigate(Screen.RunScreen.route)
+                    navController.navigate(route = Screen.RunScreen.createRoute(configurationId))
                 }
             }
 
             timer.start()
         }
     }
-
-    //com.ispgr5.locationsimulator.presentation.delay.Timer Input
 
     Row(
         horizontalArrangement = Arrangement.SpaceAround,
@@ -90,7 +105,11 @@ fun Timer(
                 style = TextStyle(fontSize = 24.sp)
             )
             Button(
-                onClick = {if(timerHours<59){timerHours++}},
+                onClick = {
+                    if (timerHours < 59) {
+                        timerHours++
+                    }
+                },
                 shape = CircleShape,
                 enabled = !timerRunning,
                 modifier = Modifier
@@ -104,7 +123,7 @@ fun Timer(
             }
             TextField(
                 value = timerHours.toString(),
-                onValueChange = {newVal:String -> timerHours = calculateTimerValue(newVal) },
+                onValueChange = { newVal: String -> timerHours = calculateTimerValue(newVal) },
                 keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
                 modifier = Modifier.padding(horizontal = 16.dp),
                 readOnly = timerRunning,
@@ -114,7 +133,11 @@ fun Timer(
                 ),
             )
             Button(
-                onClick = {if(timerHours>0){timerHours--}},
+                onClick = {
+                    if (timerHours > 0) {
+                        timerHours--
+                    }
+                },
                 shape = CircleShape,
                 enabled = !timerRunning,
                 modifier = Modifier
@@ -140,7 +163,11 @@ fun Timer(
                 style = TextStyle(fontSize = 24.sp)
             )
             Button(
-                onClick = {if(timerMinutes<59){timerMinutes++}},
+                onClick = {
+                    if (timerMinutes < 59) {
+                        timerMinutes++
+                    }
+                },
                 shape = CircleShape,
                 enabled = !timerRunning,
                 modifier = Modifier
@@ -154,7 +181,7 @@ fun Timer(
             }
             TextField(
                 value = timerMinutes.toString(),
-                onValueChange = {newVal:String -> timerMinutes = calculateTimerValue(newVal) },
+                onValueChange = { newVal: String -> timerMinutes = calculateTimerValue(newVal) },
                 keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
                 modifier = Modifier
                     .padding(horizontal = 16.dp),
@@ -165,7 +192,11 @@ fun Timer(
                 )
             )
             Button(
-                onClick = {if(timerMinutes>0){timerMinutes--}},
+                onClick = {
+                    if (timerMinutes > 0) {
+                        timerMinutes--
+                    }
+                },
                 shape = CircleShape,
                 enabled = !timerRunning,
                 modifier = Modifier
@@ -191,7 +222,11 @@ fun Timer(
                 style = TextStyle(fontSize = 24.sp)
             )
             Button(
-                onClick = {if(timerSeconds<59){timerSeconds++}},
+                onClick = {
+                    if (timerSeconds < 59) {
+                        timerSeconds++
+                    }
+                },
                 shape = CircleShape,
                 enabled = !timerRunning,
                 modifier = Modifier
@@ -205,7 +240,7 @@ fun Timer(
             }
             TextField(
                 value = timerSeconds.toString(),
-                onValueChange = {newVal:String -> timerSeconds = calculateTimerValue(newVal) },
+                onValueChange = { newVal: String -> timerSeconds = calculateTimerValue(newVal) },
                 keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
                 modifier = Modifier
                     .padding(horizontal = 16.dp),
@@ -216,7 +251,11 @@ fun Timer(
                 )
             )
             Button(
-                onClick = {if(timerSeconds>0){timerSeconds--}},
+                onClick = {
+                    if (timerSeconds > 0) {
+                        timerSeconds--
+                    }
+                },
                 shape = CircleShape,
                 enabled = !timerRunning,
                 modifier = Modifier
@@ -235,20 +274,19 @@ fun Timer(
      * The button to start or stop the timer
      */
     Button(
-        onClick = {timerRunning = !timerRunning},
+        onClick = { timerRunning = !timerRunning },
         enabled = true,
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
             .testTag(TestTags.DELAY_START_BUTTON)
     ) {
-        if(timerRunning) {
+        if (timerRunning) {
             Text(
                 text = stringResource(id = R.string.run_stop),
                 style = TextStyle(fontSize = 40.sp)
             )
-        }
-        else {
+        } else {
             Text(
                 text = stringResource(id = R.string.delay_btn_start),
                 style = TextStyle(fontSize = 40.sp)
@@ -264,12 +302,12 @@ fun calculateTimerValue(value: String): Long {
     var res: Long
     try {
         res = value.toLong()
-        if(res < 0) {
+        if (res < 0) {
             res = 0
-        } else if(res > 59) {
+        } else if (res > 59) {
             res = 59
         }
-    } catch (e:NumberFormatException) {
+    } catch (e: NumberFormatException) {
         res = 0
     }
     return res
