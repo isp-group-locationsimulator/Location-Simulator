@@ -79,4 +79,6 @@
     <string name="service_notification_channel_description">Service notifications while the simulation is running</string>
     <string name="service_notification_title">LocationSimulator is running</string>
     <string name="service_notification_contentText">LocationSimulator is running using the pattern \'%s\'</string>
+    <string name="starting_simulation">Starting simulation</string>
+    <string name="in_pause">In pause</string>
 </resources>

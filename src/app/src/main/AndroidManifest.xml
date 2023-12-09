@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
 
     <application
         android:name=".LocationApp"
@@ -31,29 +32,31 @@
             </intent-filter>
 
             <intent-filter>
-                <action android:name="android.intent.action.SEND"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <data android:mimeType="application/gzip"/>
-                <data android:mimeType="application/x-gzip"/>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="application/gzip" />
+                <data android:mimeType="application/x-gzip" />
             </intent-filter>
 
             <intent-filter tools:ignore="AppLinkUrlError">
-                <action android:name="android.intent.action.VIEW"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <data android:mimeType="application/gzip"/>
-                <data android:mimeType="application/x-gzip"/>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="application/gzip" />
+                <data android:mimeType="application/x-gzip" />
             </intent-filter>
         </activity>
 
         <service
-            android:name=".presentation.run.InfinityService"
+            android:name=".presentation.run.SimulationService"
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="specialUse"
             android:stopWithTask="true">
             <property
                 android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
-                android:value="Triggering vibrations while the app is running" />
+                android:value="Triggering vibrations and sounds while the app is running, which is the core functionality of the app." />
         </service>
 
         <provider

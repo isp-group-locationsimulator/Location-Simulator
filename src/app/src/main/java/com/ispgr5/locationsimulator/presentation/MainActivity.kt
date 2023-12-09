@@ -43,7 +43,7 @@ import com.ispgr5.locationsimulator.presentation.delay.DelayScreen
 import com.ispgr5.locationsimulator.presentation.editTimeline.EditTimelineScreen
 import com.ispgr5.locationsimulator.presentation.homescreen.HomeScreenScreen
 import com.ispgr5.locationsimulator.presentation.homescreen.InfoScreen
-import com.ispgr5.locationsimulator.presentation.run.InfinityService
+import com.ispgr5.locationsimulator.presentation.run.SimulationService
 import com.ispgr5.locationsimulator.presentation.run.RunScreen
 import com.ispgr5.locationsimulator.presentation.run.ServiceIntentKeys
 import com.ispgr5.locationsimulator.presentation.select.SelectScreen
@@ -247,7 +247,7 @@ class MainActivity : ComponentActivity() {
     val startService: (String, List<ConfigComponent>, Boolean) -> Unit =
         fun(patternName: String, config: List<ConfigComponent>, randomOrderPlayback: Boolean) {
             window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-            val intent = Intent(this, InfinityService::class.java).apply {
+            val intent = Intent(this, SimulationService::class.java).apply {
                 action = "START"
                 putExtra(
                     ServiceIntentKeys.CONFIG_JSON_STRING,
@@ -255,7 +255,7 @@ class MainActivity : ComponentActivity() {
                 )
                 putExtra(ServiceIntentKeys.PATTERN_NAME_STRING, patternName)
                 putExtra(ServiceIntentKeys.SOUNDS_DIR_STRING, "$filesDir/Sounds/")
-                putExtra(ServiceIntentKeys.RANODM_ORDER_PLAYBACK_BOOLEAN, randomOrderPlayback.toString())
+                putExtra(ServiceIntentKeys.RANDOM_ORDER_PLAYBACK_BOOLEAN, randomOrderPlayback.toString())
             }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 startForegroundService(intent)
@@ -269,7 +269,7 @@ class MainActivity : ComponentActivity() {
      */
     private fun stopService() {
         window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        Intent(this, InfinityService::class.java).also {
+        Intent(this, SimulationService::class.java).also {
             Log.d("debug", "itAction: ${it.action}")
             it.action = "STOP"
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
