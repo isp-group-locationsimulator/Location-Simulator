@@ -43,9 +43,9 @@ import com.ispgr5.locationsimulator.presentation.delay.DelayScreen
 import com.ispgr5.locationsimulator.presentation.editTimeline.EditTimelineScreen
 import com.ispgr5.locationsimulator.presentation.homescreen.HomeScreenScreen
 import com.ispgr5.locationsimulator.presentation.homescreen.InfoScreen
-import com.ispgr5.locationsimulator.presentation.run.SimulationService
 import com.ispgr5.locationsimulator.presentation.run.RunScreen
 import com.ispgr5.locationsimulator.presentation.run.ServiceIntentKeys
+import com.ispgr5.locationsimulator.presentation.run.SimulationService
 import com.ispgr5.locationsimulator.presentation.select.SelectScreen
 import com.ispgr5.locationsimulator.presentation.settings.SettingsScreen
 import com.ispgr5.locationsimulator.presentation.settings.SettingsState
@@ -55,6 +55,7 @@ import com.ispgr5.locationsimulator.presentation.universalComponents.SnackbarCon
 import com.ispgr5.locationsimulator.presentation.util.Screen
 import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
 import com.ispgr5.locationsimulator.ui.theme.ThemeState
+import com.ispgr5.locationsimulator.ui.theme.ThemeType
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.serialization.ExperimentalSerializationApi
 import java.io.FileOutputStream
@@ -86,16 +87,18 @@ class MainActivity : ComponentActivity() {
             context = this,
             snackbarContent = snackbarContent
         )
+        val storedThemeType =
+            getSharedPreferences("prefs", MODE_PRIVATE).getString("themeType", ThemeType.LIGHT.name)
+                ?.let {
+                    ThemeType.valueOf(it)
+                } ?: ThemeType.LIGHT
+
         val themeState = mutableStateOf(
-            ThemeState(
-                getSharedPreferences(
-                    "prefs", MODE_PRIVATE
-                ).getBoolean("isDarkTheme", false)
-            )
+            ThemeState(storedThemeType)
         )
 
         setContent {
-            LocationSimulatorTheme(themeState) {
+            LocationSimulatorTheme(themeState.value) {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background
@@ -111,6 +114,7 @@ class MainActivity : ComponentActivity() {
                     )
                 }
             }
+
         }
     }
 
@@ -153,7 +157,7 @@ class MainActivity : ComponentActivity() {
                     batteryOptDisableFunction = { disableBatteryOptimization() },
                     soundStorageManager = soundStorageManager,
                     activity = this@MainActivity,
-                    darkTheme = themeState,
+                    appTheme = themeState,
                     scaffoldState = scaffoldState,
                     snackbarContent = snackbarContent
                 )
@@ -206,7 +210,7 @@ class MainActivity : ComponentActivity() {
                 )
             }
             composable(Screen.StopService.route) {
-                navController.navigateUp()    //Todo not needed
+                navController.navigateUp()
             }
             composable(
                 Screen.EditTimelineScreen.route,
@@ -255,7 +259,10 @@ class MainActivity : ComponentActivity() {
                 )
                 putExtra(ServiceIntentKeys.PATTERN_NAME_STRING, patternName)
                 putExtra(ServiceIntentKeys.SOUNDS_DIR_STRING, "$filesDir/Sounds/")
-                putExtra(ServiceIntentKeys.RANDOM_ORDER_PLAYBACK_BOOLEAN, randomOrderPlayback.toString())
+                putExtra(
+                    ServiceIntentKeys.RANDOM_ORDER_PLAYBACK_BOOLEAN,
+                    randomOrderPlayback.toString()
+                )
             }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 startForegroundService(intent)
@@ -419,17 +426,17 @@ object NavigationArguments {
         defaultValue = -1
     }
 
-    val soundNameToAdd = navArgument(name = "soundNameToAdd") {
+    private val soundNameToAdd = navArgument(name = "soundNameToAdd") {
         type = NavType.StringType
         defaultValue = ""
     }
 
-    val minVolume = navArgument(name = "minVolume") {
+    private val minVolume = navArgument(name = "minVolume") {
         type = NavType.FloatType
         defaultValue = 0f
     }
 
-    val maxVolume = navArgument(name = "maxVolume") {
+    private val maxVolume = navArgument(name = "maxVolume") {
         type = NavType.FloatType
         defaultValue = 1f
     }
@@ -451,6 +458,5 @@ object NavigationArguments {
         maxVolume,
         minPause,
         maxPause
-
     )
 }

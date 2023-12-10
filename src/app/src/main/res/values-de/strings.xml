@@ -82,4 +82,7 @@
     <string name="starting_simulation">Simulation startet</string>
     <string name="in_pause">In Pause</string>
     <string name="sound_filename">Sound-Dateiname:</string>
+    <string name="light">Hell</string>
+    <string name="auto">Auto</string>
+    <string name="dark">Dunkel</string>
 </resources>

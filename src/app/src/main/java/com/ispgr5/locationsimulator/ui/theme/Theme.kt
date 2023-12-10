@@ -1,10 +1,10 @@
 package com.ispgr5.locationsimulator.ui.theme
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 
 /**
  * Colors for the light Mode
@@ -38,8 +38,6 @@ private val DarkThemeColors = darkColors(
 	onBackground = white,
 	surface = LighterBlack,
 	onSurface = white
-
-
 )
 
 /**
@@ -47,11 +45,18 @@ private val DarkThemeColors = darkColors(
  */
 @Composable
 fun LocationSimulatorTheme(
-	darkTheme: MutableState<ThemeState>,
+	themeState: ThemeState,
 	content: @Composable () -> Unit,
 ) {
 	MaterialTheme(
-		colors = if (darkTheme.value.isDarkTheme) DarkThemeColors else LightThemeColors,
+		colors = when (themeState.themeType) {
+			ThemeType.DARK -> DarkThemeColors
+			ThemeType.LIGHT -> LightThemeColors
+			else -> when (isSystemInDarkTheme()) {
+				true -> DarkThemeColors
+				else -> LightThemeColors
+			}
+		},
 		content= content
 	)
 }

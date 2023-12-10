@@ -4,6 +4,8 @@ import android.os.Build
 import android.os.PowerManager
 import androidx.activity.ComponentActivity
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,22 +15,24 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.material.Scaffold
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.SnackbarDuration
-import androidx.compose.material.Switch
-import androidx.compose.material.SwitchDefaults
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -49,6 +53,7 @@ import com.ispgr5.locationsimulator.presentation.universalComponents.TopBar
 import com.ispgr5.locationsimulator.presentation.util.MakeSnackbar
 import com.ispgr5.locationsimulator.presentation.util.Screen
 import com.ispgr5.locationsimulator.ui.theme.ThemeState
+import com.ispgr5.locationsimulator.ui.theme.ThemeType
 
 /**
  * The Home Screen.
@@ -62,7 +67,7 @@ fun HomeScreenScreen(
     batteryOptDisableFunction: () -> Unit,
     soundStorageManager: SoundStorageManager,
     activity: MainActivity,
-    darkTheme: MutableState<ThemeState>,
+    appTheme: MutableState<ThemeState>,
     scaffoldState: ScaffoldState,
     snackbarContent: MutableState<SnackbarContent?>,
 ) {
@@ -108,7 +113,7 @@ fun HomeScreenScreen(
                         text = stringResource(id = R.string.app_name),
                         fontSize = 30.sp,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colors.onBackground,
+                        color = colors.onBackground,
                         modifier = Modifier.testTag(TestTags.HOME_APPNAME)
                     )
                 }
@@ -205,37 +210,31 @@ fun HomeScreenScreen(
                     modifier = Modifier.weight(0.5f),
                     verticalArrangement = Arrangement.Center
                 ) {
-                    Row(
+                    Column(
                         Modifier
                             .fillMaxWidth()
                             .padding(1.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
+                        horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
                         Text(
                             text = stringResource(id = R.string.homescreen_darkmode),
                             fontSize = 20.sp,
                             fontWeight = FontWeight.SemiBold,
-                            color = MaterialTheme.colors.onBackground
+                            color = colors.onBackground
                         )
-                        Switch(
-                            checked = darkTheme.value.isDarkTheme,
-                            onCheckedChange = { isChecked ->
+                        TriStateToggle(
+                            stateKeyLabelMap = ThemeType.entries.associateWith { theme -> theme.labelStringRes },
+                            selectedOption = appTheme.value.themeType,
+                            onSelectionChange = { newTheme ->
+                                val newAppTheme = appTheme.value.copy(themeType = newTheme)
+                                appTheme.value = newAppTheme
                                 viewModel.onEvent(
                                     HomeScreenEvent.ChangedAppTheme(
-                                        isChecked,
-                                        activity,
-                                        darkTheme
+                                        activity = activity,
+                                        themeState = newAppTheme
                                     )
                                 )
-                            },
-                            colors = SwitchDefaults.colors(
-                                checkedThumbColor = MaterialTheme.colors.primary,
-                                uncheckedThumbColor = MaterialTheme.colors.primary,
-                                checkedTrackColor = MaterialTheme.colors.secondary,
-                                uncheckedTrackColor = MaterialTheme.colors.secondary,
-                            ),
-                            modifier = Modifier.testTag(TestTags.HOME_DARKMODE_SLIDER)
+                            }
                         )
                     }
                 }
@@ -271,4 +270,48 @@ fun HomeScreenScreen(
                 }
             }
         })
+}
+
+@Composable
+fun <K> TriStateToggle(
+    stateKeyLabelMap: Map<K, Int>,
+    selectedOption: K,
+    onSelectionChange: (K) -> Unit
+) {
+    Surface(
+        shape = RoundedCornerShape(24.dp),
+        elevation = 4.dp,
+        modifier = Modifier.wrapContentSize(),
+        color = colors.surface
+    ) {
+        Row(
+            modifier = Modifier.clip(shape = RoundedCornerShape(24.dp)).background(colors.surface)
+        ) {
+            stateKeyLabelMap.entries.forEach { (key, labelStringRes) ->
+                Text(
+                    text = stringResource(id = labelStringRes),
+                    color = when (key == selectedOption) {
+                        true -> colors.onPrimary
+                        else -> colors.onSurface
+                    },
+                    modifier = Modifier
+                        .clip(shape = RoundedCornerShape(24.dp))
+                        .clickable {
+                            onSelectionChange(key)
+                        }
+                        .background(
+                            if (key == selectedOption) {
+                                colors.primary
+                            } else {
+                                colors.surface
+                            }
+                        )
+                        .padding(
+                            vertical = 12.dp,
+                            horizontal = 16.dp,
+                        )
+                )
+            }
+        }
+    }
 }

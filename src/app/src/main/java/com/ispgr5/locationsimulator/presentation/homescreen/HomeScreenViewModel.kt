@@ -61,9 +61,8 @@ class HomeScreenViewModel @Inject constructor(
 				event.batteryOptDisableFunction()
 			}
 			is HomeScreenEvent.ChangedAppTheme -> {
-				event.darkTheme.value = event.darkTheme.value.copy(isDarkTheme = event.isDarkTheme)
 				val editor: SharedPreferences.Editor = event.activity.getSharedPreferences("prefs", ComponentActivity.MODE_PRIVATE).edit()
-				editor.putBoolean("isDarkTheme", event.isDarkTheme)
+				editor.putString("themeType", event.themeState.themeType.name)
 				editor.apply()
 			}
 		}
