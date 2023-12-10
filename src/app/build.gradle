@@ -17,7 +17,7 @@ android {
         minSdk 21
         targetSdk 34
         versionCode 6
-        versionName "1.1.1-beta3"
+        versionName "1.1.1-beta4"
 
         testInstrumentationRunner "com.ispgr5.locationsimulator.HiltTestRunner"
         vectorDrawables {
@@ -149,4 +149,6 @@ dependencies {
     implementation 'com.vdurmont:semver4j:3.1.0'
 
     implementation 'com.ibm.icu:icu4j:74.1'
+
+    implementation("com.github.GIGAMOLE:ComposeScrollbars:1.0.4")
 }

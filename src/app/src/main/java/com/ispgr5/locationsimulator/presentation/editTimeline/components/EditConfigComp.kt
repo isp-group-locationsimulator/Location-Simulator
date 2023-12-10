@@ -3,20 +3,47 @@ package com.ispgr5.locationsimulator.presentation.editTimeline.components
 import android.content.Context
 import android.os.Build
 import android.os.Vibrator
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.material.AlertDialog
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.ContentAlpha
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.RangeSlider
+import androidx.compose.material.Text
+import androidx.compose.material.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ispgr5.locationsimulator.R
@@ -55,6 +82,10 @@ fun EditConfigComponent(
     var showDeleteConfirmDialog by remember { mutableStateOf(false) }
     var showStrengthNotSupportedDialog by remember { mutableStateOf(false) }
 
+
+    val blackSubtitle1 = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Black)
+
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -69,8 +100,10 @@ fun EditConfigComponent(
                 horizontalArrangement = Arrangement.SpaceAround
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Button(onClick = { onMoveLeftClicked(configComponent) },
-                        modifier = Modifier.testTag(TestTags.EDIT_MOVE_LEFT)) {
+                    Button(
+                        onClick = { onMoveLeftClicked(configComponent) },
+                        modifier = Modifier.testTag(TestTags.EDIT_MOVE_LEFT)
+                    ) {
                         Icon(
                             painter = painterResource(id = R.drawable.baseline_arrow_back_24),
                             contentDescription = null
@@ -84,8 +117,10 @@ fun EditConfigComponent(
                     )
                 }
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Button(onClick = { onMoveRightClicked(configComponent) },
-                        modifier = Modifier.testTag(TestTags.EDIT_MOVE_RIGHT)) {
+                    Button(
+                        onClick = { onMoveRightClicked(configComponent) },
+                        modifier = Modifier.testTag(TestTags.EDIT_MOVE_RIGHT)
+                    ) {
                         Icon(
                             painter = painterResource(id = R.drawable.baseline_arrow_forward_24),
                             contentDescription = null
@@ -103,61 +138,44 @@ fun EditConfigComponent(
             /**
              * Sound and vibration name
              */
-            when (configComponent) {
-                is ConfigComponent.Sound -> {
-                    Spacer(modifier = Modifier.size(7.dp))
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        //Name Text Input
-                        BasicTextField(
-                            textStyle = TextStyle(
-                                textAlign = TextAlign.Center,
-                                fontSize = 20.sp,
-                                color = MaterialTheme.colors.onBackground
-                            ),
-                            value = configComponent.name,
-                            modifier = Modifier.testTag(TestTags.EDIT_ITEM_NAME_TEXTINPUT),
-                            onValueChange = { name ->
-                                onConfigComponentNameChanged(name)
-                            }
-                        )
-                    }
-                }
-
-                is ConfigComponent.Vibration -> {
-                    Spacer(modifier = Modifier.size(7.dp))
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        BasicTextField(
-                            textStyle = TextStyle(
-                                textAlign = TextAlign.Center,
-                                fontSize = 20.sp,
-                                color = MaterialTheme.colors.onBackground
-                            ),
-                            value = configComponent.name,
-                            modifier = Modifier.testTag(TestTags.EDIT_ITEM_NAME_TEXTINPUT),
-                            onValueChange = { name ->
-                                onConfigComponentNameChanged(name)
-                            }
-                        )
-
-                    }
-                }
+            Spacer(modifier = Modifier.size(7.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                ConfigComponentNameTextInput(configComponent, onConfigComponentNameChanged)
             }
         }
+
         Column {
             when (configComponent) {
                 is ConfigComponent.Sound -> {
                     minPause = configComponent.minPause
                     maxPause = configComponent.maxPause
+                    Text(
+                        text = buildAnnotatedString {
+                            withStyle(MaterialTheme.typography.subtitle1.toSpanStyle()) {
+                                withStyle(SpanStyle(fontWeight = FontWeight.Black)) {
+                                    append(stringResource(R.string.sound_filename))
+
+                                }
+                                append(" ")
+                                withStyle(SpanStyle(fontFamily = FontFamily.Monospace)) {
+                                    append(configComponent.source)
+                                }
+                            }
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 8.dp)
+                    )
                     /**
                      * Volume
                      */
-                    Text(text = stringResource(id = R.string.editTimeline_SoundVolume))
+                    Text(
+                        text = stringResource(id = R.string.editTimeline_SoundVolume),
+                        style = blackSubtitle1
+                    )
                     Text(
                         RangeConverter.transformFactorToPercentage(configComponent.minVolume)
                             .toInt().toString() + "% "
@@ -187,7 +205,10 @@ fun EditConfigComponent(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Column {
-                            Text(text = stringResource(id = R.string.editTimeline_Vibration_Strength))
+                            Text(
+                                text = stringResource(id = R.string.editTimeline_Vibration_Strength),
+                                style = blackSubtitle1
+                            )
                             Text(
                                 RangeConverter.eightBitIntToPercentageFloat(configComponent.minStrength)
                                     .toInt().toString() + "% "
@@ -246,7 +267,10 @@ fun EditConfigComponent(
                     /**
                      * The Vibration duration
                      */
-                    Text(text = stringResource(id = R.string.editTimeline_Vibration_duration))
+                    Text(
+                        text = stringResource(id = R.string.editTimeline_Vibration_duration),
+                        style = blackSubtitle1
+                    )
                     SecText(
                         min = RangeConverter.msToS(configComponent.minDuration),
                         max = RangeConverter.msToS(configComponent.maxDuration)
@@ -268,7 +292,10 @@ fun EditConfigComponent(
             /**
              * The Pause
              */
-            Text(text = stringResource(id = R.string.editTimeline_Pause))
+            Text(
+                text = stringResource(id = R.string.editTimeline_Pause),
+                style = blackSubtitle1
+            )
             SecText(min = RangeConverter.msToS(minPause), max = RangeConverter.msToS(maxPause))
             SliderForRange(
                 value = RangeConverter.msToS(minPause)..RangeConverter.msToS(maxPause),
@@ -324,7 +351,8 @@ fun EditConfigComponent(
             }
         }
     }
-    //Dialog to confirm the deleting of an config Component
+
+//Dialog to confirm the deleting of an config Component
     val revShowDialog = fun() { showDeleteConfirmDialog = !showDeleteConfirmDialog }
     if (showDeleteConfirmDialog) {
         ConfirmDeleteDialog(onDismiss = revShowDialog, onConfirm = {
@@ -347,6 +375,27 @@ fun EditConfigComponent(
             }
         )
     }
+}
+
+@Composable
+fun ConfigComponentNameTextInput(
+    configComponent: ConfigComponent,
+    onConfigComponentNameChanged: (name: String) -> Unit
+) {
+    OutlinedTextField(
+        textStyle = TextStyle(
+            textAlign = TextAlign.Center,
+            color = MaterialTheme.colors.onBackground
+        ),
+        value = configComponent.name,
+        modifier = Modifier.testTag(TestTags.EDIT_ITEM_NAME_TEXTINPUT),
+        placeholder = {
+            Text(text = stringResource(R.string.editTimeline_name))
+        },
+        onValueChange = { name ->
+            onConfigComponentNameChanged(name)
+        }
+    )
 }
 
 @OptIn(ExperimentalMaterialApi::class)

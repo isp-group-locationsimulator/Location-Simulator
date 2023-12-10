@@ -11,6 +11,8 @@ import kotlinx.serialization.Serializable
 sealed class ConfigComponent {
     @SerialName("id")
     abstract val id: Int
+
+    abstract val name: String
     abstract fun copy(): ConfigComponent
 
     /**
@@ -21,7 +23,7 @@ sealed class ConfigComponent {
     @SerialName("Vibration")
     data class Vibration(
         override val id: Int,
-        val name: String,
+        override val name: String,
         val minStrength: Int,
         val maxStrength: Int,
         //in ms
@@ -66,7 +68,7 @@ sealed class ConfigComponent {
     class Sound(
         override val id: Int,
         val source: String,
-        val name : String,
+        override val name : String,
         //volume in 0f..1f
         val minVolume: Float,
         val maxVolume: Float,
