@@ -1,5 +1,6 @@
 package com.ispgr5.locationsimulator.presentation.run
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Arrangement
@@ -18,6 +19,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PauseCircleOutline
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -33,6 +35,8 @@ import androidx.navigation.NavController
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.core.util.TestTags
 import com.ispgr5.locationsimulator.presentation.universalComponents.TopBar
+
+private const val TAG = "RunScreen"
 
 /**
  * The Run Screen.
@@ -58,6 +62,10 @@ fun RunScreen(
             Spacer(modifier = Modifier.height(it.calculateTopPadding()))
 
             val effectState by SimulationService.EffectTimelineBus.observeAsState()
+            LaunchedEffect(effectState) {
+                Log.i(TAG, "RunScreen: $effectState")
+                Log.i(TAG, "in pause: ${effectState?.playingEffect == null}")
+            }
 
             /**
              * The stop button
@@ -117,7 +125,8 @@ fun SoundUi(effectState: EffectTimeline) {
         painter = painterResource(id = R.drawable.audionouse2),
         contentDescription = null
     )
-    Text(effectState.playingEffect!!.toString())
+    Text("#${effectState.playingEffect!!.instanceId}")
+    Text(effectState.playingEffect.toString())
 }
 
 @Composable
@@ -126,17 +135,22 @@ fun VibrationUi(effectState: EffectTimeline) {
         painter = painterResource(id = R.drawable.ic_baseline_vibration_24),
         contentDescription = null
     )
-    Text(effectState.playingEffect!!.toString())
+    Text(buildString {
+        append("#${effectState.playingEffect!!.instanceId}")
+        append(" - ")
+        append(effectState.playingEffect.toString())
+    })
 }
 
 @Composable
 fun PausedUi(effectState: EffectTimeline) {
     Icon(imageVector = Icons.Default.PauseCircleOutline, contentDescription = null)
     Text(stringResource(id = R.string.in_pause))
+    Text(effectState.nextEffect.instanceId.toString())
     Text(effectState.nextEffect.startAt.millis.toString())
 }
 
 @Composable
 fun NextUi(nextEffect: EffectParameters) {
-    Text("Next: $nextEffect")
+    Text("Next: #${nextEffect.instanceId} - $nextEffect")
 }

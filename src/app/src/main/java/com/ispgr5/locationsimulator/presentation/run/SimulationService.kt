@@ -19,10 +19,12 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import org.joda.time.Instant
 import java.io.File
 import java.util.Timer
+import java.util.concurrent.atomic.AtomicInteger
+import java.util.concurrent.atomic.AtomicLong
 import kotlin.concurrent.schedule
 import kotlin.random.Random
 
-private const val TAG = "InfinityService"
+private const val TAG = "SimulationService"
 
 object ServiceIntentKeys {
     const val CONFIG_JSON_STRING = "configJson"
@@ -52,6 +54,8 @@ class SimulationService : LifecycleService() {
     private var soundPlayer: SoundPlayer = SoundPlayer {}
     private var shownNotification: Notification? = null
     private lateinit var soundsDir: String
+
+    private val lastInstantOfEffect = AtomicLong()
 
     /**
      * called when the service receives an intent to start or stop the simulation
@@ -95,7 +99,6 @@ class SimulationService : LifecycleService() {
      * starts the simulation
      */
     @SuppressLint("WakelockTimeout")
-    @OptIn(DelicateCoroutinesApi::class)
     private fun startService() {
         if (IsPlayingEventBus.value == true) {
             //make *really* sure the service starts only once
@@ -123,41 +126,13 @@ class SimulationService : LifecycleService() {
         }
 
         startPlayback(vibrator)
-
-//        GlobalScope.launch(Dispatchers.Default) {
-//            while (isServiceStarted) {
-//                if (isConfigOrderRandom) {
-//                    //if the config should be played in random order play a random sound or vibration
-//                    playSoundOrVibration(config!!.random(), vibrator)
-//                } else {
-//                    //else play the config in the defined order
-//                    for (item in config!!) {
-//                        playSoundOrVibration(item, vibrator)
-//                        if (!isServiceStarted) {
-//                            break
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//        // TODO: Could possibly be overworked
-//        GlobalScope.launch(Dispatchers.Default) {
-//            //this coroutine stops the simulation when the stop button was pressed
-//            var stop = false
-//            while (!stop) {
-//                if (!isServiceStarted) {
-//                    vibrator.cancel()
-//                    soundPlayer.stopPlayback()
-//                    stop = true
-//                }
-//            }
-//        }
     }
 
     private fun startPlayback(vibrator: Vibrator) {
         val startedAt = Instant.now()
-        val firstEventOffset = startedAt.plus(1000L)
-        // we offset the first event, so we can set up the service in this one second we give ourselves
+        lastInstantOfEffect.set(startedAt.millis)
+        val firstEventOffset = startedAt.plus(500L)
+        // we offset the first event, so we can set up the service in this half-second we give ourselves
         val firstEffect = determineAnEffect(firstEventOffset)
         val initialTimeline = EffectTimeline(
             snapshotDate = startedAt,
@@ -176,6 +151,10 @@ class SimulationService : LifecycleService() {
         Log.d(TAG, "schedule: $effectToSchedule")
         effectTimer.schedule(effectToSchedule.startAt.toDate()) {
             if (IsPlayingEventBus.value == true) {
+                val playingAt = Instant.now()
+                val elapsedMillis = playingAt.millis.minus(lastInstantOfEffect.get())
+                Log.w(TAG, "elapsed: $elapsedMillis ms")
+                lastInstantOfEffect.set(playingAt.millis)
                 EffectTimelineBus.postValue(
                     EffectTimeline(
                         snapshotDate = Instant.now(),
@@ -192,7 +171,7 @@ class SimulationService : LifecycleService() {
                 }
             }
         }
-        pauseTimer.schedule(effectToSchedule.endPauseAt.toDate()) {
+        pauseTimer.schedule(effectToSchedule.endEffectAt.toDate()) {
             if (IsPlayingEventBus.value == true) {
                 Log.d(
                     TAG,
@@ -209,8 +188,7 @@ class SimulationService : LifecycleService() {
             return
         }
         val now = Instant.now()
-        val nextEffect =
-            determineAnEffect(referenceInstant = previousTimeline.nextEffect.endPauseAt)
+        val nextEffect = previousTimeline.nextEffect
         activateTimelineSnapshot(
             timeline = EffectTimeline(
                 snapshotDate = now,
@@ -221,7 +199,7 @@ class SimulationService : LifecycleService() {
         )
     }
 
-    private fun determineAnEffect(referenceInstant: Instant): EffectParameters {
+    private fun determineAnEffect(startAtInstant: Instant): EffectParameters {
         val nextIndex: Int = when (isConfigOrderRandom) {
             true -> {
                 val indexSequence = generateSequence {
@@ -245,17 +223,19 @@ class SimulationService : LifecycleService() {
         val nextConfig = config!![nextIndex]
         lastIndex = nextIndex
 
-
-        return determineEffectFromConfigComponent(nextConfig, referenceInstant)
+        return determineEffectFromConfigComponent(
+            nextConfig = nextConfig,
+            startAtInstant = startAtInstant
+        )
     }
 
     private fun determineEffectFromConfigComponent(
         nextConfig: ConfigComponent,
-        referenceInstant: Instant
+        startAtInstant: Instant
     ): EffectParameters =
         when (nextConfig) {
-            is ConfigComponent.Vibration -> determineVibrationEffect(referenceInstant, nextConfig)
-            is ConfigComponent.Sound -> determineSoundEffect(referenceInstant, nextConfig)
+            is ConfigComponent.Vibration -> determineVibrationEffect(startAtInstant, nextConfig)
+            is ConfigComponent.Sound -> determineSoundEffect(startAtInstant, nextConfig)
         }
 
     private fun playSoundEffect(parameters: EffectParameters.Sound): Long {
@@ -263,7 +243,7 @@ class SimulationService : LifecycleService() {
         val duration = soundPlayer.startSound(soundUriAsString, parameters.volume).toLong()
         Log.d(
             TAG,
-            "Creating Sound... Name: $soundUriAsString , Duration: $duration ms, Volume: ${parameters.volume}"
+            "Creating Sound... Name: $soundUriAsString, Duration: $duration ms, Volume: ${parameters.volume}"
         )
         return duration
     }
@@ -321,7 +301,7 @@ class SimulationService : LifecycleService() {
         if (Build.VERSION.SDK_INT >= 26) {
             Log.d(
                 TAG,
-                "Creating Vibration... Duration: ${effect.durationMillis} ms , Strength: ${effect.strength}"
+                "Creating Vibration... Duration: ${effect.durationMillis} ms, Strength: ${effect.strength}"
             )
             vibrator.vibrate(
                 VibrationEffect.createOneShot(
@@ -431,6 +411,12 @@ sealed class EffectParameters(
 ) {
     val endEffectAt: Instant get() = startAt.plus(durationMillis)
     val endPauseAt: Instant get() = endEffectAt.plus(pauseMillis)
+
+    val instanceId: Int = counter.incrementAndGet()
+
+    companion object {
+        val counter = AtomicInteger(0)
+    }
 
     class Vibration(
         startAt: Instant,
