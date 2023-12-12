@@ -55,8 +55,6 @@ class SimulationService : LifecycleService() {
     private var shownNotification: Notification? = null
     private lateinit var soundsDir: String
 
-    private val lastInstantOfEffect = AtomicLong()
-
     /**
      * called when the service receives an intent to start or stop the simulation
      */
@@ -130,14 +128,15 @@ class SimulationService : LifecycleService() {
 
     private fun startPlayback(vibrator: Vibrator) {
         val startedAt = Instant.now()
-        lastInstantOfEffect.set(startedAt.millis)
-        val firstEventOffset = startedAt.plus(500L)
+        val firstPauseDuration = 500L
+        val firstEventOffset = startedAt.plus(firstPauseDuration)
         // we offset the first event, so we can set up the service in this half-second we give ourselves
         val firstEffect = determineAnEffect(firstEventOffset)
         val initialTimeline = EffectTimeline(
             snapshotDate = startedAt,
             playingEffect = null,
             nextEffect = firstEffect,
+            currentPauseDuration = firstPauseDuration
         )
         activateTimelineSnapshot(initialTimeline, vibrator)
     }
@@ -151,15 +150,12 @@ class SimulationService : LifecycleService() {
         Log.d(TAG, "schedule: $effectToSchedule")
         effectTimer.schedule(effectToSchedule.startAt.toDate()) {
             if (IsPlayingEventBus.value == true) {
-                val playingAt = Instant.now()
-                val elapsedMillis = playingAt.millis.minus(lastInstantOfEffect.get())
-                Log.w(TAG, "elapsed: $elapsedMillis ms")
-                lastInstantOfEffect.set(playingAt.millis)
                 EffectTimelineBus.postValue(
                     EffectTimeline(
                         snapshotDate = Instant.now(),
                         playingEffect = effectToSchedule,
-                        nextEffect = determineAnEffect(effectToSchedule.endPauseAt)
+                        nextEffect = determineAnEffect(effectToSchedule.endPauseAt),
+                        currentPauseDuration = null
                     )
                 )
                 when (effectToSchedule) {
@@ -177,12 +173,12 @@ class SimulationService : LifecycleService() {
                     TAG,
                     "schedule: pausing until ${effectToSchedule.endPauseAt} for ${effectToSchedule.pauseMillis}ms"
                 )
-                updateTimelineDuringPause(vibrator)
+                updateTimelineDuringPause(vibrator, effectToSchedule.pauseMillis)
             }
         }
     }
 
-    private fun updateTimelineDuringPause(vibrator: Vibrator) {
+    private fun updateTimelineDuringPause(vibrator: Vibrator, pauseDuration: Long) {
         val previousTimeline = EffectTimelineBus.value ?: run {
             stopSelf()
             return
@@ -193,7 +189,8 @@ class SimulationService : LifecycleService() {
             timeline = EffectTimeline(
                 snapshotDate = now,
                 playingEffect = null,
-                nextEffect = nextEffect
+                nextEffect = nextEffect,
+                currentPauseDuration = pauseDuration
             ),
             vibrator = vibrator
         )
@@ -447,8 +444,10 @@ sealed class EffectParameters(
 data class EffectTimeline(
     val snapshotDate: Instant,
     val playingEffect: EffectParameters?,
-    val nextEffect: EffectParameters
-)
+    val nextEffect: EffectParameters,
+    val currentPauseDuration: Long?
+) {
+}
 
 object MediaDurationDeterminer {
     private val durationCache = mutableMapOf<String, Long>()
