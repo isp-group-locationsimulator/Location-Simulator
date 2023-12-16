@@ -19,6 +19,7 @@ import com.ispgr5.locationsimulator.presentation.MainActivity
 import com.ispgr5.locationsimulator.presentation.universalComponents.SnackbarContent
 import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
 import com.ispgr5.locationsimulator.ui.theme.ThemeState
+import com.ispgr5.locationsimulator.ui.theme.ThemeType
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.UninstallModules
@@ -46,10 +47,10 @@ class WunschfunktionalitaetenEndToEndTest {
         composeRule.activity.runOnUiThread {
             composeRule.activity.setContent {
                 val navController = rememberNavController()
-                val themeState = mutableStateOf(ThemeState(isDarkTheme = false))
+                val themeState = mutableStateOf(ThemeState(ThemeType.LIGHT))
                 val scaffoldState = rememberScaffoldState()
                 val snackbarContent: MutableState<SnackbarContent?> = mutableStateOf(null)
-                LocationSimulatorTheme(themeState) {
+                LocationSimulatorTheme(themeState.value) {
                     composeRule.activity.NavigationAppHost(
                         navController = navController,
                         themeState = themeState,

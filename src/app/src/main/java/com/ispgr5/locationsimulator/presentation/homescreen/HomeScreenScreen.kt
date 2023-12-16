@@ -81,7 +81,7 @@ fun HomeScreenScreen(
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = {
-            TopBar(navController, "", false,
+            TopBar(navController, stringResource(R.string.app_name), false,
                 extraActions = {
                     IconButton(onClick = {
                         navController.navigate(Screen.InfoScreen.route)

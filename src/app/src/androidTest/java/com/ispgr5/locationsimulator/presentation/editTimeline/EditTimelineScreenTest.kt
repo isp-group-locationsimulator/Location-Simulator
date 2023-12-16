@@ -15,6 +15,7 @@ import com.ispgr5.locationsimulator.presentation.MainActivity
 import com.ispgr5.locationsimulator.presentation.settings.SettingsState
 import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
 import com.ispgr5.locationsimulator.ui.theme.ThemeState
+import com.ispgr5.locationsimulator.ui.theme.ThemeType
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.UninstallModules
@@ -45,8 +46,8 @@ class EditTimelineScreenTest{
         composeRule.activity.runOnUiThread {
             composeRule.activity.setContent {
                 val navController = rememberNavController()
-                val themeState = mutableStateOf(ThemeState(isDarkTheme = false))
-                LocationSimulatorTheme(themeState) {
+                val themeState = mutableStateOf(ThemeState(themeType = ThemeType.LIGHT))
+                LocationSimulatorTheme(themeState.value) {
                     NavHost(
                         navController = navController,
                         startDestination = "testEditTimeline"    //TODO

@@ -20,7 +20,6 @@ import org.joda.time.Instant
 import java.io.File
 import java.util.Timer
 import java.util.concurrent.atomic.AtomicInteger
-import java.util.concurrent.atomic.AtomicLong
 import kotlin.concurrent.schedule
 import kotlin.random.Random
 
@@ -136,6 +135,7 @@ class SimulationService : LifecycleService() {
             snapshotDate = startedAt,
             playingEffect = null,
             nextEffect = firstEffect,
+            startPauseAt = startedAt,
             currentPauseDuration = firstPauseDuration
         )
         activateTimelineSnapshot(initialTimeline, vibrator)
@@ -155,6 +155,7 @@ class SimulationService : LifecycleService() {
                         snapshotDate = Instant.now(),
                         playingEffect = effectToSchedule,
                         nextEffect = determineAnEffect(effectToSchedule.endPauseAt),
+                        startPauseAt = null,
                         currentPauseDuration = null
                     )
                 )
@@ -190,6 +191,7 @@ class SimulationService : LifecycleService() {
                 snapshotDate = now,
                 playingEffect = null,
                 nextEffect = nextEffect,
+                startPauseAt = now,
                 currentPauseDuration = pauseDuration
             ),
             vibrator = vibrator
@@ -445,9 +447,9 @@ data class EffectTimeline(
     val snapshotDate: Instant,
     val playingEffect: EffectParameters?,
     val nextEffect: EffectParameters,
+    val startPauseAt: Instant?,
     val currentPauseDuration: Long?
-) {
-}
+)
 
 object MediaDurationDeterminer {
     private val durationCache = mutableMapOf<String, Long>()
