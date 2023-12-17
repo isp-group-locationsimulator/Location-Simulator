@@ -53,6 +53,17 @@ class SimulationService : LifecycleService() {
     private var shownNotification: Notification? = null
     private lateinit var soundsDir: String
 
+    private val vibrator by lazy {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val vibratorManager =
+                getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
+            vibratorManager.defaultVibrator
+        } else {
+            @Suppress("DEPRECATION") // Needed for the support of older Android versions.
+            getSystemService(VIBRATOR_SERVICE) as Vibrator
+        }
+    }
+
     /**
      * called when the service receives an intent to start or stop the simulation
      */
@@ -111,20 +122,10 @@ class SimulationService : LifecycleService() {
                 acquire() // Should we set a timeout for this wakelock?
             }
         }
-
-        val vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            val vibratorManager =
-                getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
-            vibratorManager.defaultVibrator
-        } else {
-            @Suppress("DEPRECATION") // Needed for the support of older Android versions.
-            getSystemService(VIBRATOR_SERVICE) as Vibrator
-        }
-
-        startPlayback(vibrator)
+        startPlayback()
     }
 
-    private fun startPlayback(vibrator: Vibrator) {
+    private fun startPlayback() {
         val startedAt = Instant.now()
         val firstPauseDuration = 500L
         val firstEventOffset = startedAt.plus(firstPauseDuration)
@@ -137,15 +138,15 @@ class SimulationService : LifecycleService() {
             startPauseAt = startedAt,
             currentPauseDuration = firstPauseDuration
         )
-        activateTimelineSnapshot(initialTimeline, vibrator)
+        activateTimelineSnapshot(initialTimeline)
     }
 
-    private fun activateTimelineSnapshot(timeline: EffectTimeline, vibrator: Vibrator) {
+    private fun activateTimelineSnapshot(timeline: EffectTimeline) {
         EffectTimelineBus.postValue(timeline)
-        schedule(timeline.nextEffect, vibrator)
+        schedule(timeline.nextEffect)
     }
 
-    private fun schedule(effectToSchedule: EffectParameters, vibrator: Vibrator) {
+    private fun schedule(effectToSchedule: EffectParameters) {
         Log.d(TAG, "schedule: $effectToSchedule")
         effectTimer.schedule(effectToSchedule.startAt.toDate()) {
             if (IsPlayingEventBus.value == true) {
@@ -160,10 +161,7 @@ class SimulationService : LifecycleService() {
                 )
                 when (effectToSchedule) {
                     is EffectParameters.Sound -> playSoundEffect(effectToSchedule)
-                    is EffectParameters.Vibration -> playVibrationEffect(
-                        effectToSchedule,
-                        vibrator
-                    )
+                    is EffectParameters.Vibration -> playVibrationEffect(effectToSchedule)
                 }
             }
         }
@@ -173,12 +171,12 @@ class SimulationService : LifecycleService() {
                     TAG,
                     "schedule: pausing until ${effectToSchedule.endPauseAt} for ${effectToSchedule.pauseMillis}ms"
                 )
-                updateTimelineDuringPause(vibrator, effectToSchedule.pauseMillis)
+                updateTimelineDuringPause(effectToSchedule.pauseMillis)
             }
         }
     }
 
-    private fun updateTimelineDuringPause(vibrator: Vibrator, pauseDuration: Long) {
+    private fun updateTimelineDuringPause(pauseDuration: Long) {
         val previousTimeline = EffectTimelineBus.value ?: run {
             stopSelf()
             return
@@ -192,8 +190,7 @@ class SimulationService : LifecycleService() {
                 nextEffect = nextEffect,
                 startPauseAt = now,
                 currentPauseDuration = pauseDuration
-            ),
-            vibrator = vibrator
+            )
         )
     }
 
@@ -288,10 +285,7 @@ class SimulationService : LifecycleService() {
         )
     }
 
-    private fun playVibrationEffect(
-        effect: EffectParameters.Vibration,
-        vibrator: Vibrator
-    ): Long? {
+    private fun playVibrationEffect(effect: EffectParameters.Vibration): Long? {
         if (IsPlayingEventBus.value != true) {
             return null
         }
@@ -320,6 +314,9 @@ class SimulationService : LifecycleService() {
      */
     private fun stopService() {
         EffectTimelineBus.postValue(null)
+        IsPlayingEventBus.postValue(false)
+        soundPlayer.stopPlayback()
+        vibrator.cancel()
         try {
             //release the wakeLock, since it is no longer needed
             wakeLock?.let {
@@ -337,7 +334,6 @@ class SimulationService : LifecycleService() {
         } catch (e: Exception) {
             Log.e(TAG, "Service stopped without being started: ${e.message}", e)
         }
-        IsPlayingEventBus.postValue(false)
     }
 
     /**

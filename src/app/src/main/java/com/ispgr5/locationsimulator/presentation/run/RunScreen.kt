@@ -1,30 +1,28 @@
 package com.ispgr5.locationsimulator.presentation.run
 
-import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
+import androidx.annotation.StringRes
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
-import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.material.ButtonColors
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Icon
+import androidx.compose.material.Button
+import androidx.compose.material.Divider
 import androidx.compose.material.LinearProgressIndicator
-import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.ProvideTextStyle
 import androidx.compose.material.Scaffold
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.SnackbarDuration
@@ -33,7 +31,6 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PauseCircleOutline
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.derivedStateOf
@@ -44,14 +41,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalViewConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -66,7 +69,9 @@ import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
 import com.ispgr5.locationsimulator.ui.theme.ThemeState
 import com.ispgr5.locationsimulator.ui.theme.ThemeType
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import org.joda.time.Instant
+import java.math.BigDecimal
 
 /**
  * The Run Screen.
@@ -145,6 +150,45 @@ fun RunScreenContent(
 ) {
     Spacer(modifier = Modifier.height(paddingValues.calculateTopPadding()))
     val context = LocalContext.current
+    val buttonInteractionSource = remember {
+        MutableInteractionSource()
+    }
+    val viewConfiguration = LocalViewConfiguration.current
+
+    val onStopLongClick: () -> Unit = {
+        snackbarContentState.value = SnackbarContent(
+            text = context.getString(R.string.run_stop),
+            snackbarDuration = SnackbarDuration.Long
+        )
+        onStop()
+    }
+
+    val onStopShortTap: () -> Unit = {
+        snackbarContentState.value = SnackbarContent(
+            text = context.getString(R.string.long_press_to_stop),
+            snackbarDuration = SnackbarDuration.Short
+        )
+    }
+
+    LaunchedEffect(buttonInteractionSource) {
+        var isLongPress = false
+        buttonInteractionSource.interactions.collectLatest { interaction ->
+            when (interaction) {
+                is PressInteraction.Press -> {
+                    isLongPress = false
+                    delay(viewConfiguration.longPressTimeoutMillis)
+                    isLongPress = true
+                    onStopLongClick.invoke()
+                }
+
+                is PressInteraction.Release -> {
+                    if (!isLongPress) {
+                        onStopShortTap.invoke()
+                    }
+                }
+            }
+        }
+    }
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -155,17 +199,30 @@ fun RunScreenContent(
             modifier = Modifier
                 .weight(0.8f)
                 .padding(horizontal = 16.dp, vertical = 32.dp)
-                .border(1.dp, Color.Red),
+                .border(2.dp, Color.Black),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
                 text = stringResource(R.string.running_configuration),
-                style = MaterialTheme.typography.h5
+                style = MaterialTheme.typography.h6
             )
             Text(
                 text = configuration?.name ?: stringResource(R.string.unknown_configuration),
-                style = MaterialTheme.typography.h5.copy(fontFamily = FontFamily.Monospace)
+                style = MaterialTheme.typography.h6.copy(fontStyle = FontStyle.Italic)
             )
+            if (configuration?.description?.isNotBlank() == true) {
+                Text(
+                    text = configuration.description,
+                    style = MaterialTheme.typography.subtitle2.copy(fontWeight = FontWeight.Normal),
+                    maxLines = 3,
+                    textAlign = TextAlign.Center,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.fillMaxWidth(0.8f)
+                )
+            }
+
+            Spacer(Modifier.height(16.dp))
+
             nextEffect?.let { next ->
                 PlayingStateUi(
                     playingEffect = playingEffect,
@@ -175,53 +232,28 @@ fun RunScreenContent(
                 )
             }
         }
-        Column(
-            Modifier
-                .weight(0.15f)
-                .fillMaxWidth()
-                .padding(bottom = 16.dp)
-                .border(1.dp, Color.Green),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            LongClickButton(onClick = {
-                snackbarContentState.value = SnackbarContent(
-                    text = context.getString(R.string.long_press_to_stop),
-                    snackbarDuration = SnackbarDuration.Short
-                )
-            }, onLongClick = {
-                snackbarContentState.value = SnackbarContent(
-                    text = context.getString(R.string.run_stop),
-                    snackbarDuration = SnackbarDuration.Long
-                )
-                onStop()
-            }) {
-                Text(stringResource(id = R.string.run_stop), fontSize = 30.sp)
-            }
-//            Column(
-//                modifier = Modifier
-//                    .weight(0.8f)
-//                    .aspectRatio(2f)
-//                    .padding(vertical = 8.dp)
-//                    .testTag(TestTags.RUN_END_BUTTON)
-//                    .pointerInput(Unit) {
-//                        detectTapGestures(
-//                            onTap = {
-//                                snackbarContentState.value = SnackbarContent(
-//                                    text = context.getString(R.string.long_press_to_stop),
-//                                    snackbarDuration = SnackbarDuration.Short
-//                                )
-//                            },
-//                            onLongPress = {
-//                                onStop()
-//                            },
-//                        )
-//                    },
-//                verticalArrangement = Arrangement.Center,
-//                horizontalAlignment = Alignment.CenterHorizontally
-//            ) {
-//                Text(text = stringResource(id = R.string.run_stop), fontSize = 30.sp)
-//            }
+        StopButton(buttonInteractionSource)
+    }
+}
+
+@Composable
+fun ColumnScope.StopButton(interactionSource: MutableInteractionSource) {
+    Column(
+        Modifier
+            .weight(0.15f)
+            .fillMaxWidth()
+            .border(1.dp, Color.Green),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Button(
+            interactionSource = interactionSource,
+            modifier = Modifier
+                .fillMaxWidth(0.5f)
+                .fillMaxHeight(0.8f)
+                .padding(bottom = 16.dp),
+            onClick = {}) {
+            Text(stringResource(id = R.string.run_stop), fontSize = 30.sp)
         }
     }
 }
@@ -249,21 +281,6 @@ private object TestData {
     )
     val lastRefresh: Instant = baselineInstant.plus(300L)
 
-    val pausedEffectState = EffectTimeline(
-        lastRefresh,
-        playingEffect = null,
-        currentPauseDuration = 500L,
-        startPauseAt = baselineInstant,
-        nextEffect = EffectParameters.Sound(
-            startAt = baselineInstant.plus(500),
-            durationMillis = 500L,
-            pauseMillis = 500L,
-            volume = 0.42f,
-            soundName = soundComponent.source,
-            original = soundComponent
-        )
-    )
-
     val playingEffectState = EffectTimeline(
         lastRefresh, playingEffect = EffectParameters.Vibration(
             startAt = baselineInstant.minus(100L),
@@ -283,70 +300,33 @@ private object TestData {
 }
 
 @Composable
-@Preview("progress-playing")
-fun ProgressBarPreview() {
-    val progress = calculateProgress(
-        playingEffect = TestData.playingEffectState.playingEffect,
-        nextEffect = TestData.playingEffectState.nextEffect,
-        startPauseAt = null,
-        now = TestData.lastRefresh
-    )
-    EffectProgressBar(progressBarProgress = progress, isInPause = false)
-}
-
-@Composable
-@Preview("progress-paused")
-fun ProgressBarPausedPreview() {
-    val progress = calculateProgress(
-        playingEffect = null,
-        nextEffect = TestData.pausedEffectState.nextEffect,
-        startPauseAt = TestData.pausedEffectState.startPauseAt,
-        now = TestData.lastRefresh
-    )
-    EffectProgressBar(progressBarProgress = progress, isInPause = true)
-}
-
-
-@Composable
 @Preview("runScreenContent")
 fun RunScreenPreview() {
-    LocationSimulatorTheme(ThemeState(themeType = ThemeType.LIGHT)) {
+    LocationSimulatorTheme(ThemeState(themeType = ThemeType.DARK)) {
 
         val snackbarContentState = remember {
             mutableStateOf<SnackbarContent?>(null)
         }
+        Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
 
-        RunScreenContent(
-            paddingValues = PaddingValues(4.dp),
-            configuration = Configuration(
-                name = "Test configuration",
-                description = "",
-                randomOrderPlayback = false,
-                components = listOf(TestData.vibrationComponent, TestData.soundComponent)
-            ),
-            TestData.playingEffectState.playingEffect,
-            TestData.playingEffectState.nextEffect,
-            TestData.playingEffectState.startPauseAt,
-            TestData.playingEffectState.currentPauseDuration,
-            snackbarContentState
-        ) {}
+            RunScreenContent(
+                paddingValues = PaddingValues(4.dp),
+                configuration = Configuration(
+                    name = "Test configuration",
+                    description = "This is a description that needs to be shown up to 3 rows in the running screeen, and I think the ajsdlkfj lakjjdsafh kjsdadhf kjsdahf kjsdahf kjsdahf kjsdahf kjsadhf jksadhfjksadhdkjfhasd kjfjhsadkjfhasdkdjjfh askjdfhkjsadhfkj",
+                    randomOrderPlayback = false,
+                    components = listOf(TestData.vibrationComponent, TestData.soundComponent)
+                ),
+                TestData.playingEffectState.playingEffect,
+                TestData.playingEffectState.nextEffect,
+                TestData.playingEffectState.startPauseAt,
+                TestData.playingEffectState.currentPauseDuration,
+                snackbarContentState
+            ) {}
+        }
     }
 }
 
-@Composable
-@Preview("playing")
-fun PlayingStateUiPreview() {
-    LocationSimulatorTheme(themeState = ThemeState(ThemeType.LIGHT)) {
-        PlayingStateUi(
-            playingEffect = TestData.playingEffectState.playingEffect,
-            nextEffect = TestData.playingEffectState.nextEffect,
-            startPauseAt = null,
-            currentPauseDuration = null
-        )
-    }
-}
-
-@SuppressLint("UnrememberedMutableState")
 @Composable
 fun PlayingStateUi(
     playingEffect: EffectParameters?,
@@ -373,14 +353,13 @@ fun PlayingStateUi(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = 32.dp)
-            .border(1.dp, Color.Magenta),
+            .padding(top = 32.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Column(
             modifier = Modifier
-                .weight(0.45f)
+                .weight(5f)
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -390,9 +369,10 @@ fun PlayingStateUi(
                 is EffectParameters.Sound -> SoundUi(playingEffect)
             }
         }
+        Divider(modifier = Modifier.weight(1f), color = Color.Green.copy(alpha = 0.1f))
         Column(
             modifier = Modifier
-                .weight(0.45f)
+                .weight(5f)
                 .fillMaxWidth()
         ) {
             NextUi(nextEffect = nextEffect)
@@ -400,8 +380,10 @@ fun PlayingStateUi(
 
         Column(
             modifier = Modifier
-                .weight(0.1f)
-                .fillMaxWidth()
+                .weight(1f)
+                .border(1.dp, Color.Black)
+                .fillMaxWidth(),
+            verticalArrangement = Arrangement.Center
         ) {
             EffectProgressBar(progressBarProgress, isInPause = currentPauseDuration != null)
         }
@@ -451,41 +433,93 @@ fun EffectProgressBar(
 }
 
 @Composable
-fun SoundUi(effectState: EffectParameters.Sound) {
+fun EffectPreviewUi(
+    effectState: EffectParameters,
+    iconSize: Dp = 42.dp,
+    ranges: List<RefRangeValue>
+) {
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp),
-        verticalArrangement = Arrangement.spacedBy(4.dp),
+        Modifier
+            .fillMaxSize()
+            .padding(horizontal = 8.dp)
+            .border(1.dp, Color.Green),
+        verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Top),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Icon(
-            painter = painterResource(id = R.drawable.audionouse2), contentDescription = null
+        val drawable = when (effectState) {
+            is EffectParameters.Vibration -> R.drawable.ic_baseline_vibration_24
+            else -> R.drawable.audionouse2
+        }
+        Image(
+            modifier = Modifier.height(iconSize),
+            painter = painterResource(id = drawable),
+            contentScale = ContentScale.FillHeight,
+            contentDescription = null,
+            colorFilter = ColorFilter.tint(MaterialTheme.colors.onBackground)
         )
-        Text(text = effectState.soundName)
     }
-
-    Text("#$effectState.instanceId}")
-    Text(effectState.toString())
 }
 
 @Composable
-fun VibrationUi(effectState: EffectParameters) {
-    Icon(
-        modifier = Modifier.scale(2f),
-        painter = painterResource(id = R.drawable.ic_baseline_vibration_24),
-        contentDescription = null
-    )
-    Text(buildString {
-        append("#${effectState.instanceId}")
-        append(" - ")
-        append(effectState.toString())
-    })
+fun SoundUi(effectState: EffectParameters.Sound) {
+    val volumeRange by remember {
+        mutableStateOf(RefRangeValue(
+            value = effectState.volume.toBigDecimal(),
+            lower = effectState.original.minVolume.toBigDecimal(),
+            upper = effectState.original.maxVolume.toBigDecimal(),
+            label = R.string.editTimeline_SoundVolume
+        ) { value ->
+            when {
+                value.between(0f, 25f) -> RefRangeValue.Breakpoint.SMALL
+                in 75f..100f -> RefRangeValue.Breakpoint.LARGE
+                else -> RefRangeValue.Breakpoint.MEDIUM
+            }
+        })
+    }
+    EffectPreviewUi(effectState = effectState, ranges = listOf(volumeRange))
+}
+
+@Composable
+fun VibrationUi(effectState: EffectParameters.Vibration) {
+
+    val strengthRange by remember {
+        mutableStateOf(
+            RefRangeValue(
+                value = effectState.strength.toBigDecimal(),
+                lower = effectState.original.minStrength.toBigDecimal(),
+                upper = effectState.original.maxStrength.toBigDecimal(),
+                label = R.string.editTimeline_Vibration_Strength,
+            ) { value ->
+                when (value.toInt()) {
+                    in 0..25 -> RefRangeValue.Breakpoint.SMALL
+                    in 75..100 -> RefRangeValue.Breakpoint.LARGE
+                    else -> RefRangeValue.Breakpoint.MEDIUM
+                }
+            }
+        )
+    }
+    val durationRange by remember {
+        mutableStateOf(
+            RefRangeValue(
+                value = effectState.durationMillis.toBigDecimal(),
+                lower = effectState.original.minDuration.toBigDecimal(),
+                upper = effectState.original.maxDuration.toBigDecimal(),
+                label = R.string.editTimeline_Vibration_duration,
+            ) { value ->
+                when (value.toLong()) {
+                    in 0..5 -> RefRangeValue.Breakpoint.SMALL
+                    in 15..50 -> RefRangeValue.Breakpoint.LARGE
+                    else -> RefRangeValue.Breakpoint.MEDIUM
+                }
+            }
+        )
+    }
+    EffectPreviewUi(effectState = effectState, ranges = listOf(strengthRange, durationRange))
 }
 
 @Composable
 fun PausedUi(currentPauseDuration: Long) {
-    Icon(imageVector = Icons.Default.PauseCircleOutline, contentDescription = null)
+    Image(imageVector = Icons.Default.PauseCircleOutline, contentDescription = null)
     Text(stringResource(id = R.string.in_pause))
     Text(
         "$currentPauseDuration ms",
@@ -498,49 +532,20 @@ fun NextUi(nextEffect: EffectParameters) {
     Text("Next: #${nextEffect.instanceId} - $nextEffect")
 }
 
-@Composable
-fun LongClickButton(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    onLongClick: (() -> Unit)? = null,
-    enabled: Boolean = true,
-    border: BorderStroke? = null,
-    colors: ButtonColors = ButtonDefaults.buttonColors(),
-    contentPadding: PaddingValues = ButtonDefaults.ContentPadding,
-    content: @Composable RowScope.() -> Unit
+data class RefRangeValue(
+    val value: BigDecimal,
+    val lower: BigDecimal,
+    val upper: BigDecimal,
+    @StringRes val label: Int,
+    val breakpoints: (BigDecimal) -> Breakpoint
 ) {
-    val contentColor by colors.contentColor(enabled)
-    Surface(
-        shape = MaterialTheme.shapes.small,
-        color = colors.backgroundColor(enabled).value,
-        contentColor = contentColor.copy(alpha = 1f),
-        border = border,
-        modifier = modifier.pointerInput(Unit) {
-            detectTapGestures(onLongPress = {
-                onLongClick?.invoke()
-            },
-                onTap = {
-                    onClick()
-                }
-            )
-        }
-    ) {
-        CompositionLocalProvider(LocalContentAlpha provides contentColor.alpha) {
-            ProvideTextStyle(
-                value = MaterialTheme.typography.button
-            ) {
-                Row(
-                    Modifier
-                        .defaultMinSize(
-                            minWidth = ButtonDefaults.MinWidth,
-                            minHeight = ButtonDefaults.MinHeight
-                        )
-                        .padding(contentPadding),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically,
-                    content = content
-                )
-            }
-        }
+    enum class Breakpoint {
+        SMALL, MEDIUM, LARGE
     }
+}
+
+fun <T : Number> BigDecimal.between(lowerInclusive: T, upperExclusive: T): Boolean {
+    val satisfiesLower = this >= lowerInclusive.toBigDecimal()
+    val satisfiesUpper = this < upperExclusive.toBigDecimal()
+    return satisfiesLower && satisfiesUpper
 }
