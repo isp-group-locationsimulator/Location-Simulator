@@ -37,7 +37,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -126,7 +125,6 @@ fun RunScreenContent(
     onStop: () -> Unit
 ) {
     Spacer(modifier = Modifier.height(paddingValues.calculateTopPadding()))
-    val context = LocalContext.current
 
     Column(
         modifier = Modifier.fillMaxSize(),

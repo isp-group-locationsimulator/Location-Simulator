@@ -85,4 +85,6 @@
     <string name="light">Light</string>
     <string name="auto">Auto</string>
     <string name="dark">Dark</string>
+    <string name="error_single_sound_not_found">The sound file \'%s\' could not be found.</string>
+    <string name="error_multiple_sounds_not_found">The sound files %s could not be found.</string>
 </resources>

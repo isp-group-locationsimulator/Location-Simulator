@@ -143,7 +143,7 @@ fun SelectScreen(
                         }
                     }
                     LazyColumn(
-                        modifier = lazyColumnModifier,//.scrollable(scrollState, Orientation.Vertical),
+                        modifier = lazyColumnModifier,
                         state = lazyListState
                     ) {
                         //for all configurations in state we create a Row

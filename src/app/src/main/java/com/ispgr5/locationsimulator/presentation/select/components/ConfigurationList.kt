@@ -60,11 +60,7 @@ fun OneConfigurationListMember(
 			Row(
 				Modifier.fillMaxWidth(),
 				verticalAlignment = Alignment.CenterVertically,
-				horizontalArrangement = if (!hasErrors) {
-					Arrangement.Start
-				} else {
-					Arrangement.Start
-				},
+				horizontalArrangement = Arrangement.Start
 			) {
 				//new row so the Configuration name is centered
 				Column(
