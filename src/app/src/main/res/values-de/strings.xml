@@ -87,4 +87,5 @@
     <string name="dark">Dunkel</string>
     <string name="error_single_sound_not_found">Die Audio-Datei \'%s\' konnte nicht gefunden werden.</string>
     <string name="error_multiple_sounds_not_found">Die Audio-Dateien %s konnten nicht gefunden werden.</string>
+    <string name="long_press_to_stop">Gedrückt halten zum Beenden</string>
 </resources>

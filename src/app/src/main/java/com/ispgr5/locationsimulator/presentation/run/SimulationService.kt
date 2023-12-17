@@ -7,7 +7,6 @@ import android.content.Intent
 import android.media.MediaMetadataRetriever
 import android.os.*
 import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.MutableLiveData
 import com.ispgr5.locationsimulator.R
@@ -321,7 +320,6 @@ class SimulationService : LifecycleService() {
      */
     private fun stopService() {
         EffectTimelineBus.postValue(null)
-        Toast.makeText(this, "Stop", Toast.LENGTH_SHORT).show()
         try {
             //release the wakeLock, since it is no longer needed
             wakeLock?.let {

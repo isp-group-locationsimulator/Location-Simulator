@@ -3,29 +3,39 @@ package com.ispgr5.locationsimulator.presentation.run
 import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.material.ButtonColors
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Icon
 import androidx.compose.material.LinearProgressIndicator
+import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.ProvideTextStyle
 import androidx.compose.material.Scaffold
 import androidx.compose.material.ScaffoldState
+import androidx.compose.material.SnackbarDuration
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PauseCircleOutline
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -37,7 +47,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
@@ -47,10 +57,11 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ispgr5.locationsimulator.R
-import com.ispgr5.locationsimulator.core.util.TestTags
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 import com.ispgr5.locationsimulator.domain.model.Configuration
+import com.ispgr5.locationsimulator.presentation.universalComponents.SnackbarContent
 import com.ispgr5.locationsimulator.presentation.universalComponents.TopBar
+import com.ispgr5.locationsimulator.presentation.util.MakeSnackbar
 import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
 import com.ispgr5.locationsimulator.ui.theme.ThemeState
 import com.ispgr5.locationsimulator.ui.theme.ThemeType
@@ -73,6 +84,12 @@ fun RunScreen(
         viewModel.onEvent(RunEvent.StopClicked(stopServiceFunction))
         navController.popBackStack()
     }
+
+    val snackbarContentState = remember {
+        mutableStateOf<SnackbarContent?>(null)
+    }
+
+    MakeSnackbar(scaffoldState = scaffoldState, snackbarContent = snackbarContentState)
 
     val effectState = SimulationService.EffectTimelineBus.observeAsState()
     val playingEffect by remember {
@@ -105,7 +122,8 @@ fun RunScreen(
                 playingEffect = playingEffect,
                 nextEffect = nextEffect,
                 startPauseAt = startPauseAt,
-                currentPauseDuration = currentPauseDuration
+                currentPauseDuration = currentPauseDuration,
+                snackbarContentState = snackbarContentState,
             ) {
                 SimulationService.IsPlayingEventBus.postValue(false)
                 viewModel.onEvent(RunEvent.StopClicked(stopServiceFunction))
@@ -122,9 +140,11 @@ fun RunScreenContent(
     nextEffect: EffectParameters?,
     startPauseAt: Instant?,
     currentPauseDuration: Long?,
+    snackbarContentState: MutableState<SnackbarContent?>,
     onStop: () -> Unit
 ) {
     Spacer(modifier = Modifier.height(paddingValues.calculateTopPadding()))
+    val context = LocalContext.current
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -164,22 +184,44 @@ fun RunScreenContent(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Column(
-                modifier = Modifier
-                    .weight(0.8f)
-                    .aspectRatio(2f)
-                    .padding(vertical = 8.dp)
-                    .testTag(TestTags.RUN_END_BUTTON)
-                    .pointerInput(Unit) {
-                        detectTapGestures(
-                            onLongPress = {
-                                onStop()
-                            },)
-                    },
-
-                ) {
-                Text(text = stringResource(id = R.string.run_stop), fontSize = 30.sp)
+            LongClickButton(onClick = {
+                snackbarContentState.value = SnackbarContent(
+                    text = context.getString(R.string.long_press_to_stop),
+                    snackbarDuration = SnackbarDuration.Short
+                )
+            }, onLongClick = {
+                snackbarContentState.value = SnackbarContent(
+                    text = context.getString(R.string.run_stop),
+                    snackbarDuration = SnackbarDuration.Long
+                )
+                onStop()
+            }) {
+                Text(stringResource(id = R.string.run_stop), fontSize = 30.sp)
             }
+//            Column(
+//                modifier = Modifier
+//                    .weight(0.8f)
+//                    .aspectRatio(2f)
+//                    .padding(vertical = 8.dp)
+//                    .testTag(TestTags.RUN_END_BUTTON)
+//                    .pointerInput(Unit) {
+//                        detectTapGestures(
+//                            onTap = {
+//                                snackbarContentState.value = SnackbarContent(
+//                                    text = context.getString(R.string.long_press_to_stop),
+//                                    snackbarDuration = SnackbarDuration.Short
+//                                )
+//                            },
+//                            onLongPress = {
+//                                onStop()
+//                            },
+//                        )
+//                    },
+//                verticalArrangement = Arrangement.Center,
+//                horizontalAlignment = Alignment.CenterHorizontally
+//            ) {
+//                Text(text = stringResource(id = R.string.run_stop), fontSize = 30.sp)
+//            }
         }
     }
 }
@@ -270,6 +312,10 @@ fun ProgressBarPausedPreview() {
 fun RunScreenPreview() {
     LocationSimulatorTheme(ThemeState(themeType = ThemeType.LIGHT)) {
 
+        val snackbarContentState = remember {
+            mutableStateOf<SnackbarContent?>(null)
+        }
+
         RunScreenContent(
             paddingValues = PaddingValues(4.dp),
             configuration = Configuration(
@@ -281,7 +327,8 @@ fun RunScreenPreview() {
             TestData.playingEffectState.playingEffect,
             TestData.playingEffectState.nextEffect,
             TestData.playingEffectState.startPauseAt,
-            TestData.playingEffectState.currentPauseDuration
+            TestData.playingEffectState.currentPauseDuration,
+            snackbarContentState
         ) {}
     }
 }
@@ -449,4 +496,51 @@ fun PausedUi(currentPauseDuration: Long) {
 @Composable
 fun NextUi(nextEffect: EffectParameters) {
     Text("Next: #${nextEffect.instanceId} - $nextEffect")
+}
+
+@Composable
+fun LongClickButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    onLongClick: (() -> Unit)? = null,
+    enabled: Boolean = true,
+    border: BorderStroke? = null,
+    colors: ButtonColors = ButtonDefaults.buttonColors(),
+    contentPadding: PaddingValues = ButtonDefaults.ContentPadding,
+    content: @Composable RowScope.() -> Unit
+) {
+    val contentColor by colors.contentColor(enabled)
+    Surface(
+        shape = MaterialTheme.shapes.small,
+        color = colors.backgroundColor(enabled).value,
+        contentColor = contentColor.copy(alpha = 1f),
+        border = border,
+        modifier = modifier.pointerInput(Unit) {
+            detectTapGestures(onLongPress = {
+                onLongClick?.invoke()
+            },
+                onTap = {
+                    onClick()
+                }
+            )
+        }
+    ) {
+        CompositionLocalProvider(LocalContentAlpha provides contentColor.alpha) {
+            ProvideTextStyle(
+                value = MaterialTheme.typography.button
+            ) {
+                Row(
+                    Modifier
+                        .defaultMinSize(
+                            minWidth = ButtonDefaults.MinWidth,
+                            minHeight = ButtonDefaults.MinHeight
+                        )
+                        .padding(contentPadding),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically,
+                    content = content
+                )
+            }
+        }
+    }
 }
