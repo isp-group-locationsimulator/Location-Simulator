@@ -9,7 +9,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -20,9 +20,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.Button
+import androidx.compose.material.Card
 import androidx.compose.material.Divider
 import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.MaterialTheme.colors
+import androidx.compose.material.MaterialTheme.typography
 import androidx.compose.material.Scaffold
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.SnackbarDuration
@@ -72,6 +75,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import org.joda.time.Instant
 import java.math.BigDecimal
+import java.math.RoundingMode
 
 /**
  * The Run Screen.
@@ -146,6 +150,7 @@ fun RunScreenContent(
     startPauseAt: Instant?,
     currentPauseDuration: Long?,
     snackbarContentState: MutableState<SnackbarContent?>,
+    iconSize: Dp = 42.dp,
     onStop: () -> Unit
 ) {
     Spacer(modifier = Modifier.height(paddingValues.calculateTopPadding()))
@@ -192,28 +197,27 @@ fun RunScreenContent(
 
     Column(
         modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Column(
             modifier = Modifier
-                .weight(0.8f)
-                .padding(horizontal = 16.dp, vertical = 32.dp)
-                .border(2.dp, Color.Black),
+                .weight(0.85f)
+                .padding(vertical = 32.dp)
+                .border(2.dp, colors.onBackground),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
                 text = stringResource(R.string.running_configuration),
-                style = MaterialTheme.typography.h6
+                style = typography.h5
             )
             Text(
                 text = configuration?.name ?: stringResource(R.string.unknown_configuration),
-                style = MaterialTheme.typography.h6.copy(fontStyle = FontStyle.Italic)
+                style = typography.h5.copy(fontStyle = FontStyle.Italic)
             )
             if (configuration?.description?.isNotBlank() == true) {
                 Text(
                     text = configuration.description,
-                    style = MaterialTheme.typography.subtitle2.copy(fontWeight = FontWeight.Normal),
+                    style = typography.subtitle2.copy(fontWeight = FontWeight.Normal),
                     maxLines = 3,
                     textAlign = TextAlign.Center,
                     overflow = TextOverflow.Ellipsis,
@@ -228,20 +232,22 @@ fun RunScreenContent(
                     playingEffect = playingEffect,
                     nextEffect = next,
                     startPauseAt = startPauseAt,
-                    currentPauseDuration = currentPauseDuration
+                    currentPauseDuration = currentPauseDuration,
+                    iconSize = iconSize
                 )
             }
         }
-        StopButton(buttonInteractionSource)
+        Column(Modifier.fillMaxHeight(0.15f)) {
+            StopButton(buttonInteractionSource)
+        }
     }
 }
 
 @Composable
-fun ColumnScope.StopButton(interactionSource: MutableInteractionSource) {
+fun StopButton(interactionSource: MutableInteractionSource) {
     Column(
         Modifier
-            .weight(0.15f)
-            .fillMaxWidth()
+            .fillMaxSize()
             .border(1.dp, Color.Green),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
@@ -250,8 +256,8 @@ fun ColumnScope.StopButton(interactionSource: MutableInteractionSource) {
             interactionSource = interactionSource,
             modifier = Modifier
                 .fillMaxWidth(0.5f)
-                .fillMaxHeight(0.8f)
-                .padding(bottom = 16.dp),
+                .fillMaxHeight(0.8f),
+                //.padding(bottom = 16.dp),
             onClick = {}) {
             Text(stringResource(id = R.string.run_stop), fontSize = 30.sp)
         }
@@ -302,13 +308,12 @@ private object TestData {
 @Composable
 @Preview("runScreenContent")
 fun RunScreenPreview() {
-    LocationSimulatorTheme(ThemeState(themeType = ThemeType.DARK)) {
+    LocationSimulatorTheme(ThemeState(themeType = ThemeType.LIGHT)) {
 
         val snackbarContentState = remember {
             mutableStateOf<SnackbarContent?>(null)
         }
-        Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
-
+        Surface(modifier = Modifier.fillMaxSize(), color = colors.background) {
             RunScreenContent(
                 paddingValues = PaddingValues(4.dp),
                 configuration = Configuration(
@@ -332,7 +337,8 @@ fun PlayingStateUi(
     playingEffect: EffectParameters?,
     nextEffect: EffectParameters,
     startPauseAt: Instant?,
-    currentPauseDuration: Long?
+    currentPauseDuration: Long?,
+    iconSize: Dp
 ) {
     var lastRefreshInstant by remember {
         mutableStateOf(Instant.now())
@@ -346,7 +352,7 @@ fun PlayingStateUi(
     }
 
 
-    val progressBarProgress = calculateProgress(
+    val progressBarProgress = calculateCurrentProgress(
         playingEffect, nextEffect, startPauseAt, lastRefreshInstant
     )
 
@@ -363,10 +369,16 @@ fun PlayingStateUi(
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            when (playingEffect) {
-                null -> PausedUi(currentPauseDuration = currentPauseDuration!!)
-                is EffectParameters.Vibration -> VibrationUi(playingEffect)
-                is EffectParameters.Sound -> SoundUi(playingEffect)
+            Card(Modifier.fillMaxSize()) {
+                when (playingEffect) {
+                    null -> PausedUi(
+                        currentPauseDuration = currentPauseDuration!!,
+                        iconSize = iconSize
+                    )
+
+                    is EffectParameters.Vibration -> VibrationUi(playingEffect, iconSize)
+                    is EffectParameters.Sound -> SoundUi(playingEffect, iconSize = iconSize)
+                }
             }
         }
         Divider(modifier = Modifier.weight(1f), color = Color.Green.copy(alpha = 0.1f))
@@ -381,7 +393,7 @@ fun PlayingStateUi(
         Column(
             modifier = Modifier
                 .weight(1f)
-                .border(1.dp, Color.Black)
+                .border(1.dp, colors.primaryVariant)
                 .fillMaxWidth(),
             verticalArrangement = Arrangement.Center
         ) {
@@ -390,7 +402,7 @@ fun PlayingStateUi(
     }
 }
 
-fun calculateProgress(
+fun calculateCurrentProgress(
     playingEffect: EffectParameters?,
     nextEffect: EffectParameters,
     startPauseAt: Instant?,
@@ -425,8 +437,8 @@ fun EffectProgressBar(
                 .weight(0.7f)
                 .padding(8.dp),
             color = when (isInPause) {
-                true -> MaterialTheme.colors.secondary.copy(alpha = 0.4f)
-                else -> MaterialTheme.colors.primary
+                true -> colors.secondary.copy(alpha = 0.4f)
+                else -> colors.secondary
             }
         )
     }
@@ -435,13 +447,13 @@ fun EffectProgressBar(
 @Composable
 fun EffectPreviewUi(
     effectState: EffectParameters,
-    iconSize: Dp = 42.dp,
+    iconSize: Dp,
     ranges: List<RefRangeValue>
 ) {
     Column(
         Modifier
             .fillMaxSize()
-            .padding(horizontal = 8.dp)
+            .padding(horizontal = 8.dp, vertical = 4.dp)
             .border(1.dp, Color.Green),
         verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Top),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -455,33 +467,110 @@ fun EffectPreviewUi(
             painter = painterResource(id = drawable),
             contentScale = ContentScale.FillHeight,
             contentDescription = null,
-            colorFilter = ColorFilter.tint(MaterialTheme.colors.onBackground)
+            colorFilter = ColorFilter.tint(colors.onSurface)
         )
+        ranges.forEach { range ->
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(IntrinsicSize.Max),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    stringResource(id = range.label), modifier = Modifier
+                        .weight(1 / 3f, true)
+                )
+                RefRangeIndicator(range = range, modifier = Modifier.weight(2 / 3f, true))
+            }
+        }
     }
 }
 
 @Composable
-fun SoundUi(effectState: EffectParameters.Sound) {
+fun RefRangeIndicator(modifier: Modifier = Modifier, range: RefRangeValue) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+
+        val boxWeight by remember {
+            mutableStateOf(range.breakpoints(range))
+        }
+
+        val progress by remember {
+            mutableStateOf(range.valueRelative())
+        }
+
+        val lowerText by remember {
+            mutableStateOf(range.lower.formatToString())
+        }
+
+        val upperText by remember {
+            mutableStateOf(range.upper.formatToString())
+        }
+
+        val valueText by remember {
+            mutableStateOf(range.formatValue(range))
+        }
+
+        Text(text = valueText, style = typography.body2)
+        if (progress != null) {
+            LinearProgressIndicator(
+                modifier = Modifier
+                    .height(3.dp)
+                    .fillMaxWidth(boxWeight.weight),
+                progress = progress!!.setScale(2).toFloat()
+            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(boxWeight.weight)
+            ) {
+                Text(
+                    text = lowerText,
+                    style = typography.caption.copy(textAlign = TextAlign.Start),
+                    modifier = Modifier.weight(1f, fill = true)
+                )
+                Text(
+                    text = upperText,
+                    style = typography.caption.copy(textAlign = TextAlign.End),
+                    modifier = Modifier.weight(1f, fill = true)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun SoundUi(effectState: EffectParameters.Sound, iconSize: Dp) {
     val volumeRange by remember {
         mutableStateOf(RefRangeValue(
-            value = effectState.volume.toBigDecimal(),
-            lower = effectState.original.minVolume.toBigDecimal(),
-            upper = effectState.original.maxVolume.toBigDecimal(),
-            label = R.string.editTimeline_SoundVolume
-        ) { value ->
-            when {
-                value.between(0f, 25f) -> RefRangeValue.Breakpoint.SMALL
-                in 75f..100f -> RefRangeValue.Breakpoint.LARGE
-                else -> RefRangeValue.Breakpoint.MEDIUM
+            value = effectState.volume.toBigDecimal() * 100.toBigDecimal(),
+            lower = effectState.original.minVolume.toBigDecimal() * 100.toBigDecimal(),
+            upper = effectState.original.maxVolume.toBigDecimal() * 100.toBigDecimal(),
+            label = R.string.editTimeline_SoundVolume,
+            breakpoints = {
+                when {
+                    value.between(0f, 25f) -> RefRangeValue.Breakpoint.SMALL
+                    value.between(75f, 101f) -> RefRangeValue.Breakpoint.LARGE
+                    else -> RefRangeValue.Breakpoint.MEDIUM
+                }
+            },
+            formatValue = {
+                "${value.formatToString()} %"
             }
-        })
+        ))
     }
-    EffectPreviewUi(effectState = effectState, ranges = listOf(volumeRange))
+    EffectPreviewUi(effectState = effectState, ranges = listOf(volumeRange), iconSize = iconSize)
+}
+
+fun BigDecimal.formatToString() = when (this <= BigDecimal.valueOf(1)) {
+    true -> this.setScale(2, RoundingMode.HALF_UP).toString()
+    else -> this.setScale(0, RoundingMode.HALF_UP).toString()
 }
 
 @Composable
-fun VibrationUi(effectState: EffectParameters.Vibration) {
-
+fun VibrationUi(effectState: EffectParameters.Vibration, iconSize: Dp) {
     val strengthRange by remember {
         mutableStateOf(
             RefRangeValue(
@@ -489,13 +578,17 @@ fun VibrationUi(effectState: EffectParameters.Vibration) {
                 lower = effectState.original.minStrength.toBigDecimal(),
                 upper = effectState.original.maxStrength.toBigDecimal(),
                 label = R.string.editTimeline_Vibration_Strength,
-            ) { value ->
-                when (value.toInt()) {
-                    in 0..25 -> RefRangeValue.Breakpoint.SMALL
-                    in 75..100 -> RefRangeValue.Breakpoint.LARGE
-                    else -> RefRangeValue.Breakpoint.MEDIUM
+                breakpoints = {
+                    when (value.toInt()) {
+                        in 0..25 -> RefRangeValue.Breakpoint.SMALL
+                        in 75..100 -> RefRangeValue.Breakpoint.LARGE
+                        else -> RefRangeValue.Breakpoint.MEDIUM
+                    }
+                },
+                formatValue = {
+                    value.formatToString()
                 }
-            }
+            )
         )
     }
     val durationRange by remember {
@@ -505,31 +598,62 @@ fun VibrationUi(effectState: EffectParameters.Vibration) {
                 lower = effectState.original.minDuration.toBigDecimal(),
                 upper = effectState.original.maxDuration.toBigDecimal(),
                 label = R.string.editTimeline_Vibration_duration,
-            ) { value ->
-                when (value.toLong()) {
-                    in 0..5 -> RefRangeValue.Breakpoint.SMALL
-                    in 15..50 -> RefRangeValue.Breakpoint.LARGE
-                    else -> RefRangeValue.Breakpoint.MEDIUM
+                breakpoints = {
+                    when (value.toLong()) {
+                        in 0..5 -> RefRangeValue.Breakpoint.SMALL
+                        in 15..50 -> RefRangeValue.Breakpoint.LARGE
+                        else -> RefRangeValue.Breakpoint.MEDIUM
+                    }
+                },
+                formatValue = {
+                    "${value.formatToString()} ms"
                 }
-            }
+            )
         )
     }
-    EffectPreviewUi(effectState = effectState, ranges = listOf(strengthRange, durationRange))
-}
-
-@Composable
-fun PausedUi(currentPauseDuration: Long) {
-    Image(imageVector = Icons.Default.PauseCircleOutline, contentDescription = null)
-    Text(stringResource(id = R.string.in_pause))
-    Text(
-        "$currentPauseDuration ms",
-        style = MaterialTheme.typography.h6.copy(fontFamily = FontFamily.Monospace)
+    EffectPreviewUi(
+        effectState = effectState,
+        ranges = listOf(strengthRange, durationRange),
+        iconSize = iconSize
     )
 }
 
 @Composable
-fun NextUi(nextEffect: EffectParameters) {
-    Text("Next: #${nextEffect.instanceId} - $nextEffect")
+fun PausedUi(currentPauseDuration: Long, iconSize: Dp) {
+    Column(
+        Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Top),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Image(
+            imageVector = Icons.Default.PauseCircleOutline,
+            contentDescription = null,
+            modifier = Modifier.height(iconSize),
+            colorFilter = ColorFilter.tint(colors.onSurface)
+        )
+        Text(
+            "$currentPauseDuration ms",
+            style = typography.h6.copy(fontFamily = FontFamily.Monospace)
+        )
+    }
+}
+
+@Composable
+fun NextUi(nextEffect: EffectParameters, iconSize: Dp = 32.dp) {
+    Card(Modifier.fillMaxSize()) {
+        Column(
+            Modifier
+                .fillMaxSize()
+                .padding(horizontal = 8.dp, vertical = 4.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(stringResource(id = R.string.next_effect), style = typography.subtitle1)
+            when (nextEffect) {
+                is EffectParameters.Vibration -> VibrationUi(nextEffect, iconSize)
+                is EffectParameters.Sound -> SoundUi(nextEffect, iconSize)
+            }
+        }
+    }
 }
 
 data class RefRangeValue(
@@ -537,10 +661,19 @@ data class RefRangeValue(
     val lower: BigDecimal,
     val upper: BigDecimal,
     @StringRes val label: Int,
-    val breakpoints: (BigDecimal) -> Breakpoint
+    val breakpoints: RefRangeValue.() -> Breakpoint,
+    val formatValue: RefRangeValue.() -> String
 ) {
-    enum class Breakpoint {
-        SMALL, MEDIUM, LARGE
+    fun valueRelative(): BigDecimal? {
+        val lowerSanitized = value - lower
+        return when (val rangeWidth = upper - lower) {
+            BigDecimal.valueOf(0) -> null
+            else -> lowerSanitized.divide(rangeWidth, 2, RoundingMode.HALF_UP)
+        }
+    }
+
+    enum class Breakpoint(val weight: Float) {
+        SMALL(1 / 3f), MEDIUM(2 / 3f), LARGE(1f)
     }
 }
 
@@ -548,4 +681,14 @@ fun <T : Number> BigDecimal.between(lowerInclusive: T, upperExclusive: T): Boole
     val satisfiesLower = this >= lowerInclusive.toBigDecimal()
     val satisfiesUpper = this < upperExclusive.toBigDecimal()
     return satisfiesLower && satisfiesUpper
+}
+
+private fun Number.toBigDecimal(): BigDecimal {
+    return when (this) {
+        is Double -> BigDecimal.valueOf(this)
+        is Long -> BigDecimal.valueOf(this)
+        is Float -> this.toDouble().toBigDecimal()
+        is Int -> this.toLong().toBigDecimal()
+        else -> throw UnsupportedOperationException("can't convert $this (${this::class.simpleName}) to BigDecimal")
+    }
 }
