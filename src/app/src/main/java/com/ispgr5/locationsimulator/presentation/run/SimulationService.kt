@@ -17,8 +17,8 @@ import kotlinx.coroutines.*
 import kotlinx.serialization.ExperimentalSerializationApi
 import org.joda.time.Instant
 import java.io.File
+import java.math.BigDecimal
 import java.util.Timer
-import java.util.concurrent.atomic.AtomicInteger
 import kotlin.concurrent.schedule
 import kotlin.random.Random
 
@@ -136,7 +136,10 @@ class SimulationService : LifecycleService() {
             playingEffect = null,
             nextEffect = firstEffect,
             startPauseAt = startedAt,
-            currentPauseDuration = firstPauseDuration
+            currentPauseDuration = firstPauseDuration,
+            pauseReferenceRange = BigDecimal.valueOf(firstPauseDuration) to BigDecimal.valueOf(
+                firstPauseDuration
+            )
         )
         activateTimelineSnapshot(initialTimeline)
     }
@@ -156,7 +159,8 @@ class SimulationService : LifecycleService() {
                         playingEffect = effectToSchedule,
                         nextEffect = determineAnEffect(effectToSchedule.endPauseAt),
                         startPauseAt = null,
-                        currentPauseDuration = null
+                        currentPauseDuration = null,
+                        pauseReferenceRange = null
                     )
                 )
                 when (effectToSchedule) {
@@ -171,25 +175,35 @@ class SimulationService : LifecycleService() {
                     TAG,
                     "schedule: pausing until ${effectToSchedule.endPauseAt} for ${effectToSchedule.pauseMillis}ms"
                 )
-                updateTimelineDuringPause(effectToSchedule.pauseMillis)
+                updateTimelineDuringPause(effectToSchedule.pauseMillis, effectToSchedule)
             }
         }
     }
 
-    private fun updateTimelineDuringPause(pauseDuration: Long) {
+    private fun updateTimelineDuringPause(
+        pauseDuration: Long,
+        effectToSchedule: EffectParameters
+    ) {
         val previousTimeline = EffectTimelineBus.value ?: run {
             stopSelf()
             return
         }
         val now = Instant.now()
         val nextEffect = previousTimeline.nextEffect
+        val pauseBounds = when (effectToSchedule.original) {
+            is ConfigComponent.Vibration -> effectToSchedule.original.minPause to effectToSchedule.original.maxPause
+            is ConfigComponent.Sound -> effectToSchedule.original.minPause to effectToSchedule.original.maxPause
+        }
         activateTimelineSnapshot(
             timeline = EffectTimeline(
                 snapshotDate = now,
                 playingEffect = null,
                 nextEffect = nextEffect,
                 startPauseAt = now,
-                currentPauseDuration = pauseDuration
+                currentPauseDuration = pauseDuration,
+                pauseReferenceRange = BigDecimal.valueOf(pauseBounds.first.toLong()) to BigDecimal.valueOf(
+                    pauseBounds.second.toLong()
+                )
             )
         )
     }
@@ -227,11 +241,10 @@ class SimulationService : LifecycleService() {
     private fun determineEffectFromConfigComponent(
         nextConfig: ConfigComponent,
         startAtInstant: Instant
-    ): EffectParameters =
-        when (nextConfig) {
-            is ConfigComponent.Vibration -> determineVibrationEffect(startAtInstant, nextConfig)
-            is ConfigComponent.Sound -> determineSoundEffect(startAtInstant, nextConfig)
-        }
+    ): EffectParameters = when (nextConfig) {
+        is ConfigComponent.Vibration -> determineVibrationEffect(startAtInstant, nextConfig)
+        is ConfigComponent.Sound -> determineSoundEffect(startAtInstant, nextConfig)
+    }
 
     private fun playSoundEffect(parameters: EffectParameters.Sound): Long {
         val soundUriAsString = soundsDir + parameters.soundName
@@ -400,24 +413,19 @@ class SimulationService : LifecycleService() {
 sealed class EffectParameters(
     val startAt: Instant,
     val durationMillis: Long,
-    val pauseMillis: Long
+    val pauseMillis: Long,
+    val original: ConfigComponent
 ) {
     val endEffectAt: Instant get() = startAt.plus(durationMillis)
     val endPauseAt: Instant get() = endEffectAt.plus(pauseMillis)
-
-    val instanceId: Int = counter.incrementAndGet()
-
-    companion object {
-        val counter = AtomicInteger(0)
-    }
 
     class Vibration(
         startAt: Instant,
         durationMillis: Long,
         pauseMillis: Long,
         val strength: Int,
-        val original: ConfigComponent.Vibration
-    ) : EffectParameters(startAt, durationMillis, pauseMillis) {
+        original: ConfigComponent.Vibration
+    ) : EffectParameters(startAt, durationMillis, pauseMillis, original) {
         override fun toString(): String {
             return "VibrationParameters(startAt=$startAt, durationMillis=$durationMillis, strength=$strength, endEffectAt=$endEffectAt, pauseMillis=$pauseMillis, endPauseAt=${endPauseAt})"
         }
@@ -429,8 +437,8 @@ sealed class EffectParameters(
         pauseMillis: Long,
         val volume: Float,
         val soundName: String,
-        val original: ConfigComponent.Sound
-    ) : EffectParameters(startAt, durationMillis, pauseMillis) {
+        original: ConfigComponent.Sound
+    ) : EffectParameters(startAt, durationMillis, pauseMillis, original) {
         override fun toString(): String {
             return "SoundParameters(startAt=$startAt, duration=$durationMillis, volume=$volume, soundName='$soundName', endEffectAt=$endEffectAt, pauseMillis=$pauseMillis, endPauseAt=${endPauseAt})"
         }
@@ -442,7 +450,8 @@ data class EffectTimeline(
     val playingEffect: EffectParameters?,
     val nextEffect: EffectParameters,
     val startPauseAt: Instant?,
-    val currentPauseDuration: Long?
+    val currentPauseDuration: Long?,
+    val pauseReferenceRange: Pair<BigDecimal, BigDecimal>?
 )
 
 object MediaDurationDeterminer {

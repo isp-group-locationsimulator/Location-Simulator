@@ -89,4 +89,5 @@
     <string name="error_multiple_sounds_not_found">The sound files %s could not be found.</string>
     <string name="long_press_to_stop">Long-press to stop</string>
     <string name="next_effect">Next effect</string>
+    <string name="playing_effect">Playing effect</string>
 </resources>

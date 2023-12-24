@@ -89,4 +89,5 @@
     <string name="error_multiple_sounds_not_found">Die Audio-Dateien %s konnten nicht gefunden werden.</string>
     <string name="long_press_to_stop">Gedrückt halten zum Beenden</string>
     <string name="next_effect">Nächster Effekt</string>
+    <string name="playing_effect">Aktueller Effekt</string>
 </resources>
