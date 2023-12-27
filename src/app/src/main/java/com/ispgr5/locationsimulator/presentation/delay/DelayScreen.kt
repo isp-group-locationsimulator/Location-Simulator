@@ -2,11 +2,21 @@ package com.ispgr5.locationsimulator.presentation.delay
 
 import android.content.Context
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.material.Divider
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
+import androidx.compose.material.ScaffoldState
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -21,8 +31,10 @@ import androidx.navigation.NavController
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.core.util.TestTags
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
+import com.ispgr5.locationsimulator.domain.model.Configuration
 import com.ispgr5.locationsimulator.presentation.editTimeline.components.Timeline
 import com.ispgr5.locationsimulator.presentation.universalComponents.TopBar
+import com.ispgr5.locationsimulator.presentation.util.millisToSeconds
 
 /**
  * The Delay Screen.
@@ -46,84 +58,100 @@ fun DelayScreen(
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = { TopBar(navController, stringResource(id = R.string.ScreenDelay)) },
-        content = {
-            Spacer(modifier = Modifier.height(it.calculateTopPadding()))
-            Column(
-                Modifier
-                    .fillMaxWidth()
-                    .verticalScroll(rememberScrollState())
-                    .testTag(TestTags.DELAY_MAIN_COLUMN),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Spacer(modifier = Modifier.size(8.dp))
-
-                if (state.configuration == null) {
-                    Text(text = "Configuration is null")
-                } else {
-                    Text(
-                        text = state.configuration.name,
-                        style = TextStyle(fontSize = 24.sp),
-                        textAlign = TextAlign.Center,
-                        maxLines = 1,
-                        overflow = TextOverflow.Clip,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp)
-                    )
-                    Spacer(modifier = Modifier.size(8.dp))
-                    if (state.configuration.description.isNotBlank()) {
-                        Divider(color = MaterialTheme.colors.primary, thickness = 1.dp)
-                        Spacer(modifier = Modifier.size(8.dp))
-                        Text(
-                            text = state.configuration.description,
-                            maxLines = 3,
-                            overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp)
-                        )
-                    }
-                }
-
-                /**
-                 * The Timeline
-                 */
-                Spacer(modifier = Modifier.size(8.dp))
-                Divider(color = MaterialTheme.colors.primary, thickness = 1.dp)
-                Spacer(modifier = Modifier.size(8.dp))
-
-                Column {
-                    state.configuration?.components?.let { components ->
-                        Timeline(
-                            components = components,
-                            selectedComponent = null,
-                            onSelectAComponent = null,
-                            onAddClicked = {},
-                            showAddButton = false
-                        )
-                    }
-                }
-
-                Spacer(modifier = Modifier.size(5.dp))
-
-                //extra runtime
-                state.configuration?.let {
-                    stringResource(
-                        id = R.string.ConfigInfoSecondsPerIteration,
-                        state.configuration.getMinDuration(context, soundsDirUri),
-                        state.configuration.getMaxDuration(context, soundsDirUri)
-                    )
-                }?.let { runtimeString ->
-                    Text(runtimeString)
-                }
-
-                Spacer(modifier = Modifier.size(3.dp))
-                Divider(color = MaterialTheme.colors.primary, thickness = 1.dp)
-                Spacer(modifier = Modifier.size(8.dp))
-
-                //The timer component
-                //val configuration by viewModel.state
-                Timer(viewModel, startServiceFunction, navController)
+        content = { paddingValues ->
+            state.configuration?.let { configuration ->
+                DelayScreenContent(
+                    paddingValues = paddingValues,
+                    configuration = configuration,
+                    context = context,
+                    soundsDirUri = soundsDirUri,
+                    viewModel = viewModel,
+                    startServiceFunction = startServiceFunction,
+                    navController = navController
+                )
             }
         })
+}
+
+@Composable
+fun DelayScreenContent(
+    paddingValues: PaddingValues,
+    configuration: Configuration,
+    context: Context,
+    soundsDirUri: String,
+    viewModel: DelayViewModel,
+    startServiceFunction: (String, List<ConfigComponent>, Boolean) -> Unit,
+    navController: NavController
+) {
+    Spacer(modifier = Modifier.height(paddingValues.calculateTopPadding()))
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .verticalScroll(rememberScrollState())
+            .testTag(TestTags.DELAY_MAIN_COLUMN),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Spacer(modifier = Modifier.size(8.dp))
+
+        Text(
+            text = configuration.name,
+            style = TextStyle(fontSize = 24.sp),
+            textAlign = TextAlign.Center,
+            maxLines = 1,
+            overflow = TextOverflow.Clip,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+        )
+        Spacer(modifier = Modifier.size(8.dp))
+        if (configuration.description.isNotBlank()) {
+            Divider(color = MaterialTheme.colors.primary, thickness = 1.dp)
+            Spacer(modifier = Modifier.size(8.dp))
+            Text(
+                text = configuration.description,
+                maxLines = 3,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+            )
+        }
+
+        /**
+         * The Timeline
+         */
+        Spacer(modifier = Modifier.size(8.dp))
+        Divider(color = MaterialTheme.colors.primary, thickness = 1.dp)
+        Spacer(modifier = Modifier.size(8.dp))
+
+        Timeline(
+            components = configuration.components,
+            selectedComponent = null,
+            onSelectAComponent = null,
+            onAddClicked = {},
+            showAddButton = false
+        )
+
+        Spacer(modifier = Modifier.size(5.dp))
+
+        val minDuration = configuration.getMinDuration(context, soundsDirUri)
+        val maxDuration = configuration.getMaxDuration(context, soundsDirUri)
+
+        //extra runtime
+        val runtimeString = stringResource(
+            id = R.string.ConfigInfoSecondsPerIteration,
+            minDuration.millisToSeconds().toString(),
+            maxDuration.millisToSeconds().toString()
+        )
+
+        Text(runtimeString)
+
+        Spacer(modifier = Modifier.size(3.dp))
+        Divider(color = MaterialTheme.colors.primary, thickness = 1.dp)
+        Spacer(modifier = Modifier.size(8.dp))
+
+        //The timer component
+        //val configuration by viewModel.state
+        Timer(viewModel, startServiceFunction, navController)
+    }
 }

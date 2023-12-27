@@ -46,7 +46,7 @@
     <string name="TimerHours">Stunden</string>
     <string name="TimerMinutes">Minuten</string>
     <string name="TimerSeconds">Sekunden</string>
-    <string name="ConfigInfoSecondsPerIteration">%1$.0fs–%2$.0fs pro Iteration</string>
+    <string name="ConfigInfoSecondsPerIteration">%1$s s – %2$s s pro Iteration</string>
     <string name="TimelineMoveLeft">nach links in Zeitleiste</string>
     <string name="TimelineMoveRight">nach rechts in Zeitleiste</string>
     <string name="PlaceholderDefaultName">"Geben Sie einen Namen ein "</string>

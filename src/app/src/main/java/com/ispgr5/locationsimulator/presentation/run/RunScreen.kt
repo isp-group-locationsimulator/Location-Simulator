@@ -72,6 +72,8 @@ import com.ispgr5.locationsimulator.domain.model.Configuration
 import com.ispgr5.locationsimulator.presentation.universalComponents.SnackbarContent
 import com.ispgr5.locationsimulator.presentation.universalComponents.TopBar
 import com.ispgr5.locationsimulator.presentation.util.MakeSnackbar
+import com.ispgr5.locationsimulator.presentation.util.between
+import com.ispgr5.locationsimulator.presentation.util.millisToSeconds
 import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
 import com.ispgr5.locationsimulator.ui.theme.ThemeState
 import com.ispgr5.locationsimulator.ui.theme.ThemeType
@@ -704,22 +706,3 @@ data class RefRangeValue(
         SMALL(1 / 2f), MEDIUM(2 / 3f), LARGE(1f)
     }
 }
-
-fun <T : Number> BigDecimal.between(lowerInclusive: T, upperExclusive: T): Boolean {
-    val satisfiesLower = this >= lowerInclusive.toBigDecimal()
-    val satisfiesUpper = this < upperExclusive.toBigDecimal()
-    return satisfiesLower && satisfiesUpper
-}
-
-private fun Number.toBigDecimal(): BigDecimal {
-    return when (this) {
-        is Double -> BigDecimal.valueOf(this)
-        is Long -> BigDecimal.valueOf(this)
-        is Float -> this.toDouble().toBigDecimal()
-        is Int -> this.toLong().toBigDecimal()
-        else -> throw UnsupportedOperationException("can't convert $this (${this::class.simpleName}) to BigDecimal")
-    }
-}
-
-private fun BigDecimal.millisToSeconds() =
-    this.divide(BigDecimal.valueOf(1000L), 1, RoundingMode.HALF_UP)
