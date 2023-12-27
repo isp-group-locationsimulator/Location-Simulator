@@ -47,8 +47,8 @@ import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 fun Timeline(
     components: List<ConfigComponent>,
     selectedComponent: ConfigComponent?,
-    onSelectAComponent: (ConfigComponent) -> Unit,
-    onAddClicked: () -> Unit,
+    onSelectAComponent: ((ConfigComponent) -> Unit)?,
+    onAddClicked: (() -> Unit)?,
     showAddButton: Boolean = true
 ) {
 
@@ -68,7 +68,8 @@ fun Timeline(
     Column(
         Modifier
             .fillMaxWidth()
-            .height(IntrinsicSize.Min)) {
+            .height(IntrinsicSize.Min)
+    ) {
         Row(
             modifier = Modifier.horizontalScroll(scrollState)
         ) {
@@ -88,7 +89,7 @@ fun Timeline(
             if (showAddButton) {
                 Button(
                     elevation = ButtonDefaults.elevation(4.dp),
-                    onClick = onAddClicked,
+                    onClick = onAddClicked!!,
                     modifier = Modifier
                         .width(55.dp)
                         .height(55.dp)
@@ -108,7 +109,7 @@ fun Timeline(
 }
 
 /**
- * Conmpose to draw a Item of the Timeline wich represents a ConfigComponent
+ * Conmpose to draw a Item of the Timeline which represents a ConfigComponent
  * @param isSelected is this Configuration Component currently selected?
  * @param configItem the Configuration Component that should showed
  * @param onSelect what should happen if this Time line Item gets clicked
@@ -117,27 +118,27 @@ fun Timeline(
 fun TimelineItem(
     isSelected: Boolean,
     configItem: ConfigComponent,
-    onSelect: (ConfigComponent) -> Unit
+    onSelect: ((ConfigComponent) -> Unit)?
 ) {
-
-    Card(elevation = 4.dp, backgroundColor = MaterialTheme.colors.surface,
+    val baseModifier =
+        Modifier
+            .width(55.dp)
+            .height(55.dp)
+            .padding(6.dp)
+            .testTag(TestTags.EDIT_CONFIG_ITEM)
+    val clickableModifier = onSelect?.let {
+        baseModifier.clickable {
+            onSelect(configItem)
+        }
+    } ?: baseModifier
+    Card(
+        elevation = 4.dp, backgroundColor = MaterialTheme.colors.surface,
         //if selected the Item gets a Border in another Color
-        modifier = if (isSelected) {
-            Modifier
-                .width(55.dp)
-                .height(55.dp)
-                .padding(6.dp)
-                .border(1.dp, MaterialTheme.colors.primary, RoundedCornerShape(10))
-                .clickable { onSelect(configItem) }
-                .testTag(TestTags.EDIT_CONFIG_ITEM)
-        } else {
-            Modifier
-                .width(55.dp)
-                .height(55.dp)
-                .padding(6.dp)
-                .clickable { onSelect(configItem) }
-                .testTag(TestTags.EDIT_CONFIG_ITEM)
-        }) {
+        modifier = when (isSelected) {
+            true -> clickableModifier.border(1.dp, MaterialTheme.colors.primary, RoundedCornerShape(10))
+            else -> clickableModifier
+        }
+    ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center,

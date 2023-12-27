@@ -1,24 +1,24 @@
 package com.ispgr5.locationsimulator.presentation.homescreen
 
+import android.content.Context
 import android.os.Build
 import android.os.PowerManager
-import android.util.Log
 import androidx.activity.ComponentActivity
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -26,19 +26,23 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Colors
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.material.MaterialTheme.shapes
+import androidx.compose.material.MaterialTheme.typography
 import androidx.compose.material.Scaffold
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.SnackbarDuration
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -69,8 +73,7 @@ import com.ispgr5.locationsimulator.presentation.util.MakeSnackbar
 import com.ispgr5.locationsimulator.presentation.util.Screen
 import com.ispgr5.locationsimulator.ui.theme.ThemeState
 import com.ispgr5.locationsimulator.ui.theme.ThemeType
-
-private const val TAG = "HomeScreenScreen"
+import kotlinx.coroutines.delay
 
 /**
  * The Home Screen.
@@ -134,19 +137,29 @@ fun HomeScreenContent(
          */
         Column(
             modifier = Modifier
-                .fillMaxHeight(0.3f)
+                .height(IntrinsicSize.Min)
+                .padding(vertical = 8.dp)
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(24.dp, Alignment.CenterVertically)
         ) {
-            AppName(colors)
+            AppName()
+        }
+
+        Row(
+            modifier = Modifier
+                .height(IntrinsicSize.Min)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ) {
             SelectProfileButton(viewModel, navController)
         }
 
         Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .weight(6f), verticalArrangement = Arrangement.Center
+                .weight(1f)
+                .fillMaxWidth(),
+            verticalArrangement = Arrangement.Center
         ) {
             FavouriteList(
                 state, navController, viewModel, soundStorageManager, snackbarContent
@@ -154,13 +167,21 @@ fun HomeScreenContent(
         }
         Column(
             modifier = Modifier
-                .padding(top = 30.dp)
+                .padding(top = 8.dp)
+                .height(IntrinsicSize.Min)
                 .fillMaxWidth(),
             verticalArrangement = Arrangement.Bottom,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            ThemeToggle(appTheme, viewModel, activity)
-            Spacer(modifier = Modifier.height(16.dp))
+            ThemeToggle(appTheme.value) { newTheme ->
+                appTheme.value = newTheme
+                viewModel.onEvent(
+                    HomeScreenEvent.ChangedAppTheme(
+                        activity = activity, themeState = newTheme
+                    )
+                )
+            }
+            Spacer(modifier = Modifier.height(4.dp))
             BatteryOptimizationHint(viewModel, batteryOptDisableFunction)
         }
     }
@@ -267,12 +288,12 @@ fun FavouriteConfigurationCard(
                 .padding(vertical = 4.dp)
         ) {
             Text(
-                text = configuration.name, fontSize = 18.sp
+                text = configuration.name, style = typography.body1
             )
             if (configuration.description.isNotBlank()) {
                 Text(
                     text = configuration.description,
-                    fontSize = 14.sp,
+                    style = typography.subtitle2,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -282,14 +303,20 @@ fun FavouriteConfigurationCard(
 }
 
 @Composable
-private fun AppName(colors: Colors) {
+private fun AppName() {
     Text(
         text = stringResource(id = R.string.app_name),
-        fontSize = 30.sp,
-        fontWeight = FontWeight.Bold,
+        style = typography.h3,
         color = colors.onBackground,
         modifier = Modifier.testTag(TestTags.HOME_APPNAME)
     )
+}
+
+private fun appIsIgnoringPowerOptimization(context: Context, powerManager: PowerManager): Boolean {
+    return when {
+        Build.VERSION.SDK_INT < Build.VERSION_CODES.M -> true
+        else -> powerManager.isIgnoringBatteryOptimizations(context.packageName)
+    }
 }
 
 @Composable
@@ -297,60 +324,69 @@ private fun BatteryOptimizationHint(
     viewModel: HomeScreenViewModel, batteryOptDisableFunction: () -> Unit
 ) {
     val context = LocalContext.current
-    val isIgnoringOptimization = remember {
-        val pm = context.getSystemService(ComponentActivity.POWER_SERVICE) as PowerManager
-        return@remember when {
-            Build.VERSION.SDK_INT < Build.VERSION_CODES.M -> {
-                Log.d(TAG, "SDK < M -> ignoring power optimization")
-                true
+    val powerManager = remember {
+        context.getSystemService(ComponentActivity.POWER_SERVICE) as PowerManager
+    }
+    var isIgnoringOptimization by remember {
+        mutableStateOf(appIsIgnoringPowerOptimization(context, powerManager))
+    }
+    LaunchedEffect(viewModel) {
+        while (true) {
+            isIgnoringOptimization = appIsIgnoringPowerOptimization(context, powerManager)
+            delay(100)
+        }
+    }
+    Crossfade(
+        targetState = isIgnoringOptimization,
+        label = "battery optimization"
+    ) { crossfadedIsIgnoringOptimization ->
+        when (crossfadedIsIgnoringOptimization) {
+            true -> {
+                Spacer(Modifier.height(20.dp))
             }
 
-            else -> pm.isIgnoringBatteryOptimizations(context.packageName).also {
-                Log.d(TAG, "ignoring power optimization for ${context.packageName}: $it")
+            else -> {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.battery_opt_recommendation),
+                        textAlign = TextAlign.Center
+                    )
+                    Button(onClick = {
+                        viewModel.onEvent(HomeScreenEvent.DisableBatteryOptimization {
+                            batteryOptDisableFunction()
+                            isIgnoringOptimization =
+                                appIsIgnoringPowerOptimization(context, powerManager)
+                        })
+                    }) {
+                        Text(text = stringResource(id = R.string.battery_opt_button))
+                    }
+                }
+
             }
         }
     }
-    when(isIgnoringOptimization) {
-        true -> {
-            Spacer(Modifier.height(20.dp))
-        }
-        else -> {
-            Text(
-                text = stringResource(id = R.string.battery_opt_recommendation),
-                textAlign = TextAlign.Center
-            )
 
-            Button(onClick = {
-                viewModel.onEvent(HomeScreenEvent.DisableBatteryOptimization { batteryOptDisableFunction() })
-            }) {
-                Text(text = stringResource(id = R.string.battery_opt_button))
-            }
-        }
-    }
 
 }
 
 @Composable
 fun ThemeToggle(
-    appTheme: MutableState<ThemeState>, viewModel: HomeScreenViewModel, activity: MainActivity
-) {
+    selectedTheme: ThemeState,
+    onSetTheme: (ThemeState) -> Unit) {
     Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
-            text = stringResource(id = R.string.homescreen_darkmode),
+            text = stringResource(id = R.string.homescreen_app_theme),
             fontSize = 20.sp,
             fontWeight = FontWeight.SemiBold,
             color = colors.onBackground
         )
         TriStateToggle(stateKeyLabelMap = ThemeType.entries.associateWith { theme -> theme.labelStringRes },
-            selectedOption = appTheme.value.themeType,
+            selectedOption = selectedTheme.themeType,
             onSelectionChange = { newTheme ->
-                val newAppTheme = appTheme.value.copy(themeType = newTheme)
-                appTheme.value = newAppTheme
-                viewModel.onEvent(
-                    HomeScreenEvent.ChangedAppTheme(
-                        activity = activity, themeState = newAppTheme
-                    )
-                )
+                onSetTheme(ThemeState(newTheme))
             })
     }
 }
@@ -365,12 +401,12 @@ private fun SelectProfileButton(
             navController.navigate(Screen.SelectScreen.route)
         },
         modifier = Modifier
-            .height(60.dp)
-            .width(300.dp)
+            .fillMaxWidth(0.8f)
             .testTag(TestTags.HOME_SELECT_CONFIG_BUTTON)
     ) {
         Text(
-            text = stringResource(id = R.string.homescreen_btn_select_profile), fontSize = 30.sp
+            text = stringResource(id = R.string.homescreen_btn_select_profile),
+            style = typography.h4
         )
     }
 }
@@ -425,7 +461,7 @@ fun <K> TriStateToggle(
                             }
                         )
                         .padding(
-                            vertical = 12.dp,
+                            vertical = 8.dp,
                             horizontal = 16.dp,
                         ))
             }

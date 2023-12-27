@@ -46,11 +46,11 @@
     <string name="TimerHours">Hours</string>
     <string name="TimerMinutes">Minutes</string>
     <string name="TimerSeconds">Seconds</string>
-    <string name="ConfigInfoPerIteration"> per iteration</string>
+    <string name="ConfigInfoSecondsPerIteration">%1$.0fs–%1$.0fs per iteration</string>
     <string name="TimelineMoveLeft">move left in Timeline</string>
     <string name="TimelineMoveRight">move right in Timeline</string>
-    <string name="PlaceholderDefaultName"> "Enter a name" </string>
-    <string name="homescreen_darkmode">Dark mode</string>
+    <string name="PlaceholderDefaultName">"Enter a name "</string>
+    <string name="homescreen_app_theme">App theme</string>
     <string name="vibrationStrengthNotSupported">This device doesn\'t support adjusting the vibration strength</string>
     <string name="DialogConfirmation">OK</string>
     <string name="DefaultVibration">Default Vibration</string>
@@ -79,7 +79,6 @@
     <string name="service_notification_channel_description">Service notifications while the simulation is running</string>
     <string name="service_notification_title">LocationSimulator is running</string>
     <string name="service_notification_contentText">LocationSimulator is running using the pattern \'%s\'</string>
-    <string name="starting_simulation">Starting simulation</string>
     <string name="in_pause">In pause</string>
     <string name="sound_filename">Sound filename:</string>
     <string name="light">Light</string>
@@ -89,5 +88,5 @@
     <string name="error_multiple_sounds_not_found">The sound files %s could not be found.</string>
     <string name="long_press_to_stop">Long-press to stop</string>
     <string name="next_effect">Next effect</string>
-    <string name="playing_effect">Playing effect</string>
+    <string name="long_press_button_to_stop">Long-press the stop button to exit.</string>
 </resources>

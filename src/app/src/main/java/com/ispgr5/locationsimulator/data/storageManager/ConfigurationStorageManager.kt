@@ -96,6 +96,7 @@ class ConfigurationStorageManager(
     /**
      * replace special characters in the configuration name (limiting to ASCII), and limit it to n chars, so the filename doesn't get too long
      */
+    @Suppress("SameParameterValue")
     private fun slugifyConfigurationName(
         configuration: Configuration,
         limit: Int = LIMIT_CONF_NAME_FOR_EXPORT

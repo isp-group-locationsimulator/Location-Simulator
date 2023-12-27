@@ -152,7 +152,7 @@ private fun SoundCard(
                 MaterialTheme.colors.onSurface,
                 RoundedCornerShape(5)
             )
-            .let { it ->
+            .let {
                 if (isSmallScreen) it.fillMaxHeight(0.9f) else it
             }
             .padding(20.dp)
@@ -236,7 +236,7 @@ private fun VibrationCard(
                 MaterialTheme.colors.onSurface,
                 RoundedCornerShape(5)
             )
-            .let { it ->
+            .let {
                 if (isSmallScreen) it.fillMaxHeight(0.9f) else it
             }
             .padding(20.dp)

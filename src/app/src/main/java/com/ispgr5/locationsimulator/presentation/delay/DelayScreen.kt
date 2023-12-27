@@ -97,8 +97,8 @@ fun DelayScreen(
                         Timeline(
                             components = components,
                             selectedComponent = null,
-                            onSelectAComponent = fun(_: ConfigComponent) {},
-                            onAddClicked = fun() {},
+                            onSelectAComponent = null,
+                            onAddClicked = {},
                             showAddButton = false
                         )
                     }
@@ -107,18 +107,15 @@ fun DelayScreen(
                 Spacer(modifier = Modifier.size(5.dp))
 
                 //extra runtime
-                Text(
-                    String.format(
-                        "%.0f",
-                        state.configuration?.getMinDuration(context, soundsDirUri)
+                state.configuration?.let {
+                    stringResource(
+                        id = R.string.ConfigInfoSecondsPerIteration,
+                        state.configuration.getMinDuration(context, soundsDirUri),
+                        state.configuration.getMaxDuration(context, soundsDirUri)
                     )
-                            + "s - " +
-                            String.format(
-                                "%.0f",
-                                state.configuration?.getMaxDuration(context, soundsDirUri)
-                            )
-                            + "s " + stringResource(id = R.string.ConfigInfoPerIteration)
-                )
+                }?.let { runtimeString ->
+                    Text(runtimeString)
+                }
 
                 Spacer(modifier = Modifier.size(3.dp))
                 Divider(color = MaterialTheme.colors.primary, thickness = 1.dp)

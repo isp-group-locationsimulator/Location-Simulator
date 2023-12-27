@@ -10,7 +10,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
 import android.provider.MediaStore
-import android.util.Log
 import android.view.WindowManager
 import android.webkit.MimeTypeMap
 import androidx.activity.ComponentActivity
@@ -60,7 +59,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.serialization.ExperimentalSerializationApi
 import java.io.FileOutputStream
 
-// TODO: Add KDoc to this class and methods.
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
@@ -277,7 +275,6 @@ class MainActivity : ComponentActivity() {
     private fun stopService() {
         window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         Intent(this, SimulationService::class.java).also {
-            Log.d("debug", "itAction: ${it.action}")
             it.action = "STOP"
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 startForegroundService(it)

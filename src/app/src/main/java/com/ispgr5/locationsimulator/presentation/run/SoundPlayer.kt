@@ -43,6 +43,8 @@ class SoundPlayer (private val onSoundFinish: () -> Unit) {
 	 * stops the currently running audio file
 	 */
 	fun stopPlayback() {
-		mediaPlayer.stop()
+		if (mediaPlayer.isPlaying) {
+			mediaPlayer.stop()
+		}
 	}
 }
