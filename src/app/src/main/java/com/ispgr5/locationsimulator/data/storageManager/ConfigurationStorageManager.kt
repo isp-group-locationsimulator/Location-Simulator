@@ -11,7 +11,6 @@ import androidx.compose.material.SnackbarDuration
 import androidx.compose.runtime.MutableState
 import androidx.core.app.ShareCompat
 import androidx.core.content.FileProvider
-import com.github.slugify.Slugify
 import com.ispgr5.locationsimulator.BuildConfig
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
@@ -100,22 +99,15 @@ class ConfigurationStorageManager(
     private fun slugifyConfigurationName(
         configuration: Configuration,
         limit: Int = LIMIT_CONF_NAME_FOR_EXPORT
-    ) =
-        when (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            // Slugify uses the Optional class, added only in API 24
-            true -> Slugify.builder().build().slugify(configuration.name).trim()
-            else -> {
-                // do it ourselves, except not quite as nicely
-                val legalCharRegex = Regex("[0-9A-Za-z ]")
-                configuration.name.mapNotNull { c: Char ->
-                    when (legalCharRegex.matches(c.toString())) {
-                        false -> null
-                        else -> if (c == ' ') '-' else c
-                    }
-                }.joinToString("")
-                // remove all characters that are not ASCII
+    ): String {
+        val legalCharRegex = Regex("[0-9A-Za-z ]")
+        return configuration.name.mapNotNull { c: Char ->
+            when (legalCharRegex.matches(c.toString())) {
+                false -> null
+                else -> if (c == ' ') '-' else c
             }
-        }.take(limit).trim().trimEnd('-', '_')
+        }.joinToString("").take(limit).trim().trimEnd('-', '_')
+    }
 
 
     /**
@@ -409,6 +401,7 @@ class ConfigurationStorageManager(
                     R.string.invalid_file_provided,
                     contentUri.toString()
                 )
+
                 else -> throw LoadException(
                     R.string.unsupported_media_type_provided,
                     contentType
@@ -449,7 +442,10 @@ class ConfigurationStorageManager(
                         else -> null
                     }
                     val theUri = listOfNotNull(extraUri, dataUri, clipDataUri).firstOrNull()
-                    Log.i(TAG, "Received ${intent.action} intent with media type '${intent.type}' and URI $theUri")
+                    Log.i(
+                        TAG,
+                        "Received ${intent.action} intent with media type '${intent.type}' and URI $theUri"
+                    )
                     if (theUri != null) {
                         val newConfName =
                             suspendingReadFileFromContentUri(uri = theUri, useCallback = false)

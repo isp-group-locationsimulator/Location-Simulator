@@ -143,12 +143,11 @@ dependencies {
     //date time handling on android <=26
     implementation 'net.danlew:android.joda:2.12.5'
 
-    //transform strings to they can be safely exported in a filename
-    implementation 'com.github.slugify:slugify:3.0.4'
-
     implementation 'com.vdurmont:semver4j:3.1.0'
 
     implementation 'com.ibm.icu:icu4j:74.1'
 
-    implementation("com.github.GIGAMOLE:ComposeScrollbars:1.0.4")
+    implementation "com.github.GIGAMOLE:ComposeScrollbars:1.0.4"
+
+    androidTestImplementation "tools.fastlane:screengrab:2.1.1"
 }
