@@ -36,6 +36,7 @@ import androidx.compose.material.ScaffoldState
 import androidx.compose.material.SnackbarDuration
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -71,6 +72,7 @@ import com.ispgr5.locationsimulator.presentation.universalComponents.SnackbarCon
 import com.ispgr5.locationsimulator.presentation.universalComponents.TopBar
 import com.ispgr5.locationsimulator.presentation.util.MakeSnackbar
 import com.ispgr5.locationsimulator.presentation.util.Screen
+import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
 import com.ispgr5.locationsimulator.ui.theme.ThemeState
 import com.ispgr5.locationsimulator.ui.theme.ThemeType
 import kotlinx.coroutines.delay
@@ -93,37 +95,131 @@ fun HomeScreenScreen(
 ) {
     viewModel.updateConfigurationWithErrorsState(soundStorageManager = soundStorageManager)
     val state = viewModel.state.value
-
+    val context = LocalContext.current
     MakeSnackbar(scaffoldState = scaffoldState, snackbarContent = snackbarContent)
 
+    HomeScreenScaffold(
+        homeScreenState = state,
+        appTheme = appTheme,
+        onInfoClick = {
+            navController.navigate(Screen.InfoScreen.route)
+        },
+        onSelectProfile = {
+            viewModel.onEvent(HomeScreenEvent.SelectConfiguration)
+            navController.navigate(Screen.SelectScreen.route)
+        },
+        onSelectFavourite = { configuration ->
+            when {
+                state.configurationsWithErrors.find { conf -> conf.id == configuration.id } == null -> {
+                    navController.navigate(
+                        Screen.DelayScreen.createRoute(
+                            configuration.id!!
+                        )
+                    )
+                }
+
+                else -> {
+                    val errorStrings = viewModel.whatIsHisErrors(
+                        configuration, soundStorageManager
+                    )
+                    val snackbarMessage = when (errorStrings.size) {
+                        1 -> context.getString(
+                            R.string.error_single_sound_not_found, errorStrings.first()
+                        )
+
+                        else -> {
+                            val errorText = errorStrings.joinToString(", ") {
+                                "'${it}'"
+                            }
+                            context.getString(
+                                R.string.error_multiple_sounds_not_found, errorText
+                            )
+                        }
+                    }
+                    snackbarContent.value = SnackbarContent(
+                        text = snackbarMessage,
+                        snackbarDuration = SnackbarDuration.Indefinite,
+                        actionLabel = context.getString(android.R.string.ok),
+                    )
+                }
+
+            }
+        },
+        onSelectTheme = { newTheme ->
+            appTheme.value = newTheme
+            viewModel.onEvent(
+                HomeScreenEvent.ChangedAppTheme(
+                    activity = activity, themeState = newTheme
+                )
+            )
+        },
+        onLaunchBatteryOptimizerDisable = {
+            viewModel.onEvent(HomeScreenEvent.DisableBatteryOptimization {
+                batteryOptDisableFunction()
+            })
+        }
+    )
+}
+
+@Composable
+fun HomeScreenScaffold(
+    homeScreenState: HomeScreenState,
+    appTheme: MutableState<ThemeState>,
+    onInfoClick: () -> Unit,
+    onSelectProfile: () -> Unit,
+    onSelectFavourite: (Configuration) -> Unit,
+    onSelectTheme: (ThemeState) -> Unit,
+    onLaunchBatteryOptimizerDisable: () -> Unit
+) {
+    val scaffoldState = rememberScaffoldState()
     Scaffold(scaffoldState = scaffoldState, topBar = {
-        AppTopBar(navController)
+        AppTopBar(onInfoClick)
     }, content = { appPadding ->
         HomeScreenContent(
-            appPadding,
-            viewModel,
-            navController,
-            state,
-            soundStorageManager,
-            snackbarContent,
-            appTheme,
-            activity,
-            batteryOptDisableFunction
+            appPadding = appPadding,
+            homeScreenState = homeScreenState,
+            appTheme = appTheme,
+            onSelectProfile = onSelectProfile,
+            onSelectFavourite = onSelectFavourite,
+            onSelectTheme = onSelectTheme,
+            onLaunchBatteryOptimizerDisable = onLaunchBatteryOptimizerDisable
         )
     })
 }
 
 @Composable
+fun HomeScreenScreenshotPreview(themeState: ThemeState, configurations: List<Configuration>) {
+    LocationSimulatorTheme(themeState = themeState) {
+        val appTheme = remember { mutableStateOf(themeState) }
+        val state by remember {
+            mutableStateOf(
+                HomeScreenState(
+                    favoriteConfigurations = configurations,
+                    configurationsWithErrors = emptyList()
+                )
+            )
+        }
+        HomeScreenScaffold(
+            homeScreenState = state,
+            appTheme = appTheme,
+            onInfoClick = {},
+            onSelectProfile = {},
+            onSelectFavourite = {},
+            onSelectTheme = {},
+            onLaunchBatteryOptimizerDisable = {}
+        )
+    }
+}
+
+@Composable
 fun HomeScreenContent(
     appPadding: PaddingValues,
-    viewModel: HomeScreenViewModel,
-    navController: NavController,
-    state: HomeScreenState,
-    soundStorageManager: SoundStorageManager,
-    snackbarContent: MutableState<SnackbarContent?>,
+    homeScreenState: HomeScreenState,
     appTheme: MutableState<ThemeState>,
-    activity: MainActivity,
-    batteryOptDisableFunction: () -> Unit
+    onSelectProfile: () -> Unit,
+    onSelectFavourite: (Configuration) -> Unit,
+    onSelectTheme: (ThemeState) -> Unit,
+    onLaunchBatteryOptimizerDisable: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -152,17 +248,16 @@ fun HomeScreenContent(
                 .fillMaxWidth(),
             horizontalArrangement = Arrangement.Center
         ) {
-            SelectProfileButton(viewModel, navController)
+            SelectProfileButton(onSelectProfile)
         }
 
         Column(
             modifier = Modifier
                 .weight(1f)
-                .fillMaxWidth(),
-            verticalArrangement = Arrangement.Center
+                .fillMaxWidth(), verticalArrangement = Arrangement.Center
         ) {
             FavouriteList(
-                state, navController, viewModel, soundStorageManager, snackbarContent
+                homeScreenState, onSelectFavourite
             )
         }
         Column(
@@ -173,16 +268,9 @@ fun HomeScreenContent(
             verticalArrangement = Arrangement.Bottom,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            ThemeToggle(appTheme.value) { newTheme ->
-                appTheme.value = newTheme
-                viewModel.onEvent(
-                    HomeScreenEvent.ChangedAppTheme(
-                        activity = activity, themeState = newTheme
-                    )
-                )
-            }
+            ThemeToggle(appTheme.value, onSetTheme = onSelectTheme)
             Spacer(modifier = Modifier.height(4.dp))
-            BatteryOptimizationHint(viewModel, batteryOptDisableFunction)
+            BatteryOptimizationHint(onLaunchBatteryOptimizerDisable)
         }
     }
 }
@@ -190,17 +278,10 @@ fun HomeScreenContent(
 @Composable
 private fun FavouriteList(
     state: HomeScreenState,
-    navController: NavController,
-    viewModel: HomeScreenViewModel,
-    soundStorageManager: SoundStorageManager,
-    snackbarContent: MutableState<SnackbarContent?>,
+    onSelectFavourite: (Configuration) -> Unit,
 ) {
-    val ok = stringResource(id = android.R.string.ok)
-    val soundNotFoundSingle = stringResource(id = R.string.error_single_sound_not_found)
-    val soundNotFoundMultiple = stringResource(id = R.string.error_multiple_sounds_not_found)
     Box(
-        modifier = Modifier
-            .fillMaxSize()
+        modifier = Modifier.fillMaxSize()
     ) {
         val lazyListState = rememberLazyListState()
         val scrollbarsState = rememberScrollbarsState(
@@ -216,15 +297,8 @@ private fun FavouriteList(
         ) {
             items(state.favoriteConfigurations.sortedBy { it.name }) { configuration ->
                 FavouriteConfigurationCard(
-                    state = state,
                     configuration = configuration,
-                    navController = navController,
-                    viewModel = viewModel,
-                    soundStorageManager = soundStorageManager,
-                    soundNotFoundSingle = soundNotFoundSingle,
-                    soundNotFoundMultiple = soundNotFoundMultiple,
-                    ok = ok,
-                    snackbarContent = snackbarContent,
+                    onSelectFavourite = onSelectFavourite
                 )
             }
         }
@@ -234,54 +308,14 @@ private fun FavouriteList(
 
 @Composable
 fun FavouriteConfigurationCard(
-    state: HomeScreenState,
     configuration: Configuration,
-    navController: NavController,
-    viewModel: HomeScreenViewModel,
-    soundStorageManager: SoundStorageManager,
-    soundNotFoundSingle: String,
-    soundNotFoundMultiple: String,
-    ok: String,
-    snackbarContent: MutableState<SnackbarContent?>,
+    onSelectFavourite: (Configuration) -> Unit
 ) {
-    Button(modifier = Modifier
-        .fillMaxWidth(),
-        colors = ButtonDefaults.buttonColors(
-            backgroundColor = colors.surface,
-        ),
-        border = null,
-        elevation = null,
-        shape = shapes.small,
-        onClick = {
-            when {
-                state.configurationsWithErrors.find { conf -> conf.id == configuration.id } == null -> {
-                    navController.navigate(
-                        Screen.DelayScreen.createRoute(
-                            configuration.id!!
-                        )
-                    )
-                }
-
-                else -> {
-                    val errorStrings = viewModel.whatIsHisErrors(
-                        configuration, soundStorageManager
-                    )
-                    val snackbarMessage = when (errorStrings.size) {
-                        1 -> soundNotFoundSingle.format(errorStrings.first())
-                        else -> soundNotFoundMultiple.format(errorStrings.joinToString(
-                            ", "
-                        ) { "'${it}'" })
-                    }
-                    snackbarContent.value = SnackbarContent(
-                        text = snackbarMessage,
-                        snackbarDuration = SnackbarDuration.Indefinite,
-                        actionLabel = ok,
-                    )
-                }
-
-            }
-        }
-    ) {
+    Button(modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(
+        backgroundColor = colors.surface,
+    ), border = null, elevation = null, shape = shapes.small, onClick = {
+        onSelectFavourite(configuration)
+    }) {
         Column(
             Modifier
                 .fillMaxWidth()
@@ -321,7 +355,7 @@ private fun appIsIgnoringPowerOptimization(context: Context, powerManager: Power
 
 @Composable
 private fun BatteryOptimizationHint(
-    viewModel: HomeScreenViewModel, batteryOptDisableFunction: () -> Unit
+    onLaunchBatteryOptimizerDisable: () -> Unit
 ) {
     val context = LocalContext.current
     val powerManager = remember {
@@ -330,10 +364,10 @@ private fun BatteryOptimizationHint(
     var isIgnoringOptimization by remember {
         mutableStateOf(appIsIgnoringPowerOptimization(context, powerManager))
     }
-    LaunchedEffect(viewModel) {
+    LaunchedEffect(Unit) {
         while (true) {
             isIgnoringOptimization = appIsIgnoringPowerOptimization(context, powerManager)
-            delay(100)
+            delay(500L)
         }
     }
     Crossfade(
@@ -354,15 +388,10 @@ private fun BatteryOptimizationHint(
                         text = stringResource(id = R.string.battery_opt_recommendation),
                         textAlign = TextAlign.Center
                     )
-                    Button(onClick = {
-                        viewModel.onEvent(HomeScreenEvent.DisableBatteryOptimization {
-                            batteryOptDisableFunction()
-                            isIgnoringOptimization =
-                                appIsIgnoringPowerOptimization(context, powerManager)
-                        })
-                    }) {
+                    Button(onClick = onLaunchBatteryOptimizerDisable) {
                         Text(text = stringResource(id = R.string.battery_opt_button))
                     }
+                    Spacer(Modifier.height(8.dp))
                 }
 
             }
@@ -374,8 +403,8 @@ private fun BatteryOptimizationHint(
 
 @Composable
 fun ThemeToggle(
-    selectedTheme: ThemeState,
-    onSetTheme: (ThemeState) -> Unit) {
+    selectedTheme: ThemeState, onSetTheme: (ThemeState) -> Unit
+) {
     Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
             text = stringResource(id = R.string.homescreen_app_theme),
@@ -392,14 +421,9 @@ fun ThemeToggle(
 }
 
 @Composable
-private fun SelectProfileButton(
-    viewModel: HomeScreenViewModel, navController: NavController
-) {
+private fun SelectProfileButton(onSelectProfile: () -> Unit) {
     Button(
-        onClick = {
-            viewModel.onEvent(HomeScreenEvent.SelectConfiguration)
-            navController.navigate(Screen.SelectScreen.route)
-        },
+        onClick = onSelectProfile,
         modifier = Modifier
             .fillMaxWidth(0.8f)
             .testTag(TestTags.HOME_SELECT_CONFIG_BUTTON)
@@ -412,19 +436,21 @@ private fun SelectProfileButton(
 }
 
 @Composable
-private fun AppTopBar(navController: NavController) {
-    TopBar(navController, stringResource(R.string.app_name), false, extraActions = {
-        IconButton(onClick = {
-            navController.navigate(Screen.InfoScreen.route)
-        }, modifier = Modifier.padding(5.dp)) {
+private fun AppTopBar(onInfoClick: () -> Unit) {
+    TopBar(
+        onBackClick = null,
+        title = stringResource(id = R.string.app_name),
+        backPossible = false
+    ) {
+        IconButton(onClick = onInfoClick, modifier = Modifier.padding(5.dp)) {
             Icon(
                 painter = painterResource(id = R.drawable.baseline_info_24),
-                contentDescription = ""
+                contentDescription = stringResource(
+                    id = R.string.about
+                )
             )
         }
     }
-
-    )
 }
 
 @Composable

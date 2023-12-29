@@ -89,4 +89,5 @@
     <string name="long_press_to_stop">Gedrückt halten zum Beenden</string>
     <string name="next_effect">Nächster Effekt</string>
     <string name="long_press_button_to_stop">Den Stop-Knopf lange gedrückt halten, um zu beenden.</string>
+    <string name="about">Über</string>
 </resources>

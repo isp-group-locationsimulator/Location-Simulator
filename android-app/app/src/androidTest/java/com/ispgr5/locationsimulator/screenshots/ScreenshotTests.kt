@@ -1,21 +1,16 @@
 package com.ispgr5.locationsimulator.screenshots
 
-import android.content.res.Resources.Theme
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Surface
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.test.junit4.ComposeContentTestRule
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.junit4.createComposeRule
 import com.ispgr5.locationsimulator.di.AppModule
-import com.ispgr5.locationsimulator.presentation.MainActivity
-import com.ispgr5.locationsimulator.presentation.universalComponents.SnackbarContent
+import com.ispgr5.locationsimulator.domain.model.ConfigComponent
+import com.ispgr5.locationsimulator.domain.model.Configuration
+import com.ispgr5.locationsimulator.presentation.homescreen.HomeScreenScreenshotPreview
+import com.ispgr5.locationsimulator.presentation.settings.DefaultShippingSettings
 import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
 import com.ispgr5.locationsimulator.ui.theme.ThemeState
 import com.ispgr5.locationsimulator.ui.theme.ThemeType
@@ -52,41 +47,35 @@ class ScreenshotTests {
     }
 
     @Test
-    fun homeScreen() {
-        composeTestRule.setContent {
-            LocationSimulatorTheme(themeState = ScreenshotData.themeState.value) {
-                Surface(Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
-                    Button(onClick = { }) {
-                        Text("Test button")
-                    }
-                }
-            }
-        }
-        Screengrab.screenshot("home_screen")
-    }
-
-    @Test
-    fun addScreenLight() {
-        screenshotLight("select_screen") {
-            Surface(Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
-                OutlinedTextField(value = "select", {})
-            }
+    fun homeScreenLight() {
+        screenshotLight("home_screen") {
+            HomeScreenScreenshotPreview(
+                themeState = ThemeState(ThemeType.LIGHT),
+                configurations = ScreenshotData.configurations
+            )
         }
     }
 
     @Test
-    fun addScreenDark() {
-        screenshotDark("select_screen") {
-            Surface(Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
-                OutlinedTextField(value = "select", {})
-            }
+    fun homeScreenDark() {
+        screenshotDark("home_screen") {
+            HomeScreenScreenshotPreview(
+                themeState = ThemeState(ThemeType.DARK),
+                configurations = ScreenshotData.configurations.filter { it.isFavorite }
+            )
         }
     }
 
-    private fun screenshot(theme: ThemeType, screenshotName: String, content: @Composable () -> Unit) {
+    private fun screenshot(
+        theme: ThemeType,
+        screenshotName: String,
+        content: @Composable () -> Unit
+    ) {
         composeTestRule.setContent {
             LocationSimulatorTheme(themeState = ThemeState(theme)) {
-                content()
+                Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
+                    content()
+                }
             }
         }
         Screengrab.screenshot("$screenshotName-${theme.name}")
@@ -102,5 +91,23 @@ class ScreenshotTests {
 }
 
 private object ScreenshotData {
-    val themeState = mutableStateOf(ThemeState(themeType = ThemeType.LIGHT))
+    val defaultVibration = ConfigComponent.Vibration(
+        id = 1,
+        name = DefaultShippingSettings.DEFAULT_NAME_VIBRATION,
+        minStrength = DefaultShippingSettings.MIN_STRENGTH_VIBRATION,
+        maxStrength = DefaultShippingSettings.MAX_STRENGTH_VIBRATION,
+        minPause = DefaultShippingSettings.MIN_PAUSE_VIBRATION,
+        maxPause = DefaultShippingSettings.MAX_PAUSE_VIBRATION,
+        minDuration = DefaultShippingSettings.MIN_DURATION_VIBRATION,
+        maxDuration = DefaultShippingSettings.MAX_DURATION_VIBRATION
+    )
+    val configurations: List<Configuration> = listOf(
+        Configuration(
+            name = "Default configuration",
+            description = "The default configuration of the app as shipped",
+            randomOrderPlayback = false,
+            components = listOf(defaultVibration, defaultVibration),
+            isFavorite = true
+        )
+    )
 }

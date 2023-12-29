@@ -66,7 +66,9 @@ fun SelectScreen(
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = {
-            TopBar(navController, stringResource(id = R.string.ScreenSelect),
+            TopBar(onBackClick = {
+                navController.popBackStack()
+            }, title = stringResource(id = R.string.ScreenSelect),
                 extraActions = {
                     //The Delete Button
                     IconButton(

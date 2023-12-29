@@ -44,7 +44,9 @@ fun InfoScreen(
 ) {
     Scaffold(
         scaffoldState = scaffoldState,
-        topBar = { TopBar(navController, stringResource(id = R.string.ScreenInfo)) },
+        topBar = { TopBar(onBackClick = {
+            navController.popBackStack()
+        }, title = stringResource(id = R.string.ScreenInfo)) },
         content = { scaffoldPadding ->
 
             val scrollState = rememberScrollState()

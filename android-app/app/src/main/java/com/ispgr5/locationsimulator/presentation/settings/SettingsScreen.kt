@@ -63,7 +63,9 @@ fun SettingsScreen(
 
     Scaffold(
         scaffoldState = scaffoldState,
-        topBar = { TopBar(navController, stringResource(id = R.string.ScreenSettings)) },
+        topBar = { TopBar(onBackClick = {
+            navController.popBackStack()
+        }, title = stringResource(id = R.string.ScreenSettings)) },
         content = {
             Spacer(modifier = Modifier.height(it.calculateTopPadding()))
 

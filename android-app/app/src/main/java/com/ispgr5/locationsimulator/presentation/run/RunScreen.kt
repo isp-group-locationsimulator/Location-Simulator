@@ -126,23 +126,29 @@ fun RunScreen(
         )
     }
 
-    Scaffold(scaffoldState = scaffoldState,
-        topBar = { TopBar(navController, stringResource(id = R.string.ScreenRun), false) },
-        content = { padding ->
-            RunScreenContent(
-                paddingValues = padding,
-                configuration = viewModel.state.value.configuration,
-                playingEffect = playingEffect,
-                nextEffect = nextEffect,
-                startPauseAt = startPauseAt,
-                currentPauseDuration = currentPauseDuration,
-                snackbarContentState = snackbarContentState,
-            ) {
-                SimulationService.IsPlayingEventBus.postValue(false)
-                viewModel.onEvent(RunEvent.StopClicked(stopServiceFunction))
+    Scaffold(scaffoldState = scaffoldState, topBar = {
+        TopBar(
+            onBackClick = {
                 navController.popBackStack()
-            }
-        })
+            },
+            title = stringResource(id = R.string.ScreenRun),
+            backPossible = false
+        )
+    }, content = { padding ->
+        RunScreenContent(
+            paddingValues = padding,
+            configuration = viewModel.state.value.configuration,
+            playingEffect = playingEffect,
+            nextEffect = nextEffect,
+            startPauseAt = startPauseAt,
+            currentPauseDuration = currentPauseDuration,
+            snackbarContentState = snackbarContentState,
+        ) {
+            SimulationService.IsPlayingEventBus.postValue(false)
+            viewModel.onEvent(RunEvent.StopClicked(stopServiceFunction))
+            navController.popBackStack()
+        }
+    })
 }
 
 /**
@@ -602,21 +608,20 @@ fun VibrationUi(effectState: EffectParameters.Vibration, iconSize: Dp) {
         formatValue = {
             it.setScale(0, RoundingMode.FLOOR).toString()
         })
-    val durationRange =
-        RefRangeValue(value = effectState.durationMillis.toBigDecimal(),
-            lower = original.minDuration.toBigDecimal(),
-            upper = original.maxDuration.toBigDecimal(),
-            label = R.string.editTimeline_Vibration_duration,
-            breakpoints = { width ->
-                when (width.millisToSeconds().toLong()) {
-                    in 0..5 -> RefRangeValue.Breakpoint.SMALL
-                    in 15..50 -> RefRangeValue.Breakpoint.LARGE
-                    else -> RefRangeValue.Breakpoint.MEDIUM
-                }
-            },
-            formatValue = {
-                "${it.millisToSeconds()} s"
-            })
+    val durationRange = RefRangeValue(value = effectState.durationMillis.toBigDecimal(),
+        lower = original.minDuration.toBigDecimal(),
+        upper = original.maxDuration.toBigDecimal(),
+        label = R.string.editTimeline_Vibration_duration,
+        breakpoints = { width ->
+            when (width.millisToSeconds().toLong()) {
+                in 0..5 -> RefRangeValue.Breakpoint.SMALL
+                in 15..50 -> RefRangeValue.Breakpoint.LARGE
+                else -> RefRangeValue.Breakpoint.MEDIUM
+            }
+        },
+        formatValue = {
+            "${it.millisToSeconds()} s"
+        })
 
 
     val pauseRange = buildPauseRange(effectState, original)

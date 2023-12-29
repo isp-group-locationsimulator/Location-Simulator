@@ -57,7 +57,9 @@ fun DelayScreen(
 
     Scaffold(
         scaffoldState = scaffoldState,
-        topBar = { TopBar(navController, stringResource(id = R.string.ScreenDelay)) },
+        topBar = { TopBar(onBackClick = {
+            navController.popBackStack()
+        }, title = stringResource(id = R.string.ScreenDelay)) },
         content = { paddingValues ->
             state.configuration?.let { configuration ->
                 DelayScreenContent(

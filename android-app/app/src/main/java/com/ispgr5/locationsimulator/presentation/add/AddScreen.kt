@@ -50,7 +50,11 @@ fun AddScreen(
 
     Scaffold(
         scaffoldState = scaffoldState,
-        topBar = { TopBar(navController, stringResource(id = R.string.ScreenAdd)) },
+        topBar = {
+            TopBar(onBackClick = {
+                navController.popBackStack()
+            }, stringResource(id = R.string.ScreenAdd))
+        },
         content = { paddingValues ->
             Spacer(modifier = Modifier.height(paddingValues.calculateTopPadding()))
             Column(
