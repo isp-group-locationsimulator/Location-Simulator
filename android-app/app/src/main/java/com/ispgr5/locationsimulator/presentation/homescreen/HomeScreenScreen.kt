@@ -1,9 +1,5 @@
 package com.ispgr5.locationsimulator.presentation.homescreen
 
-import android.content.Context
-import android.os.Build
-import android.os.PowerManager
-import androidx.activity.ComponentActivity
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
@@ -54,6 +50,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -86,6 +83,7 @@ import kotlinx.coroutines.delay
 fun HomeScreenScreen(
     navController: NavController,
     viewModel: HomeScreenViewModel = hiltViewModel(),
+    checkBatteryOptimizationStatus: () -> Boolean,
     batteryOptDisableFunction: () -> Unit,
     soundStorageManager: SoundStorageManager,
     activity: MainActivity,
@@ -153,6 +151,7 @@ fun HomeScreenScreen(
                 )
             )
         },
+        checkBatteryOptimizationStatus = checkBatteryOptimizationStatus,
         onLaunchBatteryOptimizerDisable = {
             viewModel.onEvent(HomeScreenEvent.DisableBatteryOptimization {
                 batteryOptDisableFunction()
@@ -169,6 +168,7 @@ fun HomeScreenScaffold(
     onSelectProfile: () -> Unit,
     onSelectFavourite: (Configuration) -> Unit,
     onSelectTheme: (ThemeState) -> Unit,
+    checkBatteryOptimizationStatus: () -> Boolean,
     onLaunchBatteryOptimizerDisable: () -> Unit
 ) {
     val scaffoldState = rememberScaffoldState()
@@ -182,9 +182,19 @@ fun HomeScreenScaffold(
             onSelectProfile = onSelectProfile,
             onSelectFavourite = onSelectFavourite,
             onSelectTheme = onSelectTheme,
+            checkBatteryOptimizationStatus = checkBatteryOptimizationStatus,
             onLaunchBatteryOptimizerDisable = onLaunchBatteryOptimizerDisable
         )
     })
+}
+
+@Preview(apiLevel = 33)
+@Composable
+fun HomeScreenPreview() {
+    HomeScreenScreenshotPreview(
+        themeState = ThemeState(ThemeType.LIGHT),
+        configurations = listOf()
+    )
 }
 
 @Composable
@@ -206,6 +216,7 @@ fun HomeScreenScreenshotPreview(themeState: ThemeState, configurations: List<Con
             onSelectProfile = {},
             onSelectFavourite = {},
             onSelectTheme = {},
+            checkBatteryOptimizationStatus = { false },
             onLaunchBatteryOptimizerDisable = {}
         )
     }
@@ -219,6 +230,7 @@ fun HomeScreenContent(
     onSelectProfile: () -> Unit,
     onSelectFavourite: (Configuration) -> Unit,
     onSelectTheme: (ThemeState) -> Unit,
+    checkBatteryOptimizationStatus: () -> Boolean,
     onLaunchBatteryOptimizerDisable: () -> Unit
 ) {
     Column(
@@ -270,7 +282,10 @@ fun HomeScreenContent(
         ) {
             ThemeToggle(appTheme.value, onSetTheme = onSelectTheme)
             Spacer(modifier = Modifier.height(4.dp))
-            BatteryOptimizationHint(onLaunchBatteryOptimizerDisable)
+            BatteryOptimizationHint(
+                checkBatteryOptimizationStatus = checkBatteryOptimizationStatus,
+                onLaunchBatteryOptimizerDisable = onLaunchBatteryOptimizerDisable
+            )
         }
     }
 }
@@ -337,37 +352,27 @@ fun FavouriteConfigurationCard(
 }
 
 @Composable
-private fun AppName() {
-    Text(
-        text = stringResource(id = R.string.app_name),
-        style = typography.h3,
-        color = colors.onBackground,
-        modifier = Modifier.testTag(TestTags.HOME_APPNAME)
-    )
-}
-
-private fun appIsIgnoringPowerOptimization(context: Context, powerManager: PowerManager): Boolean {
-    return when {
-        Build.VERSION.SDK_INT < Build.VERSION_CODES.M -> true
-        else -> powerManager.isIgnoringBatteryOptimizations(context.packageName)
-    }
-}
+private fun AppName() = Text(
+    text = stringResource(id = R.string.app_name),
+    style = typography.h4,
+    color = colors.onBackground,
+    modifier = Modifier
+        .testTag(TestTags.HOME_APPNAME)
+        .padding(top = 8.dp),
+)
 
 @Composable
 private fun BatteryOptimizationHint(
+    checkBatteryOptimizationStatus: () -> Boolean,
     onLaunchBatteryOptimizerDisable: () -> Unit
 ) {
-    val context = LocalContext.current
-    val powerManager = remember {
-        context.getSystemService(ComponentActivity.POWER_SERVICE) as PowerManager
-    }
     var isIgnoringOptimization by remember {
-        mutableStateOf(appIsIgnoringPowerOptimization(context, powerManager))
+        mutableStateOf(checkBatteryOptimizationStatus())
     }
     LaunchedEffect(Unit) {
         while (true) {
-            isIgnoringOptimization = appIsIgnoringPowerOptimization(context, powerManager)
-            delay(500L)
+            isIgnoringOptimization = checkBatteryOptimizationStatus()
+            delay(5000L)
         }
     }
     Crossfade(

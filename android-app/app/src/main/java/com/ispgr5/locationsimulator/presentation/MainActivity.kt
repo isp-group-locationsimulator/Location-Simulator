@@ -22,8 +22,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -103,16 +106,20 @@ class MainActivity : ComponentActivity() {
                 ) {
                     val navController = rememberNavController()
                     val scaffoldState = rememberScaffoldState()
+                    val context = LocalContext.current
+                    val powerManager by remember {
+                        mutableStateOf(context.getSystemService(POWER_SERVICE) as PowerManager)
+                    }
                     HandleIncomingIntent(intent)
                     NavigationAppHost(
                         navController = navController,
                         themeState = themeState,
                         scaffoldState = scaffoldState,
-                        snackbarContent = snackbarContent
+                        snackbarContent = snackbarContent,
+                        powerManager = powerManager
                     )
                 }
             }
-
         }
     }
 
@@ -147,12 +154,20 @@ class MainActivity : ComponentActivity() {
         themeState: MutableState<ThemeState>,
         scaffoldState: ScaffoldState,
         snackbarContent: MutableState<SnackbarContent?>,
+        powerManager: PowerManager,
     ) {
+        val context = LocalContext.current
         NavHost(navController = navController, startDestination = Screen.HomeScreen.route) {
             composable(Screen.HomeScreen.route) {
                 HomeScreenScreen(
                     navController = navController,
-                    batteryOptDisableFunction = { disableBatteryOptimization() },
+                    checkBatteryOptimizationStatus = {
+                        when {
+                            Build.VERSION.SDK_INT < Build.VERSION_CODES.M -> true
+                            else -> powerManager.isIgnoringBatteryOptimizations(context.packageName)
+                        }
+                    },
+                    batteryOptDisableFunction = { disableBatteryOptimization(powerManager) },
                     soundStorageManager = soundStorageManager,
                     activity = this@MainActivity,
                     appTheme = themeState,
@@ -285,10 +300,9 @@ class MainActivity : ComponentActivity() {
     }
 
     @SuppressLint("BatteryLife") // We need to have the Service run in the background as long as the user wants. The app only runs, when the user explicitly hits start.
-    private fun disableBatteryOptimization() {
+    private fun disableBatteryOptimization(powerManager: PowerManager) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return
-        val pm = getSystemService(POWER_SERVICE) as PowerManager
-        if (pm.isIgnoringBatteryOptimizations(packageName)) return
+        if (powerManager.isIgnoringBatteryOptimizations(packageName)) return
         val intent = Intent()
         intent.action = android.provider.Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
         intent.data = Uri.parse("package:$packageName")

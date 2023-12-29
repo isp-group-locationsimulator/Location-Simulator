@@ -3,12 +3,16 @@ package com.ispgr5.locationsimulator.userStoryTests
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.graphics.Color
+import android.os.PowerManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.navigation.compose.rememberNavController
@@ -50,12 +54,17 @@ class WunschfunktionalitaetenEndToEndTest {
                 val themeState = mutableStateOf(ThemeState(ThemeType.LIGHT))
                 val scaffoldState = rememberScaffoldState()
                 val snackbarContent: MutableState<SnackbarContent?> = mutableStateOf(null)
+                val context = LocalContext.current
+                val powerManager by remember {
+                    mutableStateOf(context.getSystemService(ComponentActivity.POWER_SERVICE) as PowerManager)
+                }
                 LocationSimulatorTheme(themeState.value) {
                     composeRule.activity.NavigationAppHost(
                         navController = navController,
                         themeState = themeState,
                         scaffoldState = scaffoldState,
-                        snackbarContent = snackbarContent
+                        snackbarContent = snackbarContent,
+                        powerManager = powerManager
                     )
                 }
             }

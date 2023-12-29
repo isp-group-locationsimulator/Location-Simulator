@@ -1,10 +1,15 @@
 package com.ispgr5.locationsimulator.userStoryTests
 
 import android.annotation.SuppressLint
+import android.os.PowerManager
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.navigation.compose.rememberNavController
@@ -47,13 +52,18 @@ class KernfunktionalitaetEndToEndTest {
                 val themeState = mutableStateOf(ThemeState(ThemeType.LIGHT))
                 val scaffoldState = rememberScaffoldState()
                 val snackbarContent: MutableState<SnackbarContent?> = mutableStateOf(null)
+                val context = LocalContext.current
+                val powerManager by remember {
+                    mutableStateOf(context.getSystemService(ComponentActivity.POWER_SERVICE) as PowerManager)
+                }
 
                 LocationSimulatorTheme(themeState.value) {
                     composeRule.activity.NavigationAppHost(
                         navController = navController,
                         themeState = themeState,
                         scaffoldState = scaffoldState,
-                        snackbarContent = snackbarContent
+                        snackbarContent = snackbarContent,
+                        powerManager = powerManager
                     )
                 }
             }
@@ -111,8 +121,10 @@ class KernfunktionalitaetEndToEndTest {
 
         /**Die Länge der Vibration und der nachfolgende Pause der Vibration wird verändert.**/
 
-        composeRule.onNodeWithTag(TestTags.EDIT_VIB_SLIDER_DURATION).performTouchInput { swipeRight() }
-        composeRule.onNodeWithTag(TestTags.EDIT_VIB_SLIDER_DURATION).performTouchInput { swipeRight() }
+        composeRule.onNodeWithTag(TestTags.EDIT_VIB_SLIDER_DURATION)
+            .performTouchInput { swipeRight() }
+        composeRule.onNodeWithTag(TestTags.EDIT_VIB_SLIDER_DURATION)
+            .performTouchInput { swipeRight() }
         composeRule.onNodeWithTag(TestTags.EDIT_SLIDER_PAUSE).performTouchInput { swipeRight() }
         composeRule.onNodeWithTag(TestTags.EDIT_SLIDER_PAUSE).performTouchInput { swipeRight() }
 
