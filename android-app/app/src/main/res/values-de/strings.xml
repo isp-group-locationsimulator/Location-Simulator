@@ -90,4 +90,5 @@
     <string name="next_effect">Nächster Effekt</string>
     <string name="long_press_button_to_stop">Den Stop-Knopf lange gedrückt halten, um zu beenden.</string>
     <string name="about">Über</string>
+    <string name="delete_configuration">Konfiguration löschen</string>
 </resources>

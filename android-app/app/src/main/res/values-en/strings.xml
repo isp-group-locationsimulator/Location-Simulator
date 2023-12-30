@@ -90,4 +90,5 @@
     <string name="next_effect">Next effect</string>
     <string name="long_press_button_to_stop">Long-press the stop button to exit.</string>
     <string name="about">About</string>
+    <string name="delete_configuration">Delete configuration</string>
 </resources>

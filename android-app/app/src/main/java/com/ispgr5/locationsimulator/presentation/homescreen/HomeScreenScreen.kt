@@ -50,7 +50,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -69,7 +68,6 @@ import com.ispgr5.locationsimulator.presentation.universalComponents.SnackbarCon
 import com.ispgr5.locationsimulator.presentation.universalComponents.TopBar
 import com.ispgr5.locationsimulator.presentation.util.MakeSnackbar
 import com.ispgr5.locationsimulator.presentation.util.Screen
-import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
 import com.ispgr5.locationsimulator.ui.theme.ThemeState
 import com.ispgr5.locationsimulator.ui.theme.ThemeType
 import kotlinx.coroutines.delay
@@ -186,40 +184,6 @@ fun HomeScreenScaffold(
             onLaunchBatteryOptimizerDisable = onLaunchBatteryOptimizerDisable
         )
     })
-}
-
-@Preview(apiLevel = 33)
-@Composable
-fun HomeScreenPreview() {
-    HomeScreenScreenshotPreview(
-        themeState = ThemeState(ThemeType.LIGHT),
-        configurations = listOf()
-    )
-}
-
-@Composable
-fun HomeScreenScreenshotPreview(themeState: ThemeState, configurations: List<Configuration>) {
-    LocationSimulatorTheme(themeState = themeState) {
-        val appTheme = remember { mutableStateOf(themeState) }
-        val state by remember {
-            mutableStateOf(
-                HomeScreenState(
-                    favoriteConfigurations = configurations,
-                    configurationsWithErrors = emptyList()
-                )
-            )
-        }
-        HomeScreenScaffold(
-            homeScreenState = state,
-            appTheme = appTheme,
-            onInfoClick = {},
-            onSelectProfile = {},
-            onSelectFavourite = {},
-            onSelectTheme = {},
-            checkBatteryOptimizationStatus = { false },
-            onLaunchBatteryOptimizerDisable = {}
-        )
-    }
 }
 
 @Composable

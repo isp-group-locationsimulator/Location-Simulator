@@ -5,11 +5,11 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.painterResource
-import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.core.util.TestTags
 
 /**
@@ -32,7 +32,7 @@ fun TopBar(
                     modifier = Modifier.testTag(TestTags.TOP_BAR_BACK_BUTTON)
                 ) {
                     Icon(
-                        painter = painterResource(id = R.drawable.baseline_arrow_back_24),
+                        imageVector = Icons.Default.ArrowBack,//(id = R.drawable.baseline_arrow_back_24),
                         contentDescription = "back Icon"
                     )
                 }

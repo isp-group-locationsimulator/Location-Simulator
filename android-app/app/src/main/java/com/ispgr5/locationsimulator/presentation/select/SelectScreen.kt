@@ -1,6 +1,7 @@
 package com.ispgr5.locationsimulator.presentation.select
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -9,17 +10,16 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -59,15 +59,26 @@ fun SelectScreen(
     val context = LocalContext.current
     MakeSnackbar(scaffoldState, snackbarContent)
 
-    SelectScreenScaffold(
-        scaffoldState = rememberScaffoldState(),
+    SelectScreenScaffold(scaffoldState = rememberScaffoldState(),
         selectScreenState = selectScreenState,
         onBackClick = {
             navController.popBackStack()
         },
-        onSelectDeleteModeClick = { viewModel.onEvent(SelectEvent.SelectDeleteMode) },
-        onClickAddScreenButton = { navController.navigate(route = Screen.AddScreen.route) },
+        onSelectDeleteModeClick = {
+            when (selectScreenState.isInDeleteMode) {
+                false -> viewModel.onEvent(SelectEvent.SelectDeleteMode)
+                else -> viewModel.onEvent(SelectEvent.SelectNormalMode)
+            }
+        },
+        onClickAddScreenButton = {
+            viewModel.onEvent(SelectEvent.SelectNormalMode)
+            navController.navigate(route = Screen.AddScreen.route)
+        },
         onSelectForDeletion = { configuration ->
+            Log.i(
+                "SelectScreen",
+                "selecting ${configuration.id} - ${configuration.name} for deletion"
+            )
             viewModel.onEvent(
                 SelectEvent.SelectConfigurationForDeletion(
                     configuration = configuration
@@ -103,8 +114,7 @@ fun SelectScreen(
         },
         onErrorInfoClicked = { configuration ->
             for (error in viewModel.whatIsHisErrors(
-                configuration = configuration,
-                soundStorageManager = soundStorageManager
+                configuration = configuration, soundStorageManager = soundStorageManager
             )) {
                 snackbarContent.value = SnackbarContent(
                     text = "$error ${context.getString(R.string.not_found)}",
@@ -116,18 +126,17 @@ fun SelectScreen(
         onFavouriteClicked = { configuration ->
             viewModel.onEvent(
                 SelectEvent.FavoriteClicked(
-                    configuration = configuration,
-                    snackbarContent = snackbarContent
+                    configuration = configuration, snackbarContent = snackbarContent
                 )
             )
-        }
-    ) { configuration ->
-        viewModel.onEvent(
-            SelectEvent.DeleteConfiguration(
-                configuration = configuration
+        },
+        onDeleteConfiguration = { configuration ->
+            viewModel.onEvent(
+                SelectEvent.DeleteConfiguration(
+                    configuration = configuration
+                )
             )
-        )
-    }
+        })
 }
 
 @Composable
@@ -143,9 +152,6 @@ private fun ConfigurationList(
     onFavouriteClicked: (Configuration) -> Unit,
     onDeleteConfiguration: (Configuration) -> Unit,
 ) {
-    var sizeOfDeletionConfiguration by remember {
-        mutableStateOf(IntSize.Zero)
-    }
     Box(modifier = Modifier.fillMaxSize()) {
         val lazyListState = rememberLazyListState()
         val scrollbarsState = rememberScrollbarsState(
@@ -167,57 +173,47 @@ private fun ConfigurationList(
                     .fillMaxSize()
             }
         }
-        LazyColumn(
-            modifier = lazyColumnModifier, state = lazyListState
-        ) {
-            //for all configurations in state we create a Row
-            items(selectScreenState.configurations) { configuration ->
-                Row(
-                    if (configuration.id == selectScreenState.selectedConfigurationForDeletion?.id) {
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(start = 15.dp)
-                    } else {
-                        Modifier.fillMaxWidth()
-                    },
-
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    if (selectScreenState.isInDeleteMode && configuration.id != selectScreenState.selectedConfigurationForDeletion?.id) {
-                        Column(Modifier.weight(1f)) {
+        Column(modifier = Modifier.fillMaxSize()) {
+            Text("${selectScreenState.isInDeleteMode}: ${selectScreenState.selectedConfigurationForDeletion?.id} - ${selectScreenState.selectedConfigurationForDeletion?.name}")
+            LazyColumn(
+                modifier = lazyColumnModifier, state = lazyListState
+            ) {
+                //for all configurations in state we create a Row
+                items(selectScreenState.configurations) { configuration ->
+                    val deleteThis =
+                        selectScreenState.selectedConfigurationForDeletion?.equals(configuration) == true
+                    Text(deleteThis.toString())
+                    Row(
+                        modifier = Modifier.border(1.dp, Color.Green)
+                            .height(IntrinsicSize.Min)
+                            .let { modifier ->
+                                when {
+                                    deleteThis -> modifier.padding(start = 15.dp)
+                                    else -> modifier
+                                }
+                            },
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        if (selectScreenState.isInDeleteMode && !deleteThis) {
                             Button(
                                 onClick = { onSelectForDeletion(configuration) },
-                                contentPadding = PaddingValues(0.dp),
-                                enabled = true,
                                 shape = MaterialTheme.shapes.small,
                                 border = null,
                                 elevation = null,
                                 colors = ButtonDefaults.buttonColors(
-                                    backgroundColor = Color.Transparent,
-                                    contentColor = MaterialTheme.colors.primary,
-                                    disabledBackgroundColor = Color.Transparent,
-                                    disabledContentColor = MaterialTheme.colors.primary.copy(
-                                        alpha = ContentAlpha.disabled
-                                    ),
-                                )
+                                    backgroundColor = Color.Transparent
+                                ),
+                                modifier = Modifier.weight(0.1f).border(1.dp, Color.Red)
                             ) {
                                 Icon(
-                                    painter = painterResource(id = R.drawable.ic_baseline_cancel_24),
-                                    contentDescription = null,
+                                    imageVector = Icons.Default.Cancel,
+                                    contentDescription = stringResource(id = R.string.delete_configuration),
                                     tint = Color.Red,
                                 )
                             }
                         }
-                    }
-                    Column(
-                        Modifier
-                            .weight(5f)
-                            .onSizeChanged {
-                                if (configuration.id == selectScreenState.selectedConfigurationForDeletion?.id) {
-                                    sizeOfDeletionConfiguration = it
-                                }
-                            }) {
+
                         OneConfigurationListMember(configuration = configuration,
                             isToggled = configuration.id == selectScreenState.toggledConfiguration?.id,
                             onToggleClicked = {
@@ -243,15 +239,11 @@ private fun ConfigurationList(
                             onFavoriteClicked = {
                                 onFavouriteClicked(configuration)
                             })
-                    }
-                    if (selectScreenState.selectedConfigurationForDeletion?.id == configuration.id) {
-                        Column(Modifier.weight(1.5f)) {
-                            Button(modifier = Modifier.then(with(LocalDensity.current) {
-                                Modifier.size(
-                                    width = 9999.dp,
-                                    height = sizeOfDeletionConfiguration.height.toDp(),
-                                )
-                            }),
+
+                        if (selectScreenState.isInDeleteMode && deleteThis) {
+                            Button(modifier = Modifier
+                                .height(IntrinsicSize.Min),
+                                //.weight(0.1f),
                                 colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red),
                                 onClick = {
                                     onDeleteConfiguration(configuration)
@@ -264,8 +256,9 @@ private fun ConfigurationList(
                             }
                         }
                     }
+
+                    Spacer(modifier = Modifier.height(6.dp))
                 }
-                Spacer(modifier = Modifier.height(6.dp))
             }
         }
         Scrollbars(state = scrollbarsState)
@@ -333,8 +326,7 @@ private fun SelectScreenTopBar(
 
 @Composable
 fun SelectScreenScreenshotPreview(selectScreenState: SelectScreenState) {
-    SelectScreenScaffold(
-        scaffoldState = rememberScaffoldState(),
+    SelectScreenScaffold(scaffoldState = rememberScaffoldState(),
         selectScreenState = selectScreenState,
         onBackClick = {},
         onSelectDeleteModeClick = {},
@@ -347,8 +339,7 @@ fun SelectScreenScreenshotPreview(selectScreenState: SelectScreenState) {
         onExportConfiguration = {},
         onEditConfiguration = {},
         onToggleConfiguration = {},
-        onSelectForDeletion = {}
-    )
+        onSelectForDeletion = {})
 }
 
 @Composable
@@ -375,10 +366,10 @@ fun SelectScreenScaffold(
             isInDeleteMode = selectScreenState.isInDeleteMode
         )
     }, content = { padding ->
-        Spacer(modifier = Modifier.height(padding.calculateTopPadding()))
-
         Column(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
         ) {
             AddButton(onClickAddScreenButton)
             ConfigurationList(

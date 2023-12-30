@@ -71,7 +71,7 @@ fun OneConfigurationListMember(
 				) {
 					Column {
 						Text(
-							text = configuration.name,
+							text = "${configuration.id} - ${configuration.name}",
 							fontSize = 18.sp,
 						)
 						if (isToggled) {
