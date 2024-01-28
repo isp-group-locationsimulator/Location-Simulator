@@ -36,6 +36,7 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PauseCircleOutline
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -106,7 +107,7 @@ fun RunScreen(
 
     MakeSnackbar(scaffoldState = scaffoldState, snackbarContent = snackbarContentState)
 
-    val effectState by SimulationService.EffectTimelineBus.observeAsState()
+    val effectState: EffectTimelineState? by SimulationService.EffectTimelineStateBus.observeAsState()
 
     val playingEffect = effectState?.playingEffect
 
@@ -118,6 +119,10 @@ fun RunScreen(
 
     val longPressToStopButtonText = stringResource(id = R.string.long_press_button_to_stop)
 
+    val initialRefreshInstant by remember {
+        mutableStateOf(Instant.now())
+    }
+
     BackPressHandler {
         snackbarContentState.value = SnackbarContent(
             text = longPressToStopButtonText,
@@ -128,18 +133,18 @@ fun RunScreen(
 
     RunScreenScaffold(
         scaffoldState = scaffoldState,
-        configuration = viewModel.state.value.configuration ,
+        configuration = viewModel.state.value.configuration,
         playingEffect = playingEffect,
         nextEffect = nextEffect,
         startPauseAt = startPauseAt,
         currentPauseDuration = currentPauseDuration,
         snackbarContentState = snackbarContentState,
-        onStop = {
-            SimulationService.IsPlayingEventBus.postValue(false)
-            viewModel.onEvent(RunEvent.StopClicked(stopServiceFunction))
-            navController.popBackStack()
-        }
-    )
+        initialRefreshInstant = initialRefreshInstant
+    ) {
+        SimulationService.IsPlayingEventBus.postValue(false)
+        viewModel.onEvent(RunEvent.StopClicked(stopServiceFunction))
+        navController.popBackStack()
+    }
 }
 
 @Composable
@@ -151,6 +156,7 @@ fun RunScreenScaffold(
     startPauseAt: Instant?,
     currentPauseDuration: Long?,
     snackbarContentState: MutableState<SnackbarContent?>,
+    initialRefreshInstant: Instant,
     onStop: () -> Unit
 ) {
     Scaffold(scaffoldState = scaffoldState, topBar = {
@@ -168,6 +174,7 @@ fun RunScreenScaffold(
             startPauseAt = startPauseAt,
             currentPauseDuration = currentPauseDuration,
             snackbarContentState = snackbarContentState,
+            initialRefreshInstant = initialRefreshInstant,
             onStop = onStop
         )
     })
@@ -210,6 +217,7 @@ fun RunScreenContent(
     currentPauseDuration: Long?,
     snackbarContentState: MutableState<SnackbarContent?>,
     iconSize: Dp = 42.dp,
+    initialRefreshInstant: Instant,
     onStop: () -> Unit
 ) {
     val context = LocalContext.current
@@ -293,6 +301,7 @@ fun RunScreenContent(
                         nextEffect = next,
                         startPauseAt = startPauseAt,
                         currentPauseDuration = currentPauseDuration,
+                        initialRefreshInstant = initialRefreshInstant,
                         iconSize = iconSize
                     )
                 }
@@ -321,7 +330,7 @@ fun StopButton(interactionSource: MutableInteractionSource) {
     }
 }
 
-private object PreviewData {
+object RunscreenPreviewData {
     val baselineInstant: Instant = Instant.ofEpochMilli(1702738800000L)
     val vibrationComponent = ConfigComponent.Vibration(
         id = 0,
@@ -342,9 +351,9 @@ private object PreviewData {
         minPause = 200,
         maxPause = 500,
     )
-    val lastRefresh: Instant = baselineInstant.plus(300L)
+    private val lastRefresh: Instant = baselineInstant.plus(300L)
 
-    val playingEffectState = EffectTimeline(
+    val effectTimelinePlayingState = EffectTimelineState(
         lastRefresh, playingEffect = EffectParameters.Vibration(
             startAt = baselineInstant.minus(100L),
             durationMillis = 500L,
@@ -359,6 +368,21 @@ private object PreviewData {
             soundName = soundComponent.source,
             original = soundComponent
         ), startPauseAt = null, currentPauseDuration = null, pauseReferenceRange = null
+    )
+
+    val effectTimelinePausedState = EffectTimelineState(
+        lastRefresh,
+        playingEffect = null,
+        nextEffect = EffectParameters.Vibration(
+            startAt = baselineInstant.plus(900L),
+            durationMillis = 500L,
+            pauseMillis = 500L,
+            strength = 42,
+            original = vibrationComponent
+        ),
+        startPauseAt = baselineInstant.minus(100L),
+        currentPauseDuration = 1000L,
+        pauseReferenceRange = BigDecimal.valueOf(1000L) to BigDecimal.valueOf(1000L)
     )
 }
 
@@ -377,13 +401,14 @@ fun RunScreenPreview() {
                     name = "Test configuration",
                     description = "This is a description that needs to be shown up to 3 rows in the running screeen, and I think the ajsdlkfj lakjjdsafh kjsdadhf kjsdahf kjsdahf kjsdahf kjsdahf kjsadhf jksadhfjksadhdkjfhasd kjfjhsadkjfhasdkdjjfh askjdfhkjsadhfkj",
                     randomOrderPlayback = false,
-                    components = listOf(PreviewData.vibrationComponent, PreviewData.soundComponent)
+                    components = listOf(RunscreenPreviewData.vibrationComponent, RunscreenPreviewData.soundComponent)
                 ),
-                PreviewData.playingEffectState.playingEffect,
-                PreviewData.playingEffectState.nextEffect,
-                PreviewData.playingEffectState.startPauseAt,
-                PreviewData.playingEffectState.currentPauseDuration,
-                snackbarContentState
+                playingEffect = RunscreenPreviewData.effectTimelinePlayingState.playingEffect,
+                nextEffect = RunscreenPreviewData.effectTimelinePlayingState.nextEffect,
+                startPauseAt = RunscreenPreviewData.effectTimelinePlayingState.startPauseAt,
+                currentPauseDuration = RunscreenPreviewData.effectTimelinePlayingState.currentPauseDuration,
+                initialRefreshInstant = RunscreenPreviewData.baselineInstant,
+                snackbarContentState = snackbarContentState,
             ) {}
         }
     }
@@ -395,10 +420,11 @@ fun PlayingStateUi(
     nextEffect: EffectParameters,
     startPauseAt: Instant?,
     currentPauseDuration: Long?,
+    initialRefreshInstant: Instant,
     iconSize: Dp
 ) {
     var lastRefreshInstant by remember {
-        mutableStateOf(Instant.now())
+        mutableStateOf(initialRefreshInstant)
     }
 
     LaunchedEffect(SimulationService.IsPlayingEventBus.value) {
@@ -714,8 +740,24 @@ fun NextUi(nextEffect: EffectParameters, iconSize: Dp = 32.dp) {
 }
 
 @Composable
-fun RunScreenScreenshotPreview() {
-    // TODO:
+fun RunScreenScreenshotPreview(
+    configuration: Configuration?,
+    effectTimelineState: EffectTimelineState,
+    initialRefreshInstant: Instant,
+) {
+    val snackbarContentState = remember {
+        mutableStateOf<SnackbarContent?>(null)
+    }
+    RunScreenScaffold(
+        scaffoldState = rememberScaffoldState(),
+        configuration = configuration,
+        playingEffect = effectTimelineState.playingEffect,
+        nextEffect = effectTimelineState.nextEffect,
+        startPauseAt = effectTimelineState.startPauseAt,
+        currentPauseDuration = effectTimelineState.currentPauseDuration,
+        snackbarContentState = snackbarContentState,
+        initialRefreshInstant = initialRefreshInstant
+    ) { }
 }
 
 data class RefRangeValue(

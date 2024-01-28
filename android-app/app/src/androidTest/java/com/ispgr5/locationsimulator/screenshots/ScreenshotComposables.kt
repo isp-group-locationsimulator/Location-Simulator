@@ -1,5 +1,4 @@
 @file:Suppress("TestFunctionName")
-@file:OptIn(ExperimentalFoundationApi::class)
 
 package com.ispgr5.locationsimulator.screenshots
 
@@ -32,6 +31,8 @@ import com.ispgr5.locationsimulator.presentation.delay.TimerState
 import com.ispgr5.locationsimulator.presentation.homescreen.HomeScreenScaffold
 import com.ispgr5.locationsimulator.presentation.homescreen.HomeScreenState
 import com.ispgr5.locationsimulator.presentation.homescreen.InfoScreenScaffold
+import com.ispgr5.locationsimulator.presentation.run.RunScreenScreenshotPreview
+import com.ispgr5.locationsimulator.presentation.run.RunscreenPreviewData
 import com.ispgr5.locationsimulator.presentation.select.SelectScreenScreenshotPreview
 import com.ispgr5.locationsimulator.presentation.select.SelectScreenState
 import com.ispgr5.locationsimulator.presentation.settings.DefaultShippingSettings
@@ -109,6 +110,7 @@ fun AddScreenScreenshot() {
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 @Preview
 fun SettingsScreenVibrationScreenshot() {
@@ -121,6 +123,7 @@ fun SettingsScreenVibrationScreenshot() {
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 @Preview
 fun SettingsScreenSoundScreenshot() {
@@ -140,6 +143,30 @@ fun DelayScreenScreenshot() {
         DelayScreenScreenshotPreview(
             state = ScreenshotData.delayScreenState,
             initialTimerState = ScreenshotData.delayScreenInitialTimerState
+        )
+    }
+}
+
+@Composable
+@Preview
+fun RunScreenPausedScreenshot() {
+    LocationSimulatorTheme(themeState = themeState) {
+        RunScreenScreenshotPreview(
+            configuration = configurations.first(),
+            effectTimelineState = ScreenshotData.runScreenStatePaused,
+            initialRefreshInstant = ScreenshotData.runScreenInitialRefresh
+        )
+    }
+}
+
+@Composable
+@Preview
+fun RunScreenActiveScreenshot() {
+    LocationSimulatorTheme(themeState = themeState) {
+        RunScreenScreenshotPreview(
+            configuration = configurations.first(),
+            effectTimelineState = ScreenshotData.runScreenStatePlaying,
+            initialRefreshInstant = ScreenshotData.runScreenInitialRefresh
         )
     }
 }
@@ -232,6 +259,9 @@ private object ScreenshotData {
         configuration = configurations.first()
     )
 
-
     val delayScreenInitialTimerState: TimerState = TimerState(setSeconds = 42L)
+
+    val runScreenInitialRefresh = RunscreenPreviewData.baselineInstant
+    val runScreenStatePaused = RunscreenPreviewData.effectTimelinePausedState
+    val runScreenStatePlaying = RunscreenPreviewData.effectTimelinePlayingState
 }

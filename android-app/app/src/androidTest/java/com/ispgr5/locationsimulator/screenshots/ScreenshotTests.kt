@@ -130,10 +130,16 @@ class ScreenshotTests {
     }
 
     @Test
-    fun runScreenLight() {
-        screenshot("run_screen") {
-            // TODO:
-            Placeholder()
+    fun runScreenPausedLight() {
+        screenshot("run_screen_paused") {
+            RunScreenPausedScreenshot()
+        }
+    }
+
+    @Test
+    fun runScreenActiveLight() {
+        screenshot("run_screen_active") {
+            RunScreenActiveScreenshot()
         }
     }
 

@@ -37,7 +37,7 @@ object ServiceIntentKeys {
 class SimulationService : LifecycleService() {
 
     companion object {
-        val EffectTimelineBus = MutableLiveData<EffectTimeline?>()
+        val EffectTimelineStateBus = MutableLiveData<EffectTimelineState?>()
         val IsPlayingEventBus = MutableLiveData(false)
     }
 
@@ -131,7 +131,7 @@ class SimulationService : LifecycleService() {
         val firstEventOffset = startedAt.plus(firstPauseDuration)
         // we offset the first event, so we can set up the service in this half-second we give ourselves
         val firstEffect = determineAnEffect(firstEventOffset)
-        val initialTimeline = EffectTimeline(
+        val initialTimeline = EffectTimelineState(
             snapshotDate = startedAt,
             playingEffect = null,
             nextEffect = firstEffect,
@@ -144,8 +144,8 @@ class SimulationService : LifecycleService() {
         activateTimelineSnapshot(initialTimeline)
     }
 
-    private fun activateTimelineSnapshot(timeline: EffectTimeline) {
-        EffectTimelineBus.postValue(timeline)
+    private fun activateTimelineSnapshot(timeline: EffectTimelineState) {
+        EffectTimelineStateBus.postValue(timeline)
         schedule(timeline.nextEffect)
     }
 
@@ -153,8 +153,8 @@ class SimulationService : LifecycleService() {
         Log.d(TAG, "schedule: $effectToSchedule")
         effectTimer.schedule(effectToSchedule.startAt.toDate()) {
             if (IsPlayingEventBus.value == true) {
-                EffectTimelineBus.postValue(
-                    EffectTimeline(
+                EffectTimelineStateBus.postValue(
+                    EffectTimelineState(
                         snapshotDate = Instant.now(),
                         playingEffect = effectToSchedule,
                         nextEffect = determineAnEffect(effectToSchedule.endPauseAt),
@@ -184,7 +184,7 @@ class SimulationService : LifecycleService() {
         pauseDuration: Long,
         effectToSchedule: EffectParameters
     ) {
-        val previousTimeline = EffectTimelineBus.value ?: run {
+        val previousTimeline = EffectTimelineStateBus.value ?: run {
             stopSelf()
             return
         }
@@ -195,7 +195,7 @@ class SimulationService : LifecycleService() {
             is ConfigComponent.Sound -> effectToSchedule.original.minPause to effectToSchedule.original.maxPause
         }
         activateTimelineSnapshot(
-            timeline = EffectTimeline(
+            timeline = EffectTimelineState(
                 snapshotDate = now,
                 playingEffect = null,
                 nextEffect = nextEffect,
@@ -326,7 +326,7 @@ class SimulationService : LifecycleService() {
      * stops the simulation
      */
     private fun stopService() {
-        EffectTimelineBus.postValue(null)
+        EffectTimelineStateBus.postValue(null)
         IsPlayingEventBus.postValue(false)
         soundPlayer.stopPlayback()
         vibrator.cancel()
@@ -445,7 +445,7 @@ sealed class EffectParameters(
     }
 }
 
-data class EffectTimeline(
+data class EffectTimelineState(
     val snapshotDate: Instant,
     val playingEffect: EffectParameters?,
     val nextEffect: EffectParameters,
