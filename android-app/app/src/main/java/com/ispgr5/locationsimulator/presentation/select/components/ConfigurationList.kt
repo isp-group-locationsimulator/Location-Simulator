@@ -20,7 +20,7 @@ import com.ispgr5.locationsimulator.domain.model.Configuration
  * Shows one Configuration as Button in max width
  */
 @Composable
-fun OneConfigurationListMember(
+fun RowScope.OneConfigurationListMember(
 	configuration: Configuration,
 	isToggled: Boolean,
 	onToggleClicked: () -> Unit,
@@ -50,7 +50,7 @@ fun OneConfigurationListMember(
 		modifier = Modifier
 			//.border(width = 1.dp, color = MaterialTheme.colors.primary, shape = RoundedCornerShape(6.dp))
 			.background(rowBackgroundColor, shape = RoundedCornerShape(6.dp))
-			.fillMaxWidth()
+			.weight(1f)
 			.heightIn(min = 55.dp)
 			.testTag(TestTags.SELECT_CONFIG_BUTTON_PREFIX + configuration.name)
 

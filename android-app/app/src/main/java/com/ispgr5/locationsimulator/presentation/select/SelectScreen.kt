@@ -1,7 +1,6 @@
 package com.ispgr5.locationsimulator.presentation.select
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -10,6 +9,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.runtime.*
@@ -38,6 +38,7 @@ import com.ispgr5.locationsimulator.presentation.universalComponents.SnackbarCon
 import com.ispgr5.locationsimulator.presentation.universalComponents.TopBar
 import com.ispgr5.locationsimulator.presentation.util.MakeSnackbar
 import com.ispgr5.locationsimulator.presentation.util.Screen
+
 
 /**
  * The Select Screen.
@@ -75,10 +76,6 @@ fun SelectScreen(
             navController.navigate(route = Screen.AddScreen.route)
         },
         onSelectForDeletion = { configuration ->
-            Log.i(
-                "SelectScreen",
-                "selecting ${configuration.id} - ${configuration.name} for deletion"
-            )
             viewModel.onEvent(
                 SelectEvent.SelectConfigurationForDeletion(
                     configuration = configuration
@@ -160,56 +157,33 @@ private fun ConfigurationList(
                 state = lazyListState
             )
         )
-        val lazyColumnModifier = when {
-            selectScreenState.isInDeleteMode -> {
-                Modifier
-                    .fillMaxSize()
-                    .padding(end = 15.dp, top = 6.dp, start = 0.dp, bottom = 15.dp)
-            }
-
-            else -> {
-                Modifier
-                    .padding(end = 15.dp, top = 6.dp, start = 15.dp, bottom = 15.dp)
-                    .fillMaxSize()
-            }
-        }
         Column(modifier = Modifier.fillMaxSize()) {
-            Text("${selectScreenState.isInDeleteMode}: ${selectScreenState.selectedConfigurationForDeletion?.id} - ${selectScreenState.selectedConfigurationForDeletion?.name}")
             LazyColumn(
-                modifier = lazyColumnModifier, state = lazyListState
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(15.dp),
+                state = lazyListState,
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 //for all configurations in state we create a Row
                 items(selectScreenState.configurations) { configuration ->
                     val deleteThis =
                         selectScreenState.selectedConfigurationForDeletion?.equals(configuration) == true
-                    Text(deleteThis.toString())
                     Row(
-                        modifier = Modifier.border(1.dp, Color.Green)
+                        modifier = Modifier
                             .height(IntrinsicSize.Min)
-                            .let { modifier ->
-                                when {
-                                    deleteThis -> modifier.padding(start = 15.dp)
-                                    else -> modifier
-                                }
-                            },
+                            .fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center
                     ) {
                         if (selectScreenState.isInDeleteMode && !deleteThis) {
-                            Button(
-                                onClick = { onSelectForDeletion(configuration) },
-                                shape = MaterialTheme.shapes.small,
-                                border = null,
-                                elevation = null,
-                                colors = ButtonDefaults.buttonColors(
-                                    backgroundColor = Color.Transparent
-                                ),
-                                modifier = Modifier.weight(0.1f).border(1.dp, Color.Red)
+                            IconButton(
+                                onClick = { onSelectForDeletion(configuration) }
                             ) {
                                 Icon(
-                                    imageVector = Icons.Default.Cancel,
-                                    contentDescription = stringResource(id = R.string.delete_configuration),
-                                    tint = Color.Red,
+                                    painter = painterResource(id = R.drawable.ic_baseline_delete_outline_24),
+                                    contentDescription = null,
+                                    tint = colors.onBackground,
                                 )
                             }
                         }
@@ -241,17 +215,18 @@ private fun ConfigurationList(
                             })
 
                         if (selectScreenState.isInDeleteMode && deleteThis) {
-                            Button(modifier = Modifier
-                                .height(IntrinsicSize.Min),
-                                //.weight(0.1f),
-                                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red),
+                            Button(modifier = Modifier.fillMaxHeight(),
+                                contentPadding = PaddingValues(1.dp),
+                                colors = ButtonDefaults.buttonColors(
+                                    backgroundColor = colors.error,
+                                ),
                                 onClick = {
                                     onDeleteConfiguration(configuration)
                                 }) {
                                 Icon(
-                                    painter = painterResource(id = R.drawable.ic_baseline_delete_outline_24),
-                                    contentDescription = null,
-                                    tint = Color.Black,
+                                    imageVector = Icons.Default.Cancel,
+                                    contentDescription = stringResource(id = R.string.delete_configuration),
+                                    tint = Color.White.copy(alpha = 0.5f)
                                 )
                             }
                         }
@@ -277,11 +252,11 @@ private fun AddButton(onClickAddScreenButton: () -> Unit) {
         colors = ButtonDefaults.buttonColors(
             backgroundColor = Color.Transparent,
             disabledBackgroundColor = Color.Transparent,
-            disabledContentColor = MaterialTheme.colors.primary.copy(alpha = ContentAlpha.disabled),
+            disabledContentColor = colors.primary.copy(alpha = ContentAlpha.disabled),
         ),
         modifier = Modifier
             .padding(15.dp, 15.dp, 15.dp, 0.dp)
-            .border(1.dp, MaterialTheme.colors.onSurface, RoundedCornerShape(6.dp))
+            .border(1.dp, colors.onSurface, RoundedCornerShape(6.dp))
             .fillMaxWidth()
             .heightIn(min = 55.dp)
             .testTag(TestTags.SELECT_ADD_BUTTON)
