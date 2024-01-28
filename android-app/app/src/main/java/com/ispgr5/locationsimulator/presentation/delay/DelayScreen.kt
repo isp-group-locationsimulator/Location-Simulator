@@ -3,10 +3,9 @@ package com.ispgr5.locationsimulator.presentation.delay
 import android.content.Context
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -16,9 +15,11 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -34,6 +35,7 @@ import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 import com.ispgr5.locationsimulator.domain.model.Configuration
 import com.ispgr5.locationsimulator.presentation.editTimeline.components.Timeline
 import com.ispgr5.locationsimulator.presentation.universalComponents.TopBar
+import com.ispgr5.locationsimulator.presentation.util.Screen
 import com.ispgr5.locationsimulator.presentation.util.millisToSeconds
 
 /**
@@ -47,45 +49,68 @@ fun DelayScreen(
     navController: NavController,
     viewModel: DelayViewModel = hiltViewModel(),
     startServiceFunction: (String, List<ConfigComponent>, Boolean) -> Unit,
-    context: Context, //context needed for calculating Sound Length
     soundsDirUri: String, //the sounds Directory Uri needed for calculating Sound Length
     scaffoldState: ScaffoldState
 ) {
     //The state from viewmodel
     val state = viewModel.state.value
 
+    DelayScreenScaffold(
+        state = state,
+        scaffoldState = scaffoldState,
+        initialTimerState = TimerState(),
+        soundsDirUri = soundsDirUri,
+        onBackClick = {
+            navController.popBackStack()
+        }
+    ) { configurationId ->
+        viewModel.onEvent(DelayEvent.StartClicked(startServiceFunction))
+        navController.navigate(route = Screen.RunScreen.createRoute(configurationId))
+    }
 
+}
+
+@Composable
+fun DelayScreenScaffold(
+    state: DelayScreenState, scaffoldState: ScaffoldState,
+    initialTimerState: TimerState,
+    soundsDirUri: String,
+    onBackClick: () -> Unit,
+    onFinishTimer: (configurationId: Int) -> Unit
+) {
+    val context = LocalContext.current
     Scaffold(
         scaffoldState = scaffoldState,
-        topBar = { TopBar(onBackClick = {
-            navController.popBackStack()
-        }, title = stringResource(id = R.string.ScreenDelay)) },
+        topBar = {
+            TopBar(onBackClick = onBackClick, title = stringResource(id = R.string.ScreenDelay))
+        },
         content = { paddingValues ->
-            state.configuration?.let { configuration ->
-                DelayScreenContent(
-                    paddingValues = paddingValues,
-                    configuration = configuration,
-                    context = context,
-                    soundsDirUri = soundsDirUri,
-                    viewModel = viewModel,
-                    startServiceFunction = startServiceFunction,
-                    navController = navController
-                )
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+            ) {
+                state.configuration?.let { configuration ->
+                    DelayScreenContent(
+                        configuration = configuration,
+                        initialTimerState = initialTimerState,
+                        context = context,
+                        soundsDirUri = soundsDirUri,
+                        onFinishTimer = onFinishTimer
+                    )
+                }
             }
         })
 }
 
 @Composable
 fun DelayScreenContent(
-    paddingValues: PaddingValues,
     configuration: Configuration,
+    initialTimerState: TimerState,
     context: Context,
     soundsDirUri: String,
-    viewModel: DelayViewModel,
-    startServiceFunction: (String, List<ConfigComponent>, Boolean) -> Unit,
-    navController: NavController
+    onFinishTimer: (configurationId: Int) -> Unit
 ) {
-    Spacer(modifier = Modifier.height(paddingValues.calculateTopPadding()))
     Column(
         Modifier
             .fillMaxWidth()
@@ -153,7 +178,22 @@ fun DelayScreenContent(
         Spacer(modifier = Modifier.size(8.dp))
 
         //The timer component
-        //val configuration by viewModel.state
-        Timer(viewModel, startServiceFunction, navController)
+        Timer(
+            initialTimerState = initialTimerState,
+            configurationId = configuration.id!!,
+            onFinishTimer = onFinishTimer
+        )
     }
+}
+
+@Composable
+fun DelayScreenScreenshotPreview(state: DelayScreenState, initialTimerState: TimerState) {
+    DelayScreenScaffold(
+        state = state,
+        scaffoldState = rememberScaffoldState(),
+        soundsDirUri = "sounds",
+        initialTimerState = initialTimerState,
+        onBackClick = {},
+        onFinishTimer = { }
+    )
 }

@@ -107,10 +107,16 @@ class ScreenshotTests {
     }
 
     @Test
-    fun settingsScreenLight() {
-        screenshot("settings_screen") {
-            // TODO:
-            Placeholder()
+    fun settingsScreenVibrationLight() {
+        screenshot("settings_screen_vibration") {
+            SettingsScreenVibrationScreenshot()
+        }
+    }
+
+    @Test
+    fun settingsScreenSoundLight() {
+        screenshot("settings_screen_sound") {
+            SettingsScreenSoundScreenshot()
         }
     }
 

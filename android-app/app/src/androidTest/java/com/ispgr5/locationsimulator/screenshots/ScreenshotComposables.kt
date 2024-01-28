@@ -1,5 +1,7 @@
 @file:Suppress("TestFunctionName")
-@file:OptIn(ExperimentalFoundationApi::class)
+@file:OptIn(ExperimentalFoundationApi::class, ExperimentalFoundationApi::class,
+    ExperimentalFoundationApi::class
+)
 
 package com.ispgr5.locationsimulator.screenshots
 
@@ -26,6 +28,9 @@ import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 import com.ispgr5.locationsimulator.domain.model.Configuration
 import com.ispgr5.locationsimulator.presentation.add.AddScreenScreenshotPreview
 import com.ispgr5.locationsimulator.presentation.add.AddScreenState
+import com.ispgr5.locationsimulator.presentation.delay.DelayScreenScreenshotPreview
+import com.ispgr5.locationsimulator.presentation.delay.DelayScreenState
+import com.ispgr5.locationsimulator.presentation.delay.TimerState
 import com.ispgr5.locationsimulator.presentation.homescreen.HomeScreenScaffold
 import com.ispgr5.locationsimulator.presentation.homescreen.HomeScreenState
 import com.ispgr5.locationsimulator.presentation.homescreen.InfoScreenScaffold
@@ -130,6 +135,17 @@ fun SettingsScreenSoundScreenshot() {
     }
 }
 
+@Composable
+@Preview
+fun DelayScreenScreenshot() {
+    LocationSimulatorTheme(themeState = themeState) {
+        DelayScreenScreenshotPreview(
+            state = ScreenshotData.delayScreenState,
+            initialTimerState = ScreenshotData.delayScreenInitialTimerState
+        )
+    }
+}
+
 @Suppress("TestFunctionName")
 @Composable
 fun ScreenshotScope.Placeholder() {
@@ -213,4 +229,11 @@ private object ScreenshotData {
     )
 
     val settingsScreenState = SettingsState()
+
+    val delayScreenState = DelayScreenState(
+        configuration = configurations.first()
+    )
+
+
+    val delayScreenInitialTimerState: TimerState = TimerState(setSeconds = 42L)
 }

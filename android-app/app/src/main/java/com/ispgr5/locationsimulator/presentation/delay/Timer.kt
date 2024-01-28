@@ -14,8 +14,8 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -29,35 +29,29 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.core.util.TestTags
-import com.ispgr5.locationsimulator.domain.model.ConfigComponent
-import com.ispgr5.locationsimulator.presentation.util.Screen
 
 /**
  * The Timer Compose Element, to input and show the delay Time
  */
 @Composable
 fun Timer(
-    viewModel: DelayViewModel,
-    startServiceFunction: (String, List<ConfigComponent>, Boolean) -> Unit,
-    navController: NavController
+    initialTimerState: TimerState,
+    onFinishTimer: (configurationId: Int) -> Unit,
+    configurationId: Int
 ) {
-    var timerSeconds by remember { mutableLongStateOf(0) }
-    var timerMinutes by remember { mutableLongStateOf(0) }
-    var timerHours by remember { mutableLongStateOf(0) }
-    var timerRunning by remember { mutableStateOf(false) }
-
-    val state by viewModel.state
+    var timerState by remember { mutableStateOf(initialTimerState) }
+    val timerRunning by remember {
+        derivedStateOf {
+            timerState.isRunning
+        }
+    }
 
     LaunchedEffect(timerRunning) {
         if (timerRunning) {
             //calculate the duration of the timer in milliseconds
-            val duration =
-                (timerHours * 1000 * 60 * 60) + (timerMinutes * 1000 * 60) + (timerSeconds * 1000)
-
-            val timer = object : CountDownTimer(duration, 1000L) {
+            val timer = object : CountDownTimer(timerState.setDuration, 1000L) {
 
                 /**
                  * Update the timer when com.ispgr5.locationsimulator.presentation.delay.Timer is running
@@ -65,23 +59,22 @@ fun Timer(
                 override fun onTick(millisUntilFinished: Long) {
                     if (timerRunning) {
                         val remainingSeconds = (millisUntilFinished / 1000)
-                        timerSeconds = remainingSeconds % 60
-                        timerMinutes = (remainingSeconds / 60) % 60
-                        timerHours = remainingSeconds / (60 * 60)
+                        timerState = timerState.copy(
+                            secondsRemaining = remainingSeconds % 60,
+                            hoursRemaining = (remainingSeconds / 60) % 60,
+                            minutesRemaining = remainingSeconds / (60 * 60)
+                        )
                     } else {
                         // cancel the timer when the stop button was pressed
                         this.cancel()
                     }
                 }
 
-                val configurationId = state.configuration?.id ?: throw NullPointerException("null ID in Timer")
-
                 /**
                  * Go to Run Screen when com.ispgr5.locationsimulator.presentation.delay.Timer is finished
                  */
                 override fun onFinish() {
-                    viewModel.onEvent(DelayEvent.StartClicked(startServiceFunction))
-                    navController.navigate(route = Screen.RunScreen.createRoute(configurationId))
+                    onFinishTimer(configurationId)
                 }
             }
 
@@ -106,9 +99,7 @@ fun Timer(
             )
             Button(
                 onClick = {
-                    if (timerHours < 59) {
-                        timerHours++
-                    }
+                    timerState = timerState.addHours(1)
                 },
                 shape = CircleShape,
                 enabled = !timerRunning,
@@ -122,8 +113,14 @@ fun Timer(
                 )
             }
             TextField(
-                value = timerHours.toString(),
-                onValueChange = { newVal: String -> timerHours = calculateTimerValue(newVal) },
+                value = timerState.stringHours(),
+                onValueChange = { newVal: String ->
+                    when (val intVal = newVal.toIntOrNull()) {
+                        null -> {}
+                        else -> timerState =
+                            timerState.copy(setHours = intVal.coerceIn(0, 24).toLong())
+                    }
+                },
                 keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
                 modifier = Modifier.padding(horizontal = 16.dp),
                 readOnly = timerRunning,
@@ -134,9 +131,7 @@ fun Timer(
             )
             Button(
                 onClick = {
-                    if (timerHours > 0) {
-                        timerHours--
-                    }
+                    timerState = timerState.addHours(-1)
                 },
                 shape = CircleShape,
                 enabled = !timerRunning,
@@ -146,7 +141,7 @@ fun Timer(
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_baseline_keyboard_double_arrow_down_24),
-                    contentDescription = null,
+                    contentDescription = null
                 )
             }
         }
@@ -164,9 +159,7 @@ fun Timer(
             )
             Button(
                 onClick = {
-                    if (timerMinutes < 59) {
-                        timerMinutes++
-                    }
+                    timerState = timerState.addMinutes(1)
                 },
                 shape = CircleShape,
                 enabled = !timerRunning,
@@ -180,8 +173,14 @@ fun Timer(
                 )
             }
             TextField(
-                value = timerMinutes.toString(),
-                onValueChange = { newVal: String -> timerMinutes = calculateTimerValue(newVal) },
+                value = timerState.stringMinutes(),
+                onValueChange = { newVal: String ->
+                    when (val intVal = newVal.toIntOrNull()) {
+                        null -> {}
+                        else -> timerState =
+                            timerState.copy(setMinutes = intVal.coerceIn(0, 59).toLong())
+                    }
+                },
                 keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
                 modifier = Modifier
                     .padding(horizontal = 16.dp),
@@ -193,9 +192,7 @@ fun Timer(
             )
             Button(
                 onClick = {
-                    if (timerMinutes > 0) {
-                        timerMinutes--
-                    }
+                    timerState = timerState.addMinutes(-1)
                 },
                 shape = CircleShape,
                 enabled = !timerRunning,
@@ -223,9 +220,7 @@ fun Timer(
             )
             Button(
                 onClick = {
-                    if (timerSeconds < 59) {
-                        timerSeconds++
-                    }
+                    timerState = timerState.addSeconds(1)
                 },
                 shape = CircleShape,
                 enabled = !timerRunning,
@@ -239,8 +234,14 @@ fun Timer(
                 )
             }
             TextField(
-                value = timerSeconds.toString(),
-                onValueChange = { newVal: String -> timerSeconds = calculateTimerValue(newVal) },
+                value = timerState.stringSeconds(),
+                onValueChange = { newVal: String ->
+                    when (val intVal = newVal.toIntOrNull()) {
+                        null -> {}
+                        else -> timerState =
+                            timerState.copy(setHours = intVal.coerceIn(0, 59).toLong())
+                    }
+                },
                 keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
                 modifier = Modifier
                     .padding(horizontal = 16.dp),
@@ -252,9 +253,7 @@ fun Timer(
             )
             Button(
                 onClick = {
-                    if (timerSeconds > 0) {
-                        timerSeconds--
-                    }
+                    timerState = timerState.addSeconds(-1)
                 },
                 shape = CircleShape,
                 enabled = !timerRunning,
@@ -274,7 +273,7 @@ fun Timer(
      * The button to start or stop the timer
      */
     Button(
-        onClick = { timerRunning = !timerRunning },
+        onClick = { timerState = timerState.copy(isRunning = !timerState.isRunning) },
         enabled = true,
         modifier = Modifier
             .fillMaxWidth()
@@ -311,4 +310,41 @@ fun calculateTimerValue(value: String): Long {
         res = 0
     }
     return res
+}
+
+data class TimerState(
+    val isRunning: Boolean = false,
+    val setHours: Long = 0,
+    val setMinutes: Long = 0,
+    val setSeconds: Long = 0,
+    val hoursRemaining: Long = 0,
+    val minutesRemaining: Long = 0,
+    val secondsRemaining: Long = 0
+) {
+    val setDuration
+        get() =
+            listOf(
+                (setHours * 1000 * 60 * 60),
+                (setMinutes * 1000 * 60),
+                (setSeconds * 1000)
+            ).sum()
+
+    fun addHours(amount: Int) = this.copy(setHours = (setHours + amount).coerceIn(0, 24))
+    fun addMinutes(amount: Int) = this.copy(setMinutes = (setMinutes + amount).coerceIn(0, 59))
+    fun addSeconds(amount: Int) = this.copy(setSeconds = (setSeconds + amount).coerceIn(0, 59))
+
+    fun stringHours() = when (isRunning) {
+        true -> hoursRemaining
+        else -> setHours
+    }.toString()
+
+    fun stringMinutes() = when (isRunning) {
+        true -> minutesRemaining
+        else -> setMinutes
+    }.toString()
+
+    fun stringSeconds() = when (isRunning) {
+        true -> secondsRemaining
+        else -> setSeconds
+    }.toString()
 }

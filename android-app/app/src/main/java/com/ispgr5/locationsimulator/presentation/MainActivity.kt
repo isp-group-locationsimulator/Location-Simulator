@@ -210,7 +210,6 @@ class MainActivity : ComponentActivity() {
                 DelayScreen(
                     navController = navController,
                     startServiceFunction = startService,
-                    context = this@MainActivity,
                     scaffoldState = scaffoldState,
                     soundsDirUri = this@MainActivity.filesDir.toString() + "/Sounds/",
                 )
