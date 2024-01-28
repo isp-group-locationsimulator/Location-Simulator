@@ -126,28 +126,50 @@ fun RunScreen(
         )
     }
 
+    RunScreenScaffold(
+        scaffoldState = scaffoldState,
+        configuration = viewModel.state.value.configuration ,
+        playingEffect = playingEffect,
+        nextEffect = nextEffect,
+        startPauseAt = startPauseAt,
+        currentPauseDuration = currentPauseDuration,
+        snackbarContentState = snackbarContentState,
+        onStop = {
+            SimulationService.IsPlayingEventBus.postValue(false)
+            viewModel.onEvent(RunEvent.StopClicked(stopServiceFunction))
+            navController.popBackStack()
+        }
+    )
+}
+
+@Composable
+fun RunScreenScaffold(
+    scaffoldState: ScaffoldState,
+    configuration: Configuration?,
+    playingEffect: EffectParameters?,
+    nextEffect: EffectParameters?,
+    startPauseAt: Instant?,
+    currentPauseDuration: Long?,
+    snackbarContentState: MutableState<SnackbarContent?>,
+    onStop: () -> Unit
+) {
     Scaffold(scaffoldState = scaffoldState, topBar = {
         TopBar(
-            onBackClick = {
-                navController.popBackStack()
-            },
+            onBackClick = null,
             title = stringResource(id = R.string.ScreenRun),
             backPossible = false
         )
     }, content = { padding ->
         RunScreenContent(
             paddingValues = padding,
-            configuration = viewModel.state.value.configuration,
+            configuration = configuration,
             playingEffect = playingEffect,
             nextEffect = nextEffect,
             startPauseAt = startPauseAt,
             currentPauseDuration = currentPauseDuration,
             snackbarContentState = snackbarContentState,
-        ) {
-            SimulationService.IsPlayingEventBus.postValue(false)
-            viewModel.onEvent(RunEvent.StopClicked(stopServiceFunction))
-            navController.popBackStack()
-        }
+            onStop = onStop
+        )
     })
 }
 
@@ -689,6 +711,11 @@ fun NextUi(nextEffect: EffectParameters, iconSize: Dp = 32.dp) {
             is EffectParameters.Sound -> SoundUi(nextEffect, iconSize)
         }
     }
+}
+
+@Composable
+fun RunScreenScreenshotPreview() {
+    // TODO:
 }
 
 data class RefRangeValue(

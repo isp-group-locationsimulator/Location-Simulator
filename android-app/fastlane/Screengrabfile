@@ -1,6 +1,6 @@
 locales ['en-US', 'de-DE']
 use_timestamp_suffix false
-clear_previous_screenshots true
+clear_previous_screenshots false
 tests_apk_path 'app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk'
 app_apk_path 'app/build/outputs/apk/debug/app-debug.apk'
 test_instrumentation_runner 'com.ispgr5.locationsimulator.HiltTestRunner'

@@ -39,6 +39,8 @@ class ScreenshotTests {
     @JvmField
     val localeTestRule = LocaleTestRule()
 
+    //todo rule for dark mode might be doable?
+
     @Before
     fun init() {
         hiltAndroidRule.inject()
@@ -123,8 +125,7 @@ class ScreenshotTests {
     @Test
     fun delayScreenLight() {
         screenshot("delay_screen") {
-            // TODO:
-            Placeholder()
+            DelayScreenScreenshot()
         }
     }
 

@@ -6,7 +6,7 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -22,29 +22,21 @@ fun TopBar(
     backPossible: Boolean = true,  // Whether going back should be possible or not
     extraActions: @Composable (RowScope.() -> Unit) = {},
 ) {
-    if (backPossible) {
-        // with back button
-        TopAppBar(
-            title = { Text(title) },
-            navigationIcon = {
+    TopAppBar(
+        title = { Text(title) },
+        navigationIcon = {
+            if (backPossible) {
                 IconButton(
                     onClick = { onBackClick!!.invoke() },
                     modifier = Modifier.testTag(TestTags.TOP_BAR_BACK_BUTTON)
                 ) {
                     Icon(
-                        imageVector = Icons.Default.ArrowBack,//(id = R.drawable.baseline_arrow_back_24),
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "back Icon"
                     )
                 }
-            },
-            actions = extraActions,
-        )
-    } else {
-        //no back Button
-        //(work around) so that title is left when there is no nav icon
-        TopAppBar(
-            title = { Text(title) },
-            actions = extraActions,
-        )
-    }
+            }
+        },
+        actions = extraActions,
+    )
 }

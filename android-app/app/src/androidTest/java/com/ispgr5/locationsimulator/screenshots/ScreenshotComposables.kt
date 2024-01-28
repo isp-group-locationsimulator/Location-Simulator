@@ -1,7 +1,5 @@
 @file:Suppress("TestFunctionName")
-@file:OptIn(ExperimentalFoundationApi::class, ExperimentalFoundationApi::class,
-    ExperimentalFoundationApi::class
-)
+@file:OptIn(ExperimentalFoundationApi::class)
 
 package com.ispgr5.locationsimulator.screenshots
 
