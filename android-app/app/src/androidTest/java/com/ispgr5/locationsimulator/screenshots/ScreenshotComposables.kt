@@ -1,11 +1,14 @@
 @file:Suppress("TestFunctionName")
+@file:OptIn(ExperimentalFoundationApi::class)
 
 package com.ispgr5.locationsimulator.screenshots
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.rememberScaffoldState
@@ -29,6 +32,9 @@ import com.ispgr5.locationsimulator.presentation.homescreen.InfoScreenScaffold
 import com.ispgr5.locationsimulator.presentation.select.SelectScreenScreenshotPreview
 import com.ispgr5.locationsimulator.presentation.select.SelectScreenState
 import com.ispgr5.locationsimulator.presentation.settings.DefaultShippingSettings
+import com.ispgr5.locationsimulator.presentation.settings.SettingsPages
+import com.ispgr5.locationsimulator.presentation.settings.SettingsScreenScreenshotPreview
+import com.ispgr5.locationsimulator.presentation.settings.SettingsState
 import com.ispgr5.locationsimulator.screenshots.ScreenshotData.configurations
 import com.ispgr5.locationsimulator.screenshots.ScreenshotData.selectScreenState
 import com.ispgr5.locationsimulator.screenshots.ScreenshotData.selectScreenStateDelete
@@ -100,6 +106,30 @@ fun AddScreenScreenshot() {
     }
 }
 
+@Composable
+@Preview
+fun SettingsScreenVibrationScreenshot() {
+    LocationSimulatorTheme(themeState = themeState) {
+        SettingsScreenScreenshotPreview(
+            state = ScreenshotData.settingsScreenState,
+            pagerState = rememberPagerState(initialPage = SettingsPages.Vibration.ordinal) {
+                SettingsPages.entries.size
+            })
+    }
+}
+
+@Composable
+@Preview
+fun SettingsScreenSoundScreenshot() {
+    LocationSimulatorTheme(themeState = themeState) {
+        SettingsScreenScreenshotPreview(
+            state = ScreenshotData.settingsScreenState,
+            pagerState = rememberPagerState(initialPage = SettingsPages.Sound.ordinal) {
+                SettingsPages.entries.size
+            })
+    }
+}
+
 @Suppress("TestFunctionName")
 @Composable
 fun ScreenshotScope.Placeholder() {
@@ -110,7 +140,10 @@ fun ScreenshotScope.Placeholder() {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = stringResource(id = theme.themeType.labelStringRes), style = MaterialTheme.typography.h6)
+        Text(
+            text = stringResource(id = theme.themeType.labelStringRes),
+            style = MaterialTheme.typography.h6
+        )
         Text(
             text = screenshotName,
             style = MaterialTheme.typography.h5.copy(fontFamily = FontFamily.Monospace)
@@ -178,4 +211,6 @@ private object ScreenshotData {
     val addScreenState: AddScreenState = AddScreenState(
         name = "foo", description = "", randomOrderPlayback = false, components = emptyList()
     )
+
+    val settingsScreenState = SettingsState()
 }
