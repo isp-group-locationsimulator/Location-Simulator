@@ -109,14 +109,14 @@ class ScreenshotTests {
     }
 
     @Test
-    fun settingsScreenVibrationLight() {
+    fun settingsScreenVibration() {
         screenshot("settings_screen_vibration") {
             SettingsScreenVibrationScreenshot()
         }
     }
 
     @Test
-    fun settingsScreenSoundLight() {
+    fun settingsScreenSound() {
         screenshot("settings_screen_sound") {
             SettingsScreenSoundScreenshot()
         }
@@ -144,10 +144,16 @@ class ScreenshotTests {
     }
 
     @Test
-    fun editTimelineScreen() {
+    fun editTimelineScreenNormal() {
         screenshot("edit_timeline_screen") {
-            // TODO:
-            Placeholder()
+            EditTimelineNormalScreenshot()
+        }
+    }
+
+    @Test
+    fun editTimelineScreenDialogShown() {
+        screenshot("edit_timeline_screen") {
+            EditTimelineDialogShownScreenshot()
         }
     }
 

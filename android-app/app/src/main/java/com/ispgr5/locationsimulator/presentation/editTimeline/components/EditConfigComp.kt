@@ -56,6 +56,7 @@ import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.core.util.TestTags
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 import com.ispgr5.locationsimulator.domain.model.RangeConverter
+import com.ispgr5.locationsimulator.presentation.editTimeline.EditTimelineEventHandlers
 import com.ispgr5.locationsimulator.presentation.universalComponents.ConfirmDeleteDialog
 import kotlin.properties.Delegates
 
@@ -66,15 +67,7 @@ import kotlin.properties.Delegates
 @Composable
 fun EditConfigComponent(
     configComponent: ConfigComponent?,
-    onSoundValueChanged: (ClosedFloatingPointRange<Float>) -> Unit,
-    onPauseValueChanged: (ClosedFloatingPointRange<Float>) -> Unit,
-    onVibStrengthChanged: (ClosedFloatingPointRange<Float>) -> Unit,
-    onVibDurationChanged: (ClosedFloatingPointRange<Float>) -> Unit,
-    onDeleteClicked: (configComponent: ConfigComponent) -> Unit,
-    onMoveLeftClicked: (configComponent: ConfigComponent) -> Unit,
-    onMoveRightClicked: (configComponent: ConfigComponent) -> Unit,
-    onConfigComponentNameChanged: (name: String) -> Unit,
-    onCopyConfigComponent: (configComponent: ConfigComponent) -> Unit,
+    editTimelineEventHandlers: EditTimelineEventHandlers?
 ) {
     //so no Time line Item is selected for now
     if (configComponent == null) {
@@ -113,7 +106,11 @@ fun EditConfigComponent(
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Button(
-                            onClick = { onMoveLeftClicked(configComponent) },
+                            onClick = {
+                                editTimelineEventHandlers?.onMoveLeftClicked?.invoke(
+                                    configComponent
+                                )
+                            },
                             modifier = Modifier.testTag(TestTags.EDIT_MOVE_LEFT)
                         ) {
                             Icon(
@@ -130,7 +127,11 @@ fun EditConfigComponent(
                     }
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Button(
-                            onClick = { onMoveRightClicked(configComponent) },
+                            onClick = {
+                                editTimelineEventHandlers?.onMoveRightClicked?.invoke(
+                                    configComponent
+                                )
+                            },
                             modifier = Modifier.testTag(TestTags.EDIT_MOVE_RIGHT)
                         ) {
                             Icon(
@@ -155,7 +156,9 @@ fun EditConfigComponent(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    ConfigComponentNameTextInput(configComponent, onConfigComponentNameChanged)
+                    ConfigComponentNameTextInput(configComponent, onConfigComponentNameChanged = {
+                        editTimelineEventHandlers?.onConfigComponentNameChanged?.invoke(it)
+                    })
                 }
             }
 
@@ -200,10 +203,8 @@ fun EditConfigComponent(
                         SliderForRange(
                             value = RangeConverter.transformFactorToPercentage(configComponent.minVolume)..
                                     RangeConverter.transformFactorToPercentage(configComponent.maxVolume),
-                            func = { value: ClosedFloatingPointRange<Float> ->
-                                onSoundValueChanged(
-                                    value
-                                )
+                            onValueChange = {
+                                editTimelineEventHandlers?.onSoundValueChanged?.invoke(it)
                             },
                             range = 0f..100f
                         )
@@ -273,10 +274,8 @@ fun EditConfigComponent(
                             value = RangeConverter.eightBitIntToPercentageFloat(configComponent.minStrength)..RangeConverter.eightBitIntToPercentageFloat(
                                 configComponent.maxStrength
                             ),
-                            func = { value: ClosedFloatingPointRange<Float> ->
-                                onVibStrengthChanged(
-                                    value
-                                )
+                            onValueChange = {
+                                editTimelineEventHandlers?.onVibStrengthChanged?.invoke(it)
                             },
                             range = 0f..100f,
 
@@ -297,10 +296,8 @@ fun EditConfigComponent(
                             value = RangeConverter.msToS(configComponent.minDuration)..RangeConverter.msToS(
                                 configComponent.maxDuration
                             ),
-                            func = { value: ClosedFloatingPointRange<Float> ->
-                                onVibDurationChanged(
-                                    value
-                                )
+                            onValueChange = {
+                                editTimelineEventHandlers?.onVibDurationChanged?.invoke(it)
                             },
                             range = 0f..30f,
                             modifier = Modifier.testTag(TestTags.EDIT_VIB_SLIDER_DURATION)
@@ -317,7 +314,9 @@ fun EditConfigComponent(
                 SecText(min = RangeConverter.msToS(minPause), max = RangeConverter.msToS(maxPause))
                 SliderForRange(
                     value = RangeConverter.msToS(minPause)..RangeConverter.msToS(maxPause),
-                    func = { value: ClosedFloatingPointRange<Float> -> onPauseValueChanged(value) },
+                    onValueChange = {
+                        editTimelineEventHandlers?.onPauseValueChanged?.invoke(it)
+                    },
                     range = 0f..60f,
                     modifier = Modifier.testTag(TestTags.EDIT_SLIDER_PAUSE)
                 )
@@ -328,7 +327,7 @@ fun EditConfigComponent(
                     horizontalArrangement = Arrangement.SpaceAround
                 ) {
                     Button(
-                        onClick = { onCopyConfigComponent(configComponent) }, //show Confirm Dialog
+                        onClick = { editTimelineEventHandlers?.onCopyConfigComponent?.invoke(configComponent) }, //show Confirm Dialog
                         contentPadding = PaddingValues(0.dp),
                         enabled = true,
                         shape = MaterialTheme.shapes.small,
@@ -375,7 +374,7 @@ fun EditConfigComponent(
     val revShowDialog = fun() { showDeleteConfirmDialog = !showDeleteConfirmDialog }
     if (showDeleteConfirmDialog) {
         ConfirmDeleteDialog(onDismiss = revShowDialog, onConfirm = {
-            onDeleteClicked(configComponent)
+            editTimelineEventHandlers?.onDeleteClicked?.invoke(configComponent)
         })
     }
 
@@ -420,14 +419,14 @@ fun ConfigComponentNameTextInput(
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun SliderForRange(
-    func: (ClosedFloatingPointRange<Float>) -> Unit,
+    onValueChange: (ClosedFloatingPointRange<Float>) -> Unit,
     value: ClosedFloatingPointRange<Float>,
     range: ClosedFloatingPointRange<Float>,
     modifier: Modifier = Modifier
 ) {
     RangeSlider(
         value = (value),
-        onValueChange = func,
+        onValueChange = onValueChange,
         valueRange = range,
         onValueChangeFinished = {},
         modifier = modifier

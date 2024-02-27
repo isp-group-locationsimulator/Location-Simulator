@@ -225,7 +225,7 @@ private fun SoundCard(
         SliderForRange(
             value = RangeConverter.transformFactorToPercentage(state.minVolumeSound)..
                     RangeConverter.transformFactorToPercentage(state.maxVolumeSound),
-            func = { value: ClosedFloatingPointRange<Float> ->
+            onValueChange = { value: ClosedFloatingPointRange<Float> ->
                 onChangeEvent(
                     SettingsEvent.ChangedSoundVolume(
                         value,
@@ -248,7 +248,7 @@ private fun SoundCard(
             value = RangeConverter.msToS(state.minPauseSound)..RangeConverter.msToS(
                 state.maxPauseSound
             ),
-            func = { value: ClosedFloatingPointRange<Float> ->
+            onValueChange = { value: ClosedFloatingPointRange<Float> ->
                 onChangeEvent(
                     SettingsEvent.ChangedSoundPause(
                         value,
@@ -342,7 +342,7 @@ private fun VibrationCard(
                 value = RangeConverter.eightBitIntToPercentageFloat(state.minStrengthVibration)..RangeConverter.eightBitIntToPercentageFloat(
                     state.maxStrengthVibration
                 ),
-                func = { value: ClosedFloatingPointRange<Float> ->
+                onValueChange = { value: ClosedFloatingPointRange<Float> ->
                     onChangeEvent(
                         SettingsEvent.ChangedVibStrength(
                             value,
@@ -365,7 +365,7 @@ private fun VibrationCard(
             value = RangeConverter.msToS(state.minDurationVibration)..RangeConverter.msToS(
                 state.maxDurationVibration
             ),
-            func = { value: ClosedFloatingPointRange<Float> ->
+            onValueChange = { value: ClosedFloatingPointRange<Float> ->
                 onChangeEvent(
                     SettingsEvent.ChangedVibDuration(
                         value,
@@ -388,7 +388,7 @@ private fun VibrationCard(
             value = RangeConverter.msToS(state.minPauseVibration)..RangeConverter.msToS(
                 state.maxPauseVibration
             ),
-            func = { value: ClosedFloatingPointRange<Float> ->
+            onValueChange = { value: ClosedFloatingPointRange<Float> ->
                 onChangeEvent(
                     SettingsEvent.ChangedVibPause(
                         value,

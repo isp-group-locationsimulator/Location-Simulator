@@ -28,6 +28,8 @@ import com.ispgr5.locationsimulator.presentation.add.AddScreenState
 import com.ispgr5.locationsimulator.presentation.delay.DelayScreenScreenshotPreview
 import com.ispgr5.locationsimulator.presentation.delay.DelayScreenState
 import com.ispgr5.locationsimulator.presentation.delay.TimerState
+import com.ispgr5.locationsimulator.presentation.editTimeline.EditTimelineScreenshotPreview
+import com.ispgr5.locationsimulator.presentation.editTimeline.EditTimelineState
 import com.ispgr5.locationsimulator.presentation.homescreen.HomeScreenScaffold
 import com.ispgr5.locationsimulator.presentation.homescreen.HomeScreenState
 import com.ispgr5.locationsimulator.presentation.homescreen.InfoScreenScaffold
@@ -39,7 +41,14 @@ import com.ispgr5.locationsimulator.presentation.settings.DefaultShippingSetting
 import com.ispgr5.locationsimulator.presentation.settings.SettingsPages
 import com.ispgr5.locationsimulator.presentation.settings.SettingsScreenScreenshotPreview
 import com.ispgr5.locationsimulator.presentation.settings.SettingsState
+import com.ispgr5.locationsimulator.screenshots.ScreenshotData.addScreenState
 import com.ispgr5.locationsimulator.screenshots.ScreenshotData.configurations
+import com.ispgr5.locationsimulator.screenshots.ScreenshotData.delayScreenInitialTimerState
+import com.ispgr5.locationsimulator.screenshots.ScreenshotData.delayScreenState
+import com.ispgr5.locationsimulator.screenshots.ScreenshotData.editTimelineState
+import com.ispgr5.locationsimulator.screenshots.ScreenshotData.runScreenInitialRefresh
+import com.ispgr5.locationsimulator.screenshots.ScreenshotData.runScreenStatePaused
+import com.ispgr5.locationsimulator.screenshots.ScreenshotData.runScreenStatePlaying
 import com.ispgr5.locationsimulator.screenshots.ScreenshotData.selectScreenState
 import com.ispgr5.locationsimulator.screenshots.ScreenshotData.selectScreenStateDelete
 import com.ispgr5.locationsimulator.screenshots.ScreenshotData.themeState
@@ -106,7 +115,7 @@ fun SelectScreenDeleteModeScreenshot() {
 @Preview
 fun AddScreenScreenshot() {
     LocationSimulatorTheme(themeState = themeState) {
-        AddScreenScreenshotPreview(addScreenState = ScreenshotData.addScreenState)
+        AddScreenScreenshotPreview(addScreenState = addScreenState)
     }
 }
 
@@ -141,8 +150,8 @@ fun SettingsScreenSoundScreenshot() {
 fun DelayScreenScreenshot() {
     LocationSimulatorTheme(themeState = themeState) {
         DelayScreenScreenshotPreview(
-            state = ScreenshotData.delayScreenState,
-            initialTimerState = ScreenshotData.delayScreenInitialTimerState
+            state = delayScreenState,
+            initialTimerState = delayScreenInitialTimerState
         )
     }
 }
@@ -153,8 +162,8 @@ fun RunScreenPausedScreenshot() {
     LocationSimulatorTheme(themeState = themeState) {
         RunScreenScreenshotPreview(
             configuration = configurations.first(),
-            effectTimelineState = ScreenshotData.runScreenStatePaused,
-            initialRefreshInstant = ScreenshotData.runScreenInitialRefresh
+            effectTimelineState = runScreenStatePaused,
+            initialRefreshInstant = runScreenInitialRefresh
         )
     }
 }
@@ -165,9 +174,25 @@ fun RunScreenActiveScreenshot() {
     LocationSimulatorTheme(themeState = themeState) {
         RunScreenScreenshotPreview(
             configuration = configurations.first(),
-            effectTimelineState = ScreenshotData.runScreenStatePlaying,
-            initialRefreshInstant = ScreenshotData.runScreenInitialRefresh
+            effectTimelineState = runScreenStatePlaying,
+            initialRefreshInstant = runScreenInitialRefresh
         )
+    }
+}
+
+@Composable
+@Preview
+fun EditTimelineNormalScreenshot() {
+    LocationSimulatorTheme(themeState = themeState) {
+        EditTimelineScreenshotPreview(false, editTimelineState)
+    }
+}
+
+@Composable
+@Preview
+fun EditTimelineDialogShownScreenshot() {
+    LocationSimulatorTheme(themeState = themeState) {
+        EditTimelineScreenshotPreview(true, editTimelineState)
     }
 }
 
@@ -264,4 +289,12 @@ private object ScreenshotData {
     val runScreenInitialRefresh = RunscreenPreviewData.baselineInstant
     val runScreenStatePaused = RunscreenPreviewData.effectTimelinePausedState
     val runScreenStatePlaying = RunscreenPreviewData.effectTimelinePlayingState
+
+    val editTimelineState = EditTimelineState(
+        name = configurations.first().name,
+        description = configurations.first().description,
+        randomOrderPlayback = configurations.first().randomOrderPlayback,
+        components = configurations.first().components,
+        current = configurations.first().components.first()
+    )
 }
