@@ -67,7 +67,8 @@ import kotlin.properties.Delegates
 @Composable
 fun EditConfigComponent(
     configComponent: ConfigComponent?,
-    editTimelineEventHandlers: EditTimelineEventHandlers?
+    editTimelineEventHandlers: EditTimelineEventHandlers?,
+    vibrationSupportHintMode: VibrationSupportHintMode = VibrationSupportHintMode.AUTOMATIC
 ) {
     //so no Time line Item is selected for now
     if (configComponent == null) {
@@ -245,7 +246,12 @@ fun EditConfigComponent(
                                 @Suppress("DEPRECATION")
                                 LocalContext.current.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
                             }
-                            if (Build.VERSION.SDK_INT < 26 || !vibrator.hasAmplitudeControl()) {
+                            val showNoVibrationSupportHint = when (vibrationSupportHintMode) {
+                                VibrationSupportHintMode.SUPPRESSED -> false
+                                VibrationSupportHintMode.ENFORCED -> true
+                                else -> Build.VERSION.SDK_INT < 26 || !vibrator.hasAmplitudeControl()
+                            }
+                            if (showNoVibrationSupportHint) {
                                 Button(
                                     onClick = {
                                         showStrengthNotSupportedDialog = true
@@ -311,7 +317,10 @@ fun EditConfigComponent(
                     text = stringResource(id = R.string.editTimeline_Pause),
                     style = blackSubtitle1
                 )
-                SecText(min = RangeConverter.msToS(minPause), max = RangeConverter.msToS(maxPause))
+                SecText(
+                    min = RangeConverter.msToS(minPause), max =
+                    RangeConverter.msToS(maxPause)
+                )
                 SliderForRange(
                     value = RangeConverter.msToS(minPause)..RangeConverter.msToS(maxPause),
                     onValueChange = {
@@ -327,7 +336,11 @@ fun EditConfigComponent(
                     horizontalArrangement = Arrangement.SpaceAround
                 ) {
                     Button(
-                        onClick = { editTimelineEventHandlers?.onCopyConfigComponent?.invoke(configComponent) }, //show Confirm Dialog
+                        onClick = {
+                            editTimelineEventHandlers?.onCopyConfigComponent?.invoke(
+                                configComponent
+                            )
+                        }, //show Confirm Dialog
                         contentPadding = PaddingValues(0.dp),
                         enabled = true,
                         shape = MaterialTheme.shapes.small,
@@ -444,4 +457,11 @@ fun SecText(min: Float, max: Float, modifier: Modifier = Modifier) {
             max
         ) + "s ", modifier = modifier
     )
+}
+
+
+enum class VibrationSupportHintMode {
+    AUTOMATIC,
+    SUPPRESSED,
+    ENFORCED
 }

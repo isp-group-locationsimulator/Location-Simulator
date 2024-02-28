@@ -30,6 +30,7 @@ import com.ispgr5.locationsimulator.presentation.delay.DelayScreenState
 import com.ispgr5.locationsimulator.presentation.delay.TimerState
 import com.ispgr5.locationsimulator.presentation.editTimeline.EditTimelineScreenshotPreview
 import com.ispgr5.locationsimulator.presentation.editTimeline.EditTimelineState
+import com.ispgr5.locationsimulator.presentation.editTimeline.components.VibrationSupportHintMode
 import com.ispgr5.locationsimulator.presentation.homescreen.HomeScreenScaffold
 import com.ispgr5.locationsimulator.presentation.homescreen.HomeScreenState
 import com.ispgr5.locationsimulator.presentation.homescreen.InfoScreenScaffold
@@ -184,7 +185,10 @@ fun RunScreenActiveScreenshot() {
 @Preview
 fun EditTimelineNormalScreenshot() {
     LocationSimulatorTheme(themeState = themeState) {
-        EditTimelineScreenshotPreview(false, editTimelineState)
+        EditTimelineScreenshotPreview(
+            isDialogShown = false, state = editTimelineState,
+            vibrationSupportHintMode = VibrationSupportHintMode.SUPPRESSED
+        )
     }
 }
 
@@ -192,7 +196,23 @@ fun EditTimelineNormalScreenshot() {
 @Preview
 fun EditTimelineDialogShownScreenshot() {
     LocationSimulatorTheme(themeState = themeState) {
-        EditTimelineScreenshotPreview(true, editTimelineState)
+        EditTimelineScreenshotPreview(
+            isDialogShown = true,
+            state = editTimelineState,
+            vibrationSupportHintMode = VibrationSupportHintMode.SUPPRESSED
+        )
+    }
+}
+
+@Composable
+@Preview
+fun EditTimelineUnsupportedIntensityScreenshot() {
+    LocationSimulatorTheme(themeState = themeState) {
+        EditTimelineScreenshotPreview(
+            isDialogShown = false,
+            state = editTimelineState,
+            vibrationSupportHintMode = VibrationSupportHintMode.ENFORCED
+        )
     }
 }
 

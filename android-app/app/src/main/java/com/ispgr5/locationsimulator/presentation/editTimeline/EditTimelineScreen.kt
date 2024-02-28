@@ -41,6 +41,7 @@ import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 import com.ispgr5.locationsimulator.presentation.editTimeline.components.AddConfigComponentDialog
 import com.ispgr5.locationsimulator.presentation.editTimeline.components.EditConfigComponent
 import com.ispgr5.locationsimulator.presentation.editTimeline.components.Timeline
+import com.ispgr5.locationsimulator.presentation.editTimeline.components.VibrationSupportHintMode
 import com.ispgr5.locationsimulator.presentation.settings.SettingsState
 import com.ispgr5.locationsimulator.presentation.universalComponents.TopBar
 import com.ispgr5.locationsimulator.presentation.util.Screen
@@ -147,7 +148,8 @@ fun EditTimelineScaffold(
     onAddSoundClicked: () -> Unit,
     onAddVibrationClicked: () -> Unit,
     onSelectAComponent: (ConfigComponent) -> Unit,
-    editTimelineEventHandlers: EditTimelineEventHandlers?
+    editTimelineEventHandlers: EditTimelineEventHandlers?,
+    vibrationSupportHintMode: VibrationSupportHintMode = VibrationSupportHintMode.AUTOMATIC
 ) {
     Scaffold(scaffoldState = scaffoldState, topBar = {
         EditTimelineTopBar(onBackClick = onBackClick, onSettingsClick = onSettingsClick)
@@ -179,7 +181,8 @@ fun EditTimelineScaffold(
             if (state.current != null) {
                 EditConfigComponent(
                     configComponent = state.current,
-                    editTimelineEventHandlers = editTimelineEventHandlers
+                    editTimelineEventHandlers = editTimelineEventHandlers,
+                    vibrationSupportHintMode = vibrationSupportHintMode
                 )
             }
 
@@ -349,7 +352,8 @@ class EditTimelineEventHandlers(
 @Composable
 fun EditTimelineScreenshotPreview(
     isDialogShown: Boolean,
-    state: EditTimelineState
+    state: EditTimelineState,
+    vibrationSupportHintMode: VibrationSupportHintMode
 ) {
     EditTimelineScaffold(
         state = state,
@@ -364,6 +368,7 @@ fun EditTimelineScreenshotPreview(
         onAddSoundClicked = {},
         onAddVibrationClicked = {},
         onSelectAComponent = {},
-        editTimelineEventHandlers = null
+        editTimelineEventHandlers = null,
+        vibrationSupportHintMode = vibrationSupportHintMode
     )
 }

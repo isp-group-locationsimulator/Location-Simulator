@@ -68,7 +68,7 @@ class ScreenshotTests {
                 }
             }
         }
-        Thread.sleep(2000L)
+        Thread.sleep(100L)
         Screengrab.screenshot(screenshotName)
         Log.i("Screenshot", "took screenshot $screenshotName")
     }
@@ -145,15 +145,22 @@ class ScreenshotTests {
 
     @Test
     fun editTimelineScreenNormal() {
-        screenshot("edit_timeline_screen") {
+        screenshot("edit_timeline_screen_normal") {
             EditTimelineNormalScreenshot()
         }
     }
 
     @Test
     fun editTimelineScreenDialogShown() {
-        screenshot("edit_timeline_screen") {
+        screenshot("edit_timeline_screen_dialog") {
             EditTimelineDialogShownScreenshot()
+        }
+    }
+
+    @Test
+    fun editTimelineScreenNoVibrationControl() {
+        screenshot("edit_timeline_screen_no_vib_control") {
+            EditTimelineUnsupportedIntensityScreenshot()
         }
     }
 
