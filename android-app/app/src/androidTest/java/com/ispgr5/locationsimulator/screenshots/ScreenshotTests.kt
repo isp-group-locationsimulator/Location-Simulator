@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.material.Text
 import androidx.compose.material.primarySurface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -25,6 +24,7 @@ import org.junit.Test
 import tools.fastlane.screengrab.Screengrab
 import tools.fastlane.screengrab.UiAutomatorScreenshotStrategy
 import tools.fastlane.screengrab.locale.LocaleTestRule
+import tools.fastlane.screengrab.locale.LocaleUtil
 
 @HiltAndroidTest
 @UninstallModules(AppModule::class)
@@ -54,6 +54,11 @@ class ScreenshotTests {
         screenshotName: String,
         content: @Composable ScreenshotScope.() -> Unit
     ) {
+        val currentLocale = try {
+            LocaleUtil.getTestLocale()
+        } catch (_: Exception) {
+            "en-US"
+        }
         composeTestRule.setContent {
             val themeState by remember {
                 mutableStateOf(ThemeState(ThemeType.LIGHT))
@@ -62,7 +67,6 @@ class ScreenshotTests {
                 mutableStateOf(ScreenshotScope(screenshotName, themeState))
             }
             LocationSimulatorTheme(themeState = themeState) {
-                Text(screenshotName, style = MaterialTheme.typography.h6)
                 Surface(
                     modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.primarySurface
                 ) {
@@ -70,9 +74,13 @@ class ScreenshotTests {
                 }
             }
         }
-        Thread.sleep(5000L)
+        when (currentLocale.lowercase()) {
+            "en-us" -> Thread.sleep(2000L)
+            else -> Thread.sleep(10 * 1000L)
+        }
         Screengrab.screenshot(screenshotName)
-        Log.i("Screenshot", "took screenshot $screenshotName")
+        Log.i("Screenshot", "took screenshot $screenshotName, with locale en-US")
+        Thread.sleep(100L)
     }
 
     @Test
