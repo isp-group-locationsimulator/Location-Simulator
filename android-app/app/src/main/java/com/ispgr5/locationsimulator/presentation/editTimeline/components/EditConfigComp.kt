@@ -386,9 +386,9 @@ fun EditConfigComponent(
 //Dialog to confirm the deleting of an config Component
     val revShowDialog = fun() { showDeleteConfirmDialog = !showDeleteConfirmDialog }
     if (showDeleteConfirmDialog) {
-        ConfirmDeleteDialog(onDismiss = revShowDialog, onConfirm = {
+        ConfirmDeleteDialog(onDismiss = revShowDialog) {
             editTimelineEventHandlers?.onDeleteClicked?.invoke(configComponent)
-        })
+        }
     }
 
     if (showStrengthNotSupportedDialog) {

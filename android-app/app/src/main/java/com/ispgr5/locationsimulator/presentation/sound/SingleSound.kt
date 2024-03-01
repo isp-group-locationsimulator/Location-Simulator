@@ -21,54 +21,60 @@ import com.ispgr5.locationsimulator.core.util.TestTags
  */
 @Composable
 fun SingleSound(
-	soundName: String,
-	onPlayClicked: () -> Unit,
-	onStopClicked: () -> Unit,
-	onSelectClicked: () -> Unit,
-	onDeleteClicked: () -> Unit,
-	viewModel: SoundViewModel
+    soundName: String,
+    currentPlayingSoundName: String?,
+    onPlayClicked: () -> Unit,
+    onStopClicked: () -> Unit,
+    onSelectClicked: () -> Unit,
+    onDeleteClicked: () -> Unit,
 ) {
-	Row(Modifier.padding(horizontal = 5.dp)) {
-		/**
-		 * Play this Sound Button
-		 */
-		IconButton(
-			modifier = Modifier.height(intrinsicSize = IntrinsicSize.Max),
-			onClick = if(viewModel.isPlaying.value == soundName) onStopClicked else onPlayClicked
-		) {
-			Icon(
-				painter = painterResource(
-					if(viewModel.isPlaying.value == soundName) R.drawable.ic_baseline_stop_24 else R.drawable.ic_baseline_play_arrow_24
-				),
-				contentDescription = null
-			)
-		}
+    Row(Modifier.padding(horizontal = 5.dp)) {
+        /**
+         * Play this Sound Button
+         */
+        IconButton(
+            modifier = Modifier.height(intrinsicSize = IntrinsicSize.Max),
+            onClick = when (currentPlayingSoundName) {
+                soundName -> onStopClicked
+                else -> onPlayClicked
+            }
+        ) {
+            Icon(
+                painter = painterResource(
+                    when (currentPlayingSoundName) {
+                        soundName -> R.drawable.ic_baseline_stop_24
+                        else -> R.drawable.ic_baseline_play_arrow_24
+                    }
+                ),
+                contentDescription = null
+            )
+        }
 
-		/**
-		 * Button with the sound Name in it. Click to Select
-		 */
-		Button(
-			modifier = Modifier
-				.height(intrinsicSize = IntrinsicSize.Max)
-				.weight(1f)
-				.padding(2.dp)
-				.testTag(TestTags.SOUND_SELECT_BUTTON),
-			onClick = onSelectClicked
-		) {
-			Text(text = soundName)
-		}
+        /**
+         * Button with the sound Name in it. Click to Select
+         */
+        Button(
+            modifier = Modifier
+                .height(intrinsicSize = IntrinsicSize.Max)
+                .weight(1f)
+                .padding(2.dp)
+                .testTag(TestTags.SOUND_SELECT_BUTTON),
+            onClick = onSelectClicked
+        ) {
+            Text(text = soundName)
+        }
 
-		/**
-		 * Button to delete the sound.
-		 */
-		IconButton(
-			modifier = Modifier.height(intrinsicSize = IntrinsicSize.Max),
-			onClick = onDeleteClicked
-		) {
-			Icon(
-				painter = painterResource(id = R.drawable.ic_baseline_delete_outline_24),
-				contentDescription = null
-			)
-		}
-	}
+        /**
+         * Button to delete the sound.
+         */
+        IconButton(
+            modifier = Modifier.height(intrinsicSize = IntrinsicSize.Max),
+            onClick = onDeleteClicked
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_baseline_delete_outline_24),
+                contentDescription = null
+            )
+        }
+    }
 }

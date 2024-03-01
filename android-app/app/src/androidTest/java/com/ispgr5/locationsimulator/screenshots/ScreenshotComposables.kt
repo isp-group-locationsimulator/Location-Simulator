@@ -42,6 +42,8 @@ import com.ispgr5.locationsimulator.presentation.settings.DefaultShippingSetting
 import com.ispgr5.locationsimulator.presentation.settings.SettingsPages
 import com.ispgr5.locationsimulator.presentation.settings.SettingsScreenScreenshotPreview
 import com.ispgr5.locationsimulator.presentation.settings.SettingsState
+import com.ispgr5.locationsimulator.presentation.sound.SoundScreenScreenshotPreview
+import com.ispgr5.locationsimulator.presentation.sound.SoundState
 import com.ispgr5.locationsimulator.screenshots.ScreenshotData.addScreenState
 import com.ispgr5.locationsimulator.screenshots.ScreenshotData.configurations
 import com.ispgr5.locationsimulator.screenshots.ScreenshotData.delayScreenInitialTimerState
@@ -58,7 +60,7 @@ import com.ispgr5.locationsimulator.ui.theme.ThemeState
 import com.ispgr5.locationsimulator.ui.theme.ThemeType
 
 data class ScreenshotScope(
-    val screenshotName: String, val theme: ThemeState, val testLocale: String
+    val screenshotName: String, val theme: ThemeState
 )
 
 @Composable
@@ -216,7 +218,34 @@ fun EditTimelineUnsupportedIntensityScreenshot() {
     }
 }
 
+@Composable
+@Preview
+fun SoundScreenScreenshot() {
+    SoundScreenScreenshotPreview(
+        state = ScreenshotData.soundScreenState,
+        currentPlayingSoundName = ScreenshotData.soundScreenState.soundNames.first()
+    )
+}
+
+@Composable
+@Preview
+fun SoundScreenStoppedScreenshot() {
+    SoundScreenScreenshotPreview(
+        state = ScreenshotData.soundScreenState
+    )
+}
+
+@Composable
+@Preview
+fun SoundScreenForDeletionScreenshot() {
+    SoundScreenScreenshotPreview(
+        state = ScreenshotData.soundScreenState,
+        selectedForDeletion = ScreenshotData.soundScreenState.soundNames.last()
+    )
+}
+
 @Suppress("TestFunctionName")
+@Deprecated(message = "Make this a real screenshot!")
 @Composable
 fun ScreenshotScope.Placeholder() {
     Column(
@@ -233,10 +262,6 @@ fun ScreenshotScope.Placeholder() {
         Text(
             text = screenshotName,
             style = MaterialTheme.typography.h5.copy(fontFamily = FontFamily.Monospace)
-        )
-        Text(
-            text = testLocale,
-            style = MaterialTheme.typography.h6.copy(fontFamily = FontFamily.Monospace)
         )
     }
 }
@@ -316,5 +341,9 @@ private object ScreenshotData {
         randomOrderPlayback = configurations.first().randomOrderPlayback,
         components = configurations.first().components,
         current = configurations.first().components.first()
+    )
+
+    val soundScreenState = SoundState(
+        soundNames = listOf("Atmen.mp3", "Bellen.mp3", "Husten.mp3")
     )
 }

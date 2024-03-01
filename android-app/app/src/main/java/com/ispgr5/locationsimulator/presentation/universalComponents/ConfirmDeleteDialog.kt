@@ -12,12 +12,17 @@ Alert Dialog to Confirm the Deletion of an Item
  */
 @Composable
 fun ConfirmDeleteDialog(
+    itemToDeleteName: String? = null,
     onDismiss: () -> Unit,
     onConfirm: () -> Unit
 ) {
+    val text = when(itemToDeleteName) {
+        null -> stringResource(id = R.string.confirmDeleteDialogText)
+        else -> stringResource(id = R.string.confirmDeleteDialogTextSpecific, itemToDeleteName)
+    }
     AlertDialog(
         onDismissRequest = { onDismiss() },
-        text = { Text(stringResource(id = R.string.confirmDeleteDialogText)) },
+        text = { Text(text) },
         title = { Text(stringResource(id = R.string.confirmDeleteDialogTitle)) },
         confirmButton = {
             TextButton(onClick = onConfirm) {

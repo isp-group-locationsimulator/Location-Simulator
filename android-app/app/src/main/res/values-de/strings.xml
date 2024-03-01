@@ -32,7 +32,8 @@
     <string name="soundscreen_dialog_button">Bestätigen</string>
     <string name="editTimeline_randomOrderPlayback">Zufällige Reihenfolge</string>
     <string name="confirmDeleteDialogTitle">Löschen</string>
-    <string name="confirmDeleteDialogText">Sind sie sicher, dass sie Löschen möchten?</string>
+    <string name="confirmDeleteDialogTextSpecific">Sind sie sicher, dass sie \'%s\' löschen möchten?</string>
+    <string name="confirmDeleteDialogText">Sind sie sicher, dass sie löschen möchten?</string>
     <string name="confirmDeleteDialogDismissBtn">Abbrechen</string>
     <string name="confirmDeleteDialogConfirmBtn">Löschen</string>
     <string name="ScreenInfo">Info</string>

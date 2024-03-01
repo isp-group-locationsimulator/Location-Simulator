@@ -32,6 +32,7 @@
     <string name="editTimeline_randomOrderPlayback">Random order</string>
     <string name="confirmDeleteDialogTitle">Delete</string>
     <string name="confirmDeleteDialogText">Are you sure you want to delete?</string>
+    <string name="confirmDeleteDialogTextSpecific">Are you sure you want to delete \'%s\'?</string>
     <string name="confirmDeleteDialogDismissBtn">Cancel</string>
     <string name="confirmDeleteDialogConfirmBtn">Delete</string>
     <string name="ScreenInfo">Info</string>

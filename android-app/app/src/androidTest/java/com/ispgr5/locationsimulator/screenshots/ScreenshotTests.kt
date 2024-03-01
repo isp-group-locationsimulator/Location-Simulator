@@ -4,6 +4,8 @@ import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
+import androidx.compose.material.Text
+import androidx.compose.material.primarySurface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -23,7 +25,6 @@ import org.junit.Test
 import tools.fastlane.screengrab.Screengrab
 import tools.fastlane.screengrab.UiAutomatorScreenshotStrategy
 import tools.fastlane.screengrab.locale.LocaleTestRule
-import tools.fastlane.screengrab.locale.LocaleUtil
 
 @HiltAndroidTest
 @UninstallModules(AppModule::class)
@@ -58,17 +59,18 @@ class ScreenshotTests {
                 mutableStateOf(ThemeState(ThemeType.LIGHT))
             }
             val screenshotScope by remember {
-                mutableStateOf(ScreenshotScope(screenshotName, themeState, LocaleUtil.getTestLocale()))
+                mutableStateOf(ScreenshotScope(screenshotName, themeState))
             }
             LocationSimulatorTheme(themeState = themeState) {
+                Text(screenshotName, style = MaterialTheme.typography.h6)
                 Surface(
-                    modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background
+                    modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.primarySurface
                 ) {
                     screenshotScope.content()
                 }
             }
         }
-        Thread.sleep(100L)
+        Thread.sleep(5000L)
         Screengrab.screenshot(screenshotName)
         Log.i("Screenshot", "took screenshot $screenshotName")
     }
@@ -165,10 +167,23 @@ class ScreenshotTests {
     }
 
     @Test
-    fun soundScreenLight() {
-        screenshot("sound_screen") {
-            // TODO:
-            Placeholder()
+    fun soundScreenPlaying() {
+        screenshot("sound_screen_playing") {
+            SoundScreenScreenshot()
+        }
+    }
+
+    @Test
+    fun soundScreenStopped() {
+        screenshot("sound_screen_stopped") {
+            SoundScreenStoppedScreenshot()
+        }
+    }
+
+    @Test
+    fun soundScreenForDeletion() {
+        screenshot("sound_screen_deletion") {
+            SoundScreenForDeletionScreenshot()
         }
     }
 }
