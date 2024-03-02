@@ -101,6 +101,6 @@
     <string name="locationsimulator_is_open_source">"LocationSimulator is Open Source Software.\nThe source code of the application is available on GitHub subject to the terms of the Apache 2 license. "</string>
     <string name="github_uri" translatable="false">https://github.com/isp-group-locationsimulator/Location-Simulator</string>
     <string name="original_development_supported">The original development of LocationSimulator was supported by:</string>
-    <string name="mailto_link" translatable="false">mailto:%1$s?body=LocationSimulator%20Version%20%2$s</string>
+    <string name="mailto_link" translatable="false">mailto:%1$s?body=LocationSimulator%%20Version%%20%2$s</string>
     <string name="quick_start">Quick start</string>
 </resources>
