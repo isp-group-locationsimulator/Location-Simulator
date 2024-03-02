@@ -71,7 +71,7 @@ fun RowScope.OneConfigurationListMember(
 				) {
 					Column {
 						Text(
-							text = "${configuration.id} - ${configuration.name}",
+							text = configuration.name,
 							fontSize = 18.sp,
 						)
 						if (isToggled) {

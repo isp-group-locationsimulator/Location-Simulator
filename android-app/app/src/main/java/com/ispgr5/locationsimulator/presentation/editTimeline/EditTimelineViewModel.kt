@@ -46,10 +46,10 @@ class EditTimelineViewModel @Inject constructor(
                             savedStateHandle.get<String>("soundNameToAdd")?.let { soundSource ->
                                 if (soundSource != "") {
 
-                                    val minVolume =  savedStateHandle.get<Float>("minVolume")
-                                    val maxVolume =  savedStateHandle.get<Float>("maxVolume")
-                                    val minPause =  savedStateHandle.get<Int>("minPause")
-                                    val maxPause =  savedStateHandle.get<Int>("maxPause")
+                                    val minVolume = savedStateHandle.get<Float>("minVolume")
+                                    val maxVolume = savedStateHandle.get<Float>("maxVolume")
+                                    val minPause = savedStateHandle.get<Int>("minPause")
+                                    val maxPause = savedStateHandle.get<Int>("maxPause")
 
                                     val componentsCopy = configuration.components.toMutableList()
                                     newSound = ConfigComponent.Sound(
@@ -70,7 +70,8 @@ class EditTimelineViewModel @Inject constructor(
                                             name = configuration.name,
                                             description = configuration.description,
                                             randomOrderPlayback = configuration.randomOrderPlayback,
-                                            components = componentsCopy
+                                            components = componentsCopy,
+                                            isFavorite = configuration.isFavorite
                                         )
                                     )
                                     components = componentsCopy
@@ -82,7 +83,8 @@ class EditTimelineViewModel @Inject constructor(
                                 description = configuration.description,
                                 randomOrderPlayback = configuration.randomOrderPlayback,
                                 components = components,
-                                current = newSound
+                                current = newSound,
+                                isFavourite = configuration.isFavorite
                             )
                         }
                 }
@@ -96,7 +98,9 @@ class EditTimelineViewModel @Inject constructor(
     fun onEvent(event: EditTimelineEvent) {
         when (event) {
             is EditTimelineEvent.ChangedSoundVolume -> {
-                if (state.value.current == null){return}
+                if (state.value.current == null) {
+                    return
+                }
                 viewModelScope.launch {
                     var component = state.value.current!!.copy()
                     when (component) {
@@ -106,6 +110,7 @@ class EditTimelineViewModel @Inject constructor(
                                 maxVolume = RangeConverter.transformPercentageToFactor(event.range.endInclusive)
                             )
                         }
+
                         else -> return@launch
                     }
                     _state.value = _state.value.copy(
@@ -114,8 +119,11 @@ class EditTimelineViewModel @Inject constructor(
                     )
                 }
             }
+
             is EditTimelineEvent.ChangedPause -> {
-                if (state.value.current == null){return}
+                if (state.value.current == null) {
+                    return
+                }
                 viewModelScope.launch {
                     var component = state.value.current!!.copy()
                     component = when (component) {
@@ -125,6 +133,7 @@ class EditTimelineViewModel @Inject constructor(
                                 maxPause = RangeConverter.sToMs(event.range.endInclusive)
                             )
                         }
+
                         is ConfigComponent.Vibration -> {
                             (component as ConfigComponent.Vibration).myCopy(
                                 minPause = RangeConverter.sToMs(event.range.start),
@@ -138,8 +147,11 @@ class EditTimelineViewModel @Inject constructor(
                     )
                 }
             }
+
             is EditTimelineEvent.ChangedVibStrength -> {
-                if (state.value.current == null){return}
+                if (state.value.current == null) {
+                    return
+                }
                 viewModelScope.launch {
                     var component = state.value.current!!.copy()
                     when (component) {
@@ -149,6 +161,7 @@ class EditTimelineViewModel @Inject constructor(
                                 maxStrength = RangeConverter.floatToEightBitInt(event.range.endInclusive)
                             )
                         }
+
                         else -> return@launch
                     }
                     _state.value = _state.value.copy(
@@ -157,8 +170,11 @@ class EditTimelineViewModel @Inject constructor(
                     )
                 }
             }
+
             is EditTimelineEvent.ChangedVibDuration -> {
-                if (state.value.current == null){return}
+                if (state.value.current == null) {
+                    return
+                }
                 viewModelScope.launch {
                     var component = state.value.current!!.copy()
                     when (component) {
@@ -168,6 +184,7 @@ class EditTimelineViewModel @Inject constructor(
                                 maxDuration = RangeConverter.sToMs(event.range.endInclusive)
                             )
                         }
+
                         else -> return@launch
                     }
                     _state.value = _state.value.copy(
@@ -176,8 +193,11 @@ class EditTimelineViewModel @Inject constructor(
                     )
                 }
             }
+
             is EditTimelineEvent.ChangeConfigComponentName -> {
-                if (state.value.current == null){return}
+                if (state.value.current == null) {
+                    return
+                }
                 viewModelScope.launch {
                     var component = state.value.current!!.copy()
                     component = when (component) {
@@ -199,11 +219,17 @@ class EditTimelineViewModel @Inject constructor(
                     )
                 }
             }
+
             is EditTimelineEvent.AddSound -> {
                 viewModelScope.launch {
-                    event.navController.navigate( Screen.SoundScreen.createRoute(currentConfigurationId!!))
+                    event.navController.navigate(
+                        Screen.SoundScreen.createRoute(
+                            currentConfigurationId!!
+                        )
+                    )
                 }
             }
+
             is EditTimelineEvent.AddVibration -> {
                 viewModelScope.launch {
                     val defaultValues: SettingsState = event.getDefaultValuesFunction()
@@ -225,6 +251,7 @@ class EditTimelineViewModel @Inject constructor(
                     )
                 }
             }
+
             is EditTimelineEvent.SelectedTimelineItem -> {
                 _state.value = _state.value.copy(
                     current = if (event.selectConfigComp === state.value.current) {
@@ -248,6 +275,7 @@ class EditTimelineViewModel @Inject constructor(
                     description = event.description.take(300)
                 )
             }
+
             is EditTimelineEvent.DeleteConfigurationComponent -> {
                 viewModelScope.launch {
                     val compsCopy = state.value.components.toMutableList()
@@ -258,6 +286,7 @@ class EditTimelineViewModel @Inject constructor(
                     )
                 }
             }
+
             is EditTimelineEvent.MoveConfCompLeft -> {
                 val index = getIndex(state.value.components, event.configComponent)
                 val compsCopy = state.value.components.toMutableList()
@@ -269,6 +298,7 @@ class EditTimelineViewModel @Inject constructor(
                     )
                 }
             }
+
             is EditTimelineEvent.MoveConfCompRight -> {
                 val index = getIndex(state.value.components, event.configComponent)
                 val compsCopy = state.value.components.toMutableList()
@@ -280,13 +310,17 @@ class EditTimelineViewModel @Inject constructor(
                     )
                 }
             }
+
             is EditTimelineEvent.ChangedRandomOrderPlayback -> {
                 _state.value = _state.value.copy(
                     randomOrderPlayback = event.randomOrderPlayback
                 )
             }
+
             is EditTimelineEvent.CopyConfigComponent -> {
-                if (state.value.current == null){return}
+                if (state.value.current == null) {
+                    return
+                }
                 viewModelScope.launch {
                     val componentsListCopy = state.value.components.toMutableList()
                     var component = state.value.current!!.copy()
@@ -332,7 +366,7 @@ class EditTimelineViewModel @Inject constructor(
     /**
      * Save a Configuration
      */
-    private fun saveConfiguration( ) {
+    private fun saveConfiguration() {
         viewModelScope.launch {
             try {
                 configurationUseCases.addConfiguration(
@@ -341,7 +375,8 @@ class EditTimelineViewModel @Inject constructor(
                         name = _state.value.name,
                         description = _state.value.description,
                         randomOrderPlayback = _state.value.randomOrderPlayback,
-                        components = _state.value.components
+                        components = _state.value.components,
+                        isFavorite = _state.value.isFavourite
                     )
                 )
             } catch (e: InvalidConfigurationException) {

@@ -10,5 +10,6 @@ data class EditTimelineState(
 	val description: String = "",
 	val randomOrderPlayback: Boolean = false,
 	val components: List<ConfigComponent> = emptyList(),
-	val current: ConfigComponent? = null
+	val current: ConfigComponent? = null,
+	val isFavourite: Boolean = false
 )
