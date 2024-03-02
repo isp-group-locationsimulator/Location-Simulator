@@ -232,6 +232,12 @@ fun HomeScreenContent(
                 .weight(1f)
                 .fillMaxWidth(), verticalArrangement = Arrangement.Center
         ) {
+            Text(
+                text = stringResource(R.string.quick_start),
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center,
+                style = typography.h6
+            )
             FavouriteList(
                 homeScreenState, onSelectFavourite
             )
@@ -390,9 +396,9 @@ fun ThemeToggle(
 }
 
 @Composable
-private fun SelectProfileButton(onSelectProfile: () -> Unit) {
+private fun SelectProfileButton(onButtonClick: () -> Unit) {
     Button(
-        onClick = onSelectProfile,
+        onClick = onButtonClick,
         modifier = Modifier
             .fillMaxWidth(0.8f)
             .testTag(TestTags.HOME_SELECT_CONFIG_BUTTON)
