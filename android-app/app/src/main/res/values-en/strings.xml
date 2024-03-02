@@ -92,4 +92,10 @@
     <string name="long_press_button_to_stop">Long-press the stop button to exit.</string>
     <string name="about">About</string>
     <string name="delete_configuration">Delete configuration</string>
+    <string name="maintainer">Maintainer</string>
+    <string name="location_simulator_is_maintained_by">LocationSimulator is maintained by:</string>
+    <string name="location_simulator_was_originally_created_by">LocationSimulator was originally created by:</string>
+    <string name="locationsimulator_is_open_source">"LocationSimulator is Open Source Software.\nThe source code of the application is available on GitHub subject to the terms of the Apache 2 license. "</string>
+    <string name="open_source">Open Source</string>
+    <string name="original_development_supported">The original development of LocationSimulator was supported by:</string>
 </resources>

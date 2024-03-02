@@ -92,4 +92,10 @@
     <string name="long_press_button_to_stop">Den Stop-Knopf lange gedrückt halten, um zu beenden.</string>
     <string name="about">Über</string>
     <string name="delete_configuration">Konfiguration löschen</string>
+    <string name="maintainer">Wartung und Support</string>
+    <string name="location_simulator_is_maintained_by">LocationSimulator wird gewartet durch:</string>
+    <string name="location_simulator_was_originally_created_by">LocationSimulator wurde ursprünglich entwickelt durch:</string>
+    <string name="locationsimulator_is_open_source"> LocationSimulator ist <i>Open Source Software</i>.\nDer Quellcode der Anwendung ist auf GitHub unter den Bedingungen der Apache 2-Lizenz verfügbar.</string>
+    <string name="open_source">Open Source</string>
+    <string name="original_development_supported">Die initiale Entwiclung von LocationSimulator wurde unterstützt durch:</string>
 </resources>

@@ -15,12 +15,21 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -32,7 +41,12 @@ import com.gigamole.composescrollbars.scrolltype.ScrollbarsScrollType
 import com.gigamole.composescrollbars.scrolltype.knobtype.ScrollbarsStaticKnobType
 import com.ispgr5.locationsimulator.BuildConfig
 import com.ispgr5.locationsimulator.R
+import com.ispgr5.locationsimulator.presentation.universalComponents.ClickableLink
+import com.ispgr5.locationsimulator.presentation.universalComponents.ClickableLinkDefaults
 import com.ispgr5.locationsimulator.presentation.universalComponents.TopBar
+import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
+import com.ispgr5.locationsimulator.ui.theme.ThemeState
+import com.ispgr5.locationsimulator.ui.theme.ThemeType
 
 /**
  * The Info Screen that shows Information about the developers and similar things.
@@ -44,6 +58,14 @@ fun InfoScreen(
 ) {
     InfoScreenScaffold(scaffoldState = scaffoldState) {
         navController.popBackStack()
+    }
+}
+
+@Preview
+@Composable
+fun InfoScreenPreview() {
+    LocationSimulatorTheme(themeState = ThemeState(ThemeType.DARK)) {
+        InfoScreenScaffold(scaffoldState = rememberScaffoldState(), onBackClick = {})
     }
 }
 
@@ -84,7 +106,13 @@ fun InfoScreenScaffold(scaffoldState: ScaffoldState, onBackClick: () -> Unit) {
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Developers()
+                        Maintainer()
+                        BlankSpacer()
+
+                        OriginalDevelopers()
+
+                        BlankSpacer()
+                        OpenSource()
 
                         BlankSpacer()
                         SupportedBy()
@@ -105,17 +133,104 @@ fun InfoScreenScaffold(scaffoldState: ScaffoldState, onBackClick: () -> Unit) {
 }
 
 @Composable
-fun SupportedBy() {
+fun OpenSource() {
+    Headline(text = stringResource(id = R.string.open_source))
+
     Text(
-        text = stringResource(id = R.string.infoscreen_support),
-        style = MaterialTheme.typography.h5
+        text = stringResource(R.string.locationsimulator_is_open_source),
+        textAlign = TextAlign.Center
     )
+
+    val context = LocalContext.current
+    val uri by remember {
+        mutableStateOf(context.getString(R.string.github_uri))
+    }
+
+    ClickableLink(
+        text = uri,
+        urlTarget = uri,
+        spanStyle = ClickableLinkDefaults.defaultSpanStyle().copy(
+            color = MaterialTheme.colors.secondary,
+            fontFamily = FontFamily.Monospace
+        )
+    )
+}
+
+@Composable
+fun NameText(text: String) {
+    Text(
+        text = text,
+        style = MaterialTheme.typography.body1.copy(
+            fontWeight = FontWeight.SemiBold,
+            textAlign = TextAlign.Center
+        )
+    )
+}
+
+@Composable
+fun IntroText(text: String) {
+    Text(
+        text = text,
+        style = MaterialTheme.typography.body2.copy(
+            textAlign = TextAlign.Center,
+            fontStyle = FontStyle.Italic
+        )
+    )
+}
+
+@Composable
+fun Headline(text: String) {
+    Text(
+        text = text,
+        style = MaterialTheme.typography.h5.copy(textAlign = TextAlign.Center)
+    )
+}
+
+@Composable
+fun Maintainer() {
+    Headline(text = stringResource(id = R.string.maintainer))
+    IntroText(text = stringResource(R.string.location_simulator_is_maintained_by))
+    NameText(text = "Joshua Wiedekopf")
+
+    val context = LocalContext.current
+    val email by remember {
+        mutableStateOf(context.getString(R.string.contact_email))
+    }
+    ClickableLink(
+        text = email,
+        urlTarget = stringResource(R.string.mailto_link, email, BuildConfig.VERSION_NAME)
+    )
+}
+
+@Composable
+fun OriginalDevelopers() {
+    Headline(text = stringResource(id = R.string.infoscreen_developer))
+    val developers = listOf(
+        "Felix Winkler",
+        "Florian Vierkant",
+        "Marie Biethahn",
+        "Max Henning Junghans",
+        "Sebastian Guhl",
+        "Steffen Marbach"
+    )
+    IntroText(
+        text = stringResource(id = R.string.location_simulator_was_originally_created_by)
+    )
+    developers.forEach { dev ->
+        NameText(dev)
+    }
+}
+
+@Composable
+fun SupportedBy() {
+    Headline(text = stringResource(id = R.string.infoscreen_support))
+    IntroText(text = stringResource(R.string.original_development_supported))
     Text(text = stringResource(id = R.string.isp), textAlign = TextAlign.Center)
-    Text(text = stringResource(id = R.string.university))
+    Text(text = stringResource(id = R.string.university), textAlign = TextAlign.Center)
     Spacer(modifier = Modifier.height(5.dp))
-    Text(text = "Jan Matyssek")
-    Text(text = "Joshua Wiedekopf")
-    Text(text = "Juljan Bouchagiar")
+    NameText(text = "Jan Matyssek")
+    NameText(text = "Joshua Wiedekopf")
+    NameText(text = "Juljan Bouchagiar")
     Image(
         painter = painterResource(id = R.drawable.logo_isp),
         contentDescription = "ISP Logo"
@@ -142,25 +257,6 @@ fun License() {
         text = stringResource(id = R.string.infoscreen_usingLicense),
         textAlign = TextAlign.Center
     )
-}
-
-@Composable
-fun Developers() {
-    Text(
-        text = stringResource(id = R.string.infoscreen_developer),
-        style = MaterialTheme.typography.h5
-    )
-    val developers = listOf(
-        "Felix Winkler",
-        "Florian Vierkant",
-        "Marie Biethahn",
-        "Max Henning Junghans",
-        "Sebastian Guhl",
-        "Steffen Marbach"
-    )
-    developers.forEach { dev ->
-        Text(dev, style = MaterialTheme.typography.body1)
-    }
 }
 
 @Composable
