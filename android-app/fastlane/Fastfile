@@ -21,15 +21,24 @@ platform :android do
     gradle(task: "test")
   end
 
-  desc "Capture screen"
-  lane :capture_screen do
+  desc "Capture screen for Phone UI"
+  lane :capture_screen_phone do
     gradle(task: "clean assembleDebug assembleAndroidTest")
-    screengrab
+    capture_android_screenshots(
+        locales: ["en-US", "de-DE"],
+        use_timestamp_suffix: false,
+        clear_previous_screenshots: true,
+        tests_apk_path: 'app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk',
+        app_apk_path: 'app/build/outputs/apk/debug/app-debug.apk',
+        test_instrumentation_runner: 'com.ispgr5.locationsimulator.HiltTestRunner',
+        use_tests_in_packages: 'com.ispgr5.locationsimulator.screenshots.phone',
+        output_directory: '../docs/Writerside/images/screenshots'
+    )
   end
 
-  desc "Deploy a new version to the Google Play"
-  lane :deploy do
-    gradle(task: "clean assembleRelease")
-    upload_to_play_store
-  end
+  #desc "Deploy a new version to the Google Play"
+  #lane :deploy do
+  #  gradle(task: "clean assembleRelease")
+  #  upload_to_play_store
+  #end
 end

@@ -23,21 +23,13 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 Runs all the tests
 
-### android capture_screen
+### android capture_screen_phone
 
 ```sh
-[bundle exec] fastlane android capture_screen
+[bundle exec] fastlane android capture_screen_phone
 ```
 
-Capture screen
-
-### android deploy
-
-```sh
-[bundle exec] fastlane android deploy
-```
-
-Deploy a new version to the Google Play
+Capture screen for Phone UI
 
 ----
 

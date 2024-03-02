@@ -152,4 +152,5 @@ dependencies {
     implementation "com.github.GIGAMOLE:ComposeScrollbars:1.0.4"
 
     androidTestImplementation "tools.fastlane:screengrab:2.1.1"
+
 }
