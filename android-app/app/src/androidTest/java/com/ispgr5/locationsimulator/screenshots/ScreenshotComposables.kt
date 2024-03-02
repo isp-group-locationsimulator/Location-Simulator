@@ -43,10 +43,7 @@ import com.ispgr5.locationsimulator.screenshots.ScreenshotData.runScreenStatePau
 import com.ispgr5.locationsimulator.screenshots.ScreenshotData.runScreenStatePlaying
 import com.ispgr5.locationsimulator.screenshots.ScreenshotData.selectScreenState
 import com.ispgr5.locationsimulator.screenshots.ScreenshotData.selectScreenStateDelete
-import com.ispgr5.locationsimulator.screenshots.ScreenshotData.themeState
-import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
 import com.ispgr5.locationsimulator.ui.theme.ThemeState
-import com.ispgr5.locationsimulator.ui.theme.ThemeType
 
 data class ScreenshotScope(
     val screenshotName: String, val theme: ThemeState
@@ -54,157 +51,133 @@ data class ScreenshotScope(
 
 @Composable
 @Preview
-fun HomeScreenScreenshot() {
-    LocationSimulatorTheme(themeState = themeState) {
-        val appTheme = remember { mutableStateOf(themeState) }
-        val state by remember {
-            mutableStateOf(
-                HomeScreenState(
-                    favoriteConfigurations = configurations.filter { it.isFavorite },
-                    configurationsWithErrors = emptyList()
-                )
+fun ScreenshotScope.HomeScreenScreenshot() {
+    val state by remember {
+        mutableStateOf(
+            HomeScreenState(
+                favoriteConfigurations = configurations.filter { it.isFavorite },
+                configurationsWithErrors = emptyList()
             )
-        }
-        HomeScreenScaffold(
-            homeScreenState = state,
-            appTheme = appTheme,
-            onInfoClick = {},
-            onSelectProfile = {},
-            onSelectFavourite = {},
-            onSelectTheme = {},
-            checkBatteryOptimizationStatus = { false },
-            onLaunchBatteryOptimizerDisable = {}
         )
     }
+    val themeState = remember {
+        mutableStateOf(this.theme)
+    }
+    HomeScreenScaffold(
+        homeScreenState = state,
+        appTheme = themeState,
+        onInfoClick = {},
+        onSelectProfile = {},
+        onSelectFavourite = {},
+        onSelectTheme = {},
+        checkBatteryOptimizationStatus = { false },
+        onLaunchBatteryOptimizerDisable = {}
+    )
 }
 
 @Composable
 @Preview
 fun InfoScreenScreenshot() {
-    LocationSimulatorTheme(themeState = themeState) {
-        InfoScreenScaffold(scaffoldState = rememberScaffoldState(), onBackClick = {})
-    }
+    InfoScreenScaffold(scaffoldState = rememberScaffoldState(), onBackClick = {})
 }
 
 @Composable
 @Preview
 fun SelectScreenNormalScreenshot() {
-    LocationSimulatorTheme(themeState = themeState) {
-        SelectScreenScreenshotPreview(selectScreenState = selectScreenState)
-    }
+    SelectScreenScreenshotPreview(selectScreenState = selectScreenState)
 }
 
 
 @Composable
 @Preview
 fun SelectScreenDeleteModeScreenshot() {
-    LocationSimulatorTheme(themeState = themeState) {
-        SelectScreenScreenshotPreview(selectScreenState = selectScreenStateDelete)
-    }
+    SelectScreenScreenshotPreview(selectScreenState = selectScreenStateDelete)
 }
 
 @Composable
 @Preview
 fun AddScreenScreenshot() {
-    LocationSimulatorTheme(themeState = themeState) {
-        AddScreenScreenshotPreview(addScreenState = addScreenState)
-    }
+    AddScreenScreenshotPreview(addScreenState = addScreenState)
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 @Preview
 fun SettingsScreenVibrationScreenshot() {
-    LocationSimulatorTheme(themeState = themeState) {
-        SettingsScreenScreenshotPreview(
-            state = ScreenshotData.settingsScreenState,
-            pagerState = rememberPagerState(initialPage = SettingsPages.Vibration.ordinal) {
-                SettingsPages.entries.size
-            })
-    }
+    SettingsScreenScreenshotPreview(
+        state = ScreenshotData.settingsScreenState,
+        pagerState = rememberPagerState(initialPage = SettingsPages.Vibration.ordinal) {
+            SettingsPages.entries.size
+        })
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 @Preview
 fun SettingsScreenSoundScreenshot() {
-    LocationSimulatorTheme(themeState = themeState) {
-        SettingsScreenScreenshotPreview(
-            state = ScreenshotData.settingsScreenState,
-            pagerState = rememberPagerState(initialPage = SettingsPages.Sound.ordinal) {
-                SettingsPages.entries.size
-            })
-    }
+    SettingsScreenScreenshotPreview(
+        state = ScreenshotData.settingsScreenState,
+        pagerState = rememberPagerState(initialPage = SettingsPages.Sound.ordinal) {
+            SettingsPages.entries.size
+        })
 }
 
 @Composable
 @Preview
 fun DelayScreenScreenshot() {
-    LocationSimulatorTheme(themeState = themeState) {
-        DelayScreenScreenshotPreview(
-            state = delayScreenState,
-            initialTimerState = delayScreenInitialTimerState
-        )
-    }
+    DelayScreenScreenshotPreview(
+        state = delayScreenState,
+        initialTimerState = delayScreenInitialTimerState
+    )
 }
 
 @Composable
 @Preview
 fun RunScreenPausedScreenshot() {
-    LocationSimulatorTheme(themeState = themeState) {
-        RunScreenScreenshotPreview(
-            configuration = configurations.first(),
-            effectTimelineState = runScreenStatePaused,
-            initialRefreshInstant = runScreenInitialRefresh
-        )
-    }
+    RunScreenScreenshotPreview(
+        configuration = configurations.first(),
+        effectTimelineState = runScreenStatePaused,
+        initialRefreshInstant = runScreenInitialRefresh
+    )
 }
 
 @Composable
 @Preview
 fun RunScreenActiveScreenshot() {
-    LocationSimulatorTheme(themeState = themeState) {
-        RunScreenScreenshotPreview(
-            configuration = configurations.first(),
-            effectTimelineState = runScreenStatePlaying,
-            initialRefreshInstant = runScreenInitialRefresh
-        )
-    }
+    RunScreenScreenshotPreview(
+        configuration = configurations.first(),
+        effectTimelineState = runScreenStatePlaying,
+        initialRefreshInstant = runScreenInitialRefresh
+    )
 }
 
 @Composable
 @Preview
 fun EditTimelineNormalScreenshot() {
-    LocationSimulatorTheme(themeState = themeState) {
-        EditTimelineScreenshotPreview(
-            isDialogShown = false, state = editTimelineState,
-            vibrationSupportHintMode = VibrationSupportHintMode.SUPPRESSED
-        )
-    }
+    EditTimelineScreenshotPreview(
+        isDialogShown = false, state = editTimelineState,
+        vibrationSupportHintMode = VibrationSupportHintMode.SUPPRESSED
+    )
 }
 
 @Composable
 @Preview
 fun EditTimelineDialogShownScreenshot() {
-    LocationSimulatorTheme(themeState = themeState) {
-        EditTimelineScreenshotPreview(
-            isDialogShown = true,
-            state = editTimelineState,
-            vibrationSupportHintMode = VibrationSupportHintMode.SUPPRESSED
-        )
-    }
+    EditTimelineScreenshotPreview(
+        isDialogShown = true,
+        state = editTimelineState,
+        vibrationSupportHintMode = VibrationSupportHintMode.SUPPRESSED
+    )
 }
 
 @Composable
 @Preview
 fun EditTimelineUnsupportedIntensityScreenshot() {
-    LocationSimulatorTheme(themeState = themeState) {
-        EditTimelineScreenshotPreview(
-            isDialogShown = false,
-            state = editTimelineState,
-            vibrationSupportHintMode = VibrationSupportHintMode.ENFORCED
-        )
-    }
+    EditTimelineScreenshotPreview(
+        isDialogShown = false,
+        state = editTimelineState,
+        vibrationSupportHintMode = VibrationSupportHintMode.ENFORCED
+    )
 }
 
 @Composable
@@ -234,7 +207,6 @@ fun SoundScreenForDeletionScreenshot() {
 }
 
 private object ScreenshotData {
-    val themeState = ThemeState(ThemeType.LIGHT)
     val defaultVibration = ConfigComponent.Vibration(
         id = 1,
         name = DefaultShippingSettings.DEFAULT_NAME_VIBRATION,
