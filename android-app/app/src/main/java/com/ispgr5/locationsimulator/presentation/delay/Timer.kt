@@ -10,6 +10,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
 import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
@@ -80,6 +81,19 @@ fun Timer(
 
             timer.start()
         }
+    }
+
+    Row(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Text(
+            text = stringResource(R.string.delay_start),
+            style = MaterialTheme.typography.h4,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(4.dp),
+            textAlign = TextAlign.Center
+        )
     }
 
     Row(

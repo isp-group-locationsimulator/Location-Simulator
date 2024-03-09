@@ -99,4 +99,5 @@
     <string name="open_source">Open Source</string>
     <string name="original_development_supported">Die initiale Entwiclung von LocationSimulator wurde unterstützt durch:</string>
     <string name="quick_start">Schnellstart</string>
+    <string name="delay_start">Start verzögern um:</string>
 </resources>
