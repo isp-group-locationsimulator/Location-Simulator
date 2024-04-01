@@ -7,7 +7,7 @@
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:name=".LocationApp"
@@ -23,24 +23,30 @@
         android:theme="@style/Theme.LocationSimulator"
         tools:targetApi="tiramisu">
         <activity
+            android:name=".vibrationtest.VibrationTestActivity"
+            android:exported="true"
+            android:label="@string/title_activity_vibration_test"
+            android:theme="@style/Theme.LocationSimulator" />
+        <activity
             android:name=".presentation.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.LocationSimulator">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
+
                 <category android:name="android.intent.category.DEFAULT" />
 
                 <data android:mimeType="application/gzip" />
                 <data android:mimeType="application/x-gzip" />
             </intent-filter>
-
             <intent-filter tools:ignore="AppLinkUrlError">
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
 
                 <data android:mimeType="application/gzip" />
@@ -68,7 +74,6 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/fileprovider_paths" />
         </provider>
-
     </application>
 
 </manifest>

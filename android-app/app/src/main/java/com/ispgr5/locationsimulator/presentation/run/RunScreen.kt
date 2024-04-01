@@ -770,8 +770,10 @@ data class RefRangeValue(
 ) {
     fun valueRelative(): BigDecimal? {
         val lowerSanitized = value - lower
-        return when (val rangeWidth = upper - lower) {
-            BigDecimal.valueOf(0) -> null
+        val rangeWidth = upper - lower
+        return when {
+            rangeWidth == BigDecimal.valueOf(0) -> null
+            (BigDecimal.valueOf(0) - rangeWidth).abs() <= BigDecimal.valueOf(0.03) -> null //close but not quite null
             else -> lowerSanitized.divide(rangeWidth, 2, RoundingMode.HALF_UP)
         }
     }

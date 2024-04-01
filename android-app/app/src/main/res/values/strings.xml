@@ -104,4 +104,5 @@
     <string name="mailto_link" translatable="false">mailto:%1$s?body=LocationSimulator%%20Version%%20%2$s</string>
     <string name="quick_start">Quick start</string>
     <string name="delay_start">Delay start by:</string>
+    <string name="title_activity_vibration_test">VibrationTestActivity</string>
 </resources>

@@ -57,7 +57,10 @@ class SimulationService : LifecycleService() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             val vibratorManager =
                 getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
-            vibratorManager.defaultVibrator
+            Log.d(TAG, "Vibration manager IDs: ${vibratorManager.vibratorIds.joinToString()}")
+            vibratorManager.defaultVibrator.also {
+                Log.d(TAG, "Using vibrator with ID ${it.id}")
+            }
         } else {
             @Suppress("DEPRECATION") // Needed for the support of older Android versions.
             getSystemService(VIBRATOR_SERVICE) as Vibrator
