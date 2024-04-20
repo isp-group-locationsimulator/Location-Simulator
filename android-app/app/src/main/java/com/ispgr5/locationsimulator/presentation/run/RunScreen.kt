@@ -78,6 +78,7 @@ import com.ispgr5.locationsimulator.presentation.universalComponents.SnackbarCon
 import com.ispgr5.locationsimulator.presentation.util.MakeSnackbar
 import com.ispgr5.locationsimulator.presentation.util.between
 import com.ispgr5.locationsimulator.presentation.util.millisToSeconds
+import com.ispgr5.locationsimulator.presentation.util.vibratorHasAmplitudeControlAndReason
 import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
 import com.ispgr5.locationsimulator.ui.theme.ThemeState
 import com.ispgr5.locationsimulator.ui.theme.ThemeType
@@ -335,7 +336,7 @@ fun StopButton(interactionSource: MutableInteractionSource) {
 
 object RunscreenPreviewData {
     val baselineInstant: Instant = Instant.ofEpochMilli(1702738800000L)
-    val vibrationComponent = ConfigComponent.Vibration(
+    private val vibrationComponent = ConfigComponent.Vibration(
         id = 0,
         name = "vib0",
         minStrength = 20,
@@ -345,7 +346,7 @@ object RunscreenPreviewData {
         minDuration = 200,
         maxDuration = 500
     )
-    val soundComponent = ConfigComponent.Sound(
+    private val soundComponent = ConfigComponent.Sound(
         id = 1,
         name = "sound",
         source = "Source.mp3",
@@ -639,20 +640,23 @@ fun SoundUi(effectState: EffectParameters.Sound, iconSize: Dp) {
 @Composable
 fun VibrationUi(effectState: EffectParameters.Vibration, iconSize: Dp) {
     val original = effectState.original as ConfigComponent.Vibration
-    val strengthRange = RefRangeValue(value = effectState.strength.toBigDecimal(),
-        lower = original.minStrength.toBigDecimal(),
-        upper = original.maxStrength.toBigDecimal(),
-        label = R.string.editTimeline_Vibration_Strength,
-        breakpoints = { width ->
-            when (width.toInt()) {
-                in 0..100 -> RefRangeValue.Breakpoint.SMALL
-                in 100..200 -> RefRangeValue.Breakpoint.LARGE
-                else -> RefRangeValue.Breakpoint.MEDIUM
-            }
-        },
-        formatValue = {
-            it.setScale(0, RoundingMode.FLOOR).toString()
-        })
+    val strengthRange = when {
+        LocalContext.current.vibratorHasAmplitudeControlAndReason.first -> RefRangeValue(value = effectState.strength.toBigDecimal(),
+            lower = original.minStrength.toBigDecimal(),
+            upper = original.maxStrength.toBigDecimal(),
+            label = R.string.editTimeline_Vibration_Strength,
+            breakpoints = { width ->
+                when (width.toInt()) {
+                    in 0..100 -> RefRangeValue.Breakpoint.SMALL
+                    in 100..200 -> RefRangeValue.Breakpoint.LARGE
+                    else -> RefRangeValue.Breakpoint.MEDIUM
+                }
+            },
+            formatValue = {
+                it.setScale(0, RoundingMode.FLOOR).toString()
+            })
+        else -> null
+    }
     val durationRange = RefRangeValue(value = effectState.durationMillis.toBigDecimal(),
         lower = original.minDuration.toBigDecimal(),
         upper = original.maxDuration.toBigDecimal(),
@@ -672,7 +676,7 @@ fun VibrationUi(effectState: EffectParameters.Vibration, iconSize: Dp) {
     val pauseRange = buildPauseRange(effectState, original)
     EffectPreviewUi(
         effectState = effectState,
-        ranges = listOf(strengthRange, durationRange, pauseRange),
+        ranges = listOfNotNull(strengthRange, durationRange, pauseRange),
         iconSize = iconSize
     )
 }

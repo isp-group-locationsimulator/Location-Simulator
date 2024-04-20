@@ -1,8 +1,5 @@
 package com.ispgr5.locationsimulator.presentation.settings
 
-import android.content.Context
-import android.os.Build
-import android.os.Vibrator
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -49,6 +46,7 @@ import com.ispgr5.locationsimulator.domain.model.RangeConverter
 import com.ispgr5.locationsimulator.presentation.editTimeline.components.SecText
 import com.ispgr5.locationsimulator.presentation.editTimeline.components.SliderForRange
 import com.ispgr5.locationsimulator.presentation.universalComponents.TopBar
+import com.ispgr5.locationsimulator.presentation.util.vibratorHasAmplitudeControlAndReason
 
 /**
  * The Settings Screen.
@@ -223,8 +221,6 @@ private fun SoundCard(
                 .toString() + "% "
         )
         SliderForRange(
-            value = RangeConverter.transformFactorToPercentage(state.minVolumeSound)..
-                    RangeConverter.transformFactorToPercentage(state.maxVolumeSound),
             onValueChange = { value: ClosedFloatingPointRange<Float> ->
                 onChangeEvent(
                     SettingsEvent.ChangedSoundVolume(
@@ -233,6 +229,8 @@ private fun SoundCard(
                     )
                 )
             },
+            value = RangeConverter.transformFactorToPercentage(state.minVolumeSound)..
+                    RangeConverter.transformFactorToPercentage(state.maxVolumeSound),
             range = 0f..100f
         )
 
@@ -245,9 +243,6 @@ private fun SoundCard(
             max = RangeConverter.msToS(state.maxPauseSound)
         )
         SliderForRange(
-            value = RangeConverter.msToS(state.minPauseSound)..RangeConverter.msToS(
-                state.maxPauseSound
-            ),
             onValueChange = { value: ClosedFloatingPointRange<Float> ->
                 onChangeEvent(
                     SettingsEvent.ChangedSoundPause(
@@ -256,6 +251,9 @@ private fun SoundCard(
                     ),
                 )
             },
+            value = RangeConverter.msToS(state.minPauseSound)..RangeConverter.msToS(
+                state.maxPauseSound
+            ),
             range = 0f..60f
         )
     }
@@ -319,15 +317,8 @@ private fun VibrationCard(
         /**
          * The Vibration Strength
          */
-        val vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            // Use the recommended method to get the Vibrator service
-            LocalContext.current.getSystemService(Vibrator::class.java)
-        } else {
-            // Use the deprecated method to get the Vibrator service
-            @Suppress("DEPRECATION")
-            LocalContext.current.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-        }
-        if (Build.VERSION.SDK_INT >= 26 && vibrator.hasAmplitudeControl()) {
+        val (amplitudeControlSupported, _) = LocalContext.current.vibratorHasAmplitudeControlAndReason
+        if (amplitudeControlSupported) {
             Text(text = stringResource(id = R.string.editTimeline_Vibration_Strength))
             Text(
                 RangeConverter.eightBitIntToPercentageFloat(state.minStrengthVibration)
@@ -339,9 +330,6 @@ private fun VibrationCard(
                     .toString() + "%"
             )
             SliderForRange(
-                value = RangeConverter.eightBitIntToPercentageFloat(state.minStrengthVibration)..RangeConverter.eightBitIntToPercentageFloat(
-                    state.maxStrengthVibration
-                ),
                 onValueChange = { value: ClosedFloatingPointRange<Float> ->
                     onChangeEvent(
                         SettingsEvent.ChangedVibStrength(
@@ -350,6 +338,9 @@ private fun VibrationCard(
                         )
                     )
                 },
+                value = RangeConverter.eightBitIntToPercentageFloat(state.minStrengthVibration)..RangeConverter.eightBitIntToPercentageFloat(
+                    state.maxStrengthVibration
+                ),
                 range = 0f..100f
             )
         }
@@ -362,9 +353,6 @@ private fun VibrationCard(
             max = RangeConverter.msToS(state.maxDurationVibration)
         )
         SliderForRange(
-            value = RangeConverter.msToS(state.minDurationVibration)..RangeConverter.msToS(
-                state.maxDurationVibration
-            ),
             onValueChange = { value: ClosedFloatingPointRange<Float> ->
                 onChangeEvent(
                     SettingsEvent.ChangedVibDuration(
@@ -373,6 +361,9 @@ private fun VibrationCard(
                     )
                 )
             },
+            value = RangeConverter.msToS(state.minDurationVibration)..RangeConverter.msToS(
+                state.maxDurationVibration
+            ),
             range = 0f..30f
         )
 
@@ -385,9 +376,6 @@ private fun VibrationCard(
             max = RangeConverter.msToS(state.maxPauseVibration)
         )
         SliderForRange(
-            value = RangeConverter.msToS(state.minPauseVibration)..RangeConverter.msToS(
-                state.maxPauseVibration
-            ),
             onValueChange = { value: ClosedFloatingPointRange<Float> ->
                 onChangeEvent(
                     SettingsEvent.ChangedVibPause(
@@ -396,6 +384,9 @@ private fun VibrationCard(
                     )
                 )
             },
+            value = RangeConverter.msToS(state.minPauseVibration)..RangeConverter.msToS(
+                state.maxPauseVibration
+            ),
             range = 0f..60f
         )
 

@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -212,104 +211,60 @@ private fun ConfigMetadata(
     onChangeDescription: (String) -> Unit,
     onCheckRandomOrder: (Boolean) -> Unit
 ) {
-    Row(
-        modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End
+    Column(
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp),
+        verticalArrangement = Arrangement.spacedBy(1.dp)
     ) {
-
-        /**
-         * Name, Description and Random order
-         */
-        Column(
+        OutlinedTextField(
+            value = state.name,
             modifier = Modifier
-                .padding(12.dp)
-                .fillMaxWidth()
-                .weight(1f),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(2.dp)
+                .testTag(TestTags.EDIT_CONFIG_NAME_TEXTINPUT)
+                .fillMaxWidth(),
+            onValueChange = onChangeName,
+            label = {
+                Text(stringResource(id = R.string.editTimeline_name))
+            },
+            textStyle = TextStyle(
+                color = MaterialTheme.colors.onBackground
+            ),
+            singleLine = true
+        )
+
+        OutlinedTextField(
+            value = state.description,
+            modifier = Modifier
+                .testTag(TestTags.EDIT_CONFIG_DESCRIPTION_TEXTINPUT)
+                .fillMaxWidth(),
+            maxLines = 2,
+            singleLine = false,
+            label = {
+                Text(stringResource(id = R.string.editTimeline_description))
+            },
+            onValueChange = onChangeDescription,
+            textStyle = TextStyle(
+                color = MaterialTheme.colors.onBackground
+            )
+        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Column {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.editTimeline_name) + ":",
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.width(125.dp),
-                        color = MaterialTheme.colors.onBackground
-                    )
-                    Divider(
-                        color = MaterialTheme.colors.background,
-                        modifier = Modifier.width(10.dp)
-                    )
-                    Column(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        OutlinedTextField(
-                            value = state.name,
-                            modifier = Modifier.testTag(TestTags.EDIT_CONFIG_NAME_TEXTINPUT),
-                            onValueChange = onChangeName,
-                            textStyle = TextStyle(
-                                color = MaterialTheme.colors.onBackground
-                            )
-                        )
-                    }
-                }
-            }
-            Column {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.editTimeline_description) + ":",
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.width(125.dp)
-                    )
-                    Divider(
-                        color = MaterialTheme.colors.background,
-                        modifier = Modifier.width(10.dp)
-                    )
-                    Column(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        OutlinedTextField(
-                            value = state.description,
-                            modifier = Modifier.testTag(TestTags.EDIT_CONFIG_DESCRIPTION_TEXTINPUT),
-                            maxLines = 2,
-                            onValueChange = onChangeDescription,
-                            textStyle = TextStyle(
-                                color = MaterialTheme.colors.onBackground
-                            )
-                        )
-                    }
-                }
-            }
-            Column {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.editTimeline_randomOrderPlayback) + ":",
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.width(125.dp)
-                    )
-                    Column(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        Switch(
-                            checked = state.randomOrderPlayback,
-                            onCheckedChange = onCheckRandomOrder
-                        )
-                    }
-                }
+            Text(
+                stringResource(id = R.string.editTimeline_randomOrderPlayback),
+                fontWeight = FontWeight.Bold
+            )
+            Row(
+                modifier = Modifier.weight(1.0f).padding(start = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceEvenly,
+            ) {
+                Text(stringResource(id = R.string.playback_in_order))
+                Switch(
+                    checked = state.randomOrderPlayback,
+                    onCheckedChange = onCheckRandomOrder
+                )
+                Text(stringResource(id = R.string.playback_random_order))
             }
         }
     }
@@ -354,7 +309,7 @@ fun EditTimelineScreenshotPreview(
 ) {
     EditTimelineScaffold(
         state = state,
-        scaffoldState = rememberScaffoldState() ,
+        scaffoldState = rememberScaffoldState(),
         isDialogShown = isDialogShown,
         onBackClick = {},
         onSettingsClick = {},

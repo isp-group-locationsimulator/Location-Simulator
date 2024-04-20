@@ -1,26 +1,20 @@
 package com.ispgr5.locationsimulator.presentation.editTimeline.components
 
-import android.content.Context
-import android.os.Build
-import android.os.Vibrator
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.ContentAlpha
-import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
@@ -60,6 +54,7 @@ import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 import com.ispgr5.locationsimulator.domain.model.RangeConverter
 import com.ispgr5.locationsimulator.presentation.editTimeline.EditTimelineEventHandlers
 import com.ispgr5.locationsimulator.presentation.universalComponents.ConfirmDeleteDialog
+import com.ispgr5.locationsimulator.presentation.util.vibratorHasAmplitudeControlAndReason
 import kotlin.properties.Delegates
 
 /**
@@ -84,7 +79,6 @@ fun EditConfigComponent(
     var showDeleteConfirmDialog by remember { mutableStateOf(false) }
     var showStrengthNotSupportedDialog by remember { mutableStateOf(false) }
 
-
     val blackSubtitle1 = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Black)
 
     val scrollState = rememberScrollState()
@@ -104,55 +98,41 @@ fun EditConfigComponent(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(1.dp, Color.Yellow),
+                modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 OutlinedButton(
                     modifier = Modifier
                         .weight(1f)
                         .testTag(TestTags.EDIT_MOVE_LEFT),
-                    contentPadding = PaddingValues(all = 1.dp),
+                    contentPadding = PaddingValues(horizontal = 1.dp),
                     onClick = {
                         editTimelineEventHandlers?.onMoveLeftClicked?.invoke(configComponent)
                     },
                 ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.width(IntrinsicSize.Max)
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.baseline_arrow_back_24),
-                            contentDescription = null
-                        )
-                        Text(stringResource(id = R.string.TimelineMoveLeft))
-                    }
-
+                    Icon(
+                        painter = painterResource(id = R.drawable.baseline_arrow_back_24),
+                        contentDescription = null
+                    )
+                    Text(stringResource(id = R.string.TimelineMoveLeft))
                 }
 
-                Divider(Modifier.weight(0.2f))
+                Spacer(Modifier.weight(0.2f))
 
                 OutlinedButton(
                     modifier = Modifier
                         .weight(1f)
                         .testTag(TestTags.EDIT_MOVE_RIGHT),
-                    contentPadding = PaddingValues(all = 1.dp),
+                    contentPadding = PaddingValues(horizontal = 1.dp),
                     onClick = {
                         editTimelineEventHandlers?.onMoveRightClicked?.invoke(configComponent)
                     },
                 ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.width(IntrinsicSize.Max)
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.baseline_arrow_forward_24),
-                            contentDescription = null
-                        )
-                        Text(stringResource(id = R.string.TimelineMoveRight))
-                    }
-
+                    Text(stringResource(id = R.string.TimelineMoveRight))
+                    Icon(
+                        painter = painterResource(id = R.drawable.baseline_arrow_forward_24),
+                        contentDescription = null
+                    )
                 }
             }
 
@@ -200,11 +180,11 @@ fun EditConfigComponent(
                                 .toString() + "% "
                         )
                         SliderForRange(
-                            value = RangeConverter.transformFactorToPercentage(configComponent.minVolume)..
-                                    RangeConverter.transformFactorToPercentage(configComponent.maxVolume),
                             onValueChange = {
                                 editTimelineEventHandlers?.onSoundValueChanged?.invoke(it)
                             },
+                            value = RangeConverter.transformFactorToPercentage(configComponent.minVolume)..
+                                    RangeConverter.transformFactorToPercentage(configComponent.maxVolume),
                             range = 0f..100f
                         )
                     }
@@ -213,43 +193,49 @@ fun EditConfigComponent(
                         minPause = configComponent.minPause
                         maxPause = configComponent.maxPause
 
+                        val (hasAmplitudeControl, _) = when (vibrationSupportHintMode) {
+                            VibrationSupportHintMode.ENFORCED -> false to null
+                            VibrationSupportHintMode.SUPPRESSED -> true to null
+                            else -> LocalContext.current.vibratorHasAmplitudeControlAndReason
+                        }
+
                         /**
                          * The Vibration Strength
                          */
                         Row(
                             modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Column {
-                                Text(
-                                    text = stringResource(id = R.string.editTimeline_Vibration_Strength),
-                                    style = blackSubtitle1
-                                )
-                                Text(
-                                    RangeConverter.eightBitIntToPercentageFloat(configComponent.minStrength)
-                                        .toInt().toString() + "% "
-                                            + stringResource(id = R.string.editTimeline_range) + RangeConverter.eightBitIntToPercentageFloat(
-                                        configComponent.maxStrength
-                                    )
-                                        .toInt()
-                                        .toString() + "%",
-                                    modifier = Modifier.testTag(TestTags.EDIT_VIB_SLIDER_STRENGTH_TEXT)
-                                )
-                            }
-                            val vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                                // Use the recommended method to get the Vibrator service
-                                LocalContext.current.getSystemService(Vibrator::class.java)
-                            } else {
-                                // Use the deprecated method to get the Vibrator service
-                                @Suppress("DEPRECATION")
-                                LocalContext.current.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-                            }
-                            val showNoVibrationSupportHint = when (vibrationSupportHintMode) {
-                                VibrationSupportHintMode.SUPPRESSED -> false
-                                VibrationSupportHintMode.ENFORCED -> true
-                                else -> Build.VERSION.SDK_INT < 26 || !vibrator.hasAmplitudeControl()
-                            }
-                            if (showNoVibrationSupportHint) {
+
+                            Text(
+                                text = buildAnnotatedString {
+                                    withStyle(
+                                        MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Black)
+                                            .toSpanStyle()
+                                    ) {
+                                        append(stringResource(id = R.string.editTimeline_Vibration_Strength))
+                                    }
+                                    if (hasAmplitudeControl) {
+                                        append("\n")
+                                        val lowerBound =
+                                            RangeConverter.eightBitIntToPercentageFloat(
+                                                configComponent.minStrength
+                                            ).toInt()
+                                        val upperBound =
+                                            RangeConverter.eightBitIntToPercentageFloat(
+                                                configComponent.maxStrength
+                                            ).toInt()
+                                        append(lowerBound.toString())
+                                        append("% ")
+                                        append(stringResource(id = R.string.editTimeline_range))
+                                        append(upperBound.toString())
+                                        append("%")
+                                    }
+                                }
+                            )
+                            if (!hasAmplitudeControl) {
+
                                 Button(
                                     onClick = {
                                         showStrengthNotSupportedDialog = true
@@ -272,18 +258,21 @@ fun EditConfigComponent(
                                 }
                             }
                         }
-
-                        SliderForRange(
-                            modifier = Modifier.testTag(TestTags.EDIT_VIB_SLIDER_STRENGTH),
-                            value = RangeConverter.eightBitIntToPercentageFloat(configComponent.minStrength)..RangeConverter.eightBitIntToPercentageFloat(
-                                configComponent.maxStrength
-                            ),
-                            onValueChange = {
-                                editTimelineEventHandlers?.onVibStrengthChanged?.invoke(it)
-                            },
-                            range = 0f..100f,
-
+                        if (hasAmplitudeControl) {
+                            SliderForRange(
+                                modifier = Modifier.testTag(TestTags.EDIT_VIB_SLIDER_STRENGTH),
+                                value = RangeConverter.eightBitIntToPercentageFloat(
+                                    configComponent.minStrength
+                                )..RangeConverter.eightBitIntToPercentageFloat(
+                                    configComponent.maxStrength
+                                ),
+                                onValueChange = {
+                                    editTimelineEventHandlers?.onVibStrengthChanged?.invoke(it)
+                                },
+                                range = 0f..100f
                             )
+                        }
+
 
                         /**
                          * The Vibration duration
@@ -292,19 +281,21 @@ fun EditConfigComponent(
                             text = stringResource(id = R.string.editTimeline_Vibration_duration),
                             style = blackSubtitle1
                         )
+
                         SecText(
                             min = RangeConverter.msToS(configComponent.minDuration),
                             max = RangeConverter.msToS(configComponent.maxDuration)
                         )
                         SliderForRange(
-                            value = RangeConverter.msToS(configComponent.minDuration)..RangeConverter.msToS(
-                                configComponent.maxDuration
-                            ),
+                            modifier = Modifier.testTag(TestTags.EDIT_VIB_SLIDER_DURATION),
+                            enabled = hasAmplitudeControl,
                             onValueChange = {
                                 editTimelineEventHandlers?.onVibDurationChanged?.invoke(it)
                             },
-                            range = 0f..30f,
-                            modifier = Modifier.testTag(TestTags.EDIT_VIB_SLIDER_DURATION)
+                            value = RangeConverter.msToS(configComponent.minDuration)..RangeConverter.msToS(
+                                configComponent.maxDuration
+                            ),
+                            range = 0f..30f
                         )
                     }
                 }
@@ -320,67 +311,67 @@ fun EditConfigComponent(
                     RangeConverter.msToS(maxPause)
                 )
                 SliderForRange(
-                    value = RangeConverter.msToS(minPause)..RangeConverter.msToS(maxPause),
+                    modifier = Modifier.testTag(TestTags.EDIT_SLIDER_PAUSE),
                     onValueChange = {
                         editTimelineEventHandlers?.onPauseValueChanged?.invoke(it)
                     },
-                    range = 0f..60f,
-                    modifier = Modifier.testTag(TestTags.EDIT_SLIDER_PAUSE)
+                    value = RangeConverter.msToS(minPause)..RangeConverter.msToS(maxPause),
+                    range = 0f..60f
                 )
             }
-            Column {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceAround
+            Spacer(modifier = Modifier.weight(1f))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceAround
+            ) {
+                Button(
+                    onClick = {
+                        editTimelineEventHandlers?.onCopyConfigComponent?.invoke(
+                            configComponent
+                        )
+                    }, //show Confirm Dialog
+                    contentPadding = PaddingValues(0.dp),
+                    enabled = true,
+                    shape = MaterialTheme.shapes.small,
+                    border = null,
+                    elevation = null,
+                    colors = ButtonDefaults.buttonColors(
+                        backgroundColor = Color.Transparent,
+                        contentColor = MaterialTheme.colors.onSurface,
+                        disabledBackgroundColor = Color.Transparent,
+                        disabledContentColor = MaterialTheme.colors.primary.copy(alpha = ContentAlpha.disabled),
+                    )
                 ) {
-                    Button(
-                        onClick = {
-                            editTimelineEventHandlers?.onCopyConfigComponent?.invoke(
-                                configComponent
-                            )
-                        }, //show Confirm Dialog
-                        contentPadding = PaddingValues(0.dp),
-                        enabled = true,
-                        shape = MaterialTheme.shapes.small,
-                        border = null,
-                        elevation = null,
-                        colors = ButtonDefaults.buttonColors(
-                            backgroundColor = Color.Transparent,
-                            contentColor = MaterialTheme.colors.onSurface,
-                            disabledBackgroundColor = Color.Transparent,
-                            disabledContentColor = MaterialTheme.colors.primary.copy(alpha = ContentAlpha.disabled),
-                        )
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.duplicate_icon_24),
-                            contentDescription = null,
-                        )
-                    }
-                    Button(
-                        onClick = { showDeleteConfirmDialog = true }, //show Confirm Dialog
-                        contentPadding = PaddingValues(0.dp),
-                        enabled = true,
-                        shape = MaterialTheme.shapes.small,
-                        border = null,
-                        elevation = null,
-                        colors = ButtonDefaults.buttonColors(
-                            backgroundColor = Color.Transparent,
-                            contentColor = Color.Red,
-                            disabledBackgroundColor = Color.Transparent,
-                            disabledContentColor = MaterialTheme.colors.primary.copy(alpha = ContentAlpha.disabled),
-                        )
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_baseline_delete_outline_24),
-                            contentDescription = null,
-                        )
-                    }
-
+                    Icon(
+                        painter = painterResource(id = R.drawable.duplicate_icon_24),
+                        contentDescription = null,
+                    )
                 }
+                Button(
+                    onClick = { showDeleteConfirmDialog = true }, //show Confirm Dialog
+                    contentPadding = PaddingValues(0.dp),
+                    enabled = true,
+                    shape = MaterialTheme.shapes.small,
+                    border = null,
+                    elevation = null,
+                    colors = ButtonDefaults.buttonColors(
+                        backgroundColor = Color.Transparent,
+                        contentColor = Color.Red,
+                        disabledBackgroundColor = Color.Transparent,
+                        disabledContentColor = MaterialTheme.colors.primary.copy(alpha = ContentAlpha.disabled),
+                    )
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_baseline_delete_outline_24),
+                        contentDescription = null,
+                    )
+                }
+
             }
         }
         Scrollbars(state = scrollbarsState)
     }
+
 //Dialog to confirm the deleting of an config Component
     val revShowDialog = fun() { showDeleteConfirmDialog = !showDeleteConfirmDialog }
     if (showDeleteConfirmDialog) {
@@ -393,8 +384,16 @@ fun EditConfigComponent(
         AlertDialog(
             onDismissRequest = { showStrengthNotSupportedDialog = false },
             text = {
+                val (_, reasonStringRes) = LocalContext.current.vibratorHasAmplitudeControlAndReason
+
                 Text(
-                    text = stringResource(id = R.string.vibrationStrengthNotSupported),
+                    text = buildString {
+                        append(stringResource(id = R.string.vibrationStrengthNotSupported))
+                        if (reasonStringRes != null) {
+                            append(" ")
+                            append(stringResource(id = reasonStringRes))
+                        }
+                    }
                 )
             },
             confirmButton = {
@@ -418,7 +417,7 @@ fun ConfigComponentNameTextInput(
         ),
         value = configComponent.name,
         modifier = Modifier.testTag(TestTags.EDIT_ITEM_NAME_TEXTINPUT),
-        placeholder = {
+        label = {
             Text(text = stringResource(R.string.editTimeline_name))
         },
         onValueChange = { name ->
@@ -430,14 +429,16 @@ fun ConfigComponentNameTextInput(
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun SliderForRange(
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     onValueChange: (ClosedFloatingPointRange<Float>) -> Unit,
     value: ClosedFloatingPointRange<Float>,
-    range: ClosedFloatingPointRange<Float>,
-    modifier: Modifier = Modifier
+    range: ClosedFloatingPointRange<Float>
 ) {
     RangeSlider(
         value = (value),
         onValueChange = onValueChange,
+        enabled = enabled,
         valueRange = range,
         onValueChangeFinished = {},
         modifier = modifier

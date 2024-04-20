@@ -29,7 +29,7 @@
     <string name="battery_opt_button">disable battery optimization</string>
     <string name="soundscreen_dialog_title">Enter a name:</string>
     <string name="soundscreen_dialog_button">Confirm</string>
-    <string name="editTimeline_randomOrderPlayback">Random order</string>
+    <string name="editTimeline_randomOrderPlayback">Playback:</string>
     <string name="confirmDeleteDialogTitle">Delete</string>
     <string name="confirmDeleteDialogText">Are you sure you want to delete?</string>
     <string name="confirmDeleteDialogTextSpecific">Are you sure you want to delete \'%s\'?</string>
@@ -51,7 +51,7 @@
     <string name="TimelineMoveRight">later</string>
     <string name="PlaceholderDefaultName">"Enter a name "</string>
     <string name="homescreen_app_theme">App theme</string>
-    <string name="vibrationStrengthNotSupported">This device doesn\'t support adjusting the vibration strength</string>
+    <string name="vibrationStrengthNotSupported">This device doesn\'t support adjusting the vibration strength.</string>
     <string name="DialogConfirmation">OK</string>
     <string name="DefaultVibration">Default Vibration</string>
     <string name="DefaultSound">Default Sound</string>
@@ -105,4 +105,8 @@
     <string name="title_activity_vibration_test" translatable="false">VibrationTestActivity</string>
     <string name="start_now">Start now</string>
     <string name="stop_timer">Stop timer</string>
+    <string name="playback_random_order">Random</string>
+    <string name="playback_in_order">in-order</string>
+    <string name="android_to_old_oreo_required">Your Android version is too old. Vibration amplitude control was added by Google in Android \"O\" (version 8.x and above).</string>
+    <string name="android_current_but_no_amplitude_control">Your Android version is new enough, but the hardware in your smartphone reports that it doesn\'t support amplitude control.</string>
 </resources>

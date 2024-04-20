@@ -222,7 +222,7 @@ private object ScreenshotData {
     val defaultSound = ConfigComponent.Sound(
         id = 2,
         name = "Sound",
-        source = "Bellen.mp3",
+        source = "barking.mp3",
         maxPause = DefaultShippingSettings.MAX_PAUSE_SOUND,
         minPause = DefaultShippingSettings.MIN_PAUSE_SOUND,
         minVolume = DefaultShippingSettings.MAX_VOLUME_SOUND,
@@ -284,6 +284,6 @@ private object ScreenshotData {
     )
 
     val soundScreenState = SoundState(
-        soundNames = listOf("Atmen.mp3", "Bellen.mp3", "Husten.mp3")
+        soundNames = listOf("breathing.mp3", "barking.mp3", "coughing.mp3")
     )
 }
