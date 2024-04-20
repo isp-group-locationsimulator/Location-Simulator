@@ -25,7 +25,7 @@
         tools:ignore="ProtectedPermissions" />
 
     <application
-        android:name=".LocationApp"
+        android:name=".LocationSimulatorApp"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:enableOnBackInvokedCallback="true"

@@ -21,113 +21,117 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
-	configurationUseCases: ConfigurationUseCases
+    configurationUseCases: ConfigurationUseCases
 ) : ViewModel() {
 
-	// The provided state for the View
-	private val _state = mutableStateOf(HomeScreenState())
-	val state: State<HomeScreenState> = _state
+    // The provided state for the View
+    private val _state = mutableStateOf(HomeScreenState())
+    val state: State<HomeScreenState> = _state
 
-	//state of the Database fetch needed when we quickly change between Screens. Aboard two running fetchJobs
-	private var getConfigurationJob: Job? = null
+    //state of the Database fetch needed when we quickly change between Screens. Aboard two running fetchJobs
+    private var getConfigurationJob: Job? = null
 
-	/**
-	 * Everytime we change to this Screen the Configurations will be fetched from Database
-	 */
-	init {
-		//Aboard previous fetch if existing
-		getConfigurationJob?.cancel()
-		//Fetch the Configuration from Database
-		getConfigurationJob = configurationUseCases.getFavoriteConfigurations()
-			.onEach { configuration ->
-				//update the state with the Configurations from Database
-				_state.value = _state.value.copy(
-					favoriteConfigurations = configuration
-				)
-			}
-			//have to be in View model scope because Database request have to be called by Coroutine
-			.launchIn(viewModelScope)
-	}
+    /**
+     * Everytime we change to this Screen the Configurations will be fetched from Database
+     */
+    init {
+        //Aboard previous fetch if existing
+        getConfigurationJob?.cancel()
+        //Fetch the Configuration from Database
+        getConfigurationJob = configurationUseCases.getFavoriteConfigurations()
+            .onEach { configuration ->
+                //update the state with the Configurations from Database
+                _state.value = _state.value.copy(
+                    favoriteConfigurations = configuration
+                )
+            }
+            //have to be in View model scope because Database request have to be called by Coroutine
+            .launchIn(viewModelScope)
+    }
 
-	/**
-	 * Handles UI Events
-	 */
-	fun onEvent(event: HomeScreenEvent) {
-		when (event) {
-			is HomeScreenEvent.SelectConfiguration -> {
-				return
-			}
-			is HomeScreenEvent.DisableBatteryOptimization -> {
-				event.batteryOptDisableFunction()
-			}
-			is HomeScreenEvent.ChangedAppTheme -> {
-				val editor: SharedPreferences.Editor = event.activity.getSharedPreferences("prefs", ComponentActivity.MODE_PRIVATE).edit()
-				editor.putString("themeType", event.themeState.themeType.name)
-				editor.apply()
-			}
-		}
-	}
+    /**
+     * Handles UI Events
+     */
+    fun onEvent(event: HomeScreenEvent) {
+        when (event) {
+            is HomeScreenEvent.SelectConfiguration -> {
+                return
+            }
 
-	/**
-	 * This function updated the Select Screen State by looking up the private dir
-	 * with the saved Sounds and compare it with the Sound names in all Configurations.
-	 * COPY FROM SELECTVIEWMODEL
-	 */
-	fun updateConfigurationWithErrorsState(soundStorageManager: SoundStorageManager) {
-		val configurationsWithErrors = mutableListOf<Configuration>()
-		val knownSounds = soundStorageManager.getSoundFileNames()
-		for (conf in _state.value.favoriteConfigurations) {
-			var hasErrors = false
-			for (comp in conf.components) {
-				if (comp is ConfigComponent.Sound) {
-					var existInKnownSounds = false
-					for (knownSound in knownSounds) {
-						if (comp.source == knownSound) {
-							existInKnownSounds = true
-							break
-						}
-					}
-					if (!existInKnownSounds) {
-						hasErrors = true
-						break
-					}
-				}
-			}
-			if (hasErrors) {
-				configurationsWithErrors.add(conf)
-			}
-		}
-		_state.value = _state.value.copy(
-			configurationsWithErrors = configurationsWithErrors
-		)
-	}
+            is HomeScreenEvent.DisableBatteryOptimization -> {
+                event.batteryOptDisableFunction()
+            }
 
-	/**
-	 * search in our private dir for Sounds an look up if there are Sounds used in the configuration but
-	 * they don't exist in our private dir
-	 * COPY FROM SELECTVIEWMODEL
-	 * @return unknown Sound names in the given configuration
-	 */
-	fun whatIsHisErrors(
-		configuration: Configuration,
-		soundStorageManager: SoundStorageManager
-	): List<String> {
-		val errors = mutableListOf<String>()
-		val knownSounds = soundStorageManager.getSoundFileNames()
-		for (comp in configuration.components) {
-			if (comp is ConfigComponent.Sound) {
-				var exist = false
-				for (sound in knownSounds) {
-					if (comp.source == sound) {
-						exist = true
-						break
-					}
-				}
-				if (!exist) {
-					errors.add(comp.source)
-				}
-			}
-		}
-		return errors.toSet().toList()
-	}
+            is HomeScreenEvent.ChangedAppTheme -> {
+                val editor: SharedPreferences.Editor =
+                    event.activity.getSharedPreferences("prefs", ComponentActivity.MODE_PRIVATE)
+                        .edit()
+                editor.putString("themeType", event.themeState.themeType.name)
+                editor.apply()
+            }
+        }
+    }
+
+    /**
+     * This function updated the Select Screen State by looking up the private dir
+     * with the saved Sounds and compare it with the Sound names in all Configurations.
+     * COPY FROM SELECTVIEWMODEL
+     */
+    fun updateConfigurationWithErrorsState(soundStorageManager: SoundStorageManager) {
+        val configurationsWithErrors = mutableListOf<Configuration>()
+        val knownSounds = soundStorageManager.getSoundFileNames()
+        for (conf in _state.value.favoriteConfigurations) {
+            var hasErrors = false
+            for (comp in conf.components) {
+                if (comp is ConfigComponent.Sound) {
+                    var existInKnownSounds = false
+                    for (knownSound in knownSounds) {
+                        if (comp.source == knownSound) {
+                            existInKnownSounds = true
+                            break
+                        }
+                    }
+                    if (!existInKnownSounds) {
+                        hasErrors = true
+                        break
+                    }
+                }
+            }
+            if (hasErrors) {
+                configurationsWithErrors.add(conf)
+            }
+        }
+        _state.value = _state.value.copy(
+            configurationsWithErrors = configurationsWithErrors
+        )
+    }
+
+    /**
+     * search in our private dir for Sounds an look up if there are Sounds used in the configuration but
+     * they don't exist in our private dir
+     * COPY FROM SELECTVIEWMODEL
+     * @return unknown Sound names in the given configuration
+     */
+    fun whatIsHisErrors(
+        configuration: Configuration,
+        soundStorageManager: SoundStorageManager
+    ): List<String> {
+        val errors = mutableListOf<String>()
+        val knownSounds = soundStorageManager.getSoundFileNames()
+        for (comp in configuration.components) {
+            if (comp is ConfigComponent.Sound) {
+                var exist = false
+                for (sound in knownSounds) {
+                    if (comp.source == sound) {
+                        exist = true
+                        break
+                    }
+                }
+                if (!exist) {
+                    errors.add(comp.source)
+                }
+            }
+        }
+        return errors.toSet().toList()
+    }
 }

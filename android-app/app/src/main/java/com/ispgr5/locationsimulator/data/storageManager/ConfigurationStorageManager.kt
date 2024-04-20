@@ -47,8 +47,8 @@ private const val OUTPUT_TOKEN = "locsim"
 private const val LIMIT_CONF_NAME_FOR_EXPORT = 12
 
 private object JsonTokens {
-    const val appId = "appId"
-    const val appVersion = "appVersion"
+    const val APP_ID = "appId"
+    const val APP_VERSION = "appVersion"
 }
 
 @Serializable
@@ -270,22 +270,22 @@ class ConfigurationStorageManager(
     private fun verifyAppVersion(fileContent: String): Semver.VersionDiff? {
         val jsonObject = JSONObject(fileContent)
         when {
-            !jsonObject.has(JsonTokens.appId) -> throw LoadException(
+            !jsonObject.has(JsonTokens.APP_ID) -> throw LoadException(
                 R.string.configuration_doesnt_have_element,
-                JsonTokens.appId
+                JsonTokens.APP_ID
             )
 
-            !jsonObject.has(JsonTokens.appVersion) -> throw LoadException(
+            !jsonObject.has(JsonTokens.APP_VERSION) -> throw LoadException(
                 R.string.configuration_doesnt_have_element,
-                JsonTokens.appVersion
+                JsonTokens.APP_VERSION
             )
 
-            jsonObject.getString(JsonTokens.appId) != BuildConfig.APPLICATION_ID -> throw LoadException(
+            jsonObject.getString(JsonTokens.APP_ID) != BuildConfig.APPLICATION_ID -> throw LoadException(
                 R.string.configuration_app_id_mismatch,
-                JsonTokens.appId, BuildConfig.APPLICATION_ID, jsonObject.getString(JsonTokens.appId)
+                JsonTokens.APP_ID, BuildConfig.APPLICATION_ID, jsonObject.getString(JsonTokens.APP_ID)
             )
         }
-        val serializedVersion = jsonObject.getString(JsonTokens.appVersion)
+        val serializedVersion = jsonObject.getString(JsonTokens.APP_VERSION)
         try {
             val serializedSemVer = Semver(serializedVersion)
             val appSemVer = Semver(BuildConfig.VERSION_NAME)

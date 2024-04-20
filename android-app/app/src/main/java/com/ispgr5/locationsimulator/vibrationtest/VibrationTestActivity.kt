@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
+import android.os.VibrationAttributes
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
@@ -27,6 +28,7 @@ import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Card
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -60,6 +62,9 @@ const val VIBRATION_DURATION_ONESHOT = 500L
 const val VIBRATION_DURATION_STRENGTH_ONESHOT_MAX = 255
 const val VIBRATION_DURATION_STRENGTH_ONESHOT_LOW = 100
 
+@SuppressLint("NewApi")
+private val VIBRATION_USAGE_ALARM = VibrationAttributes.createForUsage(VibrationAttributes.USAGE_ALARM)
+
 class VibrationTestActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,8 +72,7 @@ class VibrationTestActivity : ComponentActivity() {
             LocationSimulatorTheme(themeState = ThemeState(themeType = ThemeType.LIGHT)) {
                 // A surface container using the 'background' color from the theme
                 Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
+                    modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
                 ) {
                     VibrationTesterScaffold()
                 }
@@ -92,6 +96,7 @@ fun VibrationTesterScaffold() {
         Button(modifier = Modifier.fillMaxWidth(0.8f), onClick = {
             val map = vibrationTestResult.toMap()
             Log.i("VibrationTest", Json.encodeToString(map))
+            TODO("Write out to file and share?!")
         }) {
             Text("Write report")
         }
@@ -158,22 +163,68 @@ fun VibrationTesterContent(
                 )
             }
         }
+        item {
+            VibrationTestCard(
+                description = "Simple vibrator, oneshot, default strength, with usage",
+                parameterDescriptions = mapOf(
+                    "vibrator" to "Simple",
+                    "duration" to "$VIBRATION_DURATION_ONESHOT ms",
+                    "strength" to "default (${VibrationEffect.DEFAULT_AMPLITUDE})",
+                    "amplitude_control" to simpleVibrator.hasAmplitudeControl()
+                ),
+                onAddToReport = onAddToReport
+            ) {
+                simpleVibrator.vibrate(
+                    VibrationEffect.createOneShot(
+                        VIBRATION_DURATION_ONESHOT, VibrationEffect.DEFAULT_AMPLITUDE
+                    ),
+                    VibrationAttributes.createForUsage(VibrationAttributes.USAGE_ALARM),
+                )
+            }
+        }
+        item {
+            Divider()
+        }
         complexEffectTests(
             "Simple vibrator, effect %s",
             vibrator = simpleVibrator,
             parameterDescriptions = mapOf(),
+            vibrationAttributes = null,
             onAddToReport = onAddToReport
         )
+        complexEffectTests(
+            "Simple vibrator, effect %s, with usage",
+            vibrator = simpleVibrator,
+            parameterDescriptions = mapOf(),
+            vibrationAttributes = VibrationAttributes.createForUsage(VibrationAttributes.USAGE_ALARM),
+            onAddToReport = onAddToReport
+        )
+        item {
+            Divider()
+        }
         vibratorManagerApiS?.let { vibratorManager ->
-            vibrationTestManager.getVibratorsFromVibratorManager(vibratorManager)
-                .forEach { (vibratorId, vibrator) ->
-                    complexEffectTests(
-                        titlePlaceholder = "Vibrator $vibratorId, effect %s",
-                        vibrator = vibrator,
-                        parameterDescriptions = mapOf(),
-                        onAddToReport = onAddToReport
-                    )
+            val vibrators = vibrationTestManager.getVibratorsFromVibratorManager(vibratorManager)
+            vibrators.forEach { (vibratorId, vibrator) ->
+                complexEffectTests(
+                    titlePlaceholder = "Vibrator $vibratorId, effect %s",
+                    vibrator = vibrator,
+                    parameterDescriptions = mapOf(),
+                    vibrationAttributes = null,
+                    onAddToReport = onAddToReport,
+                )
+                complexEffectTests(
+                    titlePlaceholder = "Vibrator $vibratorId, effect %s, with usage",
+                    vibrator = vibrator,
+                    parameterDescriptions = mapOf(),
+                    vibrationAttributes = VibrationAttributes.createForUsage(VibrationAttributes.USAGE_ALARM),
+                    onAddToReport = onAddToReport,
+                )
+                if (vibrators.maxOf { it.key } != vibratorId) {
+                    item {
+                        Divider()
+                    }
                 }
+            }
         }
     }
 }
@@ -183,6 +234,7 @@ fun LazyListScope.complexEffectTests(
     titlePlaceholder: String,
     vibrator: Vibrator,
     parameterDescriptions: Map<String, String>,
+    vibrationAttributes: VibrationAttributes?,
     onAddToReport: (String, Map<String, Any>) -> Unit
 ) {
     val prefabEffects = mapOf(
@@ -191,38 +243,58 @@ fun LazyListScope.complexEffectTests(
         "Double Click" to VibrationEffect.EFFECT_DOUBLE_CLICK,
         "Heavy Click" to VibrationEffect.EFFECT_HEAVY_CLICK
     )
+    val primitiveEffects = mapOf(
+        "Primitive Click" to VibrationEffect.Composition.PRIMITIVE_CLICK,
+        "Primitive Thud" to VibrationEffect.Composition.PRIMITIVE_THUD,
+        "Primitive Spin" to VibrationEffect.Composition.PRIMITIVE_SPIN,
+        "Primitive Quick Rise" to VibrationEffect.Composition.PRIMITIVE_QUICK_RISE,
+        "Primitive Slow Rise" to VibrationEffect.Composition.PRIMITIVE_SLOW_RISE,
+        "Primitive Quick Fall" to VibrationEffect.Composition.PRIMITIVE_QUICK_FALL,
+        "Primitive Primitive Tick" to VibrationEffect.Composition.PRIMITIVE_TICK,
+        "Primitive Primitive Low Tick" to VibrationEffect.Composition.PRIMITIVE_LOW_TICK
+    )
+    val isSupported = prefabEffects.mapValues {
+        vibrator.areAllEffectsSupported(it.value).let { effectId ->
+            when (effectId) {
+                Vibrator.VIBRATION_EFFECT_SUPPORT_YES -> "Yes"
+                Vibrator.VIBRATION_EFFECT_SUPPORT_NO -> "No"
+                Vibrator.VIBRATION_EFFECT_SUPPORT_UNKNOWN -> "Unknown"
+                else -> throw UnsupportedOperationException()
+            }
+        }
+    } + primitiveEffects.mapValues {
+        vibrator.areAllPrimitivesSupported(it.value).toString()
+    }
     val oneshotMaxStrength = VibrationEffect.createOneShot(
-        VIBRATION_DURATION_ONESHOT,
-        VIBRATION_DURATION_STRENGTH_ONESHOT_MAX
+        VIBRATION_DURATION_ONESHOT, VIBRATION_DURATION_STRENGTH_ONESHOT_MAX
     )
     val oneshotLowStrength = VibrationEffect.createOneShot(
-        VIBRATION_DURATION_ONESHOT,
-        VIBRATION_DURATION_STRENGTH_ONESHOT_LOW
+        VIBRATION_DURATION_ONESHOT, VIBRATION_DURATION_STRENGTH_ONESHOT_LOW
     )
     val waveform = VibrationEffect.createWaveform(
-        longArrayOf(0, 100, 200, 300, 400, 500),
-        intArrayOf(50, 100, 0, 150, 200, 255),
-        -1
+        longArrayOf(0, 100, 200, 300, 400, 500), intArrayOf(50, 100, 0, 150, 200, 255), -1
     )
-    val effects = prefabEffects + mapOf(
+    val effects = prefabEffects.mapValues { VibrationEffect.createPredefined(it.value) } +
+            primitiveEffects.mapValues {
+                VibrationEffect.startComposition().addPrimitive(it.value).compose()
+            } + mapOf(
         "Oneshot max" to oneshotMaxStrength,
         "Oneshot Low" to oneshotLowStrength,
         "Waveform" to waveform
     )
-    effects.forEach { (effectName, effectSpec) ->
-        val (effect, isSupported) = when (effectSpec) {
-            is VibrationEffect -> effectSpec to null
-            is Int -> VibrationEffect.createPredefined(effectSpec) to vibrator.areAllEffectsSupported(effectSpec)
-            else -> throw UnsupportedOperationException()
-        }
+    effects.forEach { (effectName, effect) ->
+        val vibrationSupported = isSupported[effectName]
         item {
             VibrationTestCard(
                 description = titlePlaceholder.format(effectName),
                 parameterDescriptions = parameterDescriptions + ("effect" to effectName),
-                isSupported = isSupported,
+                isSupported = vibrationSupported,
                 onAddToReport = onAddToReport
             ) {
-                vibrator.vibrate(effect)
+                when (vibrationAttributes) {
+                    null -> vibrator.vibrate(effect)
+                    else -> vibrator.vibrate(effect, vibrationAttributes)
+                }
             }
         }
     }
@@ -239,7 +311,7 @@ fun VibrationTestCard(
     description: String,
     parameterDescriptions: Map<String, Any>,
     onAddToReport: (String, Map<String, Any>) -> Unit,
-    isSupported: Int? = null,
+    isSupported: String? = null,
     onClickVibrate: () -> Unit,
 ) {
     var vibrationSuccess: Boolean? by remember {
@@ -256,13 +328,7 @@ fun VibrationTestCard(
         ) {
             Text(text = description, style = MaterialTheme.typography.titleLarge)
             isSupported?.let {
-                val text = when (it) {
-                    Vibrator.VIBRATION_EFFECT_SUPPORT_YES -> "Yes"
-                    Vibrator.VIBRATION_EFFECT_SUPPORT_NO -> "No"
-                    Vibrator.VIBRATION_EFFECT_SUPPORT_UNKNOWN -> "Unknown"
-                    else -> throw UnsupportedOperationException()
-                }
-                Text("Android report support as: $text")
+                Text("Android report support as: $it")
             }
 
             Row(
@@ -302,8 +368,7 @@ fun VibrationTestCard(
                     onClick = {
                         vibrationSuccess = false
                         onAddToReport(
-                            description,
-                            mapOf("success" to false) + parameterDescriptions
+                            description, mapOf("success" to false) + parameterDescriptions
                         )
                     },
                     enabled = hasTested,
@@ -316,8 +381,7 @@ fun VibrationTestCard(
                     onClick = {
                         vibrationSuccess = true
                         onAddToReport(
-                            description,
-                            mapOf("success" to true) + parameterDescriptions
+                            description, mapOf("success" to true) + parameterDescriptions
                         )
                     },
                     enabled = hasTested,
