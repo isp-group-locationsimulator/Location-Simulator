@@ -17,6 +17,9 @@ import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -54,26 +57,36 @@ fun DelayScreen(
 ) {
     //The state from viewmodel
     val state = viewModel.state.value
+    val timerState = remember {
+        mutableStateOf(TimerState())
+    }
 
     DelayScreenScaffold(
         state = state,
         scaffoldState = scaffoldState,
-        initialTimerState = TimerState(),
+        timerState = timerState,
         soundsDirUri = soundsDirUri,
         onBackClick = {
+            timerState.value = timerState.value.reset(inhibitStart = true)
             navController.popBackStack()
         }
     ) { configurationId ->
-        viewModel.onEvent(DelayEvent.StartClicked(startServiceFunction))
-        navController.navigate(route = Screen.RunScreen.createRoute(configurationId))
+        // make very sure that the simulation doesn't start when the timer has been cancelled,
+        // either by clicking the "back' button in the scaffold, or by clicking the big "cancel"
+        // button in the timer composable
+        if (!timerState.value.inhibitStart) {
+            viewModel.onEvent(DelayEvent.StartClicked(startServiceFunction))
+            navController.navigate(route = Screen.RunScreen.createRoute(configurationId))
+        }
     }
 
 }
 
 @Composable
 fun DelayScreenScaffold(
-    state: DelayScreenState, scaffoldState: ScaffoldState,
-    initialTimerState: TimerState,
+    state: DelayScreenState,
+    scaffoldState: ScaffoldState,
+    timerState: MutableState<TimerState>,
     soundsDirUri: String,
     onBackClick: () -> Unit,
     onFinishTimer: (configurationId: Int) -> Unit
@@ -82,7 +95,9 @@ fun DelayScreenScaffold(
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = {
-            TopBar(onBackClick = onBackClick, title = stringResource(id = R.string.ScreenDelay))
+            TopBar(onBackClick = {
+                onBackClick()
+            }, title = stringResource(id = R.string.ScreenDelay))
         },
         content = { paddingValues ->
             Column(
@@ -93,7 +108,7 @@ fun DelayScreenScaffold(
                 state.configuration?.let { configuration ->
                     DelayScreenContent(
                         configuration = configuration,
-                        initialTimerState = initialTimerState,
+                        timerState = timerState,
                         context = context,
                         soundsDirUri = soundsDirUri,
                         onFinishTimer = onFinishTimer
@@ -106,7 +121,7 @@ fun DelayScreenScaffold(
 @Composable
 fun DelayScreenContent(
     configuration: Configuration,
-    initialTimerState: TimerState,
+    timerState: MutableState<TimerState>,
     context: Context,
     soundsDirUri: String,
     onFinishTimer: (configurationId: Int) -> Unit
@@ -178,8 +193,8 @@ fun DelayScreenContent(
         Spacer(modifier = Modifier.size(8.dp))
 
         //The timer component
-        Timer(
-            initialTimerState = initialTimerState,
+        DelayTimer(
+            timerState = timerState,
             configurationId = configuration.id!!,
             onFinishTimer = onFinishTimer
         )
@@ -187,12 +202,15 @@ fun DelayScreenContent(
 }
 
 @Composable
-fun DelayScreenScreenshotPreview(state: DelayScreenState, initialTimerState: TimerState) {
+fun DelayScreenScreenshotPreview(state: DelayScreenState) {
+    val timerState = remember {
+        mutableStateOf(TimerState())
+    }
     DelayScreenScaffold(
         state = state,
         scaffoldState = rememberScaffoldState(),
         soundsDirUri = "sounds",
-        initialTimerState = initialTimerState,
+        timerState = timerState,
         onBackClick = {},
         onFinishTimer = { }
     )

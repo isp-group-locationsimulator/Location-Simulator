@@ -1,6 +1,8 @@
 package com.ispgr5.locationsimulator.presentation.delay
 
 import android.os.CountDownTimer
+import android.util.Log
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,12 +11,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -33,53 +37,82 @@ import androidx.compose.ui.unit.sp
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.core.util.TestTags
 
+private const val TAG = "DelayTimer"
+
+private fun onStartVibration(
+    configurationId: Int,
+    onFinishTimer: (configurationId: Int) -> Unit,
+    timerState: MutableState<TimerState>,
+    countDownTimer: CountDownTimer?
+) {
+    timerState.value = timerState.value.reset(true)
+    countDownTimer?.cancel()
+    onFinishTimer(configurationId)
+}
+
+private class DelayCountdownTimer(
+    millisInFuture: Long,
+    val timerState: MutableState<TimerState>,
+    val onStartVibration: (CountDownTimer) -> Unit
+) : CountDownTimer(millisInFuture, 1000L) {
+    /**
+     * Update the timer when com.ispgr5.locationsimulator.presentation.delay.Timer is running
+     */
+    override fun onTick(millisUntilFinished: Long) {
+        if (timerState.value.isRunning) {
+            val remainingSeconds = (millisUntilFinished / 1000)
+            timerState.value = timerState.value.copy(
+                secondsRemaining = remainingSeconds.mod(60L),
+                hoursRemaining = remainingSeconds.div(3600L),
+                minutesRemaining = remainingSeconds.mod(3600L).div(60)
+            )
+        } else {
+            // cancel the timer when the stop button was pressed
+            this.cancel()
+        }
+    }
+
+    /**
+     * Go to Run Screen when Timer is finished
+     */
+    override fun onFinish() {
+        Log.i(TAG, "Timer is elapsed, running? ${timerState.value.isRunning}")
+        if (timerState.value.isRunning) {
+            onStartVibration(this)
+        }
+    }
+}
+
 /**
  * The Timer Compose Element, to input and show the delay Time
  */
 @Composable
-fun Timer(
-    initialTimerState: TimerState,
+fun DelayTimer(
+    timerState: MutableState<TimerState>,
     onFinishTimer: (configurationId: Int) -> Unit,
     configurationId: Int
 ) {
-    var timerState by remember { mutableStateOf(initialTimerState) }
+
     val timerRunning by remember {
         derivedStateOf {
-            timerState.isRunning
+            timerState.value.isRunning
         }
+    }
+    var countDownTimer: DelayCountdownTimer? by remember {
+        mutableStateOf(null)
     }
 
     LaunchedEffect(timerRunning) {
         if (timerRunning) {
             //calculate the duration of the timer in milliseconds
-            val timer = object : CountDownTimer(timerState.setDuration, 1000L) {
-
-                /**
-                 * Update the timer when com.ispgr5.locationsimulator.presentation.delay.Timer is running
-                 */
-                override fun onTick(millisUntilFinished: Long) {
-                    if (timerRunning) {
-                        val remainingSeconds = (millisUntilFinished / 1000)
-                        timerState = timerState.copy(
-                            secondsRemaining = remainingSeconds % 60,
-                            hoursRemaining = (remainingSeconds / 60) % 60,
-                            minutesRemaining = remainingSeconds / (60 * 60)
-                        )
-                    } else {
-                        // cancel the timer when the stop button was pressed
-                        this.cancel()
-                    }
+            countDownTimer = DelayCountdownTimer(timerState.value.setDurationInMillis,
+                timerState = timerState,
+                onStartVibration = {
+                    onStartVibration(configurationId, onFinishTimer, timerState, it)
                 }
+            )
 
-                /**
-                 * Go to Run Screen when com.ispgr5.locationsimulator.presentation.delay.Timer is finished
-                 */
-                override fun onFinish() {
-                    onFinishTimer(configurationId)
-                }
-            }
-
-            timer.start()
+            countDownTimer?.start()
         }
     }
 
@@ -113,7 +146,7 @@ fun Timer(
             )
             Button(
                 onClick = {
-                    timerState = timerState.addHours(1)
+                    timerState.value = timerState.value.addHours(1)
                 },
                 shape = CircleShape,
                 enabled = !timerRunning,
@@ -127,12 +160,12 @@ fun Timer(
                 )
             }
             TextField(
-                value = timerState.stringHours(),
+                value = timerState.value.stringHours(),
                 onValueChange = { newVal: String ->
                     when (val intVal = newVal.toIntOrNull()) {
                         null -> {}
-                        else -> timerState =
-                            timerState.copy(setHours = intVal.coerceIn(0, 24).toLong())
+                        else -> timerState.value =
+                            timerState.value.copy(setHours = intVal.coerceIn(0, 24).toLong())
                     }
                 },
                 keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
@@ -145,7 +178,7 @@ fun Timer(
             )
             Button(
                 onClick = {
-                    timerState = timerState.addHours(-1)
+                    timerState.value = timerState.value.addHours(-1)
                 },
                 shape = CircleShape,
                 enabled = !timerRunning,
@@ -173,7 +206,7 @@ fun Timer(
             )
             Button(
                 onClick = {
-                    timerState = timerState.addMinutes(1)
+                    timerState.value = timerState.value.addMinutes(1)
                 },
                 shape = CircleShape,
                 enabled = !timerRunning,
@@ -187,12 +220,12 @@ fun Timer(
                 )
             }
             TextField(
-                value = timerState.stringMinutes(),
+                value = timerState.value.stringMinutes(),
                 onValueChange = { newVal: String ->
                     when (val intVal = newVal.toIntOrNull()) {
                         null -> {}
-                        else -> timerState =
-                            timerState.copy(setMinutes = intVal.coerceIn(0, 59).toLong())
+                        else -> timerState.value =
+                            timerState.value.copy(setMinutes = intVal.coerceIn(0, 59).toLong())
                     }
                 },
                 keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
@@ -206,7 +239,7 @@ fun Timer(
             )
             Button(
                 onClick = {
-                    timerState = timerState.addMinutes(-1)
+                    timerState.value = timerState.value.addMinutes(-1)
                 },
                 shape = CircleShape,
                 enabled = !timerRunning,
@@ -234,7 +267,7 @@ fun Timer(
             )
             Button(
                 onClick = {
-                    timerState = timerState.addSeconds(1)
+                    timerState.value = timerState.value.addSeconds(1)
                 },
                 shape = CircleShape,
                 enabled = !timerRunning,
@@ -248,12 +281,12 @@ fun Timer(
                 )
             }
             TextField(
-                value = timerState.stringSeconds(),
+                value = timerState.value.stringSeconds(),
                 onValueChange = { newVal: String ->
                     when (val intVal = newVal.toIntOrNull()) {
                         null -> {}
-                        else -> timerState =
-                            timerState.copy(setHours = intVal.coerceIn(0, 59).toLong())
+                        else -> timerState.value =
+                            timerState.value.copy(setHours = intVal.coerceIn(0, 59).toLong())
                     }
                 },
                 keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
@@ -267,7 +300,7 @@ fun Timer(
             )
             Button(
                 onClick = {
-                    timerState = timerState.addSeconds(-1)
+                    timerState.value = timerState.value.addSeconds(-1)
                 },
                 shape = CircleShape,
                 enabled = !timerRunning,
@@ -286,23 +319,57 @@ fun Timer(
     /**
      * The button to start or stop the timer
      */
-    Button(
-        onClick = { timerState = timerState.copy(isRunning = !timerState.isRunning) },
-        enabled = true,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-            .testTag(TestTags.DELAY_START_BUTTON)
-    ) {
-        if (timerRunning) {
+    val buttonText = when {
+        timerState.value.isZero() -> stringResource(id = R.string.start_now)
+        timerRunning -> stringResource(id = R.string.stop_timer)
+        else -> stringResource(id = R.string.delay_btn_start)
+    }
+    Crossfade(targetState = buttonText, label = "Start button crossfade") { btnText ->
+        Button(
+            onClick = {
+                when {
+                    timerState.value.isZero() -> onStartVibration(
+                        configurationId = configurationId,
+                        onFinishTimer = onFinishTimer,
+                        timerState = timerState,
+                        countDownTimer = countDownTimer
+                    )
+
+                    timerState.value.isRunning -> timerState.value =
+                        timerState.value.reset(inhibitStart = true)
+
+                    else -> timerState.value = timerState.value.copy(
+                        isRunning = true,
+                        inhibitStart = false
+                    )
+                }
+            },
+            enabled = true,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+                .testTag(TestTags.DELAY_START_BUTTON)
+        ) {
             Text(
-                text = stringResource(id = R.string.run_stop),
+                text = btnText,
                 style = TextStyle(fontSize = 40.sp)
             )
-        } else {
+        }
+    }
+
+    if (timerRunning) {
+        Button(
+            onClick = {
+                onStartVibration(configurationId, onFinishTimer, timerState, countDownTimer)
+            },
+            colors = ButtonDefaults.outlinedButtonColors(
+                backgroundColor = MaterialTheme.colors.secondary
+            )
+        ) {
             Text(
-                text = stringResource(id = R.string.delay_btn_start),
-                style = TextStyle(fontSize = 40.sp)
+                stringResource(id = R.string.start_now),
+                style = TextStyle(fontSize = 30.sp),
+                color = MaterialTheme.colors.onSecondary
             )
         }
     }
@@ -328,6 +395,7 @@ fun calculateTimerValue(value: String): Long {
 
 data class TimerState(
     val isRunning: Boolean = false,
+    val inhibitStart: Boolean = false,
     val setHours: Long = 0,
     val setMinutes: Long = 0,
     val setSeconds: Long = 0,
@@ -335,7 +403,7 @@ data class TimerState(
     val minutesRemaining: Long = 0,
     val secondsRemaining: Long = 0
 ) {
-    val setDuration
+    val setDurationInMillis
         get() =
             listOf(
                 (setHours * 1000 * 60 * 60),
@@ -361,4 +429,15 @@ data class TimerState(
         true -> secondsRemaining
         else -> setSeconds
     }.toString()
+
+    fun isZero(): Boolean = setDurationInMillis == 0L
+    fun reset(inhibitStart: Boolean = false): TimerState {
+        return this.copy(
+            isRunning = false,
+            secondsRemaining = 0L,
+            minutesRemaining = 0L,
+            hoursRemaining = 0L,
+            inhibitStart = inhibitStart
+        )
+    }
 }

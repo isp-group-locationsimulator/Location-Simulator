@@ -6,7 +6,7 @@
     <string name="editTimeline_AddConfigComponentDialog_addVibration">Vibration hinzufügen</string>
     <string name="editTimeline_AddConfigComponentDialog_Cancel">ABBRECHEN</string>
     <string name="editTimeline_addConfigComponentDialog_AddSound">Sound hinzufügen</string>
-    <string name="delay_btn_start">START</string>
+    <string name="delay_btn_start">Timer starten</string>
     <string name="editTimeline_name">Name</string>
     <string name="editTimeline_description">Beschreibung</string>
     <string name="editTimeline_SoundVolume">Lautstärke</string>
@@ -100,4 +100,6 @@
     <string name="original_development_supported">Die initiale Entwiclung von LocationSimulator wurde unterstützt durch:</string>
     <string name="quick_start">Schnellstart</string>
     <string name="delay_start">Start verzögern um:</string>
+    <string name="start_now">Jetzt starten</string>
+    <string name="stop_timer">Timer abbrechen</string>
 </resources>

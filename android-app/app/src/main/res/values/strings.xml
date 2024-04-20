@@ -5,7 +5,7 @@
     <string name="editTimeline_addConfigComponentDialog_AddSound">Add Sound</string>
     <string name="editTimeline_AddConfigComponentDialog_Cancel">Cancel</string>
     <string name="editTimeline_AddConfigComponentDialog_addVibration">Add Vibration</string>
-    <string name="delay_btn_start">START</string>
+    <string name="delay_btn_start">Start timer</string>
     <string name="editTimeline_name">Name</string>
     <string name="editTimeline_description">Description</string>
     <string name="editTimeline_SoundVolume">Volume</string>
@@ -104,5 +104,7 @@
     <string name="mailto_link" translatable="false">mailto:%1$s?body=LocationSimulator%%20Version%%20%2$s</string>
     <string name="quick_start">Quick start</string>
     <string name="delay_start">Delay start by:</string>
-    <string name="title_activity_vibration_test">VibrationTestActivity</string>
+    <string name="title_activity_vibration_test" translatable="false">VibrationTestActivity</string>
+    <string name="start_now">Start now</string>
+    <string name="stop_timer">Stop timer</string>
 </resources>
