@@ -157,13 +157,11 @@ fun EditTimelineScaffold(
         Spacer(modifier = Modifier.height(paddingValues.calculateTopPadding()))
 
         Column(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(2.dp)
         ) {
             ConfigMetadata(state, onChangeName, onChangeDescription, onCheckRandomOrder)
-
-            Spacer(modifier = Modifier.size(4.dp))
             Divider(color = MaterialTheme.colors.onBackground, thickness = 1.dp)
-            Spacer(modifier = Modifier.size(7.dp))
 
             /**
              * The TimeLine
@@ -226,7 +224,8 @@ private fun ConfigMetadata(
                 .padding(12.dp)
                 .fillMaxWidth()
                 .weight(1f),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(2.dp)
         ) {
             Column {
                 Row(
@@ -259,7 +258,6 @@ private fun ConfigMetadata(
                     }
                 }
             }
-            Spacer(modifier = Modifier.size(4.dp))
             Column {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -291,7 +289,6 @@ private fun ConfigMetadata(
                     }
                 }
             }
-            Spacer(modifier = Modifier.size(4.dp))
             Column {
                 Row(
                     modifier = Modifier.fillMaxWidth(),

@@ -2,7 +2,6 @@ package com.ispgr5.locationsimulator.presentation.delay
 
 import android.os.CountDownTimer
 import android.util.Log
-import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -45,7 +44,7 @@ private fun onStartVibration(
     timerState: MutableState<TimerState>,
     countDownTimer: CountDownTimer?
 ) {
-    timerState.value = timerState.value.reset(true)
+    timerState.value = timerState.value.reset(false)
     countDownTimer?.cancel()
     onFinishTimer(configurationId)
 }
@@ -324,38 +323,37 @@ fun DelayTimer(
         timerRunning -> stringResource(id = R.string.stop_timer)
         else -> stringResource(id = R.string.delay_btn_start)
     }
-    Crossfade(targetState = buttonText, label = "Start button crossfade") { btnText ->
-        Button(
-            onClick = {
-                when {
-                    timerState.value.isZero() -> onStartVibration(
-                        configurationId = configurationId,
-                        onFinishTimer = onFinishTimer,
-                        timerState = timerState,
-                        countDownTimer = countDownTimer
-                    )
+    Button(
+        onClick = {
+            when {
+                timerState.value.isZero() -> onStartVibration(
+                    configurationId = configurationId,
+                    onFinishTimer = onFinishTimer,
+                    timerState = timerState,
+                    countDownTimer = countDownTimer
+                )
 
-                    timerState.value.isRunning -> timerState.value =
-                        timerState.value.reset(inhibitStart = true)
+                timerState.value.isRunning -> timerState.value =
+                    timerState.value.reset(inhibitStart = true)
 
-                    else -> timerState.value = timerState.value.copy(
-                        isRunning = true,
-                        inhibitStart = false
-                    )
-                }
-            },
-            enabled = true,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-                .testTag(TestTags.DELAY_START_BUTTON)
-        ) {
-            Text(
-                text = btnText,
-                style = TextStyle(fontSize = 40.sp)
-            )
-        }
+                else -> timerState.value = timerState.value.copy(
+                    isRunning = true,
+                    inhibitStart = false
+                )
+            }
+        },
+        enabled = true,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+            .testTag(TestTags.DELAY_START_BUTTON)
+    ) {
+        Text(
+            text = buttonText,
+            style = TextStyle(fontSize = 40.sp)
+        )
     }
+
 
     if (timerRunning) {
         Button(
@@ -432,6 +430,7 @@ data class TimerState(
 
     fun isZero(): Boolean = setDurationInMillis == 0L
     fun reset(inhibitStart: Boolean = false): TimerState {
+        Log.i("TAG", "cancelled timer, inhibit=$inhibitStart")
         return this.copy(
             isRunning = false,
             secondsRemaining = 0L,

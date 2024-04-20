@@ -127,7 +127,9 @@ fun SettingsScreenSoundScreenshot() {
 fun DelayScreenScreenshot() {
     DelayScreenScreenshotPreview(
         state = delayScreenState,
-        initialTimerState = delayScreenInitialTimerState
+        timerState = remember {
+            mutableStateOf(delayScreenInitialTimerState)
+        }
     )
 }
 

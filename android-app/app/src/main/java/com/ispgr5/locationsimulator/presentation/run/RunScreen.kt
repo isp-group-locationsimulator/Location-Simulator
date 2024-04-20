@@ -34,6 +34,7 @@ import androidx.compose.material.ScaffoldState
 import androidx.compose.material.SnackbarDuration
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PauseCircleOutline
 import androidx.compose.material.rememberScaffoldState
@@ -56,11 +57,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalViewConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -71,7 +75,6 @@ import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 import com.ispgr5.locationsimulator.domain.model.Configuration
 import com.ispgr5.locationsimulator.presentation.universalComponents.SnackbarContent
-import com.ispgr5.locationsimulator.presentation.universalComponents.TopBar
 import com.ispgr5.locationsimulator.presentation.util.MakeSnackbar
 import com.ispgr5.locationsimulator.presentation.util.between
 import com.ispgr5.locationsimulator.presentation.util.millisToSeconds
@@ -131,26 +134,35 @@ fun RunScreen(
         )
     }
 
-    RunScreenScaffold(
-        scaffoldState = scaffoldState,
-        configuration = viewModel.state.value.configuration,
-        playingEffect = playingEffect,
-        nextEffect = nextEffect,
-        startPauseAt = startPauseAt,
-        currentPauseDuration = currentPauseDuration,
-        snackbarContentState = snackbarContentState,
-        initialRefreshInstant = initialRefreshInstant
-    ) {
-        SimulationService.IsPlayingEventBus.postValue(false)
-        viewModel.onEvent(RunEvent.StopClicked(stopServiceFunction))
-        navController.popBackStack()
+    val configuration by remember {
+        derivedStateOf {
+            viewModel.state.value.configuration
+        }
     }
+
+    configuration?.let { conf ->
+        RunScreenScaffold(
+            scaffoldState = scaffoldState,
+            configuration = conf,
+            playingEffect = playingEffect,
+            nextEffect = nextEffect,
+            startPauseAt = startPauseAt,
+            currentPauseDuration = currentPauseDuration,
+            snackbarContentState = snackbarContentState,
+            initialRefreshInstant = initialRefreshInstant
+        ) {
+            SimulationService.IsPlayingEventBus.postValue(false)
+            viewModel.onEvent(RunEvent.StopClicked(stopServiceFunction))
+            navController.popBackStack()
+        }
+    }
+
 }
 
 @Composable
 fun RunScreenScaffold(
     scaffoldState: ScaffoldState,
-    configuration: Configuration?,
+    configuration: Configuration,
     playingEffect: EffectParameters?,
     nextEffect: EffectParameters?,
     startPauseAt: Instant?,
@@ -159,16 +171,26 @@ fun RunScreenScaffold(
     initialRefreshInstant: Instant,
     onStop: () -> Unit
 ) {
+    val context = LocalContext.current
     Scaffold(scaffoldState = scaffoldState, topBar = {
-        TopBar(
-            onBackClick = null,
-            title = stringResource(id = R.string.ScreenRun),
-            backPossible = false
+        TopAppBar(
+            title = {
+                Text(
+                    buildAnnotatedString {
+                        append(context.getString(R.string.ScreenRun))
+                        append(": ")
+                        withStyle(SpanStyle(fontStyle = FontStyle.Italic)) {
+                            append(configuration.name)
+                        }
+                    },
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
         )
     }, content = { padding ->
         RunScreenContent(
             paddingValues = padding,
-            configuration = configuration,
             playingEffect = playingEffect,
             nextEffect = nextEffect,
             startPauseAt = startPauseAt,
@@ -210,7 +232,6 @@ fun BackPressHandler(
 @Composable
 fun RunScreenContent(
     paddingValues: PaddingValues,
-    configuration: Configuration?,
     playingEffect: EffectParameters?,
     nextEffect: EffectParameters?,
     startPauseAt: Instant?,
@@ -272,24 +293,6 @@ fun RunScreenContent(
                 .padding(vertical = 8.dp, horizontal = 8.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                text = stringResource(R.string.running_configuration), style = typography.h6
-            )
-            Text(
-                text = configuration?.name ?: stringResource(R.string.unknown_configuration),
-                style = typography.h6.copy(fontStyle = FontStyle.Italic),
-            )
-            if (configuration?.description?.isNotBlank() == true) {
-                Text(
-                    text = configuration.description,
-                    style = typography.subtitle2.copy(fontWeight = FontWeight.Normal),
-                    maxLines = 2,
-                    textAlign = TextAlign.Center,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.fillMaxWidth(0.8f)
-                )
-            }
-
             nextEffect?.let { next ->
                 Box(
                     Modifier
@@ -397,18 +400,12 @@ fun RunScreenPreview() {
         Surface(modifier = Modifier.fillMaxSize(), color = colors.background) {
             RunScreenContent(
                 paddingValues = PaddingValues(4.dp),
-                configuration = Configuration(
-                    name = "Test configuration",
-                    description = "This is a description that needs to be shown up to 3 rows in the running screeen, and I think the ajsdlkfj lakjjdsafh kjsdadhf kjsdahf kjsdahf kjsdahf kjsdahf kjsadhf jksadhfjksadhdkjfhasd kjfjhsadkjfhasdkdjjfh askjdfhkjsadhfkj",
-                    randomOrderPlayback = false,
-                    components = listOf(RunscreenPreviewData.vibrationComponent, RunscreenPreviewData.soundComponent)
-                ),
                 playingEffect = RunscreenPreviewData.effectTimelinePlayingState.playingEffect,
                 nextEffect = RunscreenPreviewData.effectTimelinePlayingState.nextEffect,
                 startPauseAt = RunscreenPreviewData.effectTimelinePlayingState.startPauseAt,
                 currentPauseDuration = RunscreenPreviewData.effectTimelinePlayingState.currentPauseDuration,
-                initialRefreshInstant = RunscreenPreviewData.baselineInstant,
                 snackbarContentState = snackbarContentState,
+                initialRefreshInstant = RunscreenPreviewData.baselineInstant,
             ) {}
         }
     }
@@ -741,7 +738,7 @@ fun NextUi(nextEffect: EffectParameters, iconSize: Dp = 32.dp) {
 
 @Composable
 fun RunScreenScreenshotPreview(
-    configuration: Configuration?,
+    configuration: Configuration,
     effectTimelineState: EffectTimelineState,
     initialRefreshInstant: Instant,
 ) {

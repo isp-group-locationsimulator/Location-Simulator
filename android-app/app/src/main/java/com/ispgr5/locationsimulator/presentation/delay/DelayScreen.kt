@@ -1,6 +1,7 @@
 package com.ispgr5.locationsimulator.presentation.delay
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -41,6 +42,8 @@ import com.ispgr5.locationsimulator.presentation.universalComponents.TopBar
 import com.ispgr5.locationsimulator.presentation.util.Screen
 import com.ispgr5.locationsimulator.presentation.util.millisToSeconds
 
+private const val TAG = "DelayScreen"
+
 /**
  * The Delay Screen.
  * Here you can check you have Select the right Configuration
@@ -58,7 +61,7 @@ fun DelayScreen(
     //The state from viewmodel
     val state = viewModel.state.value
     val timerState = remember {
-        mutableStateOf(TimerState())
+        mutableStateOf(TimerState(inhibitStart = false))
     }
 
     DelayScreenScaffold(
@@ -77,6 +80,8 @@ fun DelayScreen(
         if (!timerState.value.inhibitStart) {
             viewModel.onEvent(DelayEvent.StartClicked(startServiceFunction))
             navController.navigate(route = Screen.RunScreen.createRoute(configurationId))
+        } else {
+            Log.w(TAG, "start vibration fired, but inhibited: $timerState")
         }
     }
 
@@ -202,10 +207,7 @@ fun DelayScreenContent(
 }
 
 @Composable
-fun DelayScreenScreenshotPreview(state: DelayScreenState) {
-    val timerState = remember {
-        mutableStateOf(TimerState())
-    }
+fun DelayScreenScreenshotPreview(state: DelayScreenState, timerState: MutableState<TimerState>) {
     DelayScreenScaffold(
         state = state,
         scaffoldState = rememberScaffoldState(),

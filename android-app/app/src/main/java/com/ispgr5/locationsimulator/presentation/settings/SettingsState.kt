@@ -26,7 +26,7 @@ object DefaultShippingSettings {
     const val MAX_VOLUME_SOUND: Float = 1f
     const val MIN_PAUSE_VIBRATION: Int = 0
     const val MAX_PAUSE_VIBRATION: Int = 1000
-    const val MIN_STRENGTH_VIBRATION: Int = 0
+    const val MIN_STRENGTH_VIBRATION: Int = 100
     const val MAX_STRENGTH_VIBRATION: Int = 255
     const val MIN_DURATION_VIBRATION: Int = 0
     const val MAX_DURATION_VIBRATION: Int = 1000

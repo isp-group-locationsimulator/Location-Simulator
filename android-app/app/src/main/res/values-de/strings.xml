@@ -37,7 +37,7 @@
     <string name="confirmDeleteDialogDismissBtn">Abbrechen</string>
     <string name="confirmDeleteDialogConfirmBtn">Löschen</string>
     <string name="ScreenInfo">Info</string>
-    <string name="ScreenRun">Konfiguration wird abgespielt</string>
+    <string name="ScreenRun">Konfiguration</string>
     <string name="ScreenSelect">Konfiguration auswählen</string>
     <string name="ScreenSound">Sound auswählen</string>
     <string name="ScreenAdd">Konfiguration erstellen</string>
@@ -48,8 +48,8 @@
     <string name="TimerMinutes">Minuten</string>
     <string name="TimerSeconds">Sekunden</string>
     <string name="ConfigInfoSecondsPerIteration">%1$s s – %2$s s pro Iteration</string>
-    <string name="TimelineMoveLeft">nach links in Zeitleiste</string>
-    <string name="TimelineMoveRight">nach rechts in Zeitleiste</string>
+    <string name="TimelineMoveLeft">früher</string>
+    <string name="TimelineMoveRight">später</string>
     <string name="PlaceholderDefaultName">"Geben Sie einen Namen ein "</string>
     <string name="homescreen_app_theme">Farbschema</string>
     <string name="vibrationStrengthNotSupported">Das Anpassen der Vibrationsstärke wird auf diesem Gerät nicht unterstützt</string>

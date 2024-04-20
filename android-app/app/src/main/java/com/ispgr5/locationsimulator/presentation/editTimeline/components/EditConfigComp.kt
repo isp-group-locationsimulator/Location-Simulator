@@ -3,16 +3,16 @@ package com.ispgr5.locationsimulator.presentation.editTimeline.components
 import android.content.Context
 import android.os.Build
 import android.os.Vibrator
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -20,9 +20,11 @@ import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.ContentAlpha
+import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.OutlinedButton
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.RangeSlider
 import androidx.compose.material.Text
@@ -34,6 +36,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -46,7 +49,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.gigamole.composescrollbars.Scrollbars
 import com.gigamole.composescrollbars.config.ScrollbarsConfig
 import com.gigamole.composescrollbars.config.ScrollbarsOrientation
@@ -95,73 +97,69 @@ fun EditConfigComponent(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(10.dp)
+                .padding(top = 2.dp)
+                .padding(horizontal = 4.dp)
                 .verticalScroll(scrollState),
-            verticalArrangement = Arrangement.SpaceBetween,
+            verticalArrangement = Arrangement.spacedBy(2.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Column {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceAround
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .border(1.dp, Color.Yellow),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                OutlinedButton(
+                    modifier = Modifier
+                        .weight(1f)
+                        .testTag(TestTags.EDIT_MOVE_LEFT),
+                    contentPadding = PaddingValues(all = 1.dp),
+                    onClick = {
+                        editTimelineEventHandlers?.onMoveLeftClicked?.invoke(configComponent)
+                    },
                 ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Button(
-                            onClick = {
-                                editTimelineEventHandlers?.onMoveLeftClicked?.invoke(
-                                    configComponent
-                                )
-                            },
-                            modifier = Modifier.testTag(TestTags.EDIT_MOVE_LEFT)
-                        ) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.baseline_arrow_back_24),
-                                contentDescription = null
-                            )
-                        }
-                        Text(
-                            stringResource(id = R.string.TimelineMoveLeft),
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.width(100.dp),
-                            fontSize = 15.sp,
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.width(IntrinsicSize.Max)
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.baseline_arrow_back_24),
+                            contentDescription = null
                         )
+                        Text(stringResource(id = R.string.TimelineMoveLeft))
                     }
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Button(
-                            onClick = {
-                                editTimelineEventHandlers?.onMoveRightClicked?.invoke(
-                                    configComponent
-                                )
-                            },
-                            modifier = Modifier.testTag(TestTags.EDIT_MOVE_RIGHT)
-                        ) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.baseline_arrow_forward_24),
-                                contentDescription = null
-                            )
-                        }
-                        Text(
-                            text = stringResource(id = R.string.TimelineMoveRight),
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.width(100.dp),
-                            fontSize = 15.sp,
-                        )
-                    }
+
                 }
 
-                /**
-                 * Sound and vibration name
-                 */
-                Spacer(modifier = Modifier.size(7.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
+                Divider(Modifier.weight(0.2f))
+
+                OutlinedButton(
+                    modifier = Modifier
+                        .weight(1f)
+                        .testTag(TestTags.EDIT_MOVE_RIGHT),
+                    contentPadding = PaddingValues(all = 1.dp),
+                    onClick = {
+                        editTimelineEventHandlers?.onMoveRightClicked?.invoke(configComponent)
+                    },
                 ) {
-                    ConfigComponentNameTextInput(configComponent, onConfigComponentNameChanged = {
-                        editTimelineEventHandlers?.onConfigComponentNameChanged?.invoke(it)
-                    })
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.width(IntrinsicSize.Max)
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.baseline_arrow_forward_24),
+                            contentDescription = null
+                        )
+                        Text(stringResource(id = R.string.TimelineMoveRight))
+                    }
+
                 }
             }
+
+            ConfigComponentNameTextInput(configComponent, onConfigComponentNameChanged = {
+                editTimelineEventHandlers?.onConfigComponentNameChanged?.invoke(it)
+            })
+
 
             Column {
                 when (configComponent) {
@@ -258,9 +256,9 @@ fun EditConfigComponent(
                                     }, //show Confirm Dialog
                                     shape = MaterialTheme.shapes.small,
                                     colors = ButtonDefaults.buttonColors(
-                                        backgroundColor = androidx.compose.ui.graphics.Color.Transparent,
-                                        contentColor = androidx.compose.ui.graphics.Color.Red,
-                                        disabledBackgroundColor = androidx.compose.ui.graphics.Color.Transparent,
+                                        backgroundColor = Color.Transparent,
+                                        contentColor = Color.Red,
+                                        disabledBackgroundColor = Color.Transparent,
                                         disabledContentColor = MaterialTheme.colors.primary.copy(
                                             alpha = ContentAlpha.disabled
                                         ),
@@ -347,9 +345,9 @@ fun EditConfigComponent(
                         border = null,
                         elevation = null,
                         colors = ButtonDefaults.buttonColors(
-                            backgroundColor = androidx.compose.ui.graphics.Color.Transparent,
+                            backgroundColor = Color.Transparent,
                             contentColor = MaterialTheme.colors.onSurface,
-                            disabledBackgroundColor = androidx.compose.ui.graphics.Color.Transparent,
+                            disabledBackgroundColor = Color.Transparent,
                             disabledContentColor = MaterialTheme.colors.primary.copy(alpha = ContentAlpha.disabled),
                         )
                     ) {
@@ -366,9 +364,9 @@ fun EditConfigComponent(
                         border = null,
                         elevation = null,
                         colors = ButtonDefaults.buttonColors(
-                            backgroundColor = androidx.compose.ui.graphics.Color.Transparent,
-                            contentColor = androidx.compose.ui.graphics.Color.Red,
-                            disabledBackgroundColor = androidx.compose.ui.graphics.Color.Transparent,
+                            backgroundColor = Color.Transparent,
+                            contentColor = Color.Red,
+                            disabledBackgroundColor = Color.Transparent,
                             disabledContentColor = MaterialTheme.colors.primary.copy(alpha = ContentAlpha.disabled),
                         )
                     ) {
