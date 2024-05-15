@@ -18,6 +18,7 @@ import com.ispgr5.locationsimulator.domain.model.Configuration
 import com.ispgr5.locationsimulator.domain.model.SoundConverter
 import com.ispgr5.locationsimulator.domain.useCase.ConfigurationUseCases
 import com.ispgr5.locationsimulator.presentation.MainActivity
+import com.ispgr5.locationsimulator.presentation.settings.SettingsState
 import com.ispgr5.locationsimulator.presentation.universalComponents.SnackbarContent
 import com.vdurmont.semver4j.Semver
 import com.vdurmont.semver4j.SemverException
@@ -77,7 +78,8 @@ class ConfigurationStorageManager(
     private val mainActivity: MainActivity,
     private val soundStorageManager: SoundStorageManager,
     private val context: Context,
-    val snackbarContent: MutableState<SnackbarContent?>
+    val snackbarContent: MutableState<SnackbarContent?>,
+    private val configurationUseCases: ConfigurationUseCases
 ) {
 
     private val prettyJson by lazy {
@@ -196,17 +198,9 @@ class ConfigurationStorageManager(
     \**********************************************/
 
     /**
-     * The Interface to the Database is stored here after receiving it with "pickFileAndSafeToDatabase" as parameter
-     */
-    private var configurationUseCases: ConfigurationUseCases? = null
-
-    /**
      * This function opens a file picker and reads the file and store the inner configuration to Database
      */
-    fun pickFileAndSafeToDatabase(
-        configurationUseCases: ConfigurationUseCases,
-    ) {
-        this.configurationUseCases = configurationUseCases
+    fun pickFileAndSafeToDatabase() {
         fileReader.launch(MEDIA_TYPE_IMPORT.toTypedArray())
     }
 
@@ -235,16 +229,14 @@ class ConfigurationStorageManager(
             //Edit the sound names in configuration components List, when the Sound already exist
             val components =
                 editComponentList(deserialized.configurationComponents, deserialized.sounds)
-            configurationUseCases?.addConfiguration?.let { addConfiguration ->
-                addConfiguration(
-                    Configuration(
-                        name = deserialized.name,
-                        description = deserialized.description ?: "",
-                        randomOrderPlayback = deserialized.randomOrderPlayback,
-                        components = components
-                    )
+            configurationUseCases.addConfiguration(
+                Configuration(
+                    name = deserialized.name,
+                    description = deserialized.description ?: "",
+                    randomOrderPlayback = deserialized.randomOrderPlayback,
+                    components = components
                 )
-            }
+            )
             if (useCallback) {
                 loadSuccessCallback(deserialized.name)
             }
@@ -282,7 +274,9 @@ class ConfigurationStorageManager(
 
             jsonObject.getString(JsonTokens.APP_ID) != BuildConfig.APPLICATION_ID -> throw LoadException(
                 R.string.configuration_app_id_mismatch,
-                JsonTokens.APP_ID, BuildConfig.APPLICATION_ID, jsonObject.getString(JsonTokens.APP_ID)
+                JsonTokens.APP_ID,
+                BuildConfig.APPLICATION_ID,
+                jsonObject.getString(JsonTokens.APP_ID)
             )
         }
         val serializedVersion = jsonObject.getString(JsonTokens.APP_VERSION)
@@ -420,13 +414,9 @@ class ConfigurationStorageManager(
     }
 
     suspend fun handleImportFromIntent(
-        intent: Intent,
-        configurationUseCases: ConfigurationUseCases
+        intent: Intent
     ): String? {
         try {
-            if (this.configurationUseCases == null) {
-                this.configurationUseCases = configurationUseCases
-            }
             when (intent.type) {
                 in MEDIA_TYPE_IMPORT -> {
                     Log.i(TAG, "handleImportFromIntent: ${intent.clipData}")
@@ -463,6 +453,31 @@ class ConfigurationStorageManager(
             loadErrorCallback(e)
         }
         return null
+    }
+
+    suspend fun addDefaultConfiguration(
+        context: Context,
+        defaultSettings: SettingsState
+    ) {
+        val defaultVibration = ConfigComponent.Vibration(
+            id = 0,
+            name = defaultSettings.defaultNameVibration,
+            minStrength = defaultSettings.minStrengthVibration,
+            maxStrength = defaultSettings.maxStrengthVibration,
+            minDuration = defaultSettings.minDurationVibration,
+            maxDuration = defaultSettings.maxDurationVibration,
+            minPause = defaultSettings.minPauseVibration,
+            maxPause = defaultSettings.maxPauseSound
+        )
+        val defaultConfig = Configuration(
+            name = context.getString(R.string.default_configuration_name),
+            description = context.getString(R.string.default_configuration_description),
+            randomOrderPlayback = false,
+            components = listOf(defaultVibration, defaultVibration.copy(id = 1)),
+            isFavorite = true
+        )
+        configurationUseCases.addConfiguration.invoke(defaultConfig)
+        Log.i(TAG, "Added default configuration")
     }
 }
 

@@ -28,7 +28,7 @@ import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Card
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -183,7 +183,7 @@ fun VibrationTesterContent(
             }
         }
         item {
-            Divider()
+            HorizontalDivider()
         }
         complexEffectTests(
             "Simple vibrator, effect %s",
@@ -200,7 +200,7 @@ fun VibrationTesterContent(
             onAddToReport = onAddToReport
         )
         item {
-            Divider()
+            HorizontalDivider()
         }
         vibratorManagerApiS?.let { vibratorManager ->
             val vibrators = vibrationTestManager.getVibratorsFromVibratorManager(vibratorManager)
@@ -221,7 +221,7 @@ fun VibrationTesterContent(
                 )
                 if (vibrators.maxOf { it.key } != vibratorId) {
                     item {
-                        Divider()
+                        HorizontalDivider()
                     }
                 }
             }

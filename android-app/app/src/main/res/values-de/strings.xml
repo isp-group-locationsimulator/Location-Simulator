@@ -106,4 +106,6 @@
     <string name="playback_random_order">Zufällig</string>
     <string name="android_current_but_no_amplitude_control">Ihre Android-Version ist grundsätzlich neu genug, aber die Hardware Ihres Smartphones gibt an, die Einstellung der Stärke nicht zu unterstützen.</string>
     <string name="android_to_old_oreo_required">Ihre Android-Version ist zu alt. Die Funktionalität zur Einstellung der Vibrationsstärke wurde durch Google in Android \"O\" eingeführt (Version 8.x und aufwärts).</string>
+    <string name="default_configuration_name">Standard-Konfiguration</string>
+    <string name="default_configuration_description">Dies ist die Standardkonfiguration der App, mit zwei Vibrations-Events.</string>
 </resources>

@@ -1,7 +1,7 @@
 package com.ispgr5.locationsimulator.presentation.homescreen
 
+import android.content.Context
 import android.content.SharedPreferences
-import androidx.activity.ComponentActivity
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -64,7 +64,7 @@ class HomeScreenViewModel @Inject constructor(
 
             is HomeScreenEvent.ChangedAppTheme -> {
                 val editor: SharedPreferences.Editor =
-                    event.activity.getSharedPreferences("prefs", ComponentActivity.MODE_PRIVATE)
+                    event.activity.getSharedPreferences("prefs", Context.MODE_PRIVATE)
                         .edit()
                 editor.putString("themeType", event.themeState.themeType.name)
                 editor.apply()

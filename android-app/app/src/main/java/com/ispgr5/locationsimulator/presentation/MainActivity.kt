@@ -1,7 +1,6 @@
 package com.ispgr5.locationsimulator.presentation
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -17,7 +16,11 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.*
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.ScaffoldState
+import androidx.compose.material.SnackbarDuration
+import androidx.compose.material.Surface
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -27,7 +30,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -39,8 +41,8 @@ import com.ispgr5.locationsimulator.data.storageManager.ConfigurationStorageMana
 import com.ispgr5.locationsimulator.data.storageManager.SoundStorageManager
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 import com.ispgr5.locationsimulator.domain.model.ConfigurationComponentRoomConverter
+import com.ispgr5.locationsimulator.domain.useCase.ConfigurationUseCases
 import com.ispgr5.locationsimulator.presentation.add.AddScreen
-import com.ispgr5.locationsimulator.presentation.add.AddViewModel
 import com.ispgr5.locationsimulator.presentation.delay.DelayScreen
 import com.ispgr5.locationsimulator.presentation.editTimeline.EditTimelineScreen
 import com.ispgr5.locationsimulator.presentation.homescreen.HomeScreenScreen
@@ -59,8 +61,11 @@ import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
 import com.ispgr5.locationsimulator.ui.theme.ThemeState
 import com.ispgr5.locationsimulator.ui.theme.ThemeType
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 import kotlinx.serialization.ExperimentalSerializationApi
 import java.io.FileOutputStream
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -73,6 +78,9 @@ class MainActivity : ComponentActivity() {
 
     private val snackbarContent: MutableState<SnackbarContent?> = mutableStateOf(null)
 
+    @Inject
+    lateinit var configurationUseCases: ConfigurationUseCases
+
     private val recordAudioIntent = registerForActivityResult(RecordAudioContract()) {
         popUpState.value = true
         recordedAudioUri = it
@@ -81,12 +89,15 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         soundStorageManager = SoundStorageManager(this@MainActivity)
-        installFilesOnFirstStartup()
+        MainScope().launch {
+            installFilesOnFirstStartup()
+        }
         configurationStorageManager = ConfigurationStorageManager(
             mainActivity = this,
             soundStorageManager = soundStorageManager,
             context = this,
-            snackbarContent = snackbarContent
+            snackbarContent = snackbarContent,
+            configurationUseCases = configurationUseCases
         )
         val storedThemeType =
             getSharedPreferences("prefs", MODE_PRIVATE).getString("themeType", ThemeType.LIGHT.name)
@@ -127,11 +138,9 @@ class MainActivity : ComponentActivity() {
     private fun HandleIncomingIntent(intent: Intent?) {
         if (intent == null) return
         if (intent.action in listOf(Intent.ACTION_SEND, Intent.ACTION_VIEW)) {
-            val viewModel: AddViewModel = hiltViewModel()
             LaunchedEffect(key1 = intent) {
-                val newConfigurationName = configurationStorageManager.handleImportFromIntent(
-                    intent, viewModel.configurationUseCases
-                )
+                val newConfigurationName =
+                    configurationStorageManager.handleImportFromIntent(intent)
                 if (newConfigurationName != null) {
                     val feedbackMessage =
                         getString(R.string.success_reading_configuration_name).format(
@@ -326,7 +335,7 @@ class MainActivity : ComponentActivity() {
         }
 
         override fun parseResult(resultCode: Int, intent: Intent?): Uri? {
-            if (resultCode != Activity.RESULT_OK) {
+            if (resultCode != RESULT_OK) {
                 return null
             }
             return intent?.data
@@ -349,7 +358,7 @@ class MainActivity : ComponentActivity() {
     /**
      * This function installs the audio files that come with the app.
      */
-    private fun installFilesOnFirstStartup() {
+    private suspend fun installFilesOnFirstStartup() {
         val preferences: SharedPreferences = getSharedPreferences("prefs", MODE_PRIVATE)
         val firstStart: Boolean = preferences.getBoolean("firstStart", true)
         if (!firstStart) return
@@ -363,13 +372,17 @@ class MainActivity : ComponentActivity() {
                 soundStorageManager.addSoundFile(soundName, assets)
             }
         }
+        configurationStorageManager.addDefaultConfiguration(
+            context = this,
+            defaultSettings = getDefaultValues()
+        )
         val editor: SharedPreferences.Editor = preferences.edit()
         editor.putBoolean("firstStart", false)
         editor.apply()
     }
 
     /**
-     * function which saves the setted default values for Config Components
+     * function which saves the set default values for Config Components
      * (in Main Activity because it needs the context)
      */
     private val saveDefaultValues: (state: State<SettingsState>) -> Unit =
@@ -393,7 +406,7 @@ class MainActivity : ComponentActivity() {
         }
 
     /**
-     * function which returns the setted default values for Config Componments
+     * function which returns the set default values for Config Componments
      * (in Main Activity because it needs the context)
      */
     private val getDefaultValues: () -> SettingsState = fun(): SettingsState {

@@ -87,9 +87,7 @@ class AddViewModel @Inject constructor(
             }
 
             is AddEvent.SelectedImportConfiguration -> {
-                event.configurationStorageManager.pickFileAndSafeToDatabase(
-                    configurationUseCases = configurationUseCases
-                )
+                event.configurationStorageManager.pickFileAndSafeToDatabase()
             }
         }
     }
