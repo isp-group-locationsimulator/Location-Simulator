@@ -3,7 +3,7 @@ package com.ispgr5.locationsimulator.presentation.select.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,7 +33,7 @@ fun RowScope.OneConfigurationListMember(
 	isFavorite: Boolean,
 	onFavoriteClicked: () -> Unit
 ) {
-	val rowBackgroundColor: Color = MaterialTheme.colors.surface
+	val rowBackgroundColor: Color = MaterialTheme.colorScheme.surface
 
 	Button(
 		onClick = onToggleClicked,
@@ -45,10 +45,10 @@ fun RowScope.OneConfigurationListMember(
 		colors = ButtonDefaults.buttonColors(
 			backgroundColor = Color.Transparent,
 			disabledBackgroundColor = Color.Transparent,
-			disabledContentColor = MaterialTheme.colors.primary.copy(alpha = ContentAlpha.disabled),
+			disabledContentColor = MaterialTheme.colorScheme.primary.copy(alpha = ContentAlpha.disabled),
 		),
 		modifier = Modifier
-			//.border(width = 1.dp, color = MaterialTheme.colors.primary, shape = RoundedCornerShape(6.dp))
+			//.border(width = 1.dp, color = MaterialTheme.colorScheme.primary, shape = RoundedCornerShape(6.dp))
 			.background(rowBackgroundColor, shape = RoundedCornerShape(6.dp))
 			.weight(1f)
 			.heightIn(min = 55.dp)
@@ -96,9 +96,9 @@ fun RowScope.OneConfigurationListMember(
 							elevation = null,
 							colors = ButtonDefaults.buttonColors(
 								backgroundColor = Color.Transparent,
-								contentColor = MaterialTheme.colors.primary,
+								contentColor = MaterialTheme.colorScheme.primary,
 								disabledBackgroundColor = Color.Transparent,
-								disabledContentColor = MaterialTheme.colors.primary.copy(alpha = ContentAlpha.disabled),
+								disabledContentColor = MaterialTheme.colorScheme.primary.copy(alpha = ContentAlpha.disabled),
 							)
 						) {
 							Icon(
@@ -119,9 +119,9 @@ fun RowScope.OneConfigurationListMember(
 						elevation = null,
 						colors = ButtonDefaults.buttonColors(
 							backgroundColor = Color.Transparent,
-							contentColor = MaterialTheme.colors.primary,
+							contentColor = MaterialTheme.colorScheme.primary,
 							disabledBackgroundColor = Color.Transparent,
-							disabledContentColor = MaterialTheme.colors.primary.copy(alpha = ContentAlpha.disabled),
+							disabledContentColor = MaterialTheme.colorScheme.primary.copy(alpha = ContentAlpha.disabled),
 						)
 					) {
 						//favorite
@@ -135,7 +135,7 @@ fun RowScope.OneConfigurationListMember(
 							Icon(
 								painter = painterResource(id = R.drawable.ic_baseline_star_outline_24),
 								contentDescription = null,
-								tint = MaterialTheme.colors.onSurface,
+								tint = MaterialTheme.colorScheme.onSurface,
 							)
 						}
 					}
@@ -170,15 +170,15 @@ fun RowScope.OneConfigurationListMember(
 						modifier = Modifier.testTag(TestTags.SELECT_CONFIG_BUTTON_SELECT_PREFIX + configuration.name),
 						colors = ButtonDefaults.buttonColors(
 							backgroundColor = Color.Transparent,
-							contentColor = MaterialTheme.colors.primary,
+							contentColor = MaterialTheme.colorScheme.primary,
 							disabledBackgroundColor = Color.Transparent,
-							disabledContentColor = MaterialTheme.colors.primary.copy(alpha = ContentAlpha.disabled),
+							disabledContentColor = MaterialTheme.colorScheme.primary.copy(alpha = ContentAlpha.disabled),
 						)
 					) {
 						Icon(
 							painter = painterResource(id = R.drawable.ic_baseline_play_arrow_24),
 							contentDescription = null,
-							tint = MaterialTheme.colors.onSurface
+							tint = MaterialTheme.colorScheme.onSurface
 						)
 					}
 					//The Export Button
@@ -191,15 +191,15 @@ fun RowScope.OneConfigurationListMember(
 						elevation = null,
 						colors = ButtonDefaults.buttonColors(
 							backgroundColor = Color.Transparent,
-							contentColor = MaterialTheme.colors.primary,
+							contentColor = MaterialTheme.colorScheme.primary,
 							disabledBackgroundColor = Color.Transparent,
-							disabledContentColor = MaterialTheme.colors.primary.copy(alpha = ContentAlpha.disabled),
+							disabledContentColor = MaterialTheme.colorScheme.primary.copy(alpha = ContentAlpha.disabled),
 						)
 					) {
 						Icon(
 							painter = painterResource(id = R.drawable.ic_ios_share_24),
 							contentDescription = null,
-							tint = MaterialTheme.colors.onSurface
+							tint = MaterialTheme.colorScheme.onSurface
 						)
 					}
 					//The Edit Button
@@ -213,15 +213,15 @@ fun RowScope.OneConfigurationListMember(
 						modifier = Modifier.testTag(TestTags.SELECT_CONFIG_BUTTON_EDIT_PREFIX + configuration.name),
 						colors = ButtonDefaults.buttonColors(
 							backgroundColor = Color.Transparent,
-							contentColor = MaterialTheme.colors.primary,
+							contentColor = MaterialTheme.colorScheme.primary,
 							disabledBackgroundColor = Color.Transparent,
-							disabledContentColor = MaterialTheme.colors.primary.copy(alpha = ContentAlpha.disabled),
+							disabledContentColor = MaterialTheme.colorScheme.primary.copy(alpha = ContentAlpha.disabled),
 						)
 					) {
 						Icon(
 							painter = painterResource(id = R.drawable.ic_baseline_edit_24),
 							contentDescription = null,
-							tint = MaterialTheme.colors.onSurface
+							tint = MaterialTheme.colorScheme.onSurface
 						)
 					}
 					//The Duplicate Button
@@ -235,9 +235,9 @@ fun RowScope.OneConfigurationListMember(
 						modifier = Modifier.testTag(TestTags.SELECT_CONFIG_BUTTON_DUPLICTAE_PREFIX + configuration.name),
 						colors = ButtonDefaults.buttonColors(
 							backgroundColor = Color.Transparent,
-							contentColor = MaterialTheme.colors.onSurface,
+							contentColor = MaterialTheme.colorScheme.onSurface,
 							disabledBackgroundColor = Color.Transparent,
-							disabledContentColor = MaterialTheme.colors.primary.copy(alpha = ContentAlpha.disabled),
+							disabledContentColor = MaterialTheme.colorScheme.primary.copy(alpha = ContentAlpha.disabled),
 						)
 					) {
 						Icon(

@@ -11,11 +11,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.ScaffoldState
-import androidx.compose.material.Text
-import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -54,9 +52,8 @@ import com.ispgr5.locationsimulator.ui.theme.ThemeType
 @Composable
 fun InfoScreen(
     navController: NavController,
-    scaffoldState: ScaffoldState
 ) {
-    InfoScreenScaffold(scaffoldState = scaffoldState) {
+    InfoScreenScaffold {
         navController.popBackStack()
     }
 }
@@ -65,14 +62,13 @@ fun InfoScreen(
 @Composable
 fun InfoScreenPreview() {
     LocationSimulatorTheme(themeState = ThemeState(ThemeType.DARK)) {
-        InfoScreenScaffold(scaffoldState = rememberScaffoldState(), onBackClick = {})
+        InfoScreenScaffold(onBackClick = {})
     }
 }
 
 @Composable
-fun InfoScreenScaffold(scaffoldState: ScaffoldState, onBackClick: () -> Unit) {
+fun InfoScreenScaffold(onBackClick: () -> Unit) {
     Scaffold(
-        scaffoldState = scaffoldState,
         topBar = {
             TopBar(
                 onBackClick = onBackClick,
@@ -150,7 +146,7 @@ fun OpenSource() {
         text = uri,
         urlTarget = uri,
         spanStyle = ClickableLinkDefaults.defaultSpanStyle().copy(
-            color = MaterialTheme.colors.secondary,
+            color = MaterialTheme.colorScheme.secondary,
             fontFamily = FontFamily.Monospace
         )
     )
@@ -160,7 +156,7 @@ fun OpenSource() {
 fun NameText(text: String) {
     Text(
         text = text,
-        style = MaterialTheme.typography.body1.copy(
+        style = MaterialTheme.typography.bodyLarge.copy(
             fontWeight = FontWeight.SemiBold,
             textAlign = TextAlign.Center
         )
@@ -171,7 +167,7 @@ fun NameText(text: String) {
 fun IntroText(text: String) {
     Text(
         text = text,
-        style = MaterialTheme.typography.body2.copy(
+        style = MaterialTheme.typography.bodyMedium.copy(
             textAlign = TextAlign.Center,
             fontStyle = FontStyle.Italic
         )
@@ -182,7 +178,7 @@ fun IntroText(text: String) {
 fun Headline(text: String) {
     Text(
         text = text,
-        style = MaterialTheme.typography.h5.copy(textAlign = TextAlign.Center)
+        style = MaterialTheme.typography.headlineSmall.copy(textAlign = TextAlign.Center)
     )
 }
 
@@ -239,7 +235,7 @@ fun SupportedBy() {
 
 @Composable
 fun Disclaimer() {
-    Text(text = "Disclaimer", style = MaterialTheme.typography.h5)
+    Text(text = "Disclaimer", style = MaterialTheme.typography.headlineSmall)
     Text(text = stringResource(id = R.string.Disclaimer), textAlign = TextAlign.Center)
 }
 
@@ -247,7 +243,7 @@ fun Disclaimer() {
 fun License() {
     Text(
         text = stringResource(id = R.string.infoscreen_license),
-        style = MaterialTheme.typography.h5
+        style = MaterialTheme.typography.headlineSmall
     )
     Text(
         text = stringResource(id = R.string.infoscreen_ownLicense),
@@ -275,13 +271,13 @@ fun AppNameAndVersion() {
     ) {
         Text(
             text = stringResource(id = R.string.app_name),
-            style = MaterialTheme.typography.h4,
+            style = MaterialTheme.typography.headlineMedium,
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Center,
         )
         Text(
             text = stringResource(id = R.string.app_version, BuildConfig.VERSION_NAME),
-            style = MaterialTheme.typography.h5
+            style = MaterialTheme.typography.headlineSmall
         )
     }
 }

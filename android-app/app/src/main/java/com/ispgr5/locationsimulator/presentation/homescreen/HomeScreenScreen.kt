@@ -20,19 +20,18 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme.colors
-import androidx.compose.material.MaterialTheme.shapes
-import androidx.compose.material.MaterialTheme.typography
-import androidx.compose.material.Scaffold
-import androidx.compose.material.ScaffoldState
-import androidx.compose.material.SnackbarDuration
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.material3.MaterialTheme.shapes
+import androidx.compose.material3.MaterialTheme.typography
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -50,6 +49,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -64,6 +64,7 @@ import com.ispgr5.locationsimulator.core.util.TestTags
 import com.ispgr5.locationsimulator.data.storageManager.SoundStorageManager
 import com.ispgr5.locationsimulator.domain.model.Configuration
 import com.ispgr5.locationsimulator.presentation.MainActivity
+import com.ispgr5.locationsimulator.presentation.screenshotData.ScreenshotData
 import com.ispgr5.locationsimulator.presentation.universalComponents.SnackbarContent
 import com.ispgr5.locationsimulator.presentation.universalComponents.TopBar
 import com.ispgr5.locationsimulator.presentation.util.MakeSnackbar
@@ -86,13 +87,13 @@ fun HomeScreenScreen(
     soundStorageManager: SoundStorageManager,
     activity: MainActivity,
     appTheme: MutableState<ThemeState>,
-    scaffoldState: ScaffoldState,
+    snackbarHostState: SnackbarHostState,
     snackbarContent: MutableState<SnackbarContent?>,
 ) {
     viewModel.updateConfigurationWithErrorsState(soundStorageManager = soundStorageManager)
     val state = viewModel.state.value
     val context = LocalContext.current
-    MakeSnackbar(scaffoldState = scaffoldState, snackbarContent = snackbarContent)
+    MakeSnackbar(snackbarHostState = snackbarHostState, snackbarContent = snackbarContent)
 
     HomeScreenScaffold(
         homeScreenState = state,
@@ -169,8 +170,7 @@ fun HomeScreenScaffold(
     checkBatteryOptimizationStatus: () -> Boolean,
     onLaunchBatteryOptimizerDisable: () -> Unit
 ) {
-    val scaffoldState = rememberScaffoldState()
-    Scaffold(scaffoldState = scaffoldState, topBar = {
+    Scaffold(topBar = {
         AppTopBar(onInfoClick)
     }, content = { appPadding ->
         HomeScreenContent(
@@ -236,7 +236,7 @@ fun HomeScreenContent(
                 text = stringResource(R.string.quick_start),
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
-                style = typography.h6
+                style = typography.titleLarge
             )
             FavouriteList(
                 homeScreenState, onSelectFavourite
@@ -297,7 +297,7 @@ fun FavouriteConfigurationCard(
     onSelectFavourite: (Configuration) -> Unit
 ) {
     Button(modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(
-        backgroundColor = colors.surface,
+        containerColor = colorScheme.surface,
     ), border = null, elevation = null, shape = shapes.small, onClick = {
         onSelectFavourite(configuration)
     }) {
@@ -307,12 +307,12 @@ fun FavouriteConfigurationCard(
                 .padding(vertical = 4.dp)
         ) {
             Text(
-                text = configuration.name, style = typography.body1
+                text = configuration.name, style = typography.bodyLarge
             )
             if (configuration.description.isNotBlank()) {
                 Text(
                     text = configuration.description,
-                    style = typography.subtitle2,
+                    style = typography.titleSmall,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -324,8 +324,8 @@ fun FavouriteConfigurationCard(
 @Composable
 private fun AppName() = Text(
     text = stringResource(id = R.string.app_name),
-    style = typography.h4,
-    color = colors.onBackground,
+    style = typography.headlineMedium,
+    color = colorScheme.onBackground,
     modifier = Modifier
         .testTag(TestTags.HOME_APPNAME)
         .padding(top = 8.dp),
@@ -385,7 +385,7 @@ fun ThemeToggle(
             text = stringResource(id = R.string.homescreen_app_theme),
             fontSize = 20.sp,
             fontWeight = FontWeight.SemiBold,
-            color = colors.onBackground
+            color = colorScheme.onBackground
         )
         TriStateToggle(stateKeyLabelMap = ThemeType.entries.associateWith { theme -> theme.labelStringRes },
             selectedOption = selectedTheme.themeType,
@@ -405,7 +405,7 @@ private fun SelectProfileButton(onButtonClick: () -> Unit) {
     ) {
         Text(
             text = stringResource(id = R.string.homescreen_btn_select_profile),
-            style = typography.h4
+            style = typography.headlineMedium
         )
     }
 }
@@ -434,20 +434,20 @@ fun <K> TriStateToggle(
 ) {
     Surface(
         shape = RoundedCornerShape(24.dp),
-        elevation = 4.dp,
+        tonalElevation = 4.dp,
         modifier = Modifier.wrapContentSize(),
-        color = colors.surface
+        color = colorScheme.surface
     ) {
         Row(
             modifier = Modifier
                 .clip(shape = RoundedCornerShape(24.dp))
-                .background(colors.surface)
+                .background(colorScheme.surface)
         ) {
             stateKeyLabelMap.entries.forEach { (key, labelStringRes) ->
                 Text(text = stringResource(id = labelStringRes),
                     color = when (key == selectedOption) {
-                        true -> colors.onPrimary
-                        else -> colors.onSurface
+                        true -> colorScheme.onPrimary
+                        else -> colorScheme.onSurface
                     },
                     modifier = Modifier
                         .clip(shape = RoundedCornerShape(24.dp))
@@ -455,10 +455,14 @@ fun <K> TriStateToggle(
                             onSelectionChange(key)
                         }
                         .background(
-                            if (key == selectedOption) {
-                                colors.primary
-                            } else {
-                                colors.surface
+                            when (key) {
+                                selectedOption -> {
+                                    colorScheme.primary
+                                }
+
+                                else -> {
+                                    colorScheme.surface
+                                }
                             }
                         )
                         .padding(
@@ -468,4 +472,30 @@ fun <K> TriStateToggle(
             }
         }
     }
+}
+
+@Composable
+@Preview
+fun HomeScreenPreview() {
+    val state by remember {
+        mutableStateOf(
+            HomeScreenState(
+                favoriteConfigurations = ScreenshotData.configurations.filter { it.isFavorite },
+                configurationsWithErrors = emptyList()
+            )
+        )
+    }
+    val themeState = remember {
+        mutableStateOf(ThemeState(themeType = ThemeType.AUTO))
+    }
+    HomeScreenScaffold(
+        homeScreenState = state,
+        appTheme = themeState,
+        onInfoClick = {},
+        onSelectProfile = {},
+        onSelectFavourite = {},
+        onSelectTheme = {},
+        checkBatteryOptimizationStatus = { false },
+        onLaunchBatteryOptimizerDisable = {}
+    )
 }

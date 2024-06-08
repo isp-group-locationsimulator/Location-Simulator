@@ -2,9 +2,9 @@ package com.ispgr5.locationsimulator.screenshots.phone
 
 import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.primarySurface
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.primarySurface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -50,7 +50,7 @@ abstract class PhoneScreenshotTests(private val themeState: ThemeState) : Screen
                 LocationSimulatorTheme(themeState = themeState) {
                     Surface(
                         modifier = Modifier.fillMaxSize(),
-                        color = MaterialTheme.colors.primarySurface
+                        color = MaterialTheme.colorSchemecheme.primarySurface
                     ) {
                         screenshotScope.content()
                     }

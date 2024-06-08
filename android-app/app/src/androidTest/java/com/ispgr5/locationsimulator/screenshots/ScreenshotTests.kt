@@ -3,6 +3,8 @@ package com.ispgr5.locationsimulator.screenshots
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.junit4.createComposeRule
 import com.ispgr5.locationsimulator.di.AppModule
+import com.ispgr5.locationsimulator.presentation.add.AddScreenScreenshot
+import com.ispgr5.locationsimulator.presentation.delay.DelayScreenPreview
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.UninstallModules
@@ -111,7 +113,7 @@ abstract class ScreenshotTests {
     @Test
     fun delayScreenLight() {
         screenshot {
-            DelayScreenScreenshot()
+            DelayScreenPreview()
         }
     }
 

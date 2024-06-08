@@ -11,18 +11,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.AlertDialog
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.ContentAlpha
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedButton
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.RangeSlider
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.RangeSlider
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -55,6 +54,7 @@ import com.ispgr5.locationsimulator.domain.model.RangeConverter
 import com.ispgr5.locationsimulator.presentation.editTimeline.EditTimelineEventHandlers
 import com.ispgr5.locationsimulator.presentation.universalComponents.ConfirmDeleteDialog
 import com.ispgr5.locationsimulator.presentation.util.vibratorHasAmplitudeControlAndReason
+import java.util.Locale
 import kotlin.properties.Delegates
 
 /**
@@ -79,7 +79,7 @@ fun EditConfigComponent(
     var showDeleteConfirmDialog by remember { mutableStateOf(false) }
     var showStrengthNotSupportedDialog by remember { mutableStateOf(false) }
 
-    val blackSubtitle1 = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Black)
+    val blackSubtitle1 = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Black)
 
     val scrollState = rememberScrollState()
     val scrollbarsState = rememberScrollbarsState(
@@ -148,7 +148,7 @@ fun EditConfigComponent(
                         maxPause = configComponent.maxPause
                         Text(
                             text = buildAnnotatedString {
-                                withStyle(MaterialTheme.typography.subtitle1.toSpanStyle()) {
+                                withStyle(MaterialTheme.typography.titleMedium.toSpanStyle()) {
                                     withStyle(SpanStyle(fontWeight = FontWeight.Black)) {
                                         append(stringResource(R.string.sound_filename))
 
@@ -211,7 +211,7 @@ fun EditConfigComponent(
                             Text(
                                 text = buildAnnotatedString {
                                     withStyle(
-                                        MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Black)
+                                        MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Black)
                                             .toSpanStyle()
                                     ) {
                                         append(stringResource(id = R.string.editTimeline_Vibration_Strength))
@@ -242,12 +242,10 @@ fun EditConfigComponent(
                                     }, //show Confirm Dialog
                                     shape = MaterialTheme.shapes.small,
                                     colors = ButtonDefaults.buttonColors(
-                                        backgroundColor = Color.Transparent,
-                                        contentColor = Color.Red,
-                                        disabledBackgroundColor = Color.Transparent,
-                                        disabledContentColor = MaterialTheme.colors.primary.copy(
-                                            alpha = ContentAlpha.disabled
-                                        ),
+                                        containerColor = Color.Transparent,
+                                        contentColor = colorScheme.error,
+                                        disabledContainerColor = Color.Transparent,
+                                        disabledContentColor = colorScheme.error.copy(alpha = 0.38f)
                                     ),
                                     elevation = null
                                 ) {
@@ -336,10 +334,8 @@ fun EditConfigComponent(
                     border = null,
                     elevation = null,
                     colors = ButtonDefaults.buttonColors(
-                        backgroundColor = Color.Transparent,
-                        contentColor = MaterialTheme.colors.onSurface,
-                        disabledBackgroundColor = Color.Transparent,
-                        disabledContentColor = MaterialTheme.colors.primary.copy(alpha = ContentAlpha.disabled),
+                        containerColor = Color.Transparent,
+                        contentColor = colorScheme.onSurface
                     )
                 ) {
                     Icon(
@@ -355,10 +351,8 @@ fun EditConfigComponent(
                     border = null,
                     elevation = null,
                     colors = ButtonDefaults.buttonColors(
-                        backgroundColor = Color.Transparent,
-                        contentColor = Color.Red,
-                        disabledBackgroundColor = Color.Transparent,
-                        disabledContentColor = MaterialTheme.colors.primary.copy(alpha = ContentAlpha.disabled),
+                        containerColor = Color.Transparent,
+                        contentColor = colorScheme.error
                     )
                 ) {
                     Icon(
@@ -413,7 +407,7 @@ fun ConfigComponentNameTextInput(
     OutlinedTextField(
         textStyle = TextStyle(
             textAlign = TextAlign.Center,
-            color = MaterialTheme.colors.onBackground
+            color = colorScheme.onBackground
         ),
         value = configComponent.name,
         modifier = Modifier.testTag(TestTags.EDIT_ITEM_NAME_TEXTINPUT),
@@ -426,7 +420,6 @@ fun ConfigComponentNameTextInput(
     )
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun SliderForRange(
     modifier: Modifier = Modifier,
@@ -449,9 +442,11 @@ fun SliderForRange(
 fun SecText(min: Float, max: Float, modifier: Modifier = Modifier) {
     Text(
         String.format(
+            Locale.US,
             "%.1f",
             min
         ) + "s " + stringResource(id = R.string.editTimeline_range) + String.format(
+            Locale.US,
             "%.1f",
             max
         ) + "s ", modifier = modifier

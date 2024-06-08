@@ -4,32 +4,30 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Button
-import androidx.compose.material.Icon
-import androidx.compose.material.Scaffold
-import androidx.compose.material.ScaffoldState
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ImportExport
 import androidx.compose.material.icons.filled.Save
-import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.core.util.TestTags
 import com.ispgr5.locationsimulator.data.storageManager.ConfigurationStorageManager
+import com.ispgr5.locationsimulator.presentation.screenshotData.ScreenshotData.addScreenPreviewState
 import com.ispgr5.locationsimulator.presentation.settings.SettingsState
 import com.ispgr5.locationsimulator.presentation.universalComponents.TopBar
 
@@ -44,12 +42,11 @@ fun AddScreen(
     viewModel: AddViewModel = hiltViewModel(),
     configurationStorageManager: ConfigurationStorageManager,
     getDefaultValuesFunction: () -> SettingsState,
-    scaffoldState: ScaffoldState
 ) {
     //The state from viewmodel
     val addScreenState = viewModel.state.value
 
-    AddScreenScaffold(scaffoldState = scaffoldState,
+    AddScreenScaffold(
         addScreenState = addScreenState,
         onBackClick = {
             navController.popBackStack()
@@ -78,10 +75,10 @@ fun AddScreen(
 }
 
 @Composable
-fun AddScreenScreenshotPreview(addScreenState: AddScreenState) {
-    val scaffoldState = rememberScaffoldState()
-    AddScreenScaffold(scaffoldState = scaffoldState,
-        addScreenState = addScreenState,
+@Preview
+fun AddScreenPreview() {
+    AddScreenScaffold(
+        addScreenState = addScreenPreviewState,
         onBackClick = {},
         onNameChange = {},
         onDescriptionChange = {},
@@ -91,7 +88,6 @@ fun AddScreenScreenshotPreview(addScreenState: AddScreenState) {
 
 @Composable
 private fun AddScreenScaffold(
-    scaffoldState: ScaffoldState,
     addScreenState: AddScreenState,
     onBackClick: () -> Unit,
     onNameChange: (String) -> Unit,
@@ -99,13 +95,16 @@ private fun AddScreenScaffold(
     onSave: () -> Unit,
     onImportClick: () -> Unit
 ) {
-    Scaffold(scaffoldState = scaffoldState, topBar = {
+    Scaffold(topBar = {
         TopBar(onBackClick = onBackClick, stringResource(id = R.string.ScreenAdd))
     }, content = { paddingValues ->
-        Spacer(modifier = Modifier.height(paddingValues.calculateTopPadding()))
+        //Spacer(modifier = Modifier.height(paddingValues.calculateTopPadding()))
         Column(
             Modifier
-                .padding(15.dp)
+                .padding(
+                    top = paddingValues.calculateTopPadding() + 4.dp,
+                    start = 8.dp, end = 8.dp
+                )
                 .fillMaxSize()
         ) {
             //The name Input Field

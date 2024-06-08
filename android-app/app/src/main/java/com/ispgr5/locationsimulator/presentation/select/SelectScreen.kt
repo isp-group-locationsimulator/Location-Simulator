@@ -8,8 +8,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
-import androidx.compose.material.MaterialTheme.colors
+import androidx.compose.material3.*
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.runtime.*
@@ -52,15 +52,15 @@ fun SelectScreen(
     viewModel: SelectViewModel = hiltViewModel(),
     configurationStorageManager: ConfigurationStorageManager,
     soundStorageManager: SoundStorageManager,
-    scaffoldState: ScaffoldState,
+    snackbarHostState: SnackbarHostState,
     snackbarContent: MutableState<SnackbarContent?>
 ) {
     viewModel.updateConfigurationWithErrorsState(soundStorageManager = soundStorageManager)
     val selectScreenState = viewModel.state.value
     val context = LocalContext.current
-    MakeSnackbar(scaffoldState, snackbarContent)
+    MakeSnackbar(snackbarHostState = snackbarHostState, snackbarContent)
 
-    SelectScreenScaffold(scaffoldState = rememberScaffoldState(),
+    SelectScreenScaffold(
         selectScreenState = selectScreenState,
         onBackClick = {
             navController.popBackStack()
@@ -183,7 +183,7 @@ private fun ConfigurationList(
                                 Icon(
                                     painter = painterResource(id = R.drawable.ic_baseline_delete_outline_24),
                                     contentDescription = null,
-                                    tint = colors.onBackground,
+                                    tint = colorScheme.onBackground,
                                 )
                             }
                         }
@@ -218,7 +218,7 @@ private fun ConfigurationList(
                             Button(modifier = Modifier.fillMaxHeight(),
                                 contentPadding = PaddingValues(1.dp),
                                 colors = ButtonDefaults.buttonColors(
-                                    backgroundColor = colors.error,
+                                    containerColor = colorScheme.error,
                                 ),
                                 onClick = {
                                     onDeleteConfiguration(configuration)
@@ -250,13 +250,12 @@ private fun AddButton(onClickAddScreenButton: () -> Unit) {
         border = null,
         elevation = null,
         colors = ButtonDefaults.buttonColors(
-            backgroundColor = Color.Transparent,
-            disabledBackgroundColor = Color.Transparent,
-            disabledContentColor = colors.primary.copy(alpha = ContentAlpha.disabled),
+            containerColor = Color.Transparent,
+            disabledContentColor = colorScheme.primary.copy(alpha = 0.38f),
         ),
         modifier = Modifier
             .padding(15.dp, 15.dp, 15.dp, 0.dp)
-            .border(1.dp, colors.onSurface, RoundedCornerShape(6.dp))
+            .border(1.dp, colorScheme.onSurface, RoundedCornerShape(6.dp))
             .fillMaxWidth()
             .heightIn(min = 55.dp)
             .testTag(TestTags.SELECT_ADD_BUTTON)
@@ -301,7 +300,7 @@ private fun SelectScreenTopBar(
 
 @Composable
 fun SelectScreenScreenshotPreview(selectScreenState: SelectScreenState) {
-    SelectScreenScaffold(scaffoldState = rememberScaffoldState(),
+    SelectScreenScaffold(
         selectScreenState = selectScreenState,
         onBackClick = {},
         onSelectDeleteModeClick = {},
@@ -319,7 +318,6 @@ fun SelectScreenScreenshotPreview(selectScreenState: SelectScreenState) {
 
 @Composable
 fun SelectScreenScaffold(
-    scaffoldState: ScaffoldState,
     selectScreenState: SelectScreenState,
     onBackClick: () -> Unit,
     onSelectDeleteModeClick: () -> Unit,
@@ -334,7 +332,7 @@ fun SelectScreenScaffold(
     onFavouriteClicked: (Configuration) -> Unit,
     onDeleteConfiguration: (Configuration) -> Unit
 ) {
-    Scaffold(scaffoldState = scaffoldState, topBar = {
+    Scaffold(topBar = {
         SelectScreenTopBar(
             onBackClick = onBackClick,
             onSelectDeleteModeClick = onSelectDeleteModeClick,

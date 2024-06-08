@@ -23,11 +23,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Card
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -72,7 +72,7 @@ class VibrationTestActivity : ComponentActivity() {
             LocationSimulatorTheme(themeState = ThemeState(themeType = ThemeType.LIGHT)) {
                 // A surface container using the 'background' color from the theme
                 Surface(
-                    modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
+                    modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorSchemecheme.background
                 ) {
                     VibrationTesterScaffold()
                 }
@@ -353,7 +353,7 @@ fun VibrationTestCard(
                         onClickVibrate()
                         hasTested = true
                     },
-                    colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colorScheme.primary)
+                    colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colorSchemecheme.primary)
                 ) {
                     Text("Vibrate")
                 }

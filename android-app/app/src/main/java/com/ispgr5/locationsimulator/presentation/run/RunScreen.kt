@@ -24,20 +24,20 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Button
-import androidx.compose.material.Card
-import androidx.compose.material.LinearProgressIndicator
-import androidx.compose.material.MaterialTheme.colors
-import androidx.compose.material.MaterialTheme.typography
-import androidx.compose.material.Scaffold
-import androidx.compose.material.ScaffoldState
-import androidx.compose.material.SnackbarDuration
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PauseCircleOutline
-import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.material3.MaterialTheme.typography
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -74,6 +74,10 @@ import androidx.navigation.NavController
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 import com.ispgr5.locationsimulator.domain.model.Configuration
+import com.ispgr5.locationsimulator.presentation.screenshotData.ScreenshotData
+import com.ispgr5.locationsimulator.presentation.screenshotData.ScreenshotData.runScreenPreviewInitialRefresh
+import com.ispgr5.locationsimulator.presentation.screenshotData.ScreenshotData.runScreenPreviewStatePaused
+import com.ispgr5.locationsimulator.presentation.screenshotData.ScreenshotData.runScreenPreviewStatePlaying
 import com.ispgr5.locationsimulator.presentation.universalComponents.SnackbarContent
 import com.ispgr5.locationsimulator.presentation.util.MakeSnackbar
 import com.ispgr5.locationsimulator.presentation.util.between
@@ -97,8 +101,8 @@ import java.math.RoundingMode
 fun RunScreen(
     navController: NavController,
     stopServiceFunction: () -> Unit,
-    viewModel: RunViewModel = hiltViewModel(),
-    scaffoldState: ScaffoldState
+    snackbarHostState: SnackbarHostState,
+    viewModel: RunViewModel = hiltViewModel()
 ) {
     BackHandler {
         viewModel.onEvent(RunEvent.StopClicked(stopServiceFunction))
@@ -109,7 +113,10 @@ fun RunScreen(
         mutableStateOf<SnackbarContent?>(null)
     }
 
-    MakeSnackbar(scaffoldState = scaffoldState, snackbarContent = snackbarContentState)
+    MakeSnackbar(
+        snackbarHostState = snackbarHostState,
+        snackbarContent = snackbarContentState
+    )
 
     val effectState: EffectTimelineState? by SimulationService.EffectTimelineStateBus.observeAsState()
 
@@ -143,7 +150,6 @@ fun RunScreen(
 
     configuration?.let { conf ->
         RunScreenScaffold(
-            scaffoldState = scaffoldState,
             configuration = conf,
             playingEffect = playingEffect,
             nextEffect = nextEffect,
@@ -161,8 +167,28 @@ fun RunScreen(
 }
 
 @Composable
+@Preview
+fun RunScreenPausedScreenshot() {
+    RunScreenScreenshotPreview(
+        configuration = ScreenshotData.configurations.first(),
+        effectTimelineState = runScreenPreviewStatePaused,
+        initialRefreshInstant = runScreenPreviewInitialRefresh
+    )
+}
+
+@Composable
+@Preview
+fun RunScreenActiveScreenshot() {
+    RunScreenScreenshotPreview(
+        configuration = ScreenshotData.configurations.first(),
+        effectTimelineState = runScreenPreviewStatePlaying,
+        initialRefreshInstant = runScreenPreviewInitialRefresh
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
 fun RunScreenScaffold(
-    scaffoldState: ScaffoldState,
     configuration: Configuration,
     playingEffect: EffectParameters?,
     nextEffect: EffectParameters?,
@@ -173,7 +199,7 @@ fun RunScreenScaffold(
     onStop: () -> Unit
 ) {
     val context = LocalContext.current
-    Scaffold(scaffoldState = scaffoldState, topBar = {
+    Scaffold(topBar = {
         TopAppBar(
             title = {
                 Text(
@@ -398,7 +424,7 @@ fun RunScreenPreview() {
         val snackbarContentState = remember {
             mutableStateOf<SnackbarContent?>(null)
         }
-        Surface(modifier = Modifier.fillMaxSize(), color = colors.background) {
+        Surface(modifier = Modifier.fillMaxSize(), color = colorScheme.background) {
             RunScreenContent(
                 paddingValues = PaddingValues(4.dp),
                 playingEffect = RunscreenPreviewData.effectTimelinePlayingState.playingEffect,
@@ -431,11 +457,6 @@ fun PlayingStateUi(
             lastRefreshInstant = Instant.now()
         }
     }
-
-
-    val progressBarProgress = calculateCurrentProgress(
-        playingEffect, nextEffect, startPauseAt, lastRefreshInstant
-    )
 
     Column(
         modifier = Modifier
@@ -486,7 +507,11 @@ fun PlayingStateUi(
                 .height(IntrinsicSize.Min),
             horizontalArrangement = Arrangement.Center
         ) {
-            EffectProgressBar(progressBarProgress, isInPause = currentPauseDuration != null)
+            EffectProgressBar(progressBarProgress = {
+                calculateCurrentProgress(
+                    playingEffect, nextEffect, startPauseAt, lastRefreshInstant
+                )
+            }, isInPause = currentPauseDuration != null)
         }
 
 
@@ -514,7 +539,7 @@ fun calculateCurrentProgress(
 
 @Composable
 fun EffectProgressBar(
-    progressBarProgress: Float, isInPause: Boolean
+    progressBarProgress: () -> Float, isInPause: Boolean
 ) {
     Row(
         modifier = Modifier.wrapContentHeight(Alignment.Bottom),
@@ -527,8 +552,8 @@ fun EffectProgressBar(
                 .weight(0.7f)
                 .padding(8.dp),
             color = when (isInPause) {
-                true -> colors.secondary.copy(alpha = 0.4f)
-                else -> colors.secondary
+                true -> colorScheme.secondary.copy(alpha = 0.4f)
+                else -> colorScheme.secondary
             }
         )
     }
@@ -555,7 +580,7 @@ fun EffectPreviewUi(
             painter = painterResource(id = drawable),
             contentScale = ContentScale.FillHeight,
             contentDescription = null,
-            colorFilter = ColorFilter.tint(colors.onSurface)
+            colorFilter = ColorFilter.tint(colorScheme.onSurface)
         )
         ranges.forEach { range ->
             Row(
@@ -586,25 +611,25 @@ fun RefRangeIndicator(modifier: Modifier = Modifier, range: RefRangeValue) {
         val upperText = range.formatValue(range.upper)
         val valueText = range.formatValue(range.value)
 
-        Text(text = valueText, style = typography.body2.copy(fontWeight = FontWeight.Bold))
+        Text(text = valueText, style = typography.bodyMedium.copy(fontWeight = FontWeight.Bold))
         if (progress != null) {
             LinearProgressIndicator(
                 modifier = Modifier
                     .height(3.dp)
                     .fillMaxWidth(boxWeight.weight),
-                progress = progress.setScale(2).toFloat()
+                progress = { progress.setScale(2).toFloat() }
             )
             Row(
                 modifier = Modifier.fillMaxWidth(boxWeight.weight)
             ) {
                 Text(
                     text = lowerText,
-                    style = typography.caption.copy(textAlign = TextAlign.Start),
+                    style = typography.bodySmall.copy(textAlign = TextAlign.Start),
                     modifier = Modifier.weight(1f, fill = true)
                 )
                 Text(
                     text = upperText,
-                    style = typography.caption.copy(textAlign = TextAlign.End),
+                    style = typography.bodySmall.copy(textAlign = TextAlign.End),
                     modifier = Modifier.weight(1f, fill = true)
                 )
             }
@@ -631,7 +656,7 @@ fun SoundUi(effectState: EffectParameters.Sound, iconSize: Dp) {
         })
 
     val pauseRange = buildPauseRange(effectState, original)
-    Text(effectState.soundName, style = typography.subtitle2)
+    Text(effectState.soundName, style = typography.titleSmall)
     EffectPreviewUi(
         effectState = effectState, ranges = listOf(volumeRange, pauseRange), iconSize = iconSize
     )
@@ -655,6 +680,7 @@ fun VibrationUi(effectState: EffectParameters.Vibration, iconSize: Dp) {
             formatValue = {
                 it.setScale(0, RoundingMode.FLOOR).toString()
             })
+
         else -> null
     }
     val durationRange = RefRangeValue(value = effectState.durationMillis.toBigDecimal(),
@@ -714,12 +740,12 @@ fun PausedUi(currentPauseDuration: Long, iconSize: Dp) {
             contentDescription = null,
             modifier = Modifier.height(iconSize),
             contentScale = ContentScale.FillHeight,
-            colorFilter = ColorFilter.tint(colors.onSurface)
+            colorFilter = ColorFilter.tint(colorScheme.onSurface)
         )
         Text(stringResource(id = R.string.in_pause))
         Text(
             text = "${BigDecimal.valueOf(currentPauseDuration).millisToSeconds()} s",
-            style = typography.h6.copy(fontFamily = FontFamily.Monospace)
+            style = typography.titleLarge.copy(fontFamily = FontFamily.Monospace)
         )
     }
 }
@@ -732,7 +758,7 @@ fun NextUi(nextEffect: EffectParameters, iconSize: Dp = 32.dp) {
             .padding(horizontal = 8.dp, vertical = 4.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(stringResource(id = R.string.next_effect), style = typography.subtitle1)
+        Text(stringResource(id = R.string.next_effect), style = typography.titleMedium)
         when (nextEffect) {
             is EffectParameters.Vibration -> VibrationUi(nextEffect, iconSize)
             is EffectParameters.Sound -> SoundUi(nextEffect, iconSize)
@@ -750,7 +776,6 @@ fun RunScreenScreenshotPreview(
         mutableStateOf<SnackbarContent?>(null)
     }
     RunScreenScaffold(
-        scaffoldState = rememberScaffoldState(),
         configuration = configuration,
         playingEffect = effectTimelineState.playingEffect,
         nextEffect = effectTimelineState.nextEffect,

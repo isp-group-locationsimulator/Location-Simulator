@@ -7,7 +7,7 @@ import android.os.Build
 import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.StringRes
-import androidx.compose.material.SnackbarDuration
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.runtime.MutableState
 import androidx.core.app.ShareCompat
 import androidx.core.content.FileProvider

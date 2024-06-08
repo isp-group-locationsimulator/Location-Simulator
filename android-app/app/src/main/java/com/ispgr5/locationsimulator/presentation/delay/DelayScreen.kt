@@ -11,12 +11,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Divider
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.ScaffoldState
-import androidx.compose.material.Text
-import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -29,6 +27,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -38,6 +37,8 @@ import com.ispgr5.locationsimulator.core.util.TestTags
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 import com.ispgr5.locationsimulator.domain.model.Configuration
 import com.ispgr5.locationsimulator.presentation.editTimeline.components.Timeline
+import com.ispgr5.locationsimulator.presentation.screenshotData.ScreenshotData.delayScreenInitialTimerState
+import com.ispgr5.locationsimulator.presentation.screenshotData.ScreenshotData.delayScreenPreviewState
 import com.ispgr5.locationsimulator.presentation.universalComponents.TopBar
 import com.ispgr5.locationsimulator.presentation.util.Screen
 import com.ispgr5.locationsimulator.presentation.util.millisToSeconds
@@ -56,7 +57,6 @@ fun DelayScreen(
     viewModel: DelayViewModel = hiltViewModel(),
     startServiceFunction: (String, List<ConfigComponent>, Boolean) -> Unit,
     soundsDirUri: String, //the sounds Directory Uri needed for calculating Sound Length
-    scaffoldState: ScaffoldState
 ) {
     //The state from viewmodel
     val state = viewModel.state.value
@@ -66,7 +66,6 @@ fun DelayScreen(
 
     DelayScreenScaffold(
         state = state,
-        scaffoldState = scaffoldState,
         timerState = timerState,
         soundsDirUri = soundsDirUri,
         onBackClick = {
@@ -90,7 +89,6 @@ fun DelayScreen(
 @Composable
 fun DelayScreenScaffold(
     state: DelayScreenState,
-    scaffoldState: ScaffoldState,
     timerState: MutableState<TimerState>,
     soundsDirUri: String,
     onBackClick: () -> Unit,
@@ -98,7 +96,6 @@ fun DelayScreenScaffold(
 ) {
     val context = LocalContext.current
     Scaffold(
-        scaffoldState = scaffoldState,
         topBar = {
             TopBar(onBackClick = {
                 onBackClick()
@@ -152,7 +149,7 @@ fun DelayScreenContent(
         )
         Spacer(modifier = Modifier.size(8.dp))
         if (configuration.description.isNotBlank()) {
-            Divider(color = MaterialTheme.colors.primary, thickness = 1.dp)
+            HorizontalDivider(color = colorScheme.primary, thickness = 1.dp)
             Spacer(modifier = Modifier.size(8.dp))
             Text(
                 text = configuration.description,
@@ -168,7 +165,7 @@ fun DelayScreenContent(
          * The Timeline
          */
         Spacer(modifier = Modifier.size(8.dp))
-        Divider(color = MaterialTheme.colors.primary, thickness = 1.dp)
+        HorizontalDivider(color = colorScheme.primary, thickness = 1.dp)
         Spacer(modifier = Modifier.size(8.dp))
 
         Timeline(
@@ -194,7 +191,7 @@ fun DelayScreenContent(
         Text(runtimeString)
 
         Spacer(modifier = Modifier.size(3.dp))
-        Divider(color = MaterialTheme.colors.primary, thickness = 1.dp)
+        HorizontalDivider(color = colorScheme.primary, thickness = 1.dp)
         Spacer(modifier = Modifier.size(8.dp))
 
         //The timer component
@@ -207,10 +204,13 @@ fun DelayScreenContent(
 }
 
 @Composable
-fun DelayScreenScreenshotPreview(state: DelayScreenState, timerState: MutableState<TimerState>) {
+@Preview
+fun DelayScreenPreview() {
+    val timerState = remember {
+        mutableStateOf(delayScreenInitialTimerState)
+    }
     DelayScreenScaffold(
-        state = state,
-        scaffoldState = rememberScaffoldState(),
+        state = delayScreenPreviewState,
         soundsDirUri = "sounds",
         timerState = timerState,
         onBackClick = {},

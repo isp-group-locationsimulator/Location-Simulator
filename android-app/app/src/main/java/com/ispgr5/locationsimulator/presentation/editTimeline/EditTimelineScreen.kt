@@ -9,16 +9,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.Divider
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Scaffold
-import androidx.compose.material.ScaffoldState
-import androidx.compose.material.Switch
-import androidx.compose.material.Text
-import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -53,8 +51,7 @@ import com.ispgr5.locationsimulator.presentation.util.Screen
 fun EditTimelineScreen(
     navController: NavController,
     viewModel: EditTimelineViewModel = hiltViewModel(),
-    getDefaultValuesFunction: () -> SettingsState,
-    scaffoldState: ScaffoldState
+    getDefaultValuesFunction: () -> SettingsState
 ) {
     val state = viewModel.state.value
     var showCustomDialogWithResult by remember { mutableStateOf(false) }
@@ -95,7 +92,6 @@ fun EditTimelineScreen(
 
     EditTimelineScaffold(
         state = state,
-        scaffoldState = scaffoldState,
         isDialogShown = showCustomDialogWithResult,
         onBackClick = {
             navController.popBackStack()
@@ -136,7 +132,6 @@ fun EditTimelineScreen(
 @Composable
 fun EditTimelineScaffold(
     state: EditTimelineState,
-    scaffoldState: ScaffoldState,
     isDialogShown: Boolean,
     onBackClick: () -> Unit,
     onSettingsClick: () -> Unit,
@@ -150,7 +145,7 @@ fun EditTimelineScaffold(
     editTimelineEventHandlers: EditTimelineEventHandlers?,
     vibrationSupportHintMode: VibrationSupportHintMode = VibrationSupportHintMode.AUTOMATIC
 ) {
-    Scaffold(scaffoldState = scaffoldState, topBar = {
+    Scaffold(topBar = {
         EditTimelineTopBar(onBackClick = onBackClick, onSettingsClick = onSettingsClick)
     }) { paddingValues ->
         Spacer(modifier = Modifier.height(paddingValues.calculateTopPadding()))
@@ -160,7 +155,7 @@ fun EditTimelineScaffold(
             verticalArrangement = Arrangement.spacedBy(2.dp)
         ) {
             ConfigMetadata(state, onChangeName, onChangeDescription, onCheckRandomOrder)
-            Divider(color = MaterialTheme.colors.onBackground, thickness = 1.dp)
+            HorizontalDivider(color = colorScheme.onBackground, thickness = 1.dp)
 
             /**
              * The TimeLine
@@ -170,7 +165,7 @@ fun EditTimelineScaffold(
                 onSelectAComponent = onSelectAComponent,
                 onAddClicked = { onToggleShowDialog(true) })
             Spacer(modifier = Modifier.size(7.dp))
-            Divider(color = MaterialTheme.colors.onBackground, thickness = 1.dp)
+            HorizontalDivider(color = colorScheme.onBackground, thickness = 1.dp)
 
             /**
              * The Edit Options, like Slider
@@ -225,7 +220,7 @@ private fun ConfigMetadata(
                 Text(stringResource(id = R.string.editTimeline_name))
             },
             textStyle = TextStyle(
-                color = MaterialTheme.colors.onBackground
+                color = colorScheme.onBackground
             ),
             singleLine = true
         )
@@ -242,7 +237,7 @@ private fun ConfigMetadata(
             },
             onValueChange = onChangeDescription,
             textStyle = TextStyle(
-                color = MaterialTheme.colors.onBackground
+                color = colorScheme.onBackground
             )
         )
         Row(
@@ -309,7 +304,6 @@ fun EditTimelineScreenshotPreview(
 ) {
     EditTimelineScaffold(
         state = state,
-        scaffoldState = rememberScaffoldState(),
         isDialogShown = isDialogShown,
         onBackClick = {},
         onSettingsClick = {},

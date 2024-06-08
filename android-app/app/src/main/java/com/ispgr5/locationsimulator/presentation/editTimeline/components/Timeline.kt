@@ -13,11 +13,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Card
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -88,7 +89,7 @@ fun Timeline(
              */
             if (showAddButton) {
                 Button(
-                    elevation = ButtonDefaults.elevation(4.dp),
+                    elevation = ButtonDefaults.buttonElevation(4.dp),
                     onClick = onAddClicked!!,
                     modifier = Modifier
                         .width(55.dp)
@@ -132,10 +133,19 @@ fun TimelineItem(
         }
     } ?: baseModifier
     Card(
-        elevation = 4.dp, backgroundColor = MaterialTheme.colors.surface,
+        elevation = CardDefaults.cardElevation(4.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface,
+            contentColor = MaterialTheme.colorScheme.onSurface
+        ),
         //if selected the Item gets a Border in another Color
         modifier = when (isSelected) {
-            true -> clickableModifier.border(1.dp, MaterialTheme.colors.primary, RoundedCornerShape(10))
+            true -> clickableModifier.border(
+                1.dp,
+                MaterialTheme.colorScheme.primary,
+                RoundedCornerShape(10)
+            )
+
             else -> clickableModifier
         }
     ) {

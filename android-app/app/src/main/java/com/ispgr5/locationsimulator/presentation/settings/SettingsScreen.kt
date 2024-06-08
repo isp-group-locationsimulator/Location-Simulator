@@ -22,13 +22,13 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Scaffold
-import androidx.compose.material.ScaffoldState
-import androidx.compose.material.Text
-import androidx.compose.material.TextFieldDefaults
-import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.ScaffoldState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.ui.Alignment
@@ -163,7 +163,7 @@ fun SettingsScreenScaffold(
                 ) {
                     repeat(pagerState.pageCount) { iteration ->
                         val color =
-                            if (pagerState.currentPage == iteration) MaterialTheme.colors.primary else MaterialTheme.colors.surface
+                            if (pagerState.currentPage == iteration) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface
                         Box(
                             modifier = Modifier
                                 .padding(2.dp)
@@ -190,7 +190,7 @@ private fun SoundCard(
             .padding(20.dp)
             .border(
                 1.dp,
-                MaterialTheme.colors.onSurface,
+                MaterialTheme.colorScheme.onSurface,
                 RoundedCornerShape(5)
             )
             .padding(20.dp)
@@ -270,7 +270,7 @@ private fun VibrationCard(
             .padding(20.dp)
             .border(
                 1.dp,
-                MaterialTheme.colors.onSurface,
+                MaterialTheme.colorScheme.onSurface,
                 RoundedCornerShape(5)
             )
             .fillMaxHeight()
@@ -307,8 +307,8 @@ private fun VibrationCard(
             placeholder = { Text(text = stringResource(id = R.string.PlaceholderDefaultName)) },
             singleLine = true,
             colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = MaterialTheme.colors.primary,
-                unfocusedBorderColor = MaterialTheme.colors.onSurface
+                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                unfocusedBorderColor = MaterialTheme.colorScheme.onSurface
             ),
             modifier = Modifier
                 .fillMaxWidth()

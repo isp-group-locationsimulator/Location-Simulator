@@ -9,12 +9,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -120,7 +121,7 @@ fun DelayTimer(
     ) {
         Text(
             text = stringResource(R.string.delay_start),
-            style = MaterialTheme.typography.h4,
+            style = MaterialTheme.typography.headlineMedium,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(4.dp),
@@ -361,13 +362,14 @@ fun DelayTimer(
                 onStartVibration(configurationId, onFinishTimer, timerState, countDownTimer)
             },
             colors = ButtonDefaults.outlinedButtonColors(
-                backgroundColor = MaterialTheme.colors.secondary
+                containerColor = colorScheme.secondary
             )
+
         ) {
             Text(
                 stringResource(id = R.string.start_now),
                 style = TextStyle(fontSize = 30.sp),
-                color = MaterialTheme.colors.onSecondary
+                color = colorScheme.onSecondary
             )
         }
     }

@@ -16,11 +16,9 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.ScaffoldState
-import androidx.compose.material.SnackbarDuration
-import androidx.compose.material.Surface
-import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -113,10 +111,9 @@ class MainActivity : ComponentActivity() {
             LocationSimulatorTheme(themeState.value) {
                 // A surface container using the 'background' color from the theme
                 Surface(
-                    modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background
+                    modifier = Modifier.fillMaxSize(), color = colorScheme.background
                 ) {
                     val navController = rememberNavController()
-                    val scaffoldState = rememberScaffoldState()
                     val context = LocalContext.current
                     val powerManager by remember {
                         mutableStateOf(context.getSystemService(POWER_SERVICE) as PowerManager)
@@ -125,7 +122,6 @@ class MainActivity : ComponentActivity() {
                     NavigationAppHost(
                         navController = navController,
                         themeState = themeState,
-                        scaffoldState = scaffoldState,
                         snackbarContent = snackbarContent,
                         powerManager = powerManager
                     )
@@ -161,7 +157,6 @@ class MainActivity : ComponentActivity() {
     fun NavigationAppHost(
         navController: NavHostController,
         themeState: MutableState<ThemeState>,
-        scaffoldState: ScaffoldState,
         snackbarContent: MutableState<SnackbarContent?>,
         powerManager: PowerManager,
     ) {
@@ -180,19 +175,17 @@ class MainActivity : ComponentActivity() {
                     soundStorageManager = soundStorageManager,
                     activity = this@MainActivity,
                     appTheme = themeState,
-                    scaffoldState = scaffoldState,
                     snackbarContent = snackbarContent
                 )
             }
             composable(Screen.InfoScreen.route) {
-                InfoScreen(navController = navController, scaffoldState = scaffoldState)
+                InfoScreen(navController = navController)
             }
             composable(route = Screen.SelectScreen.route) {
                 SelectScreen(
                     navController = navController,
                     configurationStorageManager = configurationStorageManager,
                     soundStorageManager = soundStorageManager,
-                    scaffoldState = scaffoldState,
                     snackbarContent = snackbarContent
                 )
             }
@@ -200,14 +193,12 @@ class MainActivity : ComponentActivity() {
                 AddScreen(
                     navController = navController,
                     configurationStorageManager = configurationStorageManager,
-                    scaffoldState = scaffoldState,
                     getDefaultValuesFunction = getDefaultValues
                 )
             }
             composable(Screen.SettingsScreen.route) {
                 SettingsScreen(
                     navController = navController,
-                    scaffoldState = scaffoldState,
                     saveDefaultValuesFunction = saveDefaultValues,
                     getDefaultValuesFunction = getDefaultValues
                 )
@@ -219,7 +210,6 @@ class MainActivity : ComponentActivity() {
                 DelayScreen(
                     navController = navController,
                     startServiceFunction = startService,
-                    scaffoldState = scaffoldState,
                     soundsDirUri = this@MainActivity.filesDir.toString() + "/Sounds/",
                 )
             }
@@ -227,7 +217,6 @@ class MainActivity : ComponentActivity() {
                 RunScreen(
                     navController = navController,
                     stopServiceFunction = { stopService() },
-                    scaffoldState = scaffoldState
                 )
             }
             composable(Screen.StopService.route) {
@@ -240,7 +229,6 @@ class MainActivity : ComponentActivity() {
                 EditTimelineScreen(
                     navController = navController,
                     getDefaultValuesFunction = getDefaultValues,
-                    scaffoldState = scaffoldState
                 )
             }
             composable(
@@ -252,7 +240,6 @@ class MainActivity : ComponentActivity() {
                     soundsDirUri = this@MainActivity.filesDir.toString() + "/Sounds/",
                     recordAudio = { recordAudio() },
                     getDefaultValuesFunction = getDefaultValues,
-                    scaffoldState = scaffoldState
                 )
                 SoundDialog(
                     popUpState = popUpState

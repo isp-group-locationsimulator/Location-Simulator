@@ -1,10 +1,10 @@
 package com.ispgr5.locationsimulator.presentation.universalComponents
 
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.AlertDialog
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -27,7 +27,7 @@ fun ConfirmDeleteDialog(
 //        Card(
 //            elevation = 8.dp,
 //            shape = RoundedCornerShape(12.dp),
-//            backgroundColor = MaterialTheme.colors.surface,
+//            backgroundColor = MaterialTheme.colorScheme.surface,
 //        ) {
 //            Column(modifier = Modifier.padding(8.dp)) {
 //                Text(
@@ -51,6 +51,6 @@ fun ConfirmDeleteDialog(
             }
         },
         shape = RoundedCornerShape(12.dp),
-        backgroundColor = MaterialTheme.colors.surface
+        backgroundColor = MaterialTheme.colorScheme.surface
     )
 }
