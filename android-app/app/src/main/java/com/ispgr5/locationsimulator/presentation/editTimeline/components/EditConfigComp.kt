@@ -54,6 +54,7 @@ import com.ispgr5.locationsimulator.domain.model.RangeConverter
 import com.ispgr5.locationsimulator.presentation.editTimeline.EditTimelineEventHandlers
 import com.ispgr5.locationsimulator.presentation.universalComponents.ConfirmDeleteDialog
 import com.ispgr5.locationsimulator.presentation.util.vibratorHasAmplitudeControlAndReason
+import com.ispgr5.locationsimulator.ui.theme.DISABLED_ALPHA
 import java.util.Locale
 import kotlin.properties.Delegates
 
@@ -245,7 +246,7 @@ fun EditConfigComponent(
                                         containerColor = Color.Transparent,
                                         contentColor = colorScheme.error,
                                         disabledContainerColor = Color.Transparent,
-                                        disabledContentColor = colorScheme.error.copy(alpha = 0.38f)
+                                        disabledContentColor = colorScheme.error.copy(alpha = DISABLED_ALPHA)
                                     ),
                                     elevation = null
                                 ) {

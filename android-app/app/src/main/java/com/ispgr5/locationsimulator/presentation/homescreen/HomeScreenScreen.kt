@@ -64,11 +64,12 @@ import com.ispgr5.locationsimulator.core.util.TestTags
 import com.ispgr5.locationsimulator.data.storageManager.SoundStorageManager
 import com.ispgr5.locationsimulator.domain.model.Configuration
 import com.ispgr5.locationsimulator.presentation.MainActivity
-import com.ispgr5.locationsimulator.presentation.screenshotData.ScreenshotData
+import com.ispgr5.locationsimulator.presentation.previewData.PreviewData
 import com.ispgr5.locationsimulator.presentation.universalComponents.SnackbarContent
-import com.ispgr5.locationsimulator.presentation.universalComponents.TopBar
+import com.ispgr5.locationsimulator.presentation.universalComponents.LocationSimulatorTopBar
 import com.ispgr5.locationsimulator.presentation.util.MakeSnackbar
 import com.ispgr5.locationsimulator.presentation.util.Screen
+import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
 import com.ispgr5.locationsimulator.ui.theme.ThemeState
 import com.ispgr5.locationsimulator.ui.theme.ThemeType
 import kotlinx.coroutines.delay
@@ -204,20 +205,6 @@ fun HomeScreenContent(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceAround
     ) {
-        /**
-         * Header
-         */
-        Column(
-            modifier = Modifier
-                .height(IntrinsicSize.Min)
-                .padding(vertical = 8.dp)
-                .fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(24.dp, Alignment.CenterVertically)
-        ) {
-            AppName()
-        }
-
         Row(
             modifier = Modifier
                 .height(IntrinsicSize.Min)
@@ -296,11 +283,17 @@ fun FavouriteConfigurationCard(
     configuration: Configuration,
     onSelectFavourite: (Configuration) -> Unit
 ) {
-    Button(modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(
-        containerColor = colorScheme.surface,
-    ), border = null, elevation = null, shape = shapes.small, onClick = {
-        onSelectFavourite(configuration)
-    }) {
+    Button(
+        modifier = Modifier.fillMaxWidth(),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = colorScheme.secondaryContainer,
+            contentColor = colorScheme.onSecondaryContainer
+        ),
+        border = null,
+        elevation = null,
+        shape = shapes.small, onClick = {
+            onSelectFavourite(configuration)
+        }) {
         Column(
             Modifier
                 .fillMaxWidth()
@@ -320,16 +313,6 @@ fun FavouriteConfigurationCard(
         }
     }
 }
-
-@Composable
-private fun AppName() = Text(
-    text = stringResource(id = R.string.app_name),
-    style = typography.headlineMedium,
-    color = colorScheme.onBackground,
-    modifier = Modifier
-        .testTag(TestTags.HOME_APPNAME)
-        .padding(top = 8.dp),
-)
 
 @Composable
 private fun BatteryOptimizationHint(
@@ -363,7 +346,13 @@ private fun BatteryOptimizationHint(
                         text = stringResource(id = R.string.battery_opt_recommendation),
                         textAlign = TextAlign.Center
                     )
-                    Button(onClick = onLaunchBatteryOptimizerDisable) {
+                    Button(
+                        onClick = onLaunchBatteryOptimizerDisable,
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = colorScheme.secondaryContainer,
+                            contentColor = colorScheme.onSecondaryContainer
+                        )
+                    ) {
                         Text(text = stringResource(id = R.string.battery_opt_button))
                     }
                     Spacer(Modifier.height(8.dp))
@@ -372,8 +361,6 @@ private fun BatteryOptimizationHint(
             }
         }
     }
-
-
 }
 
 @Composable
@@ -412,7 +399,7 @@ private fun SelectProfileButton(onButtonClick: () -> Unit) {
 
 @Composable
 private fun AppTopBar(onInfoClick: () -> Unit) {
-    TopBar(
+    LocationSimulatorTopBar(
         onBackClick = null,
         title = stringResource(id = R.string.app_name),
         backPossible = false
@@ -434,14 +421,14 @@ fun <K> TriStateToggle(
 ) {
     Surface(
         shape = RoundedCornerShape(24.dp),
-        tonalElevation = 4.dp,
+        shadowElevation = 4.dp,
         modifier = Modifier.wrapContentSize(),
-        color = colorScheme.surface
+        color = colorScheme.surfaceContainer
     ) {
         Row(
             modifier = Modifier
                 .clip(shape = RoundedCornerShape(24.dp))
-                .background(colorScheme.surface)
+                .background(colorScheme.surfaceContainer)
         ) {
             stateKeyLabelMap.entries.forEach { (key, labelStringRes) ->
                 Text(text = stringResource(id = labelStringRes),
@@ -461,7 +448,7 @@ fun <K> TriStateToggle(
                                 }
 
                                 else -> {
-                                    colorScheme.surface
+                                    colorScheme.surfaceContainer
                                 }
                             }
                         )
@@ -480,22 +467,24 @@ fun HomeScreenPreview() {
     val state by remember {
         mutableStateOf(
             HomeScreenState(
-                favoriteConfigurations = ScreenshotData.configurations.filter { it.isFavorite },
+                favoriteConfigurations = PreviewData.previewConfigurations.filter { it.isFavorite },
                 configurationsWithErrors = emptyList()
             )
         )
     }
     val themeState = remember {
-        mutableStateOf(ThemeState(themeType = ThemeType.AUTO))
+        mutableStateOf(PreviewData.themePreviewState)
     }
-    HomeScreenScaffold(
-        homeScreenState = state,
-        appTheme = themeState,
-        onInfoClick = {},
-        onSelectProfile = {},
-        onSelectFavourite = {},
-        onSelectTheme = {},
-        checkBatteryOptimizationStatus = { false },
-        onLaunchBatteryOptimizerDisable = {}
-    )
+    LocationSimulatorTheme(themeState = PreviewData.themePreviewState) {
+        HomeScreenScaffold(
+            homeScreenState = state,
+            appTheme = themeState,
+            onInfoClick = {},
+            onSelectProfile = {},
+            onSelectFavourite = {},
+            onSelectTheme = {},
+            checkBatteryOptimizationStatus = { false },
+            onLaunchBatteryOptimizerDisable = {}
+        )
+    }
 }

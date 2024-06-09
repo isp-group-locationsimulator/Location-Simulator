@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -20,6 +21,8 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -35,6 +38,10 @@ import com.gigamole.composescrollbars.scrolltype.knobtype.ScrollbarsStaticKnobTy
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.core.util.TestTags
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
+import com.ispgr5.locationsimulator.presentation.delay.DelayScreenScaffold
+import com.ispgr5.locationsimulator.presentation.previewData.AppPreviewConfig
+import com.ispgr5.locationsimulator.presentation.previewData.PreviewData
+import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
 
 /**
  * Compose to show the Timeline of a Configuration
@@ -42,7 +49,7 @@ import com.ispgr5.locationsimulator.domain.model.ConfigComponent
  * @param selectedComponent the Configuration Component that is currently selected
  * @param onSelectAComponent what should happen if a Time line Item gets clicked
  * @param onAddClicked functions which gets called if the add button gets clicked
- * @param showAddButton whether the AddButton should be drawn or not
+ * @param interactive whether the AddButton and scroll bar should be drawn or not
  */
 @Composable
 fun Timeline(
@@ -50,7 +57,7 @@ fun Timeline(
     selectedComponent: ConfigComponent?,
     onSelectAComponent: ((ConfigComponent) -> Unit)?,
     onAddClicked: (() -> Unit)?,
-    showAddButton: Boolean = true
+    interactive: Boolean = true
 ) {
 
     val scrollState = rememberScrollState()
@@ -87,7 +94,7 @@ fun Timeline(
             /**
              * Add new Timeline Item(Configuration Component)
              */
-            if (showAddButton) {
+            if (interactive) {
                 Button(
                     elevation = ButtonDefaults.buttonElevation(4.dp),
                     onClick = onAddClicked!!,
@@ -104,7 +111,9 @@ fun Timeline(
                 }
             }
         }
-        Scrollbars(state = scrollBarState)
+        if (interactive) {
+            Scrollbars(state = scrollBarState)
+        }
     }
 
 }
@@ -125,7 +134,7 @@ fun TimelineItem(
         Modifier
             .width(55.dp)
             .height(55.dp)
-            .padding(6.dp)
+            .padding(horizontal = 6.dp, vertical = 2.dp)
             .testTag(TestTags.EDIT_CONFIG_ITEM)
     val clickableModifier = onSelect?.let {
         baseModifier.clickable {
@@ -152,7 +161,7 @@ fun TimelineItem(
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.padding(2.dp)
+            modifier = Modifier.padding(2.dp).fillMaxSize()
         ) {
             Icon(
                 painter = if (configItem is ConfigComponent.Sound) {
@@ -164,5 +173,19 @@ fun TimelineItem(
             )
 
         }
+    }
+}
+
+@Composable
+@AppPreviewConfig
+fun TimelinePreview() {
+    LocationSimulatorTheme(themeState = PreviewData.themePreviewState) {
+        Timeline(
+            components = PreviewData.previewConfigurations.first().components,
+            selectedComponent = PreviewData.previewConfigurations.first().components.first(),
+            onSelectAComponent = {},
+            onAddClicked = {},
+            interactive = false
+        )
     }
 }

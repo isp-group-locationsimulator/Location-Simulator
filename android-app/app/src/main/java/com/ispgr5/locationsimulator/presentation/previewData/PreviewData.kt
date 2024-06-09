@@ -1,4 +1,4 @@
-package com.ispgr5.locationsimulator.presentation.screenshotData
+package com.ispgr5.locationsimulator.presentation.previewData
 
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 import com.ispgr5.locationsimulator.domain.model.Configuration
@@ -11,9 +11,15 @@ import com.ispgr5.locationsimulator.presentation.select.SelectScreenState
 import com.ispgr5.locationsimulator.presentation.settings.DefaultShippingSettings
 import com.ispgr5.locationsimulator.presentation.settings.SettingsState
 import com.ispgr5.locationsimulator.presentation.sound.SoundState
+import com.ispgr5.locationsimulator.ui.theme.ThemeState
+import com.ispgr5.locationsimulator.ui.theme.ThemeType
 
 
-object ScreenshotData {
+object PreviewData {
+
+
+    val themePreviewState = ThemeState(themeType = ThemeType.AUTO)
+
     private val defaultVibration = ConfigComponent.Vibration(
         id = 1,
         name = DefaultShippingSettings.DEFAULT_NAME_VIBRATION,
@@ -33,7 +39,7 @@ object ScreenshotData {
         minVolume = DefaultShippingSettings.MAX_VOLUME_SOUND,
         maxVolume = DefaultShippingSettings.MIN_VOLUME_SOUND
     )
-    val configurations: List<Configuration> = listOf(
+    val previewConfigurations: List<Configuration> = listOf(
         Configuration(
             id = 1,
             name = "Default configuration",
@@ -51,16 +57,16 @@ object ScreenshotData {
             isFavorite = false
         )
     )
-    val selectScreenState = SelectScreenState(
-        configurations = configurations,
-        toggledConfiguration = configurations.first(),
+    val selectScreenPreviewState = SelectScreenState(
+        configurations = previewConfigurations,
+        toggledConfiguration = previewConfigurations.first(),
         isInDeleteMode = false,
         selectedConfigurationForDeletion = null,
         configurationsWithErrors = listOf()
     )
 
-    val selectScreenStateDelete = selectScreenState.copy(
-        isInDeleteMode = true, selectedConfigurationForDeletion = configurations.first()
+    val selectScreenPreviewStateDelete = selectScreenPreviewState.copy(
+        isInDeleteMode = true, selectedConfigurationForDeletion = previewConfigurations.first()
     )
 
 
@@ -68,10 +74,10 @@ object ScreenshotData {
         name = "foo", description = "", randomOrderPlayback = false, components = emptyList()
     )
 
-    val settingsScreenState = SettingsState()
+    val settingsScreenPreviewState = SettingsState()
 
     val delayScreenPreviewState = DelayScreenState(
-        configuration = configurations.first()
+        configuration = previewConfigurations.first()
     )
 
     val delayScreenInitialTimerState: TimerState = TimerState(setSeconds = 42L)
@@ -81,14 +87,14 @@ object ScreenshotData {
     val runScreenPreviewStatePlaying = RunscreenPreviewData.effectTimelinePlayingState
 
     val editTimelineState = EditTimelineState(
-        name = configurations.first().name,
-        description = configurations.first().description,
-        randomOrderPlayback = configurations.first().randomOrderPlayback,
-        components = configurations.first().components,
-        current = configurations.first().components.first()
+        name = previewConfigurations.first().name,
+        description = previewConfigurations.first().description,
+        randomOrderPlayback = previewConfigurations.first().randomOrderPlayback,
+        components = previewConfigurations.first().components,
+        current = previewConfigurations.first().components.first()
     )
 
-    val soundScreenState = SoundState(
+    val soundScreenPreviewState = SoundState(
         soundNames = listOf("breathing.mp3", "barking.mp3", "coughing.mp3")
     )
 }

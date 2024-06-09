@@ -2,7 +2,9 @@ package com.ispgr5.locationsimulator.presentation.select
 
 import android.annotation.SuppressLint
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -15,11 +17,14 @@ import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -33,11 +38,16 @@ import com.ispgr5.locationsimulator.core.util.TestTags
 import com.ispgr5.locationsimulator.data.storageManager.ConfigurationStorageManager
 import com.ispgr5.locationsimulator.data.storageManager.SoundStorageManager
 import com.ispgr5.locationsimulator.domain.model.Configuration
+import com.ispgr5.locationsimulator.presentation.previewData.PreviewData.selectScreenPreviewState
+import com.ispgr5.locationsimulator.presentation.previewData.PreviewData.selectScreenPreviewStateDelete
+import com.ispgr5.locationsimulator.presentation.previewData.PreviewData.themePreviewState
 import com.ispgr5.locationsimulator.presentation.select.components.OneConfigurationListMember
 import com.ispgr5.locationsimulator.presentation.universalComponents.SnackbarContent
-import com.ispgr5.locationsimulator.presentation.universalComponents.TopBar
+import com.ispgr5.locationsimulator.presentation.universalComponents.LocationSimulatorTopBar
 import com.ispgr5.locationsimulator.presentation.util.MakeSnackbar
 import com.ispgr5.locationsimulator.presentation.util.Screen
+import com.ispgr5.locationsimulator.ui.theme.DISABLED_ALPHA
+import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
 
 
 /**
@@ -178,7 +188,7 @@ private fun ConfigurationList(
                     ) {
                         if (selectScreenState.isInDeleteMode && !deleteThis) {
                             IconButton(
-                                onClick = { onSelectForDeletion(configuration) }
+                                onClick = { onSelectForDeletion(configuration) },
                             ) {
                                 Icon(
                                     painter = painterResource(id = R.drawable.ic_baseline_delete_outline_24),
@@ -188,7 +198,8 @@ private fun ConfigurationList(
                             }
                         }
 
-                        OneConfigurationListMember(configuration = configuration,
+                        OneConfigurationListMember(
+                            configuration = configuration,
                             isToggled = configuration.id == selectScreenState.toggledConfiguration?.id,
                             onToggleClicked = {
                                 onToggleConfiguration(configuration)
@@ -215,19 +226,29 @@ private fun ConfigurationList(
                             })
 
                         if (selectScreenState.isInDeleteMode && deleteThis) {
-                            Button(modifier = Modifier.fillMaxHeight(),
-                                contentPadding = PaddingValues(1.dp),
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = colorScheme.error,
-                                ),
-                                onClick = {
-                                    onDeleteConfiguration(configuration)
-                                }) {
-                                Icon(
-                                    imageVector = Icons.Default.Cancel,
-                                    contentDescription = stringResource(id = R.string.delete_configuration),
-                                    tint = Color.White.copy(alpha = 0.7f)
-                                )
+                            Spacer(modifier = Modifier.width(2.dp))
+                            Card(
+                                shape = MaterialTheme.shapes.small,
+                                modifier = Modifier
+                                    .fillMaxHeight()
+                                    .padding(horizontal = 2.dp)
+                                    .clickable {
+                                        onDeleteConfiguration(configuration)
+                                    },
+                                colors = CardDefaults.cardColors(containerColor = colorScheme.error)
+                            ) {
+                                Column(
+                                    modifier = Modifier
+                                        .width(IntrinsicSize.Min)
+                                        .fillMaxHeight(),
+                                    verticalArrangement = Arrangement.Center
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Cancel,
+                                        contentDescription = stringResource(id = R.string.delete_configuration),
+                                        tint = Color.White.copy(alpha = 0.7f)
+                                    )
+                                }
                             }
                         }
                     }
@@ -242,16 +263,15 @@ private fun ConfigurationList(
 
 @Composable
 private fun AddButton(onClickAddScreenButton: () -> Unit) {
-    Button(
+    OutlinedButton(
         onClick = onClickAddScreenButton,
         contentPadding = PaddingValues(0.dp),
         enabled = true,
         shape = MaterialTheme.shapes.small,
         border = null,
         elevation = null,
-        colors = ButtonDefaults.buttonColors(
-            containerColor = Color.Transparent,
-            disabledContentColor = colorScheme.primary.copy(alpha = 0.38f),
+        colors = ButtonDefaults.outlinedButtonColors(
+            contentColor = colorScheme.primaryContainer,
         ),
         modifier = Modifier
             .padding(15.dp, 15.dp, 15.dp, 0.dp)
@@ -272,7 +292,7 @@ private fun SelectScreenTopBar(
     onSelectDeleteModeClick: () -> Unit,
     isInDeleteMode: Boolean,
 ) {
-    TopBar(onBackClick = onBackClick,
+    LocationSimulatorTopBar(onBackClick = onBackClick,
         title = stringResource(id = R.string.ScreenSelect),
         extraActions = {
             //The Delete Button
@@ -299,7 +319,7 @@ private fun SelectScreenTopBar(
 }
 
 @Composable
-fun SelectScreenScreenshotPreview(selectScreenState: SelectScreenState) {
+fun SelectScreenPreviewScaffold(selectScreenState: SelectScreenState) {
     SelectScreenScaffold(
         selectScreenState = selectScreenState,
         onBackClick = {},
@@ -359,4 +379,22 @@ fun SelectScreenScaffold(
             )
         }
     })
+}
+
+
+@Composable
+@Preview
+fun SelectScreenNormalPreview() {
+    LocationSimulatorTheme(themeState = themePreviewState) {
+        SelectScreenPreviewScaffold(selectScreenState = selectScreenPreviewState)
+    }
+}
+
+
+@Composable
+@Preview
+fun SelectScreenDeleteModePreview() {
+    LocationSimulatorTheme(themeState = themePreviewState) {
+        SelectScreenPreviewScaffold(selectScreenState = selectScreenPreviewStateDelete)
+    }
 }

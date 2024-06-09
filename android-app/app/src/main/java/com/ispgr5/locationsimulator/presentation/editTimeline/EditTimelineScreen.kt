@@ -29,6 +29,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -39,8 +40,9 @@ import com.ispgr5.locationsimulator.presentation.editTimeline.components.AddConf
 import com.ispgr5.locationsimulator.presentation.editTimeline.components.EditConfigComponent
 import com.ispgr5.locationsimulator.presentation.editTimeline.components.Timeline
 import com.ispgr5.locationsimulator.presentation.editTimeline.components.VibrationSupportHintMode
+import com.ispgr5.locationsimulator.presentation.previewData.PreviewData.editTimelineState
 import com.ispgr5.locationsimulator.presentation.settings.SettingsState
-import com.ispgr5.locationsimulator.presentation.universalComponents.TopBar
+import com.ispgr5.locationsimulator.presentation.universalComponents.LocationSimulatorTopBar
 import com.ispgr5.locationsimulator.presentation.util.Screen
 
 /**
@@ -267,7 +269,7 @@ private fun ConfigMetadata(
 
 @Composable
 fun EditTimelineTopBar(onBackClick: () -> Unit, onSettingsClick: () -> Unit) {
-    TopBar(
+    LocationSimulatorTopBar(
         onBackClick = onBackClick,
         title = stringResource(id = R.string.ScreenEdit),
         extraActions = {
@@ -297,7 +299,7 @@ class EditTimelineEventHandlers(
 )
 
 @Composable
-fun EditTimelineScreenshotPreview(
+fun EditTimelinePreviewScaffold(
     isDialogShown: Boolean,
     state: EditTimelineState,
     vibrationSupportHintMode: VibrationSupportHintMode
@@ -316,5 +318,36 @@ fun EditTimelineScreenshotPreview(
         onSelectAComponent = {},
         editTimelineEventHandlers = null,
         vibrationSupportHintMode = vibrationSupportHintMode
+    )
+}
+
+
+@Composable
+@Preview
+fun EditTimelineNormalPreview() {
+    EditTimelinePreviewScaffold(
+        isDialogShown = false,
+        state = editTimelineState,
+        vibrationSupportHintMode = VibrationSupportHintMode.SUPPRESSED
+    )
+}
+
+@Composable
+@Preview
+fun EditTimelineDialogShownPreview() {
+    EditTimelinePreviewScaffold(
+        isDialogShown = true,
+        state = editTimelineState,
+        vibrationSupportHintMode = VibrationSupportHintMode.SUPPRESSED
+    )
+}
+
+@Composable
+@Preview
+fun EditTimelineUnsupportedIntensityPreview() {
+    EditTimelinePreviewScaffold(
+        isDialogShown = false,
+        state = editTimelineState,
+        vibrationSupportHintMode = VibrationSupportHintMode.ENFORCED
     )
 }

@@ -3,8 +3,23 @@ package com.ispgr5.locationsimulator.screenshots
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.junit4.createComposeRule
 import com.ispgr5.locationsimulator.di.AppModule
-import com.ispgr5.locationsimulator.presentation.add.AddScreenScreenshot
+import com.ispgr5.locationsimulator.presentation.add.AddScreenPreview
 import com.ispgr5.locationsimulator.presentation.delay.DelayScreenPreview
+import com.ispgr5.locationsimulator.presentation.editTimeline.EditTimelineDialogShownPreview
+import com.ispgr5.locationsimulator.presentation.editTimeline.EditTimelineNormalPreview
+import com.ispgr5.locationsimulator.presentation.editTimeline.EditTimelineUnsupportedIntensityPreview
+import com.ispgr5.locationsimulator.presentation.homescreen.HomeScreenPreview
+import com.ispgr5.locationsimulator.presentation.homescreen.InfoScreenPreview
+import com.ispgr5.locationsimulator.presentation.run.RunScreenActivePreview
+import com.ispgr5.locationsimulator.presentation.run.RunScreenPausedPreview
+import com.ispgr5.locationsimulator.presentation.select.SelectScreenDeleteModePreview
+import com.ispgr5.locationsimulator.presentation.select.SelectScreenNormalPreview
+import com.ispgr5.locationsimulator.presentation.settings.SettingsScreenSoundPreview
+import com.ispgr5.locationsimulator.presentation.settings.SettingsScreenVibrationPreview
+import com.ispgr5.locationsimulator.presentation.sound.SoundScreenForDeletionPreview
+import com.ispgr5.locationsimulator.presentation.sound.SoundScreenPlayingPreview
+import com.ispgr5.locationsimulator.presentation.sound.SoundScreenStoppedPreview
+import com.ispgr5.locationsimulator.ui.theme.ThemeState
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.UninstallModules
@@ -18,12 +33,20 @@ import tools.fastlane.screengrab.UiAutomatorScreenshotStrategy
 import tools.fastlane.screengrab.cleanstatusbar.CleanStatusBar
 import tools.fastlane.screengrab.locale.LocaleTestRule
 
+
+data class ScreenshotScope(
+    val screenshotName: String, val theme: ThemeState
+)
+
+
 @HiltAndroidTest
 @UninstallModules(AppModule::class)
 abstract class ScreenshotTests {
 
     @get:Rule(order = 0)
-    val hiltAndroidRule = HiltAndroidRule(this)
+    val hiltAndroidRule by lazy {
+        HiltAndroidRule(this)
+    }
 
     @get:Rule(order = 1)
     val composeTestRule = createComposeRule()
@@ -64,49 +87,49 @@ abstract class ScreenshotTests {
     @Test
     fun homeScreen() {
         screenshot {
-            HomeScreenScreenshot()
+            HomeScreenPreview()
         }
     }
 
     @Test
     fun infoScreen() {
         screenshot {
-            InfoScreenScreenshot()
+            InfoScreenPreview()
         }
     }
 
     @Test
     fun selectScreenNormal() {
         screenshot {
-            SelectScreenNormalScreenshot()
+            SelectScreenNormalPreview()
         }
     }
 
     @Test
     fun selectScreenDeleteModeActive() {
         screenshot {
-            SelectScreenDeleteModeScreenshot()
+            SelectScreenDeleteModePreview()
         }
     }
 
     @Test
     fun addScreen() {
         screenshot {
-            AddScreenScreenshot()
+            AddScreenPreview()
         }
     }
 
     @Test
     fun settingsScreenVibration() {
         screenshot {
-            SettingsScreenVibrationScreenshot()
+            SettingsScreenVibrationPreview()
         }
     }
 
     @Test
     fun settingsScreenSound() {
         screenshot {
-            SettingsScreenSoundScreenshot()
+            SettingsScreenSoundPreview()
         }
     }
 
@@ -120,56 +143,56 @@ abstract class ScreenshotTests {
     @Test
     fun runScreenPaused() {
         screenshot {
-            RunScreenPausedScreenshot()
+            RunScreenPausedPreview()
         }
     }
 
     @Test
     fun runScreenActive() {
         screenshot {
-            RunScreenActiveScreenshot()
+            RunScreenActivePreview()
         }
     }
 
     @Test
     fun editTimelineScreenNormal() {
         screenshot {
-            EditTimelineNormalScreenshot()
+            EditTimelineNormalPreview()
         }
     }
 
     @Test
     fun editTimelineScreenDialogShown() {
         screenshot {
-            EditTimelineDialogShownScreenshot()
+            EditTimelineDialogShownPreview()
         }
     }
 
     @Test
     fun editTimelineScreenNoVibrationControl() {
         screenshot {
-            EditTimelineUnsupportedIntensityScreenshot()
+            EditTimelineUnsupportedIntensityPreview()
         }
     }
 
     @Test
     fun soundScreenPlaying() {
         screenshot {
-            SoundScreenScreenshot()
+            SoundScreenPlayingPreview()
         }
     }
 
     @Test
     fun soundScreenStopped() {
         screenshot {
-            SoundScreenStoppedScreenshot()
+            SoundScreenStoppedPreview()
         }
     }
 
     @Test
     fun soundScreenForDeletion() {
         screenshot {
-            SoundScreenForDeletionScreenshot()
+            SoundScreenForDeletionPreview()
         }
     }
 }

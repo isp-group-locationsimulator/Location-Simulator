@@ -74,10 +74,10 @@ import androidx.navigation.NavController
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 import com.ispgr5.locationsimulator.domain.model.Configuration
-import com.ispgr5.locationsimulator.presentation.screenshotData.ScreenshotData
-import com.ispgr5.locationsimulator.presentation.screenshotData.ScreenshotData.runScreenPreviewInitialRefresh
-import com.ispgr5.locationsimulator.presentation.screenshotData.ScreenshotData.runScreenPreviewStatePaused
-import com.ispgr5.locationsimulator.presentation.screenshotData.ScreenshotData.runScreenPreviewStatePlaying
+import com.ispgr5.locationsimulator.presentation.previewData.PreviewData
+import com.ispgr5.locationsimulator.presentation.previewData.PreviewData.runScreenPreviewInitialRefresh
+import com.ispgr5.locationsimulator.presentation.previewData.PreviewData.runScreenPreviewStatePaused
+import com.ispgr5.locationsimulator.presentation.previewData.PreviewData.runScreenPreviewStatePlaying
 import com.ispgr5.locationsimulator.presentation.universalComponents.SnackbarContent
 import com.ispgr5.locationsimulator.presentation.util.MakeSnackbar
 import com.ispgr5.locationsimulator.presentation.util.between
@@ -168,9 +168,9 @@ fun RunScreen(
 
 @Composable
 @Preview
-fun RunScreenPausedScreenshot() {
+fun RunScreenPausedPreview() {
     RunScreenScreenshotPreview(
-        configuration = ScreenshotData.configurations.first(),
+        configuration = PreviewData.previewConfigurations.first(),
         effectTimelineState = runScreenPreviewStatePaused,
         initialRefreshInstant = runScreenPreviewInitialRefresh
     )
@@ -178,9 +178,9 @@ fun RunScreenPausedScreenshot() {
 
 @Composable
 @Preview
-fun RunScreenActiveScreenshot() {
+fun RunScreenActivePreview() {
     RunScreenScreenshotPreview(
-        configuration = ScreenshotData.configurations.first(),
+        configuration = PreviewData.previewConfigurations.first(),
         effectTimelineState = runScreenPreviewStatePlaying,
         initialRefreshInstant = runScreenPreviewInitialRefresh
     )

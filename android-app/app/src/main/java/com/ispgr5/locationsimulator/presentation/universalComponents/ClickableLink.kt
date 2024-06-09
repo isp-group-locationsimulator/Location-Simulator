@@ -2,6 +2,7 @@ package com.ispgr5.locationsimulator.presentation.universalComponents
 
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.ParagraphStyle
@@ -44,9 +45,9 @@ fun ClickableLink(
 object ClickableLinkDefaults {
     @Composable
     fun defaultSpanStyle() = SpanStyle(
-        color = MaterialTheme.colorSchemecheme.primary,
+        color = colorScheme.primary,
         textDecoration = TextDecoration.Underline,
-        fontSize = MaterialTheme.typography.body1.fontSize
+        fontSize = MaterialTheme.typography.bodyLarge.fontSize
     )
 
     @Composable

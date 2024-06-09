@@ -8,8 +8,6 @@ object TestTags {
     const val HOME_SELECT_CONFIG_BUTTON ="SelectConfigButton"
     const val SELECT_ADD_BUTTON ="AddConfigButton"
 
-
-    const val HOME_APPNAME ="HomeAppName"
     const val HOME_DARKMODE_SLIDER ="DarkModeSlider"
 
     const val ADD_NAME_TEXTINPUT ="AddNameTextInput"

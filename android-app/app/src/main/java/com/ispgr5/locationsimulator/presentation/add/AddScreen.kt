@@ -27,9 +27,9 @@ import androidx.navigation.NavController
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.core.util.TestTags
 import com.ispgr5.locationsimulator.data.storageManager.ConfigurationStorageManager
-import com.ispgr5.locationsimulator.presentation.screenshotData.ScreenshotData.addScreenPreviewState
+import com.ispgr5.locationsimulator.presentation.previewData.PreviewData.addScreenPreviewState
 import com.ispgr5.locationsimulator.presentation.settings.SettingsState
-import com.ispgr5.locationsimulator.presentation.universalComponents.TopBar
+import com.ispgr5.locationsimulator.presentation.universalComponents.LocationSimulatorTopBar
 
 /**
  * The Edit Screen.
@@ -96,7 +96,7 @@ private fun AddScreenScaffold(
     onImportClick: () -> Unit
 ) {
     Scaffold(topBar = {
-        TopBar(onBackClick = onBackClick, stringResource(id = R.string.ScreenAdd))
+        LocationSimulatorTopBar(onBackClick = onBackClick, stringResource(id = R.string.ScreenAdd))
     }, content = { paddingValues ->
         //Spacer(modifier = Modifier.height(paddingValues.calculateTopPadding()))
         Column(

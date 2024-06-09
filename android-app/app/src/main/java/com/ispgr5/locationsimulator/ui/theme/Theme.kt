@@ -287,20 +287,6 @@ fun LocationSimulatorTheme(
             content = content
         )
     }
-
-//
-//    Crossfade(
-//        targetState = isDarkTheme,
-//        label = "dark"
-//    ) { crossfadeDarkTheme ->
-//        val colors = when (crossfadeDarkTheme) {
-//            true -> DarkThemeColors
-//            else -> LightThemeColors
-//        }
-//        MaterialTheme(
-//            colors = colors,
-//            content = content
-//        )
-//    }
-
 }
+
+const val DISABLED_ALPHA = 0.38f

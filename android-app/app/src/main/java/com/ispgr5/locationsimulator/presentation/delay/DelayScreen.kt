@@ -28,6 +28,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewFontScale
+import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -37,11 +40,14 @@ import com.ispgr5.locationsimulator.core.util.TestTags
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 import com.ispgr5.locationsimulator.domain.model.Configuration
 import com.ispgr5.locationsimulator.presentation.editTimeline.components.Timeline
-import com.ispgr5.locationsimulator.presentation.screenshotData.ScreenshotData.delayScreenInitialTimerState
-import com.ispgr5.locationsimulator.presentation.screenshotData.ScreenshotData.delayScreenPreviewState
-import com.ispgr5.locationsimulator.presentation.universalComponents.TopBar
+import com.ispgr5.locationsimulator.presentation.previewData.AppPreviewConfig
+import com.ispgr5.locationsimulator.presentation.previewData.PreviewData.delayScreenInitialTimerState
+import com.ispgr5.locationsimulator.presentation.previewData.PreviewData.delayScreenPreviewState
+import com.ispgr5.locationsimulator.presentation.previewData.PreviewData.themePreviewState
+import com.ispgr5.locationsimulator.presentation.universalComponents.LocationSimulatorTopBar
 import com.ispgr5.locationsimulator.presentation.util.Screen
 import com.ispgr5.locationsimulator.presentation.util.millisToSeconds
+import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
 
 private const val TAG = "DelayScreen"
 
@@ -97,7 +103,7 @@ fun DelayScreenScaffold(
     val context = LocalContext.current
     Scaffold(
         topBar = {
-            TopBar(onBackClick = {
+            LocationSimulatorTopBar(onBackClick = {
                 onBackClick()
             }, title = stringResource(id = R.string.ScreenDelay))
         },
@@ -173,7 +179,7 @@ fun DelayScreenContent(
             selectedComponent = null,
             onSelectAComponent = null,
             onAddClicked = {},
-            showAddButton = false
+            interactive = false
         )
 
         Spacer(modifier = Modifier.size(5.dp))
@@ -204,16 +210,18 @@ fun DelayScreenContent(
 }
 
 @Composable
-@Preview
+@AppPreviewConfig
 fun DelayScreenPreview() {
     val timerState = remember {
         mutableStateOf(delayScreenInitialTimerState)
     }
-    DelayScreenScaffold(
-        state = delayScreenPreviewState,
-        soundsDirUri = "sounds",
-        timerState = timerState,
-        onBackClick = {},
-        onFinishTimer = { }
-    )
+    LocationSimulatorTheme(themeState = themePreviewState) {
+        DelayScreenScaffold(
+            state = delayScreenPreviewState,
+            soundsDirUri = "sounds",
+            timerState = timerState,
+            onBackClick = {},
+            onFinishTimer = { }
+        )
+    }
 }

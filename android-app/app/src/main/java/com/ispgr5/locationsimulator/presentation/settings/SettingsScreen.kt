@@ -24,11 +24,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.ScaffoldState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.ui.Alignment
@@ -38,6 +36,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -45,7 +44,8 @@ import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.domain.model.RangeConverter
 import com.ispgr5.locationsimulator.presentation.editTimeline.components.SecText
 import com.ispgr5.locationsimulator.presentation.editTimeline.components.SliderForRange
-import com.ispgr5.locationsimulator.presentation.universalComponents.TopBar
+import com.ispgr5.locationsimulator.presentation.previewData.PreviewData.settingsScreenPreviewState
+import com.ispgr5.locationsimulator.presentation.universalComponents.LocationSimulatorTopBar
 import com.ispgr5.locationsimulator.presentation.util.vibratorHasAmplitudeControlAndReason
 
 /**
@@ -58,7 +58,6 @@ import com.ispgr5.locationsimulator.presentation.util.vibratorHasAmplitudeContro
 fun SettingsScreen(
     navController: NavController,
     viewModel: SettingsViewModel = hiltViewModel(),
-    scaffoldState: ScaffoldState,
     saveDefaultValuesFunction: (state: State<SettingsState>) -> Unit,
     getDefaultValuesFunction: () -> SettingsState
 ) {
@@ -82,7 +81,6 @@ fun SettingsScreen(
 
     SettingsScreenScaffold(
         state = state,
-        scaffoldSate = scaffoldState,
         onBackClick = {
             navController.popBackStack()
         },
@@ -100,16 +98,14 @@ fun SettingsScreen(
 @Composable
 fun SettingsScreenScaffold(
     state: SettingsState,
-    scaffoldSate: ScaffoldState,
     pagerState: PagerState,
     onBackClick: () -> Unit,
     onSaveDefaultValues: (State<SettingsState>) -> Unit,
     onChangeEvent: (SettingsEvent) -> Unit,
 ) {
     Scaffold(
-        scaffoldState = scaffoldSate,
         topBar = {
-            TopBar(onBackClick = onBackClick, title = stringResource(id = R.string.ScreenSettings))
+            LocationSimulatorTopBar(onBackClick = onBackClick, title = stringResource(id = R.string.ScreenSettings))
         },
         content = { paddingValues ->
             Column(
@@ -201,7 +197,7 @@ private fun SoundCard(
          */
         Text(
             text = stringResource(id = R.string.DefaultSound),
-            style = MaterialTheme.typography.h5,
+            style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold,
             modifier = Modifier
                 .padding(16.dp)
@@ -283,7 +279,7 @@ private fun VibrationCard(
          */
         Text(
             text = stringResource(id = R.string.DefaultVibration),
-            style = MaterialTheme.typography.h5,
+            style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold,
             modifier = Modifier
                 .padding(16.dp)
@@ -306,7 +302,7 @@ private fun VibrationCard(
             label = { Text("Default Name") },
             placeholder = { Text(text = stringResource(id = R.string.PlaceholderDefaultName)) },
             singleLine = true,
-            colors = TextFieldDefaults.outlinedTextFieldColors(
+            colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = MaterialTheme.colorScheme.primary,
                 unfocusedBorderColor = MaterialTheme.colorScheme.onSurface
             ),
@@ -402,10 +398,31 @@ enum class SettingsPages {
 fun SettingsScreenScreenshotPreview(state: SettingsState, pagerState: PagerState) {
     SettingsScreenScaffold(
         state = state,
-        scaffoldSate = rememberScaffoldState(),
         pagerState = pagerState,
         onBackClick = { },
         onSaveDefaultValues = {},
         onChangeEvent = {}
     )
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+@Preview
+fun SettingsScreenVibrationPreview() {
+    SettingsScreenScreenshotPreview(
+        state = settingsScreenPreviewState,
+        pagerState = rememberPagerState(initialPage = SettingsPages.Vibration.ordinal) {
+            SettingsPages.entries.size
+        })
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+@Preview
+fun SettingsScreenSoundPreview() {
+    SettingsScreenScreenshotPreview(
+        state = settingsScreenPreviewState,
+        pagerState = rememberPagerState(initialPage = SettingsPages.Sound.ordinal) {
+            SettingsPages.entries.size
+        })
 }

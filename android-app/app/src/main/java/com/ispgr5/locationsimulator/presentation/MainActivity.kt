@@ -18,6 +18,8 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -161,6 +163,9 @@ class MainActivity : ComponentActivity() {
         powerManager: PowerManager,
     ) {
         val context = LocalContext.current
+        val snackbarHostState = remember {
+            SnackbarHostState()
+        }
         NavHost(navController = navController, startDestination = Screen.HomeScreen.route) {
             composable(Screen.HomeScreen.route) {
                 HomeScreenScreen(
@@ -175,6 +180,7 @@ class MainActivity : ComponentActivity() {
                     soundStorageManager = soundStorageManager,
                     activity = this@MainActivity,
                     appTheme = themeState,
+                    snackbarHostState = snackbarHostState,
                     snackbarContent = snackbarContent
                 )
             }
@@ -186,6 +192,7 @@ class MainActivity : ComponentActivity() {
                     navController = navController,
                     configurationStorageManager = configurationStorageManager,
                     soundStorageManager = soundStorageManager,
+                    snackbarHostState = snackbarHostState,
                     snackbarContent = snackbarContent
                 )
             }
@@ -216,6 +223,7 @@ class MainActivity : ComponentActivity() {
             composable(Screen.RunScreen.route) {
                 RunScreen(
                     navController = navController,
+                    snackbarHostState = snackbarHostState,
                     stopServiceFunction = { stopService() },
                 )
             }

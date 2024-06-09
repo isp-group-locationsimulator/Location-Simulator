@@ -30,6 +30,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -72,7 +73,7 @@ class VibrationTestActivity : ComponentActivity() {
             LocationSimulatorTheme(themeState = ThemeState(themeType = ThemeType.LIGHT)) {
                 // A surface container using the 'background' color from the theme
                 Surface(
-                    modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorSchemecheme.background
+                    modifier = Modifier.fillMaxSize(), color = colorScheme.background
                 ) {
                     VibrationTesterScaffold()
                 }
@@ -353,7 +354,7 @@ fun VibrationTestCard(
                         onClickVibrate()
                         hasTested = true
                     },
-                    colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colorSchemecheme.primary)
+                    colors = ButtonDefaults.buttonColors(containerColor = colorScheme.primary)
                 ) {
                     Text("Vibrate")
                 }
@@ -372,7 +373,7 @@ fun VibrationTestCard(
                         )
                     },
                     enabled = hasTested,
-                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red.copy(alpha = 0.5f))
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Red.copy(alpha = 0.5f))
                 ) {
                     Text(":(")
                 }
@@ -385,7 +386,7 @@ fun VibrationTestCard(
                         )
                     },
                     enabled = hasTested,
-                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.Cyan.copy(alpha = 0.5f))
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Cyan.copy(alpha = 0.5f))
                 ) {
                     Text(":)")
                 }

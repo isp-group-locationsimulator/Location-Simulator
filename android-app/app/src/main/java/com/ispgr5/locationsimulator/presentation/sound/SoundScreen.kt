@@ -8,14 +8,16 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.data.storageManager.SoundStorageManager
+import com.ispgr5.locationsimulator.presentation.previewData.PreviewData.soundScreenPreviewState
 import com.ispgr5.locationsimulator.presentation.settings.SettingsState
 import com.ispgr5.locationsimulator.presentation.universalComponents.ConfirmDeleteDialog
-import com.ispgr5.locationsimulator.presentation.universalComponents.TopBar
+import com.ispgr5.locationsimulator.presentation.universalComponents.LocationSimulatorTopBar
 import kotlinx.coroutines.delay
 
 /**
@@ -28,8 +30,7 @@ fun SoundScreen(
     soundStorageManager: SoundStorageManager,
     soundsDirUri: String,
     recordAudio: () -> Unit,
-    getDefaultValuesFunction: () -> SettingsState,
-    scaffoldState: ScaffoldState
+    getDefaultValuesFunction: () -> SettingsState
 ) {
     val state = viewModel.state.value
 
@@ -45,7 +46,6 @@ fun SoundScreen(
 
     SoundScreenScaffold(
         state = state,
-        scaffoldState = scaffoldState,
         onBackClick = { navController.popBackStack() },
         currentPlayingSoundName = viewModel.isPlaying.value,
         soundNameToDelete = soundNameToDelete,
@@ -94,7 +94,6 @@ fun SoundScreen(
 @Composable
 fun SoundScreenScaffold(
     state: SoundState,
-    scaffoldState: ScaffoldState,
     currentPlayingSoundName: String?,
     soundNameToDelete: String?,
     onBackClick: () -> Unit,
@@ -108,9 +107,8 @@ fun SoundScreenScaffold(
     onConfirmDeletion: (String) -> Unit
 ) {
     Scaffold(
-        scaffoldState = scaffoldState,
         topBar = {
-            TopBar(
+            LocationSimulatorTopBar(
                 onBackClick = onBackClick,
                 title = stringResource(id = R.string.ScreenSound)
             )
@@ -181,14 +179,13 @@ fun SoundScreenScaffold(
 }
 
 @Composable
-fun SoundScreenScreenshotPreview(
+fun SoundScreenPreviewScaffold(
     state: SoundState,
     currentPlayingSoundName: String? = null,
     selectedForDeletion: String? = null
 ) {
     SoundScreenScaffold(
         state = state,
-        scaffoldState = rememberScaffoldState(),
         currentPlayingSoundName = currentPlayingSoundName,
         soundNameToDelete = selectedForDeletion,
         onBackClick = {},
@@ -200,5 +197,32 @@ fun SoundScreenScreenshotPreview(
         onDeleteSoundClick = {},
         onDismissShowDeleteDialog = {},
         onConfirmDeletion = {}
+    )
+}
+
+
+@Composable
+@Preview
+fun SoundScreenPlayingPreview() {
+    SoundScreenPreviewScaffold(
+        state = soundScreenPreviewState,
+        currentPlayingSoundName = soundScreenPreviewState.soundNames.first()
+    )
+}
+
+@Composable
+@Preview
+fun SoundScreenStoppedPreview() {
+    SoundScreenPreviewScaffold(
+        state = soundScreenPreviewState
+    )
+}
+
+@Composable
+@Preview
+fun SoundScreenForDeletionPreview() {
+    SoundScreenPreviewScaffold(
+        state = soundScreenPreviewState,
+        selectedForDeletion = soundScreenPreviewState.soundNames.last()
     )
 }

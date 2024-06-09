@@ -2,9 +2,12 @@ package com.ispgr5.locationsimulator.presentation.delay
 
 import android.os.CountDownTimer
 import android.util.Log
+import androidx.annotation.StringRes
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
@@ -12,6 +15,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
@@ -36,6 +40,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.core.util.TestTags
+import com.ispgr5.locationsimulator.presentation.previewData.AppPreviewConfig
+import com.ispgr5.locationsimulator.presentation.previewData.PreviewData
+import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
 
 private const val TAG = "DelayTimer"
 
@@ -105,273 +112,188 @@ fun DelayTimer(
     LaunchedEffect(timerRunning) {
         if (timerRunning) {
             //calculate the duration of the timer in milliseconds
-            countDownTimer = DelayCountdownTimer(timerState.value.setDurationInMillis,
+            countDownTimer = DelayCountdownTimer(
+                timerState.value.setDurationInMillis,
                 timerState = timerState,
                 onStartVibration = {
                     onStartVibration(configurationId, onFinishTimer, timerState, it)
-                }
-            )
+                })
 
             countDownTimer?.start()
         }
     }
 
-    Row(
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Text(
-            text = stringResource(R.string.delay_start),
-            style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(4.dp),
-            textAlign = TextAlign.Center
-        )
-    }
-
-    Row(
-        horizontalArrangement = Arrangement.SpaceAround,
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        /**
-         * The input for hours
-         */
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.weight(1f)
-        ) {
-            Text(
-                text = stringResource(id = R.string.TimerHours),
-                style = TextStyle(fontSize = 24.sp)
-            )
-            Button(
-                onClick = {
-                    timerState.value = timerState.value.addHours(1)
-                },
-                shape = CircleShape,
-                enabled = !timerRunning,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_baseline_keyboard_double_arrow_up_24),
-                    contentDescription = null,
-                )
-            }
-            TextField(
-                value = timerState.value.stringHours(),
-                onValueChange = { newVal: String ->
-                    when (val intVal = newVal.toIntOrNull()) {
-                        null -> {}
-                        else -> timerState.value =
-                            timerState.value.copy(setHours = intVal.coerceIn(0, 24).toLong())
-                    }
-                },
-                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-                modifier = Modifier.padding(horizontal = 16.dp),
-                readOnly = timerRunning,
-                textStyle = TextStyle(
-                    textAlign = TextAlign.Center,
-                    fontSize = 30.sp
-                ),
-            )
-            Button(
-                onClick = {
-                    timerState.value = timerState.value.addHours(-1)
-                },
-                shape = CircleShape,
-                enabled = !timerRunning,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_baseline_keyboard_double_arrow_down_24),
-                    contentDescription = null
-                )
-            }
-        }
-
-        /**
-         * The input for minutes
-         */
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.weight(1f)
-        ) {
-            Text(
-                text = stringResource(id = R.string.TimerMinutes),
-                style = TextStyle(fontSize = 24.sp)
-            )
-            Button(
-                onClick = {
-                    timerState.value = timerState.value.addMinutes(1)
-                },
-                shape = CircleShape,
-                enabled = !timerRunning,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_baseline_keyboard_double_arrow_up_24),
-                    contentDescription = null,
-                )
-            }
-            TextField(
-                value = timerState.value.stringMinutes(),
-                onValueChange = { newVal: String ->
-                    when (val intVal = newVal.toIntOrNull()) {
-                        null -> {}
-                        else -> timerState.value =
-                            timerState.value.copy(setMinutes = intVal.coerceIn(0, 59).toLong())
-                    }
-                },
-                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-                modifier = Modifier
-                    .padding(horizontal = 16.dp),
-                readOnly = timerRunning,
-                textStyle = TextStyle(
-                    textAlign = TextAlign.Center,
-                    fontSize = 30.sp
-                )
-            )
-            Button(
-                onClick = {
-                    timerState.value = timerState.value.addMinutes(-1)
-                },
-                shape = CircleShape,
-                enabled = !timerRunning,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_baseline_keyboard_double_arrow_down_24),
-                    contentDescription = null,
-                )
-            }
-        }
-
-        /**
-         * The input for hours
-         */
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.weight(1f)
-        ) {
-            Text(
-                text = stringResource(id = R.string.TimerSeconds),
-                style = TextStyle(fontSize = 24.sp)
-            )
-            Button(
-                onClick = {
-                    timerState.value = timerState.value.addSeconds(1)
-                },
-                shape = CircleShape,
-                enabled = !timerRunning,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_baseline_keyboard_double_arrow_up_24),
-                    contentDescription = null,
-                )
-            }
-            TextField(
-                value = timerState.value.stringSeconds(),
-                onValueChange = { newVal: String ->
-                    when (val intVal = newVal.toIntOrNull()) {
-                        null -> {}
-                        else -> timerState.value =
-                            timerState.value.copy(setHours = intVal.coerceIn(0, 59).toLong())
-                    }
-                },
-                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-                modifier = Modifier
-                    .padding(horizontal = 16.dp),
-                readOnly = timerRunning,
-                textStyle = TextStyle(
-                    textAlign = TextAlign.Center,
-                    fontSize = 30.sp
-                )
-            )
-            Button(
-                onClick = {
-                    timerState.value = timerState.value.addSeconds(-1)
-                },
-                shape = CircleShape,
-                enabled = !timerRunning,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_baseline_keyboard_double_arrow_down_24),
-                    contentDescription = null,
-                )
-            }
-        }
-    }
-
-    /**
-     * The button to start or stop the timer
-     */
-    val buttonText = when {
-        timerState.value.isZero() -> stringResource(id = R.string.start_now)
-        timerRunning -> stringResource(id = R.string.stop_timer)
-        else -> stringResource(id = R.string.delay_btn_start)
-    }
-    Button(
-        onClick = {
-            when {
-                timerState.value.isZero() -> onStartVibration(
-                    configurationId = configurationId,
-                    onFinishTimer = onFinishTimer,
-                    timerState = timerState,
-                    countDownTimer = countDownTimer
-                )
-
-                timerState.value.isRunning -> timerState.value =
-                    timerState.value.reset(inhibitStart = true)
-
-                else -> timerState.value = timerState.value.copy(
-                    isRunning = true,
-                    inhibitStart = false
-                )
-            }
-        },
-        enabled = true,
+    Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
-            .testTag(TestTags.DELAY_START_BUTTON)
+            .background(colorScheme.background)
     ) {
-        Text(
-            text = buttonText,
-            style = TextStyle(fontSize = 40.sp)
-        )
-    }
-
-
-    if (timerRunning) {
-        Button(
-            onClick = {
-                onStartVibration(configurationId, onFinishTimer, timerState, countDownTimer)
-            },
-            colors = ButtonDefaults.outlinedButtonColors(
-                containerColor = colorScheme.secondary
-            )
-
+        Row(
+            modifier = Modifier.fillMaxWidth()
         ) {
             Text(
-                stringResource(id = R.string.start_now),
-                style = TextStyle(fontSize = 30.sp),
-                color = colorScheme.onSecondary
+                text = stringResource(R.string.delay_start),
+                style = MaterialTheme.typography.headlineMedium,
+                color = colorScheme.onBackground,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(4.dp),
+                textAlign = TextAlign.Center
             )
         }
+
+        Row(
+            horizontalArrangement = Arrangement.SpaceAround, modifier = Modifier.fillMaxWidth()
+        ) {
+            TimerFlipper(titleText = R.string.TimerHours,
+                stringValue = timerState.value.stringHours(),
+                timerRunning = timerRunning,
+                onIncrement = {
+                    timerState.value = timerState.value.addHours(1)
+                },
+                onDecrement = {
+                    timerState.value = timerState.value.addHours(-1)
+                },
+                onSetValue = {
+                    timerState.value = timerState.value.copy(setHours = it.coerceIn(0, 24))
+                })
+
+            TimerFlipper(titleText = R.string.TimerMinutes,
+                stringValue = timerState.value.stringMinutes(),
+                timerRunning = timerRunning,
+                onIncrement = { timerState.value.addMinutes(1) },
+                onDecrement = { timerState.value.addMinutes(-1) }) {
+                timerState.value = timerState.value.copy(setMinutes = it.coerceIn(0, 59))
+            }
+
+
+            TimerFlipper(
+                titleText = R.string.TimerSeconds,
+                stringValue = timerState.value.stringMinutes(),
+                timerRunning = timerRunning,
+                onIncrement = {
+                    timerState.value.addSeconds(1)
+                },
+                onDecrement = { timerState.value.addMinutes(-1) },
+                onSetValue = {
+                    timerState.value = timerState.value.copy(setSeconds = it.coerceIn(0, 59))
+                }
+            )
+        }
+
+        /**
+         * The button to start or stop the timer
+         */
+        val buttonText = when {
+            timerState.value.isZero() -> stringResource(id = R.string.start_now)
+            timerRunning -> stringResource(id = R.string.stop_timer)
+            else -> stringResource(id = R.string.delay_btn_start)
+        }
+        Button(
+            onClick = {
+                when {
+                    timerState.value.isZero() -> onStartVibration(
+                        configurationId = configurationId,
+                        onFinishTimer = onFinishTimer,
+                        timerState = timerState,
+                        countDownTimer = countDownTimer
+                    )
+
+                    timerState.value.isRunning -> timerState.value =
+                        timerState.value.reset(inhibitStart = true)
+
+                    else -> timerState.value = timerState.value.copy(
+                        isRunning = true, inhibitStart = false
+                    )
+                }
+            },
+            enabled = true,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp)
+                .testTag(TestTags.DELAY_START_BUTTON)
+        ) {
+            Text(
+                text = buttonText, style = TextStyle(fontSize = 40.sp)
+            )
+        }
+
+
+        if (timerRunning) {
+            Button(
+                onClick = {
+                    onStartVibration(configurationId, onFinishTimer, timerState, countDownTimer)
+                }, colors = ButtonDefaults.outlinedButtonColors(
+                    containerColor = colorScheme.secondary
+                )
+
+            ) {
+                Text(
+                    stringResource(id = R.string.start_now),
+                    style = TextStyle(fontSize = 30.sp),
+                    color = colorScheme.onSecondary
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun RowScope.TimerFlipper(
+    @StringRes titleText: Int,
+    stringValue: String,
+    timerRunning: Boolean,
+    onIncrement: () -> Unit,
+    onDecrement: () -> Unit,
+    onSetValue: (Long) -> Unit
+) = Column(
+    horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.weight(1f)
+) {
+    Text(
+        text = stringResource(id = titleText),
+        color = colorScheme.onBackground,
+        style = TextStyle(fontSize = 20.sp)
+    )
+    Button(
+        onClick = onIncrement,
+        shape = CircleShape,
+        enabled = !timerRunning,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 4.dp)
+    ) {
+        Icon(
+            painter = painterResource(id = R.drawable.ic_baseline_keyboard_double_arrow_up_24),
+            contentDescription = null,
+        )
+    }
+    TextField(
+        value = stringValue,
+        onValueChange = { newVal: String ->
+            when (val longVal = newVal.toLongOrNull()) {
+                null -> {}
+                else -> onSetValue(longVal)
+            }
+        },
+        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+        modifier = Modifier.padding(horizontal = 16.dp),
+        readOnly = timerRunning,
+        textStyle = TextStyle(
+            textAlign = TextAlign.Center, fontSize = 30.sp
+        ),
+    )
+    Button(
+        onClick = onDecrement,
+        shape = CircleShape,
+        enabled = !timerRunning,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 4.dp)
+    ) {
+        Icon(
+            painter = painterResource(id = R.drawable.ic_baseline_keyboard_double_arrow_down_24),
+            contentDescription = null
+        )
     }
 }
 
@@ -404,12 +326,9 @@ data class TimerState(
     val secondsRemaining: Long = 0
 ) {
     val setDurationInMillis
-        get() =
-            listOf(
-                (setHours * 1000 * 60 * 60),
-                (setMinutes * 1000 * 60),
-                (setSeconds * 1000)
-            ).sum()
+        get() = listOf(
+            (setHours * 1000 * 60 * 60), (setMinutes * 1000 * 60), (setSeconds * 1000)
+        ).sum()
 
     fun addHours(amount: Int) = this.copy(setHours = (setHours + amount).coerceIn(0, 24))
     fun addMinutes(amount: Int) = this.copy(setMinutes = (setMinutes + amount).coerceIn(0, 59))
@@ -439,6 +358,21 @@ data class TimerState(
             minutesRemaining = 0L,
             hoursRemaining = 0L,
             inhibitStart = inhibitStart
+        )
+    }
+}
+
+@Composable
+@AppPreviewConfig
+fun DelayTimerPreview() {
+    val timerState = remember {
+        mutableStateOf(PreviewData.delayScreenInitialTimerState)
+    }
+    LocationSimulatorTheme(themeState = PreviewData.themePreviewState) {
+        DelayTimer(
+            timerState = timerState,
+            onFinishTimer = {},
+            configurationId = PreviewData.previewConfigurations.first().id!!
         )
     }
 }

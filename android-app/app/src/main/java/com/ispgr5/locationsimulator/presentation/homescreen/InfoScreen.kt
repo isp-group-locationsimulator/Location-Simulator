@@ -41,7 +41,7 @@ import com.ispgr5.locationsimulator.BuildConfig
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.presentation.universalComponents.ClickableLink
 import com.ispgr5.locationsimulator.presentation.universalComponents.ClickableLinkDefaults
-import com.ispgr5.locationsimulator.presentation.universalComponents.TopBar
+import com.ispgr5.locationsimulator.presentation.universalComponents.LocationSimulatorTopBar
 import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
 import com.ispgr5.locationsimulator.ui.theme.ThemeState
 import com.ispgr5.locationsimulator.ui.theme.ThemeType
@@ -70,7 +70,7 @@ fun InfoScreenPreview() {
 fun InfoScreenScaffold(onBackClick: () -> Unit) {
     Scaffold(
         topBar = {
-            TopBar(
+            LocationSimulatorTopBar(
                 onBackClick = onBackClick,
                 title = stringResource(id = R.string.ScreenInfo)
             )
