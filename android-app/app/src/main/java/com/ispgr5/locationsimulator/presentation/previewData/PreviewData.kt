@@ -6,7 +6,7 @@ import com.ispgr5.locationsimulator.presentation.add.AddScreenState
 import com.ispgr5.locationsimulator.presentation.delay.DelayScreenState
 import com.ispgr5.locationsimulator.presentation.delay.TimerState
 import com.ispgr5.locationsimulator.presentation.editTimeline.EditTimelineState
-import com.ispgr5.locationsimulator.presentation.run.RunscreenPreviewData
+import com.ispgr5.locationsimulator.presentation.run.RunScreenPreviewData
 import com.ispgr5.locationsimulator.presentation.select.SelectScreenState
 import com.ispgr5.locationsimulator.presentation.settings.DefaultShippingSettings
 import com.ispgr5.locationsimulator.presentation.settings.SettingsState
@@ -20,7 +20,7 @@ object PreviewData {
 
     val themePreviewState = ThemeState(themeType = ThemeType.AUTO)
 
-    private val defaultVibration = ConfigComponent.Vibration(
+    val defaultVibration = ConfigComponent.Vibration(
         id = 1,
         name = DefaultShippingSettings.DEFAULT_NAME_VIBRATION,
         minStrength = DefaultShippingSettings.MIN_STRENGTH_VIBRATION,
@@ -30,7 +30,7 @@ object PreviewData {
         minDuration = DefaultShippingSettings.MIN_DURATION_VIBRATION,
         maxDuration = DefaultShippingSettings.MAX_DURATION_VIBRATION
     )
-    private val defaultSound = ConfigComponent.Sound(
+    val defaultSound = ConfigComponent.Sound(
         id = 2,
         name = "Sound",
         source = "barking.mp3",
@@ -82,9 +82,9 @@ object PreviewData {
 
     val delayScreenInitialTimerState: TimerState = TimerState(setSeconds = 42L)
 
-    val runScreenPreviewInitialRefresh = RunscreenPreviewData.baselineInstant
-    val runScreenPreviewStatePaused = RunscreenPreviewData.effectTimelinePausedState
-    val runScreenPreviewStatePlaying = RunscreenPreviewData.effectTimelinePlayingState
+    val runScreenPreviewInitialRefresh = RunScreenPreviewData.baselineInstant
+    val runScreenPreviewStatePaused = RunScreenPreviewData.effectTimelinePausedState
+    val runScreenPreviewStatePlaying = RunScreenPreviewData.effectTimelinePlayingState
 
     val editTimelineState = EditTimelineState(
         name = previewConfigurations.first().name,

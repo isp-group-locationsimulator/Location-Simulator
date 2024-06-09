@@ -2,7 +2,6 @@ package com.ispgr5.locationsimulator.presentation.editTimeline
 
 import android.annotation.SuppressLint
 import androidx.activity.compose.setContent
-import androidx.compose.material3.rememberScaffoldState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
@@ -55,8 +54,7 @@ class EditTimelineScreenTest{
                         composable("testEditTimeline") {
                             EditTimelineScreen(
                                 navController = navController,
-                                getDefaultValuesFunction = getDefaultValuesTest,
-                                scaffoldState = rememberScaffoldState()
+                                getDefaultValuesFunction = getDefaultValuesTest
                             )
                         }
                     }

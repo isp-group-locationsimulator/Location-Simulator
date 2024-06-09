@@ -3,13 +3,12 @@ package com.ispgr5.locationsimulator.presentation.settings
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -22,6 +21,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -159,7 +159,10 @@ fun SettingsScreenScaffold(
                 ) {
                     repeat(pagerState.pageCount) { iteration ->
                         val color =
-                            if (pagerState.currentPage == iteration) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface
+                            when (pagerState.currentPage) {
+                                iteration -> MaterialTheme.colorScheme.primary
+                                else -> MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)
+                            }
                         Box(
                             modifier = Modifier
                                 .padding(2.dp)
@@ -175,20 +178,16 @@ fun SettingsScreenScaffold(
 }
 
 @Composable
-private fun SoundCard(
+private fun ColumnScope.SoundCard(
     state: SettingsState,
     saveDefaultValuesFunction: (state: State<SettingsState>) -> Unit,
     onChangeEvent: (SettingsEvent) -> Unit
 
 ) {
-    Column(
+    Card(
         modifier = Modifier
             .padding(20.dp)
-            .border(
-                1.dp,
-                MaterialTheme.colorScheme.onSurface,
-                RoundedCornerShape(5)
-            )
+            .weight(1f)
             .padding(20.dp)
             .verticalScroll(rememberScrollState())
     ) {
@@ -256,20 +255,15 @@ private fun SoundCard(
 }
 
 @Composable
-private fun VibrationCard(
+private fun ColumnScope.VibrationCard(
     state: SettingsState,
     saveDefaultValuesFunction: (state: State<SettingsState>) -> Unit,
     onChangeEvent: (SettingsEvent) -> Unit
 ) {
-    Column(
+    Card(
         modifier = Modifier
             .padding(20.dp)
-            .border(
-                1.dp,
-                MaterialTheme.colorScheme.onSurface,
-                RoundedCornerShape(5)
-            )
-            .fillMaxHeight()
+            .weight(1f)
             .padding(20.dp)
             .verticalScroll(rememberScrollState()),
 

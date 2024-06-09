@@ -108,4 +108,5 @@
     <string name="android_to_old_oreo_required">Ihre Android-Version ist zu alt. Die Funktionalität zur Einstellung der Vibrationsstärke wurde durch Google in Android \"O\" eingeführt (Version 8.x und aufwärts).</string>
     <string name="default_configuration_name">Standard-Konfiguration</string>
     <string name="default_configuration_description">Dies ist die Standardkonfiguration der App, mit zwei Vibrations-Events.</string>
+    <string name="add_configuration_component">Komponente hinzufügen</string>
 </resources>

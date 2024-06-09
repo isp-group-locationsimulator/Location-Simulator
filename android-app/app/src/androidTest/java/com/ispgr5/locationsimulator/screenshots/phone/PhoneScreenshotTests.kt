@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.primarySurface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -50,7 +49,7 @@ abstract class PhoneScreenshotTests(private val themeState: ThemeState) : Screen
                 LocationSimulatorTheme(themeState = themeState) {
                     Surface(
                         modifier = Modifier.fillMaxSize(),
-                        color = MaterialTheme.colorSchemecheme.primarySurface
+                        color = MaterialTheme.colorScheme.background
                     ) {
                         screenshotScope.content()
                     }

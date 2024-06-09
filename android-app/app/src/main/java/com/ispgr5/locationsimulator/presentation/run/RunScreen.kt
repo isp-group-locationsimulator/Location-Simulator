@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -26,18 +25,17 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PauseCircleOutline
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -74,10 +72,12 @@ import androidx.navigation.NavController
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 import com.ispgr5.locationsimulator.domain.model.Configuration
+import com.ispgr5.locationsimulator.presentation.previewData.AppPreview
 import com.ispgr5.locationsimulator.presentation.previewData.PreviewData
 import com.ispgr5.locationsimulator.presentation.previewData.PreviewData.runScreenPreviewInitialRefresh
 import com.ispgr5.locationsimulator.presentation.previewData.PreviewData.runScreenPreviewStatePaused
 import com.ispgr5.locationsimulator.presentation.previewData.PreviewData.runScreenPreviewStatePlaying
+import com.ispgr5.locationsimulator.presentation.previewData.PreviewData.themePreviewState
 import com.ispgr5.locationsimulator.presentation.universalComponents.SnackbarContent
 import com.ispgr5.locationsimulator.presentation.util.MakeSnackbar
 import com.ispgr5.locationsimulator.presentation.util.between
@@ -167,9 +167,9 @@ fun RunScreen(
 }
 
 @Composable
-@Preview
+@AppPreview
 fun RunScreenPausedPreview() {
-    RunScreenScreenshotPreview(
+    RunScreenPreviewScaffold(
         configuration = PreviewData.previewConfigurations.first(),
         effectTimelineState = runScreenPreviewStatePaused,
         initialRefreshInstant = runScreenPreviewInitialRefresh
@@ -177,16 +177,15 @@ fun RunScreenPausedPreview() {
 }
 
 @Composable
-@Preview
+@AppPreview
 fun RunScreenActivePreview() {
-    RunScreenScreenshotPreview(
+    RunScreenPreviewScaffold(
         configuration = PreviewData.previewConfigurations.first(),
         effectTimelineState = runScreenPreviewStatePlaying,
         initialRefreshInstant = runScreenPreviewInitialRefresh
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RunScreenScaffold(
     configuration: Configuration,
@@ -198,35 +197,20 @@ fun RunScreenScaffold(
     initialRefreshInstant: Instant,
     onStop: () -> Unit
 ) {
-    val context = LocalContext.current
-    Scaffold(topBar = {
-        TopAppBar(
-            title = {
-                Text(
-                    buildAnnotatedString {
-                        append(context.getString(R.string.ScreenRun))
-                        append(": ")
-                        withStyle(SpanStyle(fontStyle = FontStyle.Italic)) {
-                            append(configuration.name)
-                        }
-                    },
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
-        )
-    }, content = { padding ->
-        RunScreenContent(
-            paddingValues = padding,
-            playingEffect = playingEffect,
-            nextEffect = nextEffect,
-            startPauseAt = startPauseAt,
-            currentPauseDuration = currentPauseDuration,
-            snackbarContentState = snackbarContentState,
-            initialRefreshInstant = initialRefreshInstant,
-            onStop = onStop
-        )
-    })
+    Scaffold(
+        content = { padding ->
+            RunScreenContent(
+                paddingValues = padding,
+                configuration = configuration,
+                playingEffect = playingEffect,
+                nextEffect = nextEffect,
+                startPauseAt = startPauseAt,
+                currentPauseDuration = currentPauseDuration,
+                snackbarContentState = snackbarContentState,
+                initialRefreshInstant = initialRefreshInstant,
+                onStop = onStop
+            )
+        })
 }
 
 /**
@@ -259,6 +243,7 @@ fun BackPressHandler(
 @Composable
 fun RunScreenContent(
     paddingValues: PaddingValues,
+    configuration: Configuration,
     playingEffect: EffectParameters?,
     nextEffect: EffectParameters?,
     startPauseAt: Instant?,
@@ -314,6 +299,18 @@ fun RunScreenContent(
             .padding(paddingValues),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Text(
+            buildAnnotatedString {
+                append(context.getString(R.string.ScreenRun))
+                append(": ")
+                withStyle(SpanStyle(fontStyle = FontStyle.Italic)) {
+                    append(configuration.name)
+                }
+            },
+            modifier = Modifier.padding(top = 8.dp, start = 4.dp, end = 4.dp),
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis
+        )
         Column(
             modifier = Modifier
                 .weight(0.85f)
@@ -337,7 +334,7 @@ fun RunScreenContent(
                 }
             }
         }
-        Column(Modifier.fillMaxHeight(0.15f)) {
+        Column(modifier = Modifier.height(IntrinsicSize.Min)) {
             StopButton(buttonInteractionSource)
         }
     }
@@ -346,21 +343,22 @@ fun RunScreenContent(
 @Composable
 fun StopButton(interactionSource: MutableInteractionSource) {
     Column(
-        Modifier.fillMaxSize(),
+        Modifier
+            .height(IntrinsicSize.Min)
+            .fillMaxWidth()
+            .padding(bottom = 6.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
         Button(interactionSource = interactionSource,
-            modifier = Modifier
-                .fillMaxWidth(0.5f)
-                .fillMaxHeight(0.8f),
+            modifier = Modifier.height(IntrinsicSize.Min),
             onClick = {}) {
             Text(stringResource(id = R.string.run_stop), fontSize = 30.sp)
         }
     }
 }
 
-object RunscreenPreviewData {
+object RunScreenPreviewData {
     val baselineInstant: Instant = Instant.ofEpochMilli(1702738800000L)
     private val vibrationComponent = ConfigComponent.Vibration(
         id = 0,
@@ -382,6 +380,13 @@ object RunscreenPreviewData {
         maxPause = 500,
     )
     private val lastRefresh: Instant = baselineInstant.plus(300L)
+
+    val configuration = Configuration(
+        name = "Test configuration",
+        description = "A description for the configuration",
+        randomOrderPlayback = false,
+        components = listOf(vibrationComponent, soundComponent)
+    )
 
     val effectTimelinePlayingState = EffectTimelineState(
         lastRefresh, playingEffect = EffectParameters.Vibration(
@@ -427,12 +432,13 @@ fun RunScreenPreview() {
         Surface(modifier = Modifier.fillMaxSize(), color = colorScheme.background) {
             RunScreenContent(
                 paddingValues = PaddingValues(4.dp),
-                playingEffect = RunscreenPreviewData.effectTimelinePlayingState.playingEffect,
-                nextEffect = RunscreenPreviewData.effectTimelinePlayingState.nextEffect,
-                startPauseAt = RunscreenPreviewData.effectTimelinePlayingState.startPauseAt,
-                currentPauseDuration = RunscreenPreviewData.effectTimelinePlayingState.currentPauseDuration,
+                configuration = RunScreenPreviewData.configuration,
+                playingEffect = RunScreenPreviewData.effectTimelinePlayingState.playingEffect,
+                nextEffect = RunScreenPreviewData.effectTimelinePlayingState.nextEffect,
+                startPauseAt = RunScreenPreviewData.effectTimelinePlayingState.startPauseAt,
+                currentPauseDuration = RunScreenPreviewData.effectTimelinePlayingState.currentPauseDuration,
                 snackbarContentState = snackbarContentState,
-                initialRefreshInstant = RunscreenPreviewData.baselineInstant,
+                initialRefreshInstant = RunScreenPreviewData.baselineInstant,
             ) {}
         }
     }
@@ -470,11 +476,15 @@ fun PlayingStateUi(
                 .fillMaxSize()
                 .weight(1f)
         ) {
-            Card(
+            ElevatedCard(
                 Modifier
                     .fillMaxWidth()
                     .weight(1f)
-                    .padding(vertical = 8.dp)
+                    .padding(vertical = 8.dp),
+                colors = CardDefaults.elevatedCardColors(
+                    containerColor = colorScheme.surfaceContainer,
+                    contentColor = colorScheme.onSurface
+                )
             ) {
                 Column(
                     modifier = Modifier
@@ -492,11 +502,15 @@ fun PlayingStateUi(
                     }
                 }
             }
-            Card(
+            ElevatedCard(
                 Modifier
                     .weight(1f)
                     .fillMaxWidth()
-                    .padding(vertical = 8.dp)
+                    .padding(vertical = 8.dp),
+                colors = CardDefaults.elevatedCardColors(
+                    containerColor = colorScheme.surfaceContainer,
+                    contentColor = colorScheme.onSurface
+                )
             ) {
                 NextUi(nextEffect = nextEffect)
             }
@@ -767,7 +781,7 @@ fun NextUi(nextEffect: EffectParameters, iconSize: Dp = 32.dp) {
 }
 
 @Composable
-fun RunScreenScreenshotPreview(
+fun RunScreenPreviewScaffold(
     configuration: Configuration,
     effectTimelineState: EffectTimelineState,
     initialRefreshInstant: Instant,
@@ -775,15 +789,17 @@ fun RunScreenScreenshotPreview(
     val snackbarContentState = remember {
         mutableStateOf<SnackbarContent?>(null)
     }
-    RunScreenScaffold(
-        configuration = configuration,
-        playingEffect = effectTimelineState.playingEffect,
-        nextEffect = effectTimelineState.nextEffect,
-        startPauseAt = effectTimelineState.startPauseAt,
-        currentPauseDuration = effectTimelineState.currentPauseDuration,
-        snackbarContentState = snackbarContentState,
-        initialRefreshInstant = initialRefreshInstant
-    ) { }
+    LocationSimulatorTheme(themeState = themePreviewState) {
+        RunScreenScaffold(
+            configuration = configuration,
+            playingEffect = effectTimelineState.playingEffect,
+            nextEffect = effectTimelineState.nextEffect,
+            startPauseAt = effectTimelineState.startPauseAt,
+            currentPauseDuration = effectTimelineState.currentPauseDuration,
+            snackbarContentState = snackbarContentState,
+            initialRefreshInstant = initialRefreshInstant
+        ) { }
+    }
 }
 
 data class RefRangeValue(

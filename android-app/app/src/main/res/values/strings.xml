@@ -111,4 +111,5 @@
     <string name="android_current_but_no_amplitude_control">Your Android version is new enough, but the hardware in your smartphone reports that it doesn\'t support amplitude control.</string>
     <string name="default_configuration_name">Default configuration</string>
     <string name="default_configuration_description">This is the default vibration the app ships with, with two vibration events.</string>
+    <string name="add_configuration_component">Add configuration component</string>
 </resources>

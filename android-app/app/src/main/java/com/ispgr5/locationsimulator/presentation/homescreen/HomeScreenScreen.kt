@@ -22,6 +22,8 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme.colorScheme
@@ -283,21 +285,20 @@ fun FavouriteConfigurationCard(
     configuration: Configuration,
     onSelectFavourite: (Configuration) -> Unit
 ) {
-    Button(
+    ElevatedCard(
         modifier = Modifier.fillMaxWidth(),
-        colors = ButtonDefaults.buttonColors(
+        colors = CardDefaults.elevatedCardColors(
             containerColor = colorScheme.secondaryContainer,
             contentColor = colorScheme.onSecondaryContainer
         ),
-        border = null,
-        elevation = null,
-        shape = shapes.small, onClick = {
+        shape = shapes.small,
+        onClick = {
             onSelectFavourite(configuration)
         }) {
         Column(
             Modifier
                 .fillMaxWidth()
-                .padding(vertical = 4.dp)
+                .padding(4.dp)
         ) {
             Text(
                 text = configuration.name, style = typography.bodyLarge
@@ -374,7 +375,7 @@ fun ThemeToggle(
             fontWeight = FontWeight.SemiBold,
             color = colorScheme.onBackground
         )
-        TriStateToggle(stateKeyLabelMap = ThemeType.entries.associateWith { theme -> theme.labelStringRes },
+        MultiStateToggle(stateKeyLabelMap = ThemeType.entries.associateWith { theme -> theme.labelStringRes },
             selectedOption = selectedTheme.themeType,
             onSelectionChange = { newTheme ->
                 onSetTheme(ThemeState(newTheme))
@@ -416,7 +417,7 @@ private fun AppTopBar(onInfoClick: () -> Unit) {
 }
 
 @Composable
-fun <K> TriStateToggle(
+fun <K> MultiStateToggle(
     stateKeyLabelMap: Map<K, Int>, selectedOption: K, onSelectionChange: (K) -> Unit
 ) {
     Surface(

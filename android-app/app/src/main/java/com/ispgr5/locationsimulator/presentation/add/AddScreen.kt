@@ -12,6 +12,7 @@ import androidx.compose.material.icons.filled.ImportExport
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -27,9 +28,11 @@ import androidx.navigation.NavController
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.core.util.TestTags
 import com.ispgr5.locationsimulator.data.storageManager.ConfigurationStorageManager
+import com.ispgr5.locationsimulator.presentation.previewData.PreviewData
 import com.ispgr5.locationsimulator.presentation.previewData.PreviewData.addScreenPreviewState
 import com.ispgr5.locationsimulator.presentation.settings.SettingsState
 import com.ispgr5.locationsimulator.presentation.universalComponents.LocationSimulatorTopBar
+import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
 
 /**
  * The Edit Screen.
@@ -77,13 +80,15 @@ fun AddScreen(
 @Composable
 @Preview
 fun AddScreenPreview() {
-    AddScreenScaffold(
-        addScreenState = addScreenPreviewState,
-        onBackClick = {},
-        onNameChange = {},
-        onDescriptionChange = {},
-        onSave = {},
-        onImportClick = {})
+    LocationSimulatorTheme(themeState = PreviewData.themePreviewState) {
+        AddScreenScaffold(
+            addScreenState = addScreenPreviewState,
+            onBackClick = {},
+            onNameChange = {},
+            onDescriptionChange = {},
+            onSave = {},
+            onImportClick = {})
+    }
 }
 
 @Composable
@@ -98,7 +103,6 @@ private fun AddScreenScaffold(
     Scaffold(topBar = {
         LocationSimulatorTopBar(onBackClick = onBackClick, stringResource(id = R.string.ScreenAdd))
     }, content = { paddingValues ->
-        //Spacer(modifier = Modifier.height(paddingValues.calculateTopPadding()))
         Column(
             Modifier
                 .padding(
@@ -109,7 +113,7 @@ private fun AddScreenScaffold(
         ) {
             //The name Input Field
             Text(text = stringResource(id = R.string.edit_name))
-            TextField(
+            OutlinedTextField(
                 value = addScreenState.name,
                 onValueChange = onNameChange,
                 modifier = Modifier
@@ -118,7 +122,7 @@ private fun AddScreenScaffold(
             )
             //The description Input Field
             Text(text = stringResource(id = R.string.edit_Description))
-            TextField(
+            OutlinedTextField(
                 value = addScreenState.description,
                 onValueChange = onDescriptionChange,
                 modifier = Modifier

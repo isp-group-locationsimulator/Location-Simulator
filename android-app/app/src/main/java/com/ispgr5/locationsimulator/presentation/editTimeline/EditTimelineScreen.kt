@@ -3,12 +3,9 @@ package com.ispgr5.locationsimulator.presentation.editTimeline
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -27,7 +24,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -40,10 +36,13 @@ import com.ispgr5.locationsimulator.presentation.editTimeline.components.AddConf
 import com.ispgr5.locationsimulator.presentation.editTimeline.components.EditConfigComponent
 import com.ispgr5.locationsimulator.presentation.editTimeline.components.Timeline
 import com.ispgr5.locationsimulator.presentation.editTimeline.components.VibrationSupportHintMode
+import com.ispgr5.locationsimulator.presentation.previewData.AppPreview
+import com.ispgr5.locationsimulator.presentation.previewData.PreviewData
 import com.ispgr5.locationsimulator.presentation.previewData.PreviewData.editTimelineState
 import com.ispgr5.locationsimulator.presentation.settings.SettingsState
 import com.ispgr5.locationsimulator.presentation.universalComponents.LocationSimulatorTopBar
 import com.ispgr5.locationsimulator.presentation.util.Screen
+import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
 
 /**
  * The Edit Screen.
@@ -150,10 +149,10 @@ fun EditTimelineScaffold(
     Scaffold(topBar = {
         EditTimelineTopBar(onBackClick = onBackClick, onSettingsClick = onSettingsClick)
     }) { paddingValues ->
-        Spacer(modifier = Modifier.height(paddingValues.calculateTopPadding()))
-
         Column(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues),
             verticalArrangement = Arrangement.spacedBy(2.dp)
         ) {
             ConfigMetadata(state, onChangeName, onChangeDescription, onCheckRandomOrder)
@@ -166,7 +165,6 @@ fun EditTimelineScaffold(
                 selectedComponent = state.current,
                 onSelectAComponent = onSelectAComponent,
                 onAddClicked = { onToggleShowDialog(true) })
-            Spacer(modifier = Modifier.size(7.dp))
             HorizontalDivider(color = colorScheme.onBackground, thickness = 1.dp)
 
             /**
@@ -209,7 +207,9 @@ private fun ConfigMetadata(
     onCheckRandomOrder: (Boolean) -> Unit
 ) {
     Column(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 4.dp),
         verticalArrangement = Arrangement.spacedBy(1.dp)
     ) {
         OutlinedTextField(
@@ -221,9 +221,6 @@ private fun ConfigMetadata(
             label = {
                 Text(stringResource(id = R.string.editTimeline_name))
             },
-            textStyle = TextStyle(
-                color = colorScheme.onBackground
-            ),
             singleLine = true
         )
 
@@ -238,9 +235,6 @@ private fun ConfigMetadata(
                 Text(stringResource(id = R.string.editTimeline_description))
             },
             onValueChange = onChangeDescription,
-            textStyle = TextStyle(
-                color = colorScheme.onBackground
-            )
         )
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -252,14 +246,16 @@ private fun ConfigMetadata(
                 fontWeight = FontWeight.Bold
             )
             Row(
-                modifier = Modifier.weight(1.0f).padding(start = 8.dp),
+                modifier = Modifier
+                    .weight(1.0f)
+                    .padding(start = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceEvenly,
             ) {
                 Text(stringResource(id = R.string.playback_in_order))
                 Switch(
                     checked = state.randomOrderPlayback,
-                    onCheckedChange = onCheckRandomOrder
+                    onCheckedChange = onCheckRandomOrder,
                 )
                 Text(stringResource(id = R.string.playback_random_order))
             }
@@ -304,26 +300,28 @@ fun EditTimelinePreviewScaffold(
     state: EditTimelineState,
     vibrationSupportHintMode: VibrationSupportHintMode
 ) {
-    EditTimelineScaffold(
-        state = state,
-        isDialogShown = isDialogShown,
-        onBackClick = {},
-        onSettingsClick = {},
-        onToggleShowDialog = {},
-        onChangeName = {},
-        onChangeDescription = {},
-        onCheckRandomOrder = {},
-        onAddSoundClicked = {},
-        onAddVibrationClicked = {},
-        onSelectAComponent = {},
-        editTimelineEventHandlers = null,
-        vibrationSupportHintMode = vibrationSupportHintMode
-    )
+    LocationSimulatorTheme(themeState = PreviewData.themePreviewState) {
+        EditTimelineScaffold(
+            state = state,
+            isDialogShown = isDialogShown,
+            onBackClick = {},
+            onSettingsClick = {},
+            onToggleShowDialog = {},
+            onChangeName = {},
+            onChangeDescription = {},
+            onCheckRandomOrder = {},
+            onAddSoundClicked = {},
+            onAddVibrationClicked = {},
+            onSelectAComponent = {},
+            editTimelineEventHandlers = null,
+            vibrationSupportHintMode = vibrationSupportHintMode
+        )
+    }
 }
 
 
 @Composable
-@Preview
+@AppPreview
 fun EditTimelineNormalPreview() {
     EditTimelinePreviewScaffold(
         isDialogShown = false,
@@ -333,7 +331,7 @@ fun EditTimelineNormalPreview() {
 }
 
 @Composable
-@Preview
+@AppPreview
 fun EditTimelineDialogShownPreview() {
     EditTimelinePreviewScaffold(
         isDialogShown = true,
@@ -343,7 +341,7 @@ fun EditTimelineDialogShownPreview() {
 }
 
 @Composable
-@Preview
+@AppPreview
 fun EditTimelineUnsupportedIntensityPreview() {
     EditTimelinePreviewScaffold(
         isDialogShown = false,

@@ -20,6 +20,7 @@ import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RangeSlider
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -52,9 +53,13 @@ import com.ispgr5.locationsimulator.core.util.TestTags
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 import com.ispgr5.locationsimulator.domain.model.RangeConverter
 import com.ispgr5.locationsimulator.presentation.editTimeline.EditTimelineEventHandlers
+import com.ispgr5.locationsimulator.presentation.previewData.LocalesPreview
+import com.ispgr5.locationsimulator.presentation.previewData.PreviewData
+import com.ispgr5.locationsimulator.presentation.previewData.ThemePreview
 import com.ispgr5.locationsimulator.presentation.universalComponents.ConfirmDeleteDialog
 import com.ispgr5.locationsimulator.presentation.util.vibratorHasAmplitudeControlAndReason
 import com.ispgr5.locationsimulator.ui.theme.DISABLED_ALPHA
+import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
 import java.util.Locale
 import kotlin.properties.Delegates
 
@@ -72,9 +77,6 @@ fun EditConfigComponent(
     if (configComponent == null) {
         return
     }
-    //needed to show the Pause Slider separately
-    var minPause by Delegates.notNull<Int>()
-    var maxPause by Delegates.notNull<Int>()
 
     //Delete Confirm Dialog
     var showDeleteConfirmDialog by remember { mutableStateOf(false) }
@@ -145,178 +147,22 @@ fun EditConfigComponent(
             Column {
                 when (configComponent) {
                     is ConfigComponent.Sound -> {
-                        minPause = configComponent.minPause
-                        maxPause = configComponent.maxPause
-                        Text(
-                            text = buildAnnotatedString {
-                                withStyle(MaterialTheme.typography.titleMedium.toSpanStyle()) {
-                                    withStyle(SpanStyle(fontWeight = FontWeight.Black)) {
-                                        append(stringResource(R.string.sound_filename))
-
-                                    }
-                                    append(" ")
-                                    withStyle(SpanStyle(fontFamily = FontFamily.Monospace)) {
-                                        append(configComponent.source)
-                                    }
-                                }
-                            },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(bottom = 8.dp)
-                        )
-                        /**
-                         * Volume
-                         */
-                        Text(
-                            text = stringResource(id = R.string.editTimeline_SoundVolume),
-                            style = blackSubtitle1
-                        )
-                        Text(
-                            RangeConverter.transformFactorToPercentage(configComponent.minVolume)
-                                .toInt().toString() + "% "
-                                    + stringResource(id = R.string.editTimeline_range) + RangeConverter.transformFactorToPercentage(
-                                configComponent.maxVolume
-                            )
-                                .toInt()
-                                .toString() + "% "
-                        )
-                        SliderForRange(
-                            onValueChange = {
-                                editTimelineEventHandlers?.onSoundValueChanged?.invoke(it)
-                            },
-                            value = RangeConverter.transformFactorToPercentage(configComponent.minVolume)..
-                                    RangeConverter.transformFactorToPercentage(configComponent.maxVolume),
-                            range = 0f..100f
-                        )
+                        SoundParameters(configComponent, blackSubtitle1, editTimelineEventHandlers)
                     }
 
                     is ConfigComponent.Vibration -> {
-                        minPause = configComponent.minPause
-                        maxPause = configComponent.maxPause
-
-                        val (hasAmplitudeControl, _) = when (vibrationSupportHintMode) {
-                            VibrationSupportHintMode.ENFORCED -> false to null
-                            VibrationSupportHintMode.SUPPRESSED -> true to null
-                            else -> LocalContext.current.vibratorHasAmplitudeControlAndReason
-                        }
-
-                        /**
-                         * The Vibration Strength
-                         */
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-
-                            Text(
-                                text = buildAnnotatedString {
-                                    withStyle(
-                                        MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Black)
-                                            .toSpanStyle()
-                                    ) {
-                                        append(stringResource(id = R.string.editTimeline_Vibration_Strength))
-                                    }
-                                    if (hasAmplitudeControl) {
-                                        append("\n")
-                                        val lowerBound =
-                                            RangeConverter.eightBitIntToPercentageFloat(
-                                                configComponent.minStrength
-                                            ).toInt()
-                                        val upperBound =
-                                            RangeConverter.eightBitIntToPercentageFloat(
-                                                configComponent.maxStrength
-                                            ).toInt()
-                                        append(lowerBound.toString())
-                                        append("% ")
-                                        append(stringResource(id = R.string.editTimeline_range))
-                                        append(upperBound.toString())
-                                        append("%")
-                                    }
-                                }
-                            )
-                            if (!hasAmplitudeControl) {
-
-                                Button(
-                                    onClick = {
-                                        showStrengthNotSupportedDialog = true
-                                    }, //show Confirm Dialog
-                                    shape = MaterialTheme.shapes.small,
-                                    colors = ButtonDefaults.buttonColors(
-                                        containerColor = Color.Transparent,
-                                        contentColor = colorScheme.error,
-                                        disabledContainerColor = Color.Transparent,
-                                        disabledContentColor = colorScheme.error.copy(alpha = DISABLED_ALPHA)
-                                    ),
-                                    elevation = null
-                                ) {
-                                    Icon(
-                                        painter = painterResource(id = R.drawable.baseline_info_24),
-                                        contentDescription = null,
-                                    )
-                                }
-                            }
-                        }
-                        if (hasAmplitudeControl) {
-                            SliderForRange(
-                                modifier = Modifier.testTag(TestTags.EDIT_VIB_SLIDER_STRENGTH),
-                                value = RangeConverter.eightBitIntToPercentageFloat(
-                                    configComponent.minStrength
-                                )..RangeConverter.eightBitIntToPercentageFloat(
-                                    configComponent.maxStrength
-                                ),
-                                onValueChange = {
-                                    editTimelineEventHandlers?.onVibStrengthChanged?.invoke(it)
-                                },
-                                range = 0f..100f
-                            )
-                        }
-
-
-                        /**
-                         * The Vibration duration
-                         */
-                        Text(
-                            text = stringResource(id = R.string.editTimeline_Vibration_duration),
-                            style = blackSubtitle1
-                        )
-
-                        SecText(
-                            min = RangeConverter.msToS(configComponent.minDuration),
-                            max = RangeConverter.msToS(configComponent.maxDuration)
-                        )
-                        SliderForRange(
-                            modifier = Modifier.testTag(TestTags.EDIT_VIB_SLIDER_DURATION),
-                            enabled = hasAmplitudeControl,
-                            onValueChange = {
-                                editTimelineEventHandlers?.onVibDurationChanged?.invoke(it)
+                        VibrationParameters(
+                            vibrationSupportHintMode,
+                            configComponent,
+                            showStrengthNotSupportedDialog,
+                            onShowStrengthNotSupportedDialog = {
+                                showStrengthNotSupportedDialog = it
                             },
-                            value = RangeConverter.msToS(configComponent.minDuration)..RangeConverter.msToS(
-                                configComponent.maxDuration
-                            ),
-                            range = 0f..30f
+                            editTimelineEventHandlers = editTimelineEventHandlers,
+                            blackSubtitle1 = blackSubtitle1
                         )
                     }
                 }
-                /**
-                 * The Pause
-                 */
-                Text(
-                    text = stringResource(id = R.string.editTimeline_Pause),
-                    style = blackSubtitle1
-                )
-                SecText(
-                    min = RangeConverter.msToS(minPause), max =
-                    RangeConverter.msToS(maxPause)
-                )
-                SliderForRange(
-                    modifier = Modifier.testTag(TestTags.EDIT_SLIDER_PAUSE),
-                    onValueChange = {
-                        editTimelineEventHandlers?.onPauseValueChanged?.invoke(it)
-                    },
-                    value = RangeConverter.msToS(minPause)..RangeConverter.msToS(maxPause),
-                    range = 0f..60f
-                )
             }
             Spacer(modifier = Modifier.weight(1f))
             Row(
@@ -401,6 +247,205 @@ fun EditConfigComponent(
 }
 
 @Composable
+private fun PauseEditor(
+    blackSubtitle1: TextStyle,
+    editTimelineEventHandlers: EditTimelineEventHandlers?,
+    getMinPause: () -> Int,
+    getMaxPause: () -> Int,
+    //setPause: (ClosedFloatingPointRange<Float>) -> Unit,
+) {
+    /**
+     * The Pause
+     */
+    Text(
+        text = stringResource(id = R.string.editTimeline_Pause),
+        style = blackSubtitle1
+    )
+    SecText(
+        min = RangeConverter.msToS(getMinPause()), max =
+        RangeConverter.msToS(getMaxPause())
+    )
+    SliderForRange(
+        modifier = Modifier.testTag(TestTags.EDIT_SLIDER_PAUSE),
+        onValueChange = {
+            editTimelineEventHandlers?.onPauseValueChanged?.invoke(it)
+        },
+        value = RangeConverter.msToS(getMinPause())..RangeConverter.msToS(getMaxPause()),
+        range = 0f..60f
+    )
+}
+
+@Composable
+private fun VibrationParameters(
+    vibrationSupportHintMode: VibrationSupportHintMode,
+    configComponent: ConfigComponent.Vibration,
+    showStrengthNotSupportedDialog: Boolean,
+    onShowStrengthNotSupportedDialog: (Boolean) -> Unit,
+    editTimelineEventHandlers: EditTimelineEventHandlers?,
+    blackSubtitle1: TextStyle
+) {
+    val (hasAmplitudeControl, _) = when (vibrationSupportHintMode) {
+        VibrationSupportHintMode.ENFORCED -> false to null
+        VibrationSupportHintMode.SUPPRESSED -> true to null
+        else -> LocalContext.current.vibratorHasAmplitudeControlAndReason
+    }
+
+    /**
+     * The Vibration Strength
+     */
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+
+        Text(
+            text = buildAnnotatedString {
+                withStyle(
+                    MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Black)
+                        .toSpanStyle()
+                ) {
+                    append(stringResource(id = R.string.editTimeline_Vibration_Strength))
+                }
+                if (hasAmplitudeControl) {
+                    append("\n")
+                    val lowerBound =
+                        RangeConverter.eightBitIntToPercentageFloat(
+                            configComponent.minStrength
+                        ).toInt()
+                    val upperBound =
+                        RangeConverter.eightBitIntToPercentageFloat(
+                            configComponent.maxStrength
+                        ).toInt()
+                    append(lowerBound.toString())
+                    append("% ")
+                    append(stringResource(id = R.string.editTimeline_range))
+                    append(upperBound.toString())
+                    append("%")
+                }
+            }
+        )
+        if (!hasAmplitudeControl) {
+
+            Button(
+                onClick = {
+                    onShowStrengthNotSupportedDialog(true)
+                },
+                shape = MaterialTheme.shapes.small,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.Transparent,
+                    contentColor = colorScheme.error,
+                    disabledContainerColor = Color.Transparent,
+                    disabledContentColor = colorScheme.error.copy(alpha = DISABLED_ALPHA)
+                ),
+                elevation = null
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.baseline_info_24),
+                    contentDescription = null,
+                )
+            }
+        }
+    }
+    if (hasAmplitudeControl) {
+        SliderForRange(
+            modifier = Modifier.testTag(TestTags.EDIT_VIB_SLIDER_STRENGTH),
+            value = RangeConverter.eightBitIntToPercentageFloat(
+                configComponent.minStrength
+            )..RangeConverter.eightBitIntToPercentageFloat(
+                configComponent.maxStrength
+            ),
+            onValueChange = {
+                editTimelineEventHandlers?.onVibStrengthChanged?.invoke(it)
+            },
+            range = 0f..100f
+        )
+    }
+
+
+    /**
+     * The Vibration duration
+     */
+    Text(
+        text = stringResource(id = R.string.editTimeline_Vibration_duration),
+        style = blackSubtitle1
+    )
+
+    SecText(
+        min = RangeConverter.msToS(configComponent.minDuration),
+        max = RangeConverter.msToS(configComponent.maxDuration)
+    )
+    SliderForRange(
+        modifier = Modifier.testTag(TestTags.EDIT_VIB_SLIDER_DURATION),
+        enabled = hasAmplitudeControl,
+        onValueChange = {
+            editTimelineEventHandlers?.onVibDurationChanged?.invoke(it)
+        },
+        value = RangeConverter.msToS(configComponent.minDuration)..RangeConverter.msToS(
+            configComponent.maxDuration
+        ),
+        range = 0f..30f
+    )
+
+    PauseEditor(blackSubtitle1, editTimelineEventHandlers,
+        getMaxPause = { configComponent.maxPause },
+        getMinPause = { configComponent.minPause })
+}
+
+@Composable
+private fun SoundParameters(
+    configComponent: ConfigComponent.Sound,
+    blackSubtitle1: TextStyle,
+    editTimelineEventHandlers: EditTimelineEventHandlers?
+) {
+    Text(
+        text = buildAnnotatedString {
+            withStyle(MaterialTheme.typography.titleMedium.toSpanStyle()) {
+                withStyle(SpanStyle(fontWeight = FontWeight.Black)) {
+                    append(stringResource(R.string.sound_filename))
+
+                }
+                append(" ")
+                withStyle(SpanStyle(fontFamily = FontFamily.Monospace)) {
+                    append(configComponent.source)
+                }
+            }
+        },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 8.dp)
+    )
+    /**
+     * Volume
+     */
+    Text(
+        text = stringResource(id = R.string.editTimeline_SoundVolume),
+        style = blackSubtitle1
+    )
+    Text(
+        RangeConverter.transformFactorToPercentage(configComponent.minVolume)
+            .toInt().toString() + "% "
+                + stringResource(id = R.string.editTimeline_range) + RangeConverter.transformFactorToPercentage(
+            configComponent.maxVolume
+        )
+            .toInt()
+            .toString() + "% "
+    )
+    SliderForRange(
+        onValueChange = {
+            editTimelineEventHandlers?.onSoundValueChanged?.invoke(it)
+        },
+        value = RangeConverter.transformFactorToPercentage(configComponent.minVolume)..
+                RangeConverter.transformFactorToPercentage(configComponent.maxVolume),
+        range = 0f..100f
+    )
+
+    PauseEditor(blackSubtitle1, editTimelineEventHandlers,
+        getMaxPause = { configComponent.maxPause },
+        getMinPause = { configComponent.minPause })
+}
+
+@Composable
 fun ConfigComponentNameTextInput(
     configComponent: ConfigComponent,
     onConfigComponentNameChanged: (name: String) -> Unit
@@ -459,4 +504,50 @@ enum class VibrationSupportHintMode {
     AUTOMATIC,
     SUPPRESSED,
     ENFORCED
+}
+
+@LocalesPreview
+@ThemePreview
+@Composable
+fun EditVibrationPreview() {
+    LocationSimulatorTheme(themeState = PreviewData.themePreviewState) {
+        Surface(modifier = Modifier.fillMaxSize(), color = colorScheme.background) {
+            EditConfigComponent(
+                configComponent = PreviewData.defaultVibration,
+                editTimelineEventHandlers = null,
+                vibrationSupportHintMode = VibrationSupportHintMode.SUPPRESSED
+            )
+        }
+    }
+}
+
+@LocalesPreview
+@ThemePreview
+@Composable
+fun EditVibrationUnsupportedVibrationPreview() {
+    LocationSimulatorTheme(themeState = PreviewData.themePreviewState) {
+        Surface(modifier = Modifier.fillMaxSize(), color = colorScheme.background) {
+            EditConfigComponent(
+                configComponent = PreviewData.defaultVibration,
+                editTimelineEventHandlers = null,
+                vibrationSupportHintMode = VibrationSupportHintMode.ENFORCED
+            )
+        }
+    }
+}
+
+
+@LocalesPreview
+@ThemePreview
+@Composable
+fun EditSoundPreview() {
+    LocationSimulatorTheme(themeState = PreviewData.themePreviewState) {
+        Surface(modifier = Modifier.fillMaxSize(), color = colorScheme.background) {
+            EditConfigComponent(
+                configComponent = PreviewData.defaultSound,
+                editTimelineEventHandlers = null
+            )
+        }
+
+    }
 }

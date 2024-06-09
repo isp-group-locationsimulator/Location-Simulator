@@ -1,12 +1,13 @@
 package com.ispgr5.locationsimulator.userStoryTests
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.os.PowerManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.material3.rememberScaffoldState
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -52,17 +53,15 @@ class WunschfunktionalitaetenEndToEndTest {
             composeRule.activity.setContent {
                 val navController = rememberNavController()
                 val themeState = mutableStateOf(ThemeState(ThemeType.LIGHT))
-                val scaffoldState = rememberScaffoldState()
                 val snackbarContent: MutableState<SnackbarContent?> = mutableStateOf(null)
                 val context = LocalContext.current
                 val powerManager by remember {
-                    mutableStateOf(context.getSystemService(ComponentActivity.POWER_SERVICE) as PowerManager)
+                    mutableStateOf(context.getSystemService(Context.POWER_SERVICE) as PowerManager)
                 }
                 LocationSimulatorTheme(themeState.value) {
                     composeRule.activity.NavigationAppHost(
                         navController = navController,
                         themeState = themeState,
-                        scaffoldState = scaffoldState,
                         snackbarContent = snackbarContent,
                         powerManager = powerManager
                     )
@@ -180,7 +179,7 @@ class WunschfunktionalitaetenEndToEndTest {
         /**Es wird überprüft, dass nun im Sytem der Darkmode gesetzt ist.**/
         //check if dark theme is setted in prefs
         var isDarkTheme =
-            composeRule.activity.getSharedPreferences("prefs", ComponentActivity.MODE_PRIVATE)
+            composeRule.activity.getSharedPreferences("prefs", Context.MODE_PRIVATE)
                 .getBoolean("isDarkTheme", false)
         assert(isDarkTheme)
         //check if screen is dark
@@ -212,7 +211,7 @@ class WunschfunktionalitaetenEndToEndTest {
         /**Es wird überprüft, dass nun im System der Lightmdoe gesetzt ist.**/
         //check if light theme is setted in prefs.
         isDarkTheme =
-            composeRule.activity.getSharedPreferences("prefs", ComponentActivity.MODE_PRIVATE)
+            composeRule.activity.getSharedPreferences("prefs", Context.MODE_PRIVATE)
                 .getBoolean("isDarkTheme", false)
         assert(!isDarkTheme)
         //check if screen is light
@@ -240,7 +239,7 @@ class WunschfunktionalitaetenEndToEndTest {
         /**Es wird überprüft, dass nun im Sytem der Darkmode gesetzt ist.**/
         //check if dark theme is setted in prefs
         var isDarkTheme =
-            composeRule.activity.getSharedPreferences("prefs", ComponentActivity.MODE_PRIVATE)
+            composeRule.activity.getSharedPreferences("prefs", Context.MODE_PRIVATE)
                 .getBoolean("isDarkTheme", false)
         assert(isDarkTheme)
 
@@ -257,7 +256,7 @@ class WunschfunktionalitaetenEndToEndTest {
         /**Es wird überprüft, dass nun im System der Lightmdoe gesetzt ist.**/
         //check if light theme is setted in prefs.
         isDarkTheme =
-            composeRule.activity.getSharedPreferences("prefs", ComponentActivity.MODE_PRIVATE)
+            composeRule.activity.getSharedPreferences("prefs", Context.MODE_PRIVATE)
                 .getBoolean("isDarkTheme", false)
         assert(!isDarkTheme)
         //check if screen is light

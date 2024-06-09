@@ -40,10 +40,8 @@ fun RowScope.OneConfigurationListMember(
     isFavorite: Boolean,
     onFavoriteClicked: () -> Unit
 ) {
-    Card(
+    ElevatedCard(
         shape = MaterialTheme.shapes.small,
-        colors = CardDefaults.elevatedCardColors(),
-        elevation = CardDefaults.elevatedCardElevation(),
         modifier = Modifier
             //.background(rowBackgroundColor, shape = RoundedCornerShape(6.dp))
             .weight(1f)

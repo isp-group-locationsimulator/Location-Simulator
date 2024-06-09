@@ -13,20 +13,24 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.gigamole.composescrollbars.Scrollbars
 import com.gigamole.composescrollbars.config.ScrollbarsConfig
@@ -38,8 +42,7 @@ import com.gigamole.composescrollbars.scrolltype.knobtype.ScrollbarsStaticKnobTy
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.core.util.TestTags
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
-import com.ispgr5.locationsimulator.presentation.delay.DelayScreenScaffold
-import com.ispgr5.locationsimulator.presentation.previewData.AppPreviewConfig
+import com.ispgr5.locationsimulator.presentation.previewData.AppPreview
 import com.ispgr5.locationsimulator.presentation.previewData.PreviewData
 import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
 
@@ -95,18 +98,23 @@ fun Timeline(
              * Add new Timeline Item(Configuration Component)
              */
             if (interactive) {
-                Button(
-                    elevation = ButtonDefaults.buttonElevation(4.dp),
-                    onClick = onAddClicked!!,
+                ElevatedCard(
+                    shape = CircleShape,
                     modifier = Modifier
                         .width(55.dp)
                         .height(55.dp)
                         .padding(6.dp)
-                        .testTag(TestTags.EDIT_TIMELINE_SCREEN_ADD_BUTTON)
+                        .clickable(onClick = onAddClicked!!)
+                        .testTag(TestTags.EDIT_TIMELINE_SCREEN_ADD_BUTTON),
+                    colors = CardDefaults.cardColors(
+                        containerColor = colorScheme.primaryContainer,
+                        contentColor = colorScheme.onPrimaryContainer
+                    )
                 ) {
                     Icon(
-                        painter = painterResource(id = R.drawable.ic_baseline_add_24),
-                        contentDescription = null
+                        imageVector = Icons.Default.Add,
+                        modifier = Modifier.fillMaxSize(),
+                        contentDescription = stringResource(id = R.string.add_configuration_component),
                     )
                 }
             }
@@ -141,18 +149,17 @@ fun TimelineItem(
             onSelect(configItem)
         }
     } ?: baseModifier
-    Card(
-        elevation = CardDefaults.cardElevation(4.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface,
-            contentColor = MaterialTheme.colorScheme.onSurface
-        ),
+    ElevatedCard(
         //if selected the Item gets a Border in another Color
+        colors = CardDefaults.elevatedCardColors(
+            containerColor = colorScheme.surfaceContainerHigh,
+            contentColor = colorScheme.onSurface,
+        ),
         modifier = when (isSelected) {
             true -> clickableModifier.border(
-                1.dp,
-                MaterialTheme.colorScheme.primary,
-                RoundedCornerShape(10)
+                1.5.dp,
+                colorScheme.secondary,
+                shape = CardDefaults.shape
             )
 
             else -> clickableModifier
@@ -161,7 +168,9 @@ fun TimelineItem(
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.padding(2.dp).fillMaxSize()
+            modifier = Modifier
+                .padding(2.dp)
+                .fillMaxSize()
         ) {
             Icon(
                 painter = if (configItem is ConfigComponent.Sound) {
@@ -177,7 +186,7 @@ fun TimelineItem(
 }
 
 @Composable
-@AppPreviewConfig
+@AppPreview
 fun TimelinePreview() {
     LocationSimulatorTheme(themeState = PreviewData.themePreviewState) {
         Timeline(
@@ -185,7 +194,7 @@ fun TimelinePreview() {
             selectedComponent = PreviewData.previewConfigurations.first().components.first(),
             onSelectAComponent = {},
             onAddClicked = {},
-            interactive = false
+            interactive = true
         )
     }
 }

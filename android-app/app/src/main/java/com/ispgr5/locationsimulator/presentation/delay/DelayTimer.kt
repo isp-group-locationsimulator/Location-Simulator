@@ -15,7 +15,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
@@ -40,7 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.core.util.TestTags
-import com.ispgr5.locationsimulator.presentation.previewData.AppPreviewConfig
+import com.ispgr5.locationsimulator.presentation.previewData.AppPreview
 import com.ispgr5.locationsimulator.presentation.previewData.PreviewData
 import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
 
@@ -363,7 +362,7 @@ data class TimerState(
 }
 
 @Composable
-@AppPreviewConfig
+@AppPreview
 fun DelayTimerPreview() {
     val timerState = remember {
         mutableStateOf(PreviewData.delayScreenInitialTimerState)

@@ -40,7 +40,7 @@ import com.ispgr5.locationsimulator.core.util.TestTags
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 import com.ispgr5.locationsimulator.domain.model.Configuration
 import com.ispgr5.locationsimulator.presentation.editTimeline.components.Timeline
-import com.ispgr5.locationsimulator.presentation.previewData.AppPreviewConfig
+import com.ispgr5.locationsimulator.presentation.previewData.AppPreview
 import com.ispgr5.locationsimulator.presentation.previewData.PreviewData.delayScreenInitialTimerState
 import com.ispgr5.locationsimulator.presentation.previewData.PreviewData.delayScreenPreviewState
 import com.ispgr5.locationsimulator.presentation.previewData.PreviewData.themePreviewState
@@ -210,7 +210,7 @@ fun DelayScreenContent(
 }
 
 @Composable
-@AppPreviewConfig
+@AppPreview
 fun DelayScreenPreview() {
     val timerState = remember {
         mutableStateOf(delayScreenInitialTimerState)

@@ -227,7 +227,7 @@ private fun ConfigurationList(
 
                         if (selectScreenState.isInDeleteMode && deleteThis) {
                             Spacer(modifier = Modifier.width(2.dp))
-                            Card(
+                            ElevatedCard(
                                 shape = MaterialTheme.shapes.small,
                                 modifier = Modifier
                                     .fillMaxHeight()
