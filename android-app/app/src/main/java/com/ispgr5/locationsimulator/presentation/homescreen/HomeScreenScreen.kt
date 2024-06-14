@@ -1,5 +1,6 @@
 package com.ispgr5.locationsimulator.presentation.homescreen
 
+import android.os.Build
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
@@ -7,6 +8,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -23,6 +25,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -33,6 +36,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -66,6 +70,7 @@ import com.ispgr5.locationsimulator.core.util.TestTags
 import com.ispgr5.locationsimulator.data.storageManager.SoundStorageManager
 import com.ispgr5.locationsimulator.domain.model.Configuration
 import com.ispgr5.locationsimulator.presentation.MainActivity
+import com.ispgr5.locationsimulator.presentation.previewData.AppPreview
 import com.ispgr5.locationsimulator.presentation.previewData.PreviewData
 import com.ispgr5.locationsimulator.presentation.universalComponents.SnackbarContent
 import com.ispgr5.locationsimulator.presentation.universalComponents.LocationSimulatorTopBar
@@ -378,8 +383,39 @@ fun ThemeToggle(
         MultiStateToggle(stateKeyLabelMap = ThemeType.entries.associateWith { theme -> theme.labelStringRes },
             selectedOption = selectedTheme.themeType,
             onSelectionChange = { newTheme ->
-                onSetTheme(ThemeState(newTheme))
+                onSetTheme(selectedTheme.copy(themeType = newTheme))
             })
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            DynamicColorSchemeToggle(
+                useDynamicColors = selectedTheme.useDynamicColor,
+                onSelectionChange = { useDynamicColor ->
+                    onSetTheme(selectedTheme.copy(useDynamicColor = useDynamicColor))
+                }
+            )
+        }
+    }
+}
+
+@Composable
+fun DynamicColorSchemeToggle(
+    useDynamicColors: Boolean,
+    onSelectionChange: (Boolean) -> Unit
+) {
+    Column(Modifier.fillMaxWidth().padding(vertical=2.dp),
+        horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(stringResource(R.string.dynamic_colors),
+            fontSize = 18.sp,
+            fontWeight = FontWeight.SemiBold,
+            color = colorScheme.onBackground)
+        Row(
+            Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally)
+        ) {
+            Text(stringResource(R.string.normal))
+            Switch(checked = useDynamicColors, onCheckedChange = onSelectionChange)
+            Text(stringResource(R.string.dynamic))
+        }
     }
 }
 
@@ -463,7 +499,7 @@ fun <K> MultiStateToggle(
 }
 
 @Composable
-@Preview
+@AppPreview
 fun HomeScreenPreview() {
     val state by remember {
         mutableStateOf(

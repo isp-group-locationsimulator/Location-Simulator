@@ -109,4 +109,7 @@
     <string name="default_configuration_name">Default configuration</string>
     <string name="default_configuration_description">This is the default vibration the app ships with, with two vibration events.</string>
     <string name="add_configuration_component">Add configuration component</string>
+    <string name="dynamic_colors">Dynamic colors</string>
+    <string name="normal">Normal</string>
+    <string name="dynamic">Dynamic</string>
 </resources>

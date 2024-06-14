@@ -246,7 +246,7 @@ private fun ConfigurationList(
                                     Icon(
                                         imageVector = Icons.Default.Cancel,
                                         contentDescription = stringResource(id = R.string.delete_configuration),
-                                        tint = Color.White.copy(alpha = 0.7f)
+                                        tint = colorScheme.onError.copy(alpha = 0.8f)
                                     )
                                 }
                             }

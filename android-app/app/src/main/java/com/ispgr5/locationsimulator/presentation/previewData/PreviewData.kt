@@ -81,6 +81,8 @@ object PreviewData {
     )
 
     val delayScreenInitialTimerState: TimerState = TimerState(setSeconds = 42L)
+    val delayScreenRunningTimerState: TimerState =
+        TimerState(isRunning = true, secondsRemaining = 40, setSeconds = 42L)
 
     val runScreenPreviewInitialRefresh = RunScreenPreviewData.baselineInstant
     val runScreenPreviewStatePaused = RunScreenPreviewData.effectTimelinePausedState

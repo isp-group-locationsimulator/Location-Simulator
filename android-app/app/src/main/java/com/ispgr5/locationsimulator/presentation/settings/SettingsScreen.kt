@@ -3,6 +3,7 @@ package com.ispgr5.locationsimulator.presentation.settings
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,6 +33,7 @@ import androidx.compose.runtime.State
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -105,7 +107,10 @@ fun SettingsScreenScaffold(
 ) {
     Scaffold(
         topBar = {
-            LocationSimulatorTopBar(onBackClick = onBackClick, title = stringResource(id = R.string.ScreenSettings))
+            LocationSimulatorTopBar(
+                onBackClick = onBackClick,
+                title = stringResource(id = R.string.ScreenSettings)
+            )
         },
         content = { paddingValues ->
             Column(
@@ -188,69 +193,70 @@ private fun ColumnScope.SoundCard(
         modifier = Modifier
             .padding(20.dp)
             .weight(1f)
-            .padding(20.dp)
-            .verticalScroll(rememberScrollState())
     ) {
-        /**
-         * The Sound Heading
-         */
-        Text(
-            text = stringResource(id = R.string.DefaultSound),
-            style = MaterialTheme.typography.headlineSmall,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier
-                .padding(16.dp)
-                .align(Alignment.CenterHorizontally),
-        )
-        /**
-         * The Sound Volume
-         */
-        Text(text = stringResource(id = R.string.editTimeline_SoundVolume))
-        Text(
-            RangeConverter.transformFactorToPercentage(state.minVolumeSound)
-                .toInt().toString() + "% "
-                    + stringResource(id = R.string.editTimeline_range) + RangeConverter.transformFactorToPercentage(
-                state.maxVolumeSound
+        Column(Modifier.fillMaxSize().padding(8.dp)
+            .verticalScroll(rememberScrollState())) {
+            /**
+             * The Sound Heading
+             */
+            Text(
+                text = stringResource(id = R.string.DefaultSound),
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier
+                    .padding(16.dp)
+                    .align(Alignment.CenterHorizontally),
             )
-                .toInt()
-                .toString() + "% "
-        )
-        SliderForRange(
-            onValueChange = { value: ClosedFloatingPointRange<Float> ->
-                onChangeEvent(
-                    SettingsEvent.ChangedSoundVolume(
-                        value,
-                        saveDefaultValuesFunction
+            /**
+             * The Sound Volume
+             */
+            Text(text = stringResource(id = R.string.editTimeline_SoundVolume))
+            Text(
+                RangeConverter.transformFactorToPercentage(state.minVolumeSound)
+                    .toInt().toString() + "% "
+                        + stringResource(id = R.string.editTimeline_range) + RangeConverter.transformFactorToPercentage(
+                    state.maxVolumeSound
+                )
+                    .toInt()
+                    .toString() + "% "
+            )
+            SliderForRange(
+                onValueChange = { value: ClosedFloatingPointRange<Float> ->
+                    onChangeEvent(
+                        SettingsEvent.ChangedSoundVolume(
+                            value,
+                            saveDefaultValuesFunction
+                        )
                     )
-                )
-            },
-            value = RangeConverter.transformFactorToPercentage(state.minVolumeSound)..
-                    RangeConverter.transformFactorToPercentage(state.maxVolumeSound),
-            range = 0f..100f
-        )
+                },
+                value = RangeConverter.transformFactorToPercentage(state.minVolumeSound)..
+                        RangeConverter.transformFactorToPercentage(state.maxVolumeSound),
+                range = 0f..100f
+            )
 
-        /**
-         * The Sound Pause
-         */
-        Text(text = stringResource(id = R.string.editTimeline_Pause))
-        SecText(
-            min = RangeConverter.msToS(state.minPauseSound),
-            max = RangeConverter.msToS(state.maxPauseSound)
-        )
-        SliderForRange(
-            onValueChange = { value: ClosedFloatingPointRange<Float> ->
-                onChangeEvent(
-                    SettingsEvent.ChangedSoundPause(
-                        value,
-                        saveDefaultValuesFunction
-                    ),
-                )
-            },
-            value = RangeConverter.msToS(state.minPauseSound)..RangeConverter.msToS(
-                state.maxPauseSound
-            ),
-            range = 0f..60f
-        )
+            /**
+             * The Sound Pause
+             */
+            Text(text = stringResource(id = R.string.editTimeline_Pause))
+            SecText(
+                min = RangeConverter.msToS(state.minPauseSound),
+                max = RangeConverter.msToS(state.maxPauseSound)
+            )
+            SliderForRange(
+                onValueChange = { value: ClosedFloatingPointRange<Float> ->
+                    onChangeEvent(
+                        SettingsEvent.ChangedSoundPause(
+                            value,
+                            saveDefaultValuesFunction
+                        ),
+                    )
+                },
+                value = RangeConverter.msToS(state.minPauseSound)..RangeConverter.msToS(
+                    state.maxPauseSound
+                ),
+                range = 0f..60f
+            )
+        }
     }
 }
 
@@ -262,124 +268,127 @@ private fun ColumnScope.VibrationCard(
 ) {
     Card(
         modifier = Modifier
-            .padding(20.dp)
-            .weight(1f)
-            .padding(20.dp)
-            .verticalScroll(rememberScrollState()),
-
+            .padding(8.dp)
+            .weight(1f),
         ) {
-        /**
-         * The Vibration Heading
-         */
-        Text(
-            text = stringResource(id = R.string.DefaultVibration),
-            style = MaterialTheme.typography.headlineSmall,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier
-                .padding(16.dp)
-                .align(Alignment.CenterHorizontally),
-            textAlign = TextAlign.Center,
-        )
-        /**
-         * The Vibration Default Name
-         */
-        OutlinedTextField(
-            value = state.defaultNameVibration,
-            onValueChange = { newText ->
-                onChangeEvent(
-                    SettingsEvent.EnteredName(
-                        newText,
-                        saveDefaultValuesFunction
-                    )
-                )
-            },
-            label = { Text("Default Name") },
-            placeholder = { Text(text = stringResource(id = R.string.PlaceholderDefaultName)) },
-            singleLine = true,
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = MaterialTheme.colorScheme.primary,
-                unfocusedBorderColor = MaterialTheme.colorScheme.onSurface
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        )
-        /**
-         * The Vibration Strength
-         */
-        val (amplitudeControlSupported, _) = LocalContext.current.vibratorHasAmplitudeControlAndReason
-        if (amplitudeControlSupported) {
-            Text(text = stringResource(id = R.string.editTimeline_Vibration_Strength))
+        Column(
+            Modifier
+                .fillMaxSize()
+                .padding(8.dp)
+                .verticalScroll(rememberScrollState()),
+        ) {
+            /**
+             * The Vibration Heading
+             */
             Text(
-                RangeConverter.eightBitIntToPercentageFloat(state.minStrengthVibration)
-                    .toInt().toString() + "% "
-                        + stringResource(id = R.string.editTimeline_range) + RangeConverter.eightBitIntToPercentageFloat(
-                    state.maxStrengthVibration
+                text = stringResource(id = R.string.DefaultVibration),
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier
+                    .padding(16.dp)
+                    .align(Alignment.CenterHorizontally),
+                textAlign = TextAlign.Center,
+            )
+            /**
+             * The Vibration Default Name
+             */
+            OutlinedTextField(
+                value = state.defaultNameVibration,
+                onValueChange = { newText ->
+                    onChangeEvent(
+                        SettingsEvent.EnteredName(
+                            newText,
+                            saveDefaultValuesFunction
+                        )
+                    )
+                },
+                label = { Text("Default Name") },
+                placeholder = { Text(text = stringResource(id = R.string.PlaceholderDefaultName)) },
+                singleLine = true,
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = MaterialTheme.colorScheme.primary,
+                    unfocusedBorderColor = MaterialTheme.colorScheme.onSurface
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            )
+            /**
+             * The Vibration Strength
+             */
+            val (amplitudeControlSupported, _) = LocalContext.current.vibratorHasAmplitudeControlAndReason
+            if (amplitudeControlSupported) {
+                Text(text = stringResource(id = R.string.editTimeline_Vibration_Strength))
+                Text(
+                    RangeConverter.eightBitIntToPercentageFloat(state.minStrengthVibration)
+                        .toInt().toString() + "% "
+                            + stringResource(id = R.string.editTimeline_range) + RangeConverter.eightBitIntToPercentageFloat(
+                        state.maxStrengthVibration
+                    )
+                        .toInt()
+                        .toString() + "%"
                 )
-                    .toInt()
-                    .toString() + "%"
+                SliderForRange(
+                    onValueChange = { value: ClosedFloatingPointRange<Float> ->
+                        onChangeEvent(
+                            SettingsEvent.ChangedVibStrength(
+                                value,
+                                saveDefaultValuesFunction
+                            )
+                        )
+                    },
+                    value = RangeConverter.eightBitIntToPercentageFloat(state.minStrengthVibration)..RangeConverter.eightBitIntToPercentageFloat(
+                        state.maxStrengthVibration
+                    ),
+                    range = 0f..100f
+                )
+            }
+            /**
+             * The Vibration Duration
+             */
+            Text(text = stringResource(id = R.string.editTimeline_Vibration_duration))
+            SecText(
+                min = RangeConverter.msToS(state.minDurationVibration),
+                max = RangeConverter.msToS(state.maxDurationVibration)
             )
             SliderForRange(
                 onValueChange = { value: ClosedFloatingPointRange<Float> ->
                     onChangeEvent(
-                        SettingsEvent.ChangedVibStrength(
+                        SettingsEvent.ChangedVibDuration(
                             value,
                             saveDefaultValuesFunction
                         )
                     )
                 },
-                value = RangeConverter.eightBitIntToPercentageFloat(state.minStrengthVibration)..RangeConverter.eightBitIntToPercentageFloat(
-                    state.maxStrengthVibration
+                value = RangeConverter.msToS(state.minDurationVibration)..RangeConverter.msToS(
+                    state.maxDurationVibration
                 ),
-                range = 0f..100f
+                range = 0f..30f
+            )
+
+            /**
+             * The Vibration Pause
+             */
+            Text(text = stringResource(id = R.string.editTimeline_Pause))
+            SecText(
+                min = RangeConverter.msToS(state.minPauseVibration),
+                max = RangeConverter.msToS(state.maxPauseVibration)
+            )
+            SliderForRange(
+                onValueChange = { value: ClosedFloatingPointRange<Float> ->
+                onChangeEvent(
+                        SettingsEvent.ChangedVibPause(
+                            value,
+                            saveDefaultValuesFunction
+                        )
+                    )
+                },
+                value = RangeConverter.msToS(state.minPauseVibration)..RangeConverter.msToS(
+                    state.maxPauseVibration
+                ),
+                range = 0f..60f
             )
         }
-        /**
-         * The Vibration Duration
-         */
-        Text(text = stringResource(id = R.string.editTimeline_Vibration_duration))
-        SecText(
-            min = RangeConverter.msToS(state.minDurationVibration),
-            max = RangeConverter.msToS(state.maxDurationVibration)
-        )
-        SliderForRange(
-            onValueChange = { value: ClosedFloatingPointRange<Float> ->
-                onChangeEvent(
-                    SettingsEvent.ChangedVibDuration(
-                        value,
-                        saveDefaultValuesFunction
-                    )
-                )
-            },
-            value = RangeConverter.msToS(state.minDurationVibration)..RangeConverter.msToS(
-                state.maxDurationVibration
-            ),
-            range = 0f..30f
-        )
-
-        /**
-         * The Vibration Pause
-         */
-        Text(text = stringResource(id = R.string.editTimeline_Pause))
-        SecText(
-            min = RangeConverter.msToS(state.minPauseVibration),
-            max = RangeConverter.msToS(state.maxPauseVibration)
-        )
-        SliderForRange(
-            onValueChange = { value: ClosedFloatingPointRange<Float> ->
-                onChangeEvent(
-                    SettingsEvent.ChangedVibPause(
-                        value,
-                        saveDefaultValuesFunction
-                    )
-                )
-            },
-            value = RangeConverter.msToS(state.minPauseVibration)..RangeConverter.msToS(
-                state.maxPauseVibration
-            ),
-            range = 0f..60f
-        )
-
     }
 }
 

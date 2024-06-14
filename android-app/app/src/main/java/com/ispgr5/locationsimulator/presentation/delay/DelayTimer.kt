@@ -125,7 +125,8 @@ fun DelayTimer(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(colorScheme.background)
+            .background(colorScheme.background),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Row(
             modifier = Modifier.fillMaxWidth()
@@ -147,37 +148,30 @@ fun DelayTimer(
             TimerFlipper(titleText = R.string.TimerHours,
                 stringValue = timerState.value.stringHours(),
                 timerRunning = timerRunning,
-                onIncrement = {
-                    timerState.value = timerState.value.addHours(1)
-                },
-                onDecrement = {
-                    timerState.value = timerState.value.addHours(-1)
-                },
-                onSetValue = {
-                    timerState.value = timerState.value.copy(setHours = it.coerceIn(0, 24))
-                })
+                onIncrement = { timerState.value = timerState.value.addHours(1) },
+                onDecrement = { timerState.value = timerState.value.addHours(-1) }
+            ) {
+                timerState.value = timerState.value.copy(setHours = it.coerceIn(0, 24))
+            }
 
             TimerFlipper(titleText = R.string.TimerMinutes,
                 stringValue = timerState.value.stringMinutes(),
                 timerRunning = timerRunning,
-                onIncrement = { timerState.value.addMinutes(1) },
-                onDecrement = { timerState.value.addMinutes(-1) }) {
+                onIncrement = { timerState.value = timerState.value.addMinutes(1) },
+                onDecrement = { timerState.value = timerState.value.addMinutes(-1) }) {
                 timerState.value = timerState.value.copy(setMinutes = it.coerceIn(0, 59))
             }
 
 
             TimerFlipper(
                 titleText = R.string.TimerSeconds,
-                stringValue = timerState.value.stringMinutes(),
+                stringValue = timerState.value.stringSeconds(),
                 timerRunning = timerRunning,
-                onIncrement = {
-                    timerState.value.addSeconds(1)
-                },
-                onDecrement = { timerState.value.addMinutes(-1) },
-                onSetValue = {
-                    timerState.value = timerState.value.copy(setSeconds = it.coerceIn(0, 59))
-                }
-            )
+                onIncrement = { timerState.value = timerState.value.addSeconds(1) },
+                onDecrement = { timerState.value = timerState.value.addSeconds(-1) }
+            ) {
+                timerState.value = timerState.value.copy(setSeconds = it.coerceIn(0, 59))
+            }
         }
 
         /**
@@ -363,9 +357,24 @@ data class TimerState(
 
 @Composable
 @AppPreview
-fun DelayTimerPreview() {
+fun DelayTimerStoppedPreview() {
     val timerState = remember {
         mutableStateOf(PreviewData.delayScreenInitialTimerState)
+    }
+    LocationSimulatorTheme(themeState = PreviewData.themePreviewState) {
+        DelayTimer(
+            timerState = timerState,
+            onFinishTimer = {},
+            configurationId = PreviewData.previewConfigurations.first().id!!
+        )
+    }
+}
+
+@Composable
+@AppPreview
+fun DelayTimerRunningPreview() {
+    val timerState = remember {
+        mutableStateOf(PreviewData.delayScreenRunningTimerState)
     }
     LocationSimulatorTheme(themeState = PreviewData.themePreviewState) {
         DelayTimer(

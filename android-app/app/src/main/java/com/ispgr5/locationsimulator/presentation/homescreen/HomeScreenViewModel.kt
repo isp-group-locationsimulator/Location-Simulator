@@ -67,6 +67,7 @@ class HomeScreenViewModel @Inject constructor(
                     event.activity.getSharedPreferences("prefs", Context.MODE_PRIVATE)
                         .edit()
                 editor.putString("themeType", event.themeState.themeType.name)
+                editor.putBoolean("dynamicColors", event.themeState.useDynamicColor)
                 editor.apply()
             }
         }

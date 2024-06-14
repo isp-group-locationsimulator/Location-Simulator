@@ -104,9 +104,10 @@ class MainActivity : ComponentActivity() {
                 ?.let {
                     ThemeType.valueOf(it)
                 } ?: ThemeType.LIGHT
+        val storedDynamicColors = getSharedPreferences("prefs", MODE_PRIVATE).getBoolean("dynamicColors", false)
 
         val themeState = mutableStateOf(
-            ThemeState(storedThemeType)
+            ThemeState(themeType = storedThemeType, useDynamicColor = storedDynamicColors)
         )
 
         setContent {
