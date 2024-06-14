@@ -61,7 +61,6 @@ import com.ispgr5.locationsimulator.presentation.util.vibratorHasAmplitudeContro
 import com.ispgr5.locationsimulator.ui.theme.DISABLED_ALPHA
 import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
 import java.util.Locale
-import kotlin.properties.Delegates
 
 /**
  * The composable for showing and Editing a ConfigComponent(Sound or Vibration).
@@ -154,7 +153,6 @@ fun EditConfigComponent(
                         VibrationParameters(
                             vibrationSupportHintMode,
                             configComponent,
-                            showStrengthNotSupportedDialog,
                             onShowStrengthNotSupportedDialog = {
                                 showStrengthNotSupportedDialog = it
                             },
@@ -279,7 +277,6 @@ private fun PauseEditor(
 private fun VibrationParameters(
     vibrationSupportHintMode: VibrationSupportHintMode,
     configComponent: ConfigComponent.Vibration,
-    showStrengthNotSupportedDialog: Boolean,
     onShowStrengthNotSupportedDialog: (Boolean) -> Unit,
     editTimelineEventHandlers: EditTimelineEventHandlers?,
     blackSubtitle1: TextStyle
