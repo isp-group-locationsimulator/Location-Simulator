@@ -117,6 +117,7 @@ fun RunScreen(
         snackbarHostState = snackbarHostState,
         snackbarContent = snackbarContentState
     )
+    // TODO snackbar not showing on current Android
 
     val effectState: EffectTimelineState? by SimulationService.EffectTimelineStateBus.observeAsState()
 

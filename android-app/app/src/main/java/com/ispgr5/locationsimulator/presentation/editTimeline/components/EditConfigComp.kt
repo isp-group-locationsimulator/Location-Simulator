@@ -94,7 +94,7 @@ fun EditConfigComponent(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(top = 2.dp)
-                .padding(horizontal = 4.dp)
+                .padding(horizontal = 8.dp)
                 .verticalScroll(scrollState),
             verticalArrangement = Arrangement.spacedBy(2.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -143,7 +143,7 @@ fun EditConfigComponent(
             })
 
 
-            Column {
+            Column(Modifier.fillMaxWidth().padding(horizontal = 8.dp)) {
                 when (configComponent) {
                     is ConfigComponent.Sound -> {
                         SoundParameters(configComponent, blackSubtitle1, editTimelineEventHandlers)

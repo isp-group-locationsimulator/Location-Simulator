@@ -1,5 +1,8 @@
 package com.ispgr5.locationsimulator.presentation.editTimeline
 
+import android.content.Context
+import android.content.res.Resources
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,11 +24,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -39,10 +42,12 @@ import com.ispgr5.locationsimulator.presentation.editTimeline.components.Vibrati
 import com.ispgr5.locationsimulator.presentation.previewData.AppPreview
 import com.ispgr5.locationsimulator.presentation.previewData.PreviewData
 import com.ispgr5.locationsimulator.presentation.previewData.PreviewData.editTimelineState
+import com.ispgr5.locationsimulator.presentation.run.BackPressHandler
 import com.ispgr5.locationsimulator.presentation.settings.SettingsState
 import com.ispgr5.locationsimulator.presentation.universalComponents.LocationSimulatorTopBar
 import com.ispgr5.locationsimulator.presentation.util.Screen
 import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
+
 
 /**
  * The Edit Screen.
@@ -56,6 +61,20 @@ fun EditTimelineScreen(
 ) {
     val state = viewModel.state.value
     var showCustomDialogWithResult by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+
+    val isGestureModeEnabled = remember {
+        isEdgeToEdgeEnabled(context)
+    }
+    if (isGestureModeEnabled > 0) {
+        BackPressHandler {
+            Toast.makeText(
+                context,
+                context.getString(R.string.the_back_gesture_is_disabled_please_use_the_bottom_above),
+                Toast.LENGTH_LONG
+            ).show()
+        }
+    }
 
     val editTimelineEventHandlers by remember {
         mutableStateOf(
@@ -348,4 +367,18 @@ fun EditTimelineUnsupportedIntensityPreview() {
         state = editTimelineState,
         vibrationSupportHintMode = VibrationSupportHintMode.ENFORCED
     )
+}
+
+fun isEdgeToEdgeEnabled(context: Context): Int {
+    try {
+        val resources = context.resources
+        val resourceId: Int =
+            resources.getIdentifier("config_navBarInteractionMode", "integer", "android")
+        if (resourceId > 0) {
+            return resources.getInteger(resourceId)
+        }
+    } catch (e: Exception) {
+        return 0
+    }
+    return 0
 }

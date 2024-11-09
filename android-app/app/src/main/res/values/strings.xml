@@ -115,4 +115,5 @@
     <string name="dynamic_colors">Dynamic colors</string>
     <string name="normal">Normal</string>
     <string name="dynamic">Dynamic</string>
+    <string name="the_back_gesture_is_disabled_please_use_the_bottom_above">The back gesture is disabled, please use the bottom above.</string>
 </resources>
