@@ -14,6 +14,7 @@ import androidx.compose.material3.*
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
+import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,8 +25,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.gigamole.composescrollbars.Scrollbars
@@ -268,14 +271,8 @@ private fun AddButton(onClickAddScreenButton: () -> Unit) {
         contentPadding = PaddingValues(0.dp),
         enabled = true,
         shape = MaterialTheme.shapes.small,
-        border = null,
-        elevation = null,
-        colors = ButtonDefaults.outlinedButtonColors(
-            contentColor = colorScheme.primaryContainer,
-        ),
         modifier = Modifier
             .padding(15.dp, 15.dp, 15.dp, 0.dp)
-            .border(1.dp, colorScheme.onSurface, RoundedCornerShape(6.dp))
             .fillMaxWidth()
             .heightIn(min = 55.dp)
             .testTag(TestTags.SELECT_ADD_BUTTON)
@@ -283,6 +280,7 @@ private fun AddButton(onClickAddScreenButton: () -> Unit) {
         Icon(
             painter = painterResource(id = R.drawable.ic_baseline_add_24), contentDescription = null
         )
+        Text(stringResource(R.string.new_configuration), fontSize = 18.sp)
     }
 }
 

@@ -70,7 +70,9 @@ import java.util.Locale
 fun EditConfigComponent(
     configComponent: ConfigComponent?,
     editTimelineEventHandlers: EditTimelineEventHandlers?,
-    vibrationSupportHintMode: VibrationSupportHintMode = VibrationSupportHintMode.AUTOMATIC
+    vibrationSupportHintMode: VibrationSupportHintMode = VibrationSupportHintMode.AUTOMATIC,
+    isFirstComponent: Boolean?,
+    isLastComponent: Boolean?
 ) {
     //so no Time line Item is selected for now
     if (configComponent == null) {
@@ -108,6 +110,7 @@ fun EditConfigComponent(
                         .weight(1f)
                         .testTag(TestTags.EDIT_MOVE_LEFT),
                     contentPadding = PaddingValues(horizontal = 1.dp),
+                    enabled = isFirstComponent == false,
                     onClick = {
                         editTimelineEventHandlers?.onMoveLeftClicked?.invoke(configComponent)
                     },
@@ -126,6 +129,7 @@ fun EditConfigComponent(
                         .weight(1f)
                         .testTag(TestTags.EDIT_MOVE_RIGHT),
                     contentPadding = PaddingValues(horizontal = 1.dp),
+                    enabled = isLastComponent == false,
                     onClick = {
                         editTimelineEventHandlers?.onMoveRightClicked?.invoke(configComponent)
                     },
@@ -143,7 +147,10 @@ fun EditConfigComponent(
             })
 
 
-            Column(Modifier.fillMaxWidth().padding(horizontal = 8.dp)) {
+            Column(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)) {
                 when (configComponent) {
                     is ConfigComponent.Sound -> {
                         SoundParameters(configComponent, blackSubtitle1, editTimelineEventHandlers)
@@ -512,7 +519,9 @@ fun EditVibrationPreview() {
             EditConfigComponent(
                 configComponent = PreviewData.defaultVibration,
                 editTimelineEventHandlers = null,
-                vibrationSupportHintMode = VibrationSupportHintMode.SUPPRESSED
+                vibrationSupportHintMode = VibrationSupportHintMode.SUPPRESSED,
+                isFirstComponent = true,
+                isLastComponent = true
             )
         }
     }
@@ -527,7 +536,9 @@ fun EditVibrationUnsupportedVibrationPreview() {
             EditConfigComponent(
                 configComponent = PreviewData.defaultVibration,
                 editTimelineEventHandlers = null,
-                vibrationSupportHintMode = VibrationSupportHintMode.ENFORCED
+                vibrationSupportHintMode = VibrationSupportHintMode.ENFORCED,
+                isFirstComponent = true,
+                isLastComponent = false
             )
         }
     }
@@ -542,7 +553,9 @@ fun EditSoundPreview() {
         Surface(modifier = Modifier.fillMaxSize(), color = colorScheme.background) {
             EditConfigComponent(
                 configComponent = PreviewData.defaultSound,
-                editTimelineEventHandlers = null
+                editTimelineEventHandlers = null,
+                isFirstComponent = true,
+                isLastComponent = false
             )
         }
 

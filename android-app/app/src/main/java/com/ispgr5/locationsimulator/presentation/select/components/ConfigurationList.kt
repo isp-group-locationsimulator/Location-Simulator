@@ -42,8 +42,11 @@ fun RowScope.OneConfigurationListMember(
 ) {
     ElevatedCard(
         shape = MaterialTheme.shapes.small,
+        colors = CardDefaults.elevatedCardColors(
+            containerColor = colorScheme.surfaceContainerHigh,
+            contentColor = colorScheme.onSurface
+        ),
         modifier = Modifier
-            //.background(rowBackgroundColor, shape = RoundedCornerShape(6.dp))
             .weight(1f)
             .heightIn(min = 55.dp)
             .testTag(TestTags.SELECT_CONFIG_BUTTON_PREFIX + configuration.name)

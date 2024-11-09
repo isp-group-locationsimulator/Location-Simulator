@@ -193,7 +193,13 @@ fun EditTimelineScaffold(
                 EditConfigComponent(
                     configComponent = state.current,
                     editTimelineEventHandlers = editTimelineEventHandlers,
-                    vibrationSupportHintMode = vibrationSupportHintMode
+                    vibrationSupportHintMode = vibrationSupportHintMode,
+                    isFirstComponent = state.current.let {
+                        state.components.first() == it
+                    },
+                    isLastComponent = state.current.let {
+                        state.components.last() == it
+                    }
                 )
             }
 
