@@ -3,8 +3,10 @@ package com.ispgr5.locationsimulator.presentation.universalComponents
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.ParagraphStyle
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -18,28 +20,21 @@ fun ClickableLink(
     spanStyle: SpanStyle = ClickableLinkDefaults.defaultSpanStyle(),
     paragraphStyle: ParagraphStyle = ClickableLinkDefaults.defaultParagraphStyle()
 ) {
-    val uriHandler = LocalUriHandler.current
     val annotatedString = buildAnnotatedString {
         withStyle(paragraphStyle) {
             withStyle(spanStyle) {
                 append(text)
-                addStringAnnotation(
-                    tag = "uri",
-                    annotation = urlTarget,
+                addLink(
+                    url = LinkAnnotation.Url(urlTarget),
                     start = 0,
-                    end = text.length - 1
+                    end = text.length -1
                 )
             }
         }
 
     }
 
-    ClickableText(annotatedString, onClick = { offset ->
-        annotatedString.getStringAnnotations("uri", offset, offset).firstOrNull()
-            ?.let { annotation ->
-                uriHandler.openUri(annotation.item)
-            }
-    })
+    Text(annotatedString)
 }
 
 object ClickableLinkDefaults {
