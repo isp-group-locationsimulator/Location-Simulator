@@ -238,6 +238,7 @@ class MainActivity : ComponentActivity() {
             ) {
                 EditTimelineScreen(
                     navController = navController,
+                    snackbarHostState = snackbarHostState,
                     getDefaultValuesFunction = getDefaultValues,
                 )
             }

@@ -1,13 +1,13 @@
 package com.ispgr5.locationsimulator.presentation.util
 
-import androidx.compose.material.SnackbarHostState
+import android.annotation.SuppressLint
+import android.content.Context
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import com.ispgr5.locationsimulator.R
-import com.ispgr5.locationsimulator.presentation.editTimeline.isEdgeToEdgeEnabled
 import com.ispgr5.locationsimulator.presentation.run.BackPressHandler
 import com.ispgr5.locationsimulator.presentation.universalComponents.SnackbarContent
 
@@ -28,4 +28,22 @@ fun BackPressGestureDisabler(
             )
         }
     }
+}
+
+@SuppressLint("DiscouragedApi")
+fun isEdgeToEdgeEnabled(context: Context): Int {
+    try {
+        val resources = context.resources
+        val resourceId: Int = resources.getIdentifier(
+            /* name = */ "config_navBarInteractionMode",
+            /* defType = */ "integer",
+            /* defPackage = */ "android"
+        )
+        if (resourceId > 0) {
+            return resources.getInteger(resourceId)
+        }
+    } catch (_: Exception) {
+        return 0
+    }
+    return 0
 }

@@ -1,8 +1,5 @@
 package com.ispgr5.locationsimulator.presentation.editTimeline
 
-import android.content.Context
-import android.content.res.Resources
-import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,6 +12,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,7 +22,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -42,9 +39,12 @@ import com.ispgr5.locationsimulator.presentation.editTimeline.components.Vibrati
 import com.ispgr5.locationsimulator.presentation.previewData.AppPreview
 import com.ispgr5.locationsimulator.presentation.previewData.PreviewData
 import com.ispgr5.locationsimulator.presentation.previewData.PreviewData.editTimelineState
-import com.ispgr5.locationsimulator.presentation.run.BackPressHandler
 import com.ispgr5.locationsimulator.presentation.settings.SettingsState
 import com.ispgr5.locationsimulator.presentation.universalComponents.LocationSimulatorTopBar
+import com.ispgr5.locationsimulator.presentation.universalComponents.SnackbarContent
+import com.ispgr5.locationsimulator.presentation.util.AppSnackbarHost
+import com.ispgr5.locationsimulator.presentation.util.BackPressGestureDisabler
+import com.ispgr5.locationsimulator.presentation.util.RenderSnackbarOnChange
 import com.ispgr5.locationsimulator.presentation.util.Screen
 import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
 
@@ -56,25 +56,20 @@ import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
 @Composable
 fun EditTimelineScreen(
     navController: NavController,
+    snackbarHostState: SnackbarHostState,
     viewModel: EditTimelineViewModel = hiltViewModel(),
     getDefaultValuesFunction: () -> SettingsState
 ) {
     val state = viewModel.state.value
     var showCustomDialogWithResult by remember { mutableStateOf(false) }
-    val context = LocalContext.current
 
-    val isGestureModeEnabled = remember {
-        isEdgeToEdgeEnabled(context)
+    val snackbarContentState = remember {
+        mutableStateOf<SnackbarContent?>(null)
     }
-    if (isGestureModeEnabled > 0) {
-        BackPressHandler {
-            Toast.makeText(
-                context,
-                context.getString(R.string.the_back_gesture_is_disabled_please_use_the_bottom_above),
-                Toast.LENGTH_LONG
-            ).show()
-        }
-    }
+
+    RenderSnackbarOnChange(snackbarHostState, snackbarContentState)
+
+    BackPressGestureDisabler(snackbarContentState)
 
     val editTimelineEventHandlers by remember {
         mutableStateOf(
@@ -113,6 +108,7 @@ fun EditTimelineScreen(
     EditTimelineScaffold(
         state = state,
         isDialogShown = showCustomDialogWithResult,
+        snackbarHostState = snackbarHostState,
         onBackClick = {
             navController.popBackStack()
         },
@@ -152,6 +148,7 @@ fun EditTimelineScreen(
 @Composable
 fun EditTimelineScaffold(
     state: EditTimelineState,
+    snackbarHostState: SnackbarHostState,
     isDialogShown: Boolean,
     onBackClick: () -> Unit,
     onSettingsClick: () -> Unit,
@@ -165,9 +162,14 @@ fun EditTimelineScaffold(
     editTimelineEventHandlers: EditTimelineEventHandlers?,
     vibrationSupportHintMode: VibrationSupportHintMode = VibrationSupportHintMode.AUTOMATIC
 ) {
-    Scaffold(topBar = {
-        EditTimelineTopBar(onBackClick = onBackClick, onSettingsClick = onSettingsClick)
-    }) { paddingValues ->
+    Scaffold(
+        topBar = {
+            EditTimelineTopBar(onBackClick = onBackClick, onSettingsClick = onSettingsClick)
+        },
+        snackbarHost = {
+            AppSnackbarHost(snackbarHostState)
+        }
+    ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -325,9 +327,13 @@ fun EditTimelinePreviewScaffold(
     state: EditTimelineState,
     vibrationSupportHintMode: VibrationSupportHintMode
 ) {
+    val snackbarHostState = remember {
+        SnackbarHostState()
+    }
     LocationSimulatorTheme(themeState = PreviewData.themePreviewState) {
         EditTimelineScaffold(
             state = state,
+            snackbarHostState = snackbarHostState,
             isDialogShown = isDialogShown,
             onBackClick = {},
             onSettingsClick = {},
@@ -375,16 +381,3 @@ fun EditTimelineUnsupportedIntensityPreview() {
     )
 }
 
-fun isEdgeToEdgeEnabled(context: Context): Int {
-    try {
-        val resources = context.resources
-        val resourceId: Int =
-            resources.getIdentifier("config_navBarInteractionMode", "integer", "android")
-        if (resourceId > 0) {
-            return resources.getInteger(resourceId)
-        }
-    } catch (e: Exception) {
-        return 0
-    }
-    return 0
-}
