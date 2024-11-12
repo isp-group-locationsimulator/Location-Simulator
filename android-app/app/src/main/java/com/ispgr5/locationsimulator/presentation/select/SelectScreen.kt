@@ -2,30 +2,22 @@ package com.ispgr5.locationsimulator.presentation.select
 
 import android.annotation.SuppressLint
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
-import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -47,9 +39,9 @@ import com.ispgr5.locationsimulator.presentation.previewData.PreviewData.themePr
 import com.ispgr5.locationsimulator.presentation.select.components.OneConfigurationListMember
 import com.ispgr5.locationsimulator.presentation.universalComponents.SnackbarContent
 import com.ispgr5.locationsimulator.presentation.universalComponents.LocationSimulatorTopBar
-import com.ispgr5.locationsimulator.presentation.util.MakeSnackbar
+import com.ispgr5.locationsimulator.presentation.util.AppSnackbarHost
+import com.ispgr5.locationsimulator.presentation.util.RenderSnackbarOnChange
 import com.ispgr5.locationsimulator.presentation.util.Screen
-import com.ispgr5.locationsimulator.ui.theme.DISABLED_ALPHA
 import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
 
 
@@ -71,10 +63,11 @@ fun SelectScreen(
     viewModel.updateConfigurationWithErrorsState(soundStorageManager = soundStorageManager)
     val selectScreenState = viewModel.state.value
     val context = LocalContext.current
-    MakeSnackbar(snackbarHostState = snackbarHostState, snackbarContent)
+    RenderSnackbarOnChange(snackbarHostState = snackbarHostState, snackbarContent)
 
     SelectScreenScaffold(
         selectScreenState = selectScreenState,
+        snackbarHostState = snackbarHostState,
         onBackClick = {
             navController.popBackStack()
         },
@@ -318,8 +311,12 @@ private fun SelectScreenTopBar(
 
 @Composable
 fun SelectScreenPreviewScaffold(selectScreenState: SelectScreenState) {
+    val snackbarHostState = remember {
+        SnackbarHostState()
+    }
     SelectScreenScaffold(
         selectScreenState = selectScreenState,
+        snackbarHostState = snackbarHostState,
         onBackClick = {},
         onSelectDeleteModeClick = {},
         onClickAddScreenButton = {},
@@ -337,6 +334,7 @@ fun SelectScreenPreviewScaffold(selectScreenState: SelectScreenState) {
 @Composable
 fun SelectScreenScaffold(
     selectScreenState: SelectScreenState,
+    snackbarHostState: SnackbarHostState,
     onBackClick: () -> Unit,
     onSelectDeleteModeClick: () -> Unit,
     onClickAddScreenButton: () -> Unit,
@@ -350,33 +348,37 @@ fun SelectScreenScaffold(
     onFavouriteClicked: (Configuration) -> Unit,
     onDeleteConfiguration: (Configuration) -> Unit
 ) {
-    Scaffold(topBar = {
-        SelectScreenTopBar(
-            onBackClick = onBackClick,
-            onSelectDeleteModeClick = onSelectDeleteModeClick,
-            isInDeleteMode = selectScreenState.isInDeleteMode
-        )
-    }, content = { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-        ) {
-            AddButton(onClickAddScreenButton)
-            ConfigurationList(
-                selectScreenState = selectScreenState,
-                onSelectForDeletion = onSelectForDeletion,
-                onToggleConfiguration = onToggleConfiguration,
-                onEditConfiguration = onEditConfiguration,
-                onSelectConfiguration = onSelectConfiguration,
-                onExportConfiguration = onExportConfiguration,
-                onDuplicateClicked = onDuplicateClicked,
-                onErrorInfoClicked = onErrorInfoClicked,
-                onFavouriteClicked = onFavouriteClicked,
-                onDeleteConfiguration = onDeleteConfiguration
+    Scaffold(
+        snackbarHost = {
+            AppSnackbarHost(snackbarHostState)
+        },
+        topBar = {
+            SelectScreenTopBar(
+                onBackClick = onBackClick,
+                onSelectDeleteModeClick = onSelectDeleteModeClick,
+                isInDeleteMode = selectScreenState.isInDeleteMode
             )
-        }
-    })
+        }, content = { padding ->
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+            ) {
+                AddButton(onClickAddScreenButton)
+                ConfigurationList(
+                    selectScreenState = selectScreenState,
+                    onSelectForDeletion = onSelectForDeletion,
+                    onToggleConfiguration = onToggleConfiguration,
+                    onEditConfiguration = onEditConfiguration,
+                    onSelectConfiguration = onSelectConfiguration,
+                    onExportConfiguration = onExportConfiguration,
+                    onDuplicateClicked = onDuplicateClicked,
+                    onErrorInfoClicked = onErrorInfoClicked,
+                    onFavouriteClicked = onFavouriteClicked,
+                    onDeleteConfiguration = onDeleteConfiguration
+                )
+            }
+        })
 }
 
 

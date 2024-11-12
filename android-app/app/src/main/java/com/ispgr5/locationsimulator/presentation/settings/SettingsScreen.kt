@@ -3,7 +3,6 @@ package com.ispgr5.locationsimulator.presentation.settings
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,20 +19,21 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -48,6 +48,10 @@ import com.ispgr5.locationsimulator.presentation.editTimeline.components.SecText
 import com.ispgr5.locationsimulator.presentation.editTimeline.components.SliderForRange
 import com.ispgr5.locationsimulator.presentation.previewData.PreviewData.settingsScreenPreviewState
 import com.ispgr5.locationsimulator.presentation.universalComponents.LocationSimulatorTopBar
+import com.ispgr5.locationsimulator.presentation.universalComponents.SnackbarContent
+import com.ispgr5.locationsimulator.presentation.util.AppSnackbarHost
+import com.ispgr5.locationsimulator.presentation.util.BackPressGestureDisabler
+import com.ispgr5.locationsimulator.presentation.util.RenderSnackbarOnChange
 import com.ispgr5.locationsimulator.presentation.util.vibratorHasAmplitudeControlAndReason
 
 /**
@@ -59,6 +63,7 @@ import com.ispgr5.locationsimulator.presentation.util.vibratorHasAmplitudeContro
 @Composable
 fun SettingsScreen(
     navController: NavController,
+    snackbarHostState: SnackbarHostState,
     viewModel: SettingsViewModel = hiltViewModel(),
     saveDefaultValuesFunction: (state: State<SettingsState>) -> Unit,
     getDefaultValuesFunction: () -> SettingsState
@@ -81,8 +86,17 @@ fun SettingsScreen(
     state.maxDurationVibration = getDefaultValuesFunction().maxDurationVibration
     state.defaultNameVibration = getDefaultValuesFunction().defaultNameVibration
 
+    val snackbarContentState = remember {
+        mutableStateOf<SnackbarContent?>(null)
+    }
+
+    RenderSnackbarOnChange(snackbarHostState, snackbarContentState)
+
+    BackPressGestureDisabler(snackbarContentState)
+
     SettingsScreenScaffold(
         state = state,
+        snackbarHostState = snackbarHostState,
         onBackClick = {
             navController.popBackStack()
         },
@@ -100,6 +114,7 @@ fun SettingsScreen(
 @Composable
 fun SettingsScreenScaffold(
     state: SettingsState,
+    snackbarHostState: SnackbarHostState,
     pagerState: PagerState,
     onBackClick: () -> Unit,
     onSaveDefaultValues: (State<SettingsState>) -> Unit,
@@ -111,6 +126,9 @@ fun SettingsScreenScaffold(
                 onBackClick = onBackClick,
                 title = stringResource(id = R.string.ScreenSettings)
             )
+        },
+        snackbarHost = {
+            AppSnackbarHost(snackbarHostState)
         },
         content = { paddingValues ->
             Column(
@@ -194,8 +212,12 @@ private fun ColumnScope.SoundCard(
             .padding(20.dp)
             .weight(1f)
     ) {
-        Column(Modifier.fillMaxSize().padding(8.dp)
-            .verticalScroll(rememberScrollState())) {
+        Column(
+            Modifier
+                .fillMaxSize()
+                .padding(horizontal = 24.dp, vertical = 8.dp)
+                .verticalScroll(rememberScrollState())
+        ) {
             /**
              * The Sound Heading
              */
@@ -270,11 +292,11 @@ private fun ColumnScope.VibrationCard(
         modifier = Modifier
             .padding(8.dp)
             .weight(1f),
-        ) {
+    ) {
         Column(
             Modifier
                 .fillMaxSize()
-                .padding(8.dp)
+                .padding(horizontal = 24.dp, vertical = 8.dp)
                 .verticalScroll(rememberScrollState()),
         ) {
             /**
@@ -376,7 +398,7 @@ private fun ColumnScope.VibrationCard(
             )
             SliderForRange(
                 onValueChange = { value: ClosedFloatingPointRange<Float> ->
-                onChangeEvent(
+                    onChangeEvent(
                         SettingsEvent.ChangedVibPause(
                             value,
                             saveDefaultValuesFunction
@@ -399,8 +421,10 @@ enum class SettingsPages {
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SettingsScreenScreenshotPreview(state: SettingsState, pagerState: PagerState) {
+    val snackbarHostState = remember { SnackbarHostState() }
     SettingsScreenScaffold(
         state = state,
+        snackbarHostState = snackbarHostState,
         pagerState = pagerState,
         onBackClick = { },
         onSaveDefaultValues = {},

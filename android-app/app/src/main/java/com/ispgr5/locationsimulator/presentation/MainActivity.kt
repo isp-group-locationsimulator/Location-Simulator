@@ -207,6 +207,7 @@ class MainActivity : ComponentActivity() {
             composable(Screen.SettingsScreen.route) {
                 SettingsScreen(
                     navController = navController,
+                    snackbarHostState = snackbarHostState,
                     saveDefaultValuesFunction = saveDefaultValues,
                     getDefaultValuesFunction = getDefaultValues
                 )

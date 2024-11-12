@@ -32,7 +32,9 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -79,7 +81,8 @@ import com.ispgr5.locationsimulator.presentation.previewData.PreviewData.runScre
 import com.ispgr5.locationsimulator.presentation.previewData.PreviewData.runScreenPreviewStatePlaying
 import com.ispgr5.locationsimulator.presentation.previewData.PreviewData.themePreviewState
 import com.ispgr5.locationsimulator.presentation.universalComponents.SnackbarContent
-import com.ispgr5.locationsimulator.presentation.util.MakeSnackbar
+import com.ispgr5.locationsimulator.presentation.util.AppSnackbarHost
+import com.ispgr5.locationsimulator.presentation.util.RenderSnackbarOnChange
 import com.ispgr5.locationsimulator.presentation.util.between
 import com.ispgr5.locationsimulator.presentation.util.millisToSeconds
 import com.ispgr5.locationsimulator.presentation.util.vibratorHasAmplitudeControlAndReason
@@ -91,6 +94,8 @@ import kotlinx.coroutines.flow.collectLatest
 import org.joda.time.Instant
 import java.math.BigDecimal
 import java.math.RoundingMode
+
+private const val TAG = "RunScreen"
 
 /**
  * The Run Screen.
@@ -113,11 +118,10 @@ fun RunScreen(
         mutableStateOf<SnackbarContent?>(null)
     }
 
-    MakeSnackbar(
+    RenderSnackbarOnChange(
         snackbarHostState = snackbarHostState,
         snackbarContent = snackbarContentState
     )
-    // TODO snackbar not showing on current Android
 
     val effectState: EffectTimelineState? by SimulationService.EffectTimelineStateBus.observeAsState()
 
@@ -156,6 +160,7 @@ fun RunScreen(
             nextEffect = nextEffect,
             startPauseAt = startPauseAt,
             currentPauseDuration = currentPauseDuration,
+            snackbarHostState = snackbarHostState,
             snackbarContentState = snackbarContentState,
             initialRefreshInstant = initialRefreshInstant
         ) {
@@ -194,11 +199,15 @@ fun RunScreenScaffold(
     nextEffect: EffectParameters?,
     startPauseAt: Instant?,
     currentPauseDuration: Long?,
+    snackbarHostState: SnackbarHostState,
     snackbarContentState: MutableState<SnackbarContent?>,
     initialRefreshInstant: Instant,
     onStop: () -> Unit
 ) {
     Scaffold(
+        snackbarHost = {
+            AppSnackbarHost(snackbarHostState)
+        },
         content = { padding ->
             RunScreenContent(
                 paddingValues = padding,
@@ -270,7 +279,8 @@ fun RunScreenContent(
     val onStopShortTap: () -> Unit = {
         snackbarContentState.value = SnackbarContent(
             text = context.getString(R.string.long_press_to_stop),
-            snackbarDuration = SnackbarDuration.Short
+            snackbarDuration = SnackbarDuration.Short,
+            withDismissAction = true
         )
     }
 
@@ -790,6 +800,9 @@ fun RunScreenPreviewScaffold(
     val snackbarContentState = remember {
         mutableStateOf<SnackbarContent?>(null)
     }
+    val snackbarHostState = remember {
+        SnackbarHostState()
+    }
     LocationSimulatorTheme(themeState = themePreviewState) {
         RunScreenScaffold(
             configuration = configuration,
@@ -797,6 +810,7 @@ fun RunScreenPreviewScaffold(
             nextEffect = effectTimelineState.nextEffect,
             startPauseAt = effectTimelineState.startPauseAt,
             currentPauseDuration = effectTimelineState.currentPauseDuration,
+            snackbarHostState = snackbarHostState,
             snackbarContentState = snackbarContentState,
             initialRefreshInstant = initialRefreshInstant
         ) { }

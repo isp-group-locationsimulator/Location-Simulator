@@ -32,6 +32,7 @@ import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
@@ -71,7 +72,8 @@ import com.ispgr5.locationsimulator.presentation.previewData.AppPreview
 import com.ispgr5.locationsimulator.presentation.previewData.PreviewData
 import com.ispgr5.locationsimulator.presentation.universalComponents.LocationSimulatorTopBar
 import com.ispgr5.locationsimulator.presentation.universalComponents.SnackbarContent
-import com.ispgr5.locationsimulator.presentation.util.MakeSnackbar
+import com.ispgr5.locationsimulator.presentation.util.AppSnackbarHost
+import com.ispgr5.locationsimulator.presentation.util.RenderSnackbarOnChange
 import com.ispgr5.locationsimulator.presentation.util.Screen
 import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
 import com.ispgr5.locationsimulator.ui.theme.ThemeState
@@ -98,11 +100,12 @@ fun HomeScreenScreen(
     viewModel.updateConfigurationWithErrorsState(soundStorageManager = soundStorageManager)
     val state = viewModel.state.value
     val context = LocalContext.current
-    MakeSnackbar(snackbarHostState = snackbarHostState, snackbarContent = snackbarContent)
+    RenderSnackbarOnChange(snackbarHostState = snackbarHostState, snackbarContent = snackbarContent)
 
     HomeScreenScaffold(
         homeScreenState = state,
         appTheme = appTheme,
+        snackbarHostState = snackbarHostState,
         onInfoClick = {
             navController.navigate(Screen.InfoScreen.route)
         },
@@ -168,6 +171,7 @@ fun HomeScreenScreen(
 fun HomeScreenScaffold(
     homeScreenState: HomeScreenState,
     appTheme: MutableState<ThemeState>,
+    snackbarHostState: SnackbarHostState,
     onInfoClick: () -> Unit,
     onSelectProfile: () -> Unit,
     onSelectFavourite: (Configuration) -> Unit,
@@ -175,20 +179,25 @@ fun HomeScreenScaffold(
     checkBatteryOptimizationStatus: () -> Boolean,
     onLaunchBatteryOptimizerDisable: () -> Unit
 ) {
-    Scaffold(topBar = {
-        AppTopBar(onInfoClick)
-    }, content = { appPadding ->
-        HomeScreenContent(
-            appPadding = appPadding,
-            homeScreenState = homeScreenState,
-            appTheme = appTheme,
-            onSelectProfile = onSelectProfile,
-            onSelectFavourite = onSelectFavourite,
-            onSelectTheme = onSelectTheme,
-            checkBatteryOptimizationStatus = checkBatteryOptimizationStatus,
-            onLaunchBatteryOptimizerDisable = onLaunchBatteryOptimizerDisable
-        )
-    })
+    Scaffold(
+        topBar = {
+            AppTopBar(onInfoClick)
+        },
+        snackbarHost = {
+            AppSnackbarHost(snackbarHostState)
+        },
+        content = { appPadding ->
+            HomeScreenContent(
+                appPadding = appPadding,
+                homeScreenState = homeScreenState,
+                appTheme = appTheme,
+                onSelectProfile = onSelectProfile,
+                onSelectFavourite = onSelectFavourite,
+                onSelectTheme = onSelectTheme,
+                checkBatteryOptimizationStatus = checkBatteryOptimizationStatus,
+                onLaunchBatteryOptimizerDisable = onLaunchBatteryOptimizerDisable
+            )
+        })
 }
 
 @Composable
@@ -398,12 +407,18 @@ fun DynamicColorSchemeToggle(
     useDynamicColors: Boolean,
     onSelectionChange: (Boolean) -> Unit
 ) {
-    Column(Modifier.fillMaxWidth().padding(vertical=2.dp),
-        horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(stringResource(R.string.dynamic_colors),
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .padding(vertical = 2.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            stringResource(R.string.dynamic_colors),
             fontSize = 18.sp,
             fontWeight = FontWeight.SemiBold,
-            color = colorScheme.onBackground)
+            color = colorScheme.onBackground
+        )
         Row(
             Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
@@ -506,6 +521,9 @@ fun HomeScreenPreview() {
             )
         )
     }
+    val snackbarHostState = remember {
+        SnackbarHostState()
+    }
     val themeState = remember {
         mutableStateOf(PreviewData.themePreviewState)
     }
@@ -513,6 +531,7 @@ fun HomeScreenPreview() {
         HomeScreenScaffold(
             homeScreenState = state,
             appTheme = themeState,
+            snackbarHostState = snackbarHostState,
             onInfoClick = {},
             onSelectProfile = {},
             onSelectFavourite = {},
