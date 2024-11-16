@@ -1,0 +1,152 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlinx-serialization'
+    id 'com.google.devtools.ksp'
+    id 'dagger.hilt.android.plugin'
+    id 'org.jetbrains.kotlin.plugin.compose'
+    id "com.github.ben-manes.versions"
+}
+
+android {
+    namespace 'com.ispgr5.locationsimulator'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId "com.ispgr5.locationsimulator"
+        minSdk 21
+        targetSdk 35
+        versionCode 11
+        versionName "1.1.1"
+
+        testInstrumentationRunner "com.ispgr5.locationsimulator.HiltTestRunner"
+        vectorDrawables {
+            useSupportLibrary true
+        }
+        resourceConfigurations += ["en", "de"]
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            debuggable false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            debuggable = true
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = '17'
+        freeCompilerArgs += [
+                //for OptIn ExperimentalAnimationApi and other @OptIn statements
+                "-opt-in=kotlin.RequiresOptIn"
+        ]
+    }
+    buildFeatures {
+        compose true
+        buildConfig true // migrated from gradle.properties in AGP 8.x upgrade
+    }
+    packagingOptions {
+        resources {
+            excludes += '/META-INF/{AL2.0,LGPL2.1}'
+        }
+    }
+    namespace 'com.ispgr5.locationsimulator'
+}
+
+dependencies {
+    def composeVersion = "2024.10.01"
+    def lifecycleVersion = "2.8.7"
+    // the BOM dependency is responsible for the version of compose we use
+    implementation platform("androidx.compose:compose-bom:$composeVersion")
+    androidTestImplementation platform("androidx.compose:compose-bom:$composeVersion")
+    implementation 'androidx.activity:activity-compose'
+    implementation "androidx.compose.ui:ui"
+    implementation 'androidx.compose.ui:ui-graphics'
+    implementation 'androidx.compose.ui:ui-text-google-fonts'
+    implementation "androidx.compose.ui:ui-tooling-preview"
+    implementation 'androidx.compose.material:material'
+    implementation 'androidx.compose.foundation:foundation'
+    implementation 'androidx.compose.material3:material3'
+    implementation "androidx.activity:activity-ktx:1.9.3"
+    implementation 'androidx.core:core-ktx:1.15.0'
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycleVersion"
+    implementation "androidx.compose.runtime:runtime-livedata:1.7.5"
+    implementation "androidx.lifecycle:lifecycle-service:$lifecycleVersion"
+
+    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
+    androidTestImplementation "androidx.compose.ui:ui-test-junit4:1.7.5"
+    debugImplementation "androidx.compose.ui:ui-tooling"
+    debugImplementation "androidx.compose.ui:ui-test-manifest"
+
+    // Local unit tests
+    testImplementation "androidx.test:core:1.6.1"
+    testImplementation "junit:junit:4.13.2"
+    testImplementation "androidx.arch.core:core-testing:2.2.0"
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.9.0"
+    testImplementation "com.google.truth:truth:1.4.4"
+    testImplementation "com.squareup.okhttp3:mockwebserver:4.9.1"
+    testImplementation "io.mockk:mockk:1.13.13"
+    debugImplementation "androidx.compose.ui:ui-test-manifest:1.7.5"
+    testImplementation 'org.json:json:20240303'
+
+    // Instrumentation tests
+    androidTestImplementation 'com.google.dagger:hilt-android-testing:2.52'
+    androidTestImplementation "junit:junit:4.13.2"
+    androidTestImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.9.0"
+    androidTestImplementation "androidx.arch.core:core-testing:2.2.0"
+    androidTestImplementation "com.google.truth:truth:1.4.4"
+    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
+    androidTestImplementation 'androidx.test:core-ktx:1.6.1'
+    androidTestImplementation "com.squareup.okhttp3:mockwebserver:4.9.1"
+    androidTestImplementation 'androidx.test:runner:1.6.2'
+
+    //room
+    implementation "androidx.room:room-runtime:2.6.1"
+    ksp "androidx.room:room-compiler:2.6.1"
+    implementation "androidx.room:room-ktx:2.6.1"
+    // serialization to store subclasses in database
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3"
+
+    //Dagger - Hilt
+    def daggerHiltVersion = "2.52"
+    implementation "com.google.dagger:hilt-android:$daggerHiltVersion"
+    kspAndroidTest "com.google.dagger:hilt-android-compiler:$daggerHiltVersion"
+    ksp "com.google.dagger:dagger-compiler:$daggerHiltVersion"
+    ksp "com.google.dagger:hilt-compiler:$daggerHiltVersion"
+
+    // Compose dependencies
+    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycleVersion"
+    implementation "androidx.navigation:navigation-compose:2.8.4"
+    implementation "androidx.compose.material:material-icons-extended"
+    implementation "androidx.hilt:hilt-navigation-compose:1.2.0"
+
+    // Coroutines
+    def coroutinesVersion = "1.9.0"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion"
+
+    //for Base64 de- and encoding
+    implementation 'com.google.guava:guava:33.3.1-jre'
+
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'androidx.preference:preference-ktx:1.2.1'
+
+    //date time handling on android <=26
+    implementation 'net.danlew:android.joda:2.13.0'
+
+    implementation 'com.vdurmont:semver4j:3.1.0'
+
+    implementation 'com.ibm.icu:icu4j:76.1'
+
+    implementation "com.github.GIGAMOLE:ComposeScrollbars:1.0.4"
+
+    androidTestImplementation "tools.fastlane:screengrab:2.1.1"
+
+}

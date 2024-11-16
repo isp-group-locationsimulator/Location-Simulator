@@ -1,0 +1,44 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:android)
+
+platform :android do
+  desc "Runs all the tests"
+  lane :test do
+    gradle(task: "test")
+  end
+
+  desc "Capture screen for Phone UI"
+  lane :capture_screen_phone do
+    gradle(task: "clean assembleDebug assembleAndroidTest")
+    capture_android_screenshots(
+        locales: ["en-US", "de-DE"],
+        use_timestamp_suffix: false,
+        clear_previous_screenshots: true,
+        tests_apk_path: 'app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk',
+        app_apk_path: 'app/build/outputs/apk/debug/app-debug.apk',
+        test_instrumentation_runner: 'com.ispgr5.locationsimulator.HiltTestRunner',
+        use_tests_in_packages: 'com.ispgr5.locationsimulator.screenshots.phone',
+        output_directory: '../docs/Writerside/images/screenshots'
+    )
+  end
+
+  #desc "Deploy a new version to the Google Play"
+  #lane :deploy do
+  #  gradle(task: "clean assembleRelease")
+  #  upload_to_play_store
+  #end
+end
