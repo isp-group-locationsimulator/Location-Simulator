@@ -16,7 +16,7 @@ android {
         applicationId "com.ispgr5.locationsimulator"
         minSdk 21
         targetSdk 35
-        versionCode 11
+        versionCode 12
         versionName "1.1.1"
 
         testInstrumentationRunner "com.ispgr5.locationsimulator.HiltTestRunner"
