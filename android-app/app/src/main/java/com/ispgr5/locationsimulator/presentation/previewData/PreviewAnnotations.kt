@@ -18,13 +18,13 @@ annotation class AppPreview
 @Preview(group = "theme", name = "Dark", uiMode = Configuration.UI_MODE_NIGHT_YES or Configuration.UI_MODE_TYPE_NORMAL)
 annotation class ThemePreview
 
-@Preview(group = "screen size", name = "Phone", device = Devices.PHONE, showSystemUi = true)
+@Preview(group = "screen size", name = "Phone", device = "spec:width=411dp,height=891dp", showSystemUi = true)
 @Preview(group = "screen size", name = "Phone - Landscape",
-    device = "spec:width = 411dp, height = 891dp, orientation = landscape, dpi = 420",
+    device = "spec:width=411dp,height=891dp,orientation=landscape,dpi=420",
     showSystemUi = true)
-@Preview(group = "screen size", name = "Unfolded Foldable", device = Devices.FOLDABLE, showSystemUi = true)
-@Preview(group = "screen size", name = "Tablet", device = Devices.TABLET, showSystemUi = true)
-@Preview(group = "screen size", name = "Desktop", device = Devices.DESKTOP, showSystemUi = true)
+@Preview(group = "screen size", name = "Unfolded Foldable", device = "spec:width=673dp,height=841dp", showSystemUi = true)
+@Preview(group = "screen size", name = "Tablet", device = "spec:width=1280dp,height=800dp,dpi=240", showSystemUi = true)
+@Preview(group = "screen size", name = "Desktop", device = "spec:width=1920dp,height=1080dp,dpi=160", showSystemUi = true)
 annotation class ScreenSizePreview
 
 

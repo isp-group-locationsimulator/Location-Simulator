@@ -32,7 +32,6 @@ import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
@@ -51,9 +50,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.ParagraphStyle
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -63,6 +67,7 @@ import com.gigamole.composescrollbars.config.ScrollbarsConfig
 import com.gigamole.composescrollbars.config.ScrollbarsOrientation
 import com.gigamole.composescrollbars.rememberScrollbarsState
 import com.gigamole.composescrollbars.scrolltype.ScrollbarsScrollType
+import com.ispgr5.locationsimulator.BuildConfig
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.core.util.TestTags
 import com.ispgr5.locationsimulator.data.storageManager.SoundStorageManager
@@ -450,7 +455,18 @@ private fun SelectProfileButton(onButtonClick: () -> Unit) {
 private fun AppTopBar(onInfoClick: () -> Unit) {
     LocationSimulatorTopBar(
         onBackClick = null,
-        title = stringResource(id = R.string.app_name),
+        title = buildAnnotatedString {
+            val appName = stringResource(R.string.app_name)
+            val appVersion = stringResource(R.string.app_version, BuildConfig.VERSION_NAME)
+            withStyle(ParagraphStyle(textAlign = TextAlign.Center, lineHeight = 20.sp)) {
+                withStyle(SpanStyle(fontSize = 18.sp, fontWeight = FontWeight.Bold)) {
+                    appendLine(appName)
+                }
+                withStyle(SpanStyle(fontStyle = FontStyle.Italic, fontSize = 14.sp)) {
+                    append(appVersion)
+                }
+            }
+        },
         backPossible = false
     ) {
         IconButton(onClick = onInfoClick, modifier = Modifier.padding(5.dp)) {
@@ -528,15 +544,17 @@ fun HomeScreenPreview() {
     val themeState = remember {
         mutableStateOf(PreviewData.themePreviewState)
     }
-    HomeScreenScaffold(
-        homeScreenState = state,
-        appTheme = themeState,
-        snackbarHostState = snackbarHostState,
-        onInfoClick = {},
-        onSelectProfile = {},
-        onSelectFavourite = {},
-        onSelectTheme = {},
-        checkBatteryOptimizationStatus = { false },
-        onLaunchBatteryOptimizerDisable = {}
-    )
+    LocationSimulatorTheme {
+        HomeScreenScaffold(
+            homeScreenState = state,
+            appTheme = themeState,
+            snackbarHostState = snackbarHostState,
+            onInfoClick = {},
+            onSelectProfile = {},
+            onSelectFavourite = {},
+            onSelectTheme = {},
+            checkBatteryOptimizationStatus = { false },
+            onLaunchBatteryOptimizerDisable = {}
+        )
+    }
 }

@@ -12,6 +12,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.AnnotatedString
 import com.ispgr5.locationsimulator.core.util.TestTags
 
 /**
@@ -21,7 +22,7 @@ import com.ispgr5.locationsimulator.core.util.TestTags
 @Composable
 fun LocationSimulatorTopBar(
     onBackClick: (() -> Unit)?,
-    title: String,  //title of Screen
+    title: AnnotatedString,  //title of Screen
     backPossible: Boolean = true,  // Whether going back should be possible or not
     extraActions: @Composable (RowScope.() -> Unit) = {},
 ) {
@@ -43,3 +44,17 @@ fun LocationSimulatorTopBar(
         actions = extraActions,
     )
 }
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun LocationSimulatorTopBar(
+    onBackClick: (() -> Unit)?,
+    title: String,  //title of Screen
+    backPossible: Boolean = true,  // Whether going back should be possible or not
+    extraActions: @Composable (RowScope.() -> Unit) = {},
+) = LocationSimulatorTopBar(
+    onBackClick=onBackClick,
+    title = AnnotatedString(title),
+    backPossible = backPossible,
+    extraActions = extraActions
+)
