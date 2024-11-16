@@ -5,7 +5,7 @@ plugins {
     id 'com.google.devtools.ksp'
     id 'dagger.hilt.android.plugin'
     id 'org.jetbrains.kotlin.plugin.compose'
-    id "com.github.ben-manes.versions" version "0.51.0"
+    id "com.github.ben-manes.versions"
     //kotlin-kapt should be the last plugin in list for no warning with dagger plugin
     id 'kotlin-kapt'
 }

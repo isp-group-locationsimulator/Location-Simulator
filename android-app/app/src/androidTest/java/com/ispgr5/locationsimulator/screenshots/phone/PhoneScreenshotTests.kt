@@ -5,11 +5,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.ispgr5.locationsimulator.di.AppModule
+import com.ispgr5.locationsimulator.presentation.LocalThemeState
 import com.ispgr5.locationsimulator.screenshots.ScreenshotScope
 import com.ispgr5.locationsimulator.screenshots.ScreenshotTests
 import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
@@ -46,12 +48,14 @@ abstract class PhoneScreenshotTests(private val themeState: ThemeState) : Screen
                 val screenshotScope by remember {
                     mutableStateOf(ScreenshotScope(modifiedScreenshotName, themeState))
                 }
-                LocationSimulatorTheme(themeState = themeState) {
-                    Surface(
-                        modifier = Modifier.fillMaxSize(),
-                        color = MaterialTheme.colorScheme.background
-                    ) {
-                        screenshotScope.content()
+                CompositionLocalProvider(LocalThemeState provides screenshotScope.theme) {
+                    LocationSimulatorTheme {
+                        Surface(
+                            modifier = Modifier.fillMaxSize(),
+                            color = MaterialTheme.colorScheme.background
+                        ) {
+                            screenshotScope.content()
+                        }
                     }
                 }
             }

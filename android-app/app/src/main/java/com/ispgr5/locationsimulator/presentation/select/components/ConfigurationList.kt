@@ -246,7 +246,7 @@ fun RowScope.OneConfigurationListMember(
 @Preview
 @Composable
 fun ConfigurationListMemberCollapsedPreview() {
-    LocationSimulatorTheme(themeState = themePreviewState) {
+    LocationSimulatorTheme {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -273,7 +273,7 @@ fun ConfigurationListMemberCollapsedPreview() {
 @Preview
 @Composable
 fun ConfigurationListMemberExpandedPreview() {
-    LocationSimulatorTheme(themeState = themePreviewState) {
+    LocationSimulatorTheme {
         Row(
             modifier = Modifier
                 .fillMaxWidth()

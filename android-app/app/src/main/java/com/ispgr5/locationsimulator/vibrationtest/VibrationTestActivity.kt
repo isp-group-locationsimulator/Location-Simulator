@@ -71,7 +71,7 @@ class VibrationTestActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            LocationSimulatorTheme(themeState = ThemeState(themeType = ThemeType.LIGHT)) {
+            LocationSimulatorTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(), color = colorScheme.background

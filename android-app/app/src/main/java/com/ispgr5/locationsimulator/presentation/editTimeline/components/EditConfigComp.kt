@@ -514,7 +514,7 @@ enum class VibrationSupportHintMode {
 @ThemePreview
 @Composable
 fun EditVibrationPreview() {
-    LocationSimulatorTheme(themeState = PreviewData.themePreviewState) {
+    LocationSimulatorTheme {
         Surface(modifier = Modifier.fillMaxSize(), color = colorScheme.background) {
             EditConfigComponent(
                 configComponent = PreviewData.defaultVibration,
@@ -531,7 +531,7 @@ fun EditVibrationPreview() {
 @ThemePreview
 @Composable
 fun EditVibrationUnsupportedVibrationPreview() {
-    LocationSimulatorTheme(themeState = PreviewData.themePreviewState) {
+    LocationSimulatorTheme {
         Surface(modifier = Modifier.fillMaxSize(), color = colorScheme.background) {
             EditConfigComponent(
                 configComponent = PreviewData.defaultVibration,
@@ -549,7 +549,7 @@ fun EditVibrationUnsupportedVibrationPreview() {
 @ThemePreview
 @Composable
 fun EditSoundPreview() {
-    LocationSimulatorTheme(themeState = PreviewData.themePreviewState) {
+    LocationSimulatorTheme {
         Surface(modifier = Modifier.fillMaxSize(), color = colorScheme.background) {
             EditConfigComponent(
                 configComponent = PreviewData.defaultSound,

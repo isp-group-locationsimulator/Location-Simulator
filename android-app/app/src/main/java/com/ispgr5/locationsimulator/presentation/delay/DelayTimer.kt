@@ -361,7 +361,7 @@ fun DelayTimerStoppedPreview() {
     val timerState = remember {
         mutableStateOf(PreviewData.delayScreenInitialTimerState)
     }
-    LocationSimulatorTheme(themeState = PreviewData.themePreviewState) {
+    LocationSimulatorTheme {
         DelayTimer(
             timerState = timerState,
             onFinishTimer = {},
@@ -376,7 +376,7 @@ fun DelayTimerRunningPreview() {
     val timerState = remember {
         mutableStateOf(PreviewData.delayScreenRunningTimerState)
     }
-    LocationSimulatorTheme(themeState = PreviewData.themePreviewState) {
+    LocationSimulatorTheme {
         DelayTimer(
             timerState = timerState,
             onFinishTimer = {},

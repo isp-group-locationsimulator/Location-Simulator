@@ -2,7 +2,9 @@ package com.ispgr5.locationsimulator.presentation.editTimeline
 
 import android.annotation.SuppressLint
 import androidx.activity.compose.setContent
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.navigation.compose.NavHost
@@ -45,8 +47,10 @@ class EditTimelineScreenTest{
         composeRule.activity.runOnUiThread {
             composeRule.activity.setContent {
                 val navController = rememberNavController()
-                val themeState = mutableStateOf(ThemeState(themeType = ThemeType.LIGHT))
-                LocationSimulatorTheme(themeState.value) {
+                val snackbarHostState = remember {
+                    SnackbarHostState()
+                }
+                LocationSimulatorTheme {
                     NavHost(
                         navController = navController,
                         startDestination = "testEditTimeline"    //TODO
@@ -54,6 +58,7 @@ class EditTimelineScreenTest{
                         composable("testEditTimeline") {
                             EditTimelineScreen(
                                 navController = navController,
+                                snackbarHostState = snackbarHostState,
                                 getDefaultValuesFunction = getDefaultValuesTest
                             )
                         }

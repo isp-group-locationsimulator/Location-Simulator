@@ -55,7 +55,7 @@ class KernfunktionalitaetEndToEndTest {
                     mutableStateOf(context.getSystemService(Context.POWER_SERVICE) as PowerManager)
                 }
 
-                LocationSimulatorTheme(themeState.value) {
+                LocationSimulatorTheme {
                     composeRule.activity.NavigationAppHost(
                         navController = navController,
                         themeState = themeState,

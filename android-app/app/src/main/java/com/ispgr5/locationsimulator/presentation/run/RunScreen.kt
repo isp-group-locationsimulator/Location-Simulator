@@ -435,8 +435,7 @@ object RunScreenPreviewData {
 @Composable
 @Preview("runScreenContent")
 fun RunScreenPreview() {
-    LocationSimulatorTheme(ThemeState(themeType = ThemeType.LIGHT)) {
-
+    LocationSimulatorTheme {
         val snackbarContentState = remember {
             mutableStateOf<SnackbarContent?>(null)
         }
@@ -803,7 +802,7 @@ fun RunScreenPreviewScaffold(
     val snackbarHostState = remember {
         SnackbarHostState()
     }
-    LocationSimulatorTheme(themeState = themePreviewState) {
+    LocationSimulatorTheme {
         RunScreenScaffold(
             configuration = configuration,
             playingEffect = effectTimelineState.playingEffect,

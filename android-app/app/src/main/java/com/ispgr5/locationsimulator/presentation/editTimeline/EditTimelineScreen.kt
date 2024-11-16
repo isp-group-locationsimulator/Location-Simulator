@@ -330,7 +330,7 @@ fun EditTimelinePreviewScaffold(
     val snackbarHostState = remember {
         SnackbarHostState()
     }
-    LocationSimulatorTheme(themeState = PreviewData.themePreviewState) {
+    LocationSimulatorTheme {
         EditTimelineScaffold(
             state = state,
             snackbarHostState = snackbarHostState,

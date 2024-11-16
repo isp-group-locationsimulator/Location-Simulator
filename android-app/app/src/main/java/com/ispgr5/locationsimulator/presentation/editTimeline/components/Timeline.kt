@@ -188,7 +188,7 @@ fun TimelineItem(
 @Composable
 @AppPreview
 fun TimelinePreview() {
-    LocationSimulatorTheme(themeState = PreviewData.themePreviewState) {
+    LocationSimulatorTheme {
         Timeline(
             components = PreviewData.previewConfigurations.first().components,
             selectedComponent = PreviewData.previewConfigurations.first().components.first(),

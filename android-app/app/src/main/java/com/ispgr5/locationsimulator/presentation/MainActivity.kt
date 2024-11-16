@@ -22,9 +22,12 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
+import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -67,6 +70,10 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import java.io.FileOutputStream
 import javax.inject.Inject
 
+val LocalThemeState = compositionLocalOf {
+    ThemeState(themeType = ThemeType.AUTO)
+}
+
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
@@ -104,30 +111,33 @@ class MainActivity : ComponentActivity() {
                 ?.let {
                     ThemeType.valueOf(it)
                 } ?: ThemeType.LIGHT
-        val storedDynamicColors = getSharedPreferences("prefs", MODE_PRIVATE).getBoolean("dynamicColors", false)
+        val storedDynamicColors =
+            getSharedPreferences("prefs", MODE_PRIVATE).getBoolean("dynamicColors", false)
 
         val themeState = mutableStateOf(
             ThemeState(themeType = storedThemeType, useDynamicColor = storedDynamicColors)
         )
 
         setContent {
-            LocationSimulatorTheme(themeState.value) {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(), color = colorScheme.background
-                ) {
-                    val navController = rememberNavController()
-                    val context = LocalContext.current
-                    val powerManager by remember {
-                        mutableStateOf(context.getSystemService(POWER_SERVICE) as PowerManager)
+            CompositionLocalProvider(LocalThemeState provides themeState.value) {
+                LocationSimulatorTheme {
+                    // A surface container using the 'background' color from the theme
+                    Surface(
+                        modifier = Modifier.fillMaxSize(), color = colorScheme.background
+                    ) {
+                        val navController = rememberNavController()
+                        val context = LocalContext.current
+                        val powerManager by remember {
+                            mutableStateOf(context.getSystemService(POWER_SERVICE) as PowerManager)
+                        }
+                        HandleIncomingIntent(intent)
+                        NavigationAppHost(
+                            navController = navController,
+                            themeState = themeState,
+                            snackbarContent = snackbarContent,
+                            powerManager = powerManager
+                        )
                     }
-                    HandleIncomingIntent(intent)
-                    NavigationAppHost(
-                        navController = navController,
-                        themeState = themeState,
-                        snackbarContent = snackbarContent,
-                        powerManager = powerManager
-                    )
                 }
             }
         }

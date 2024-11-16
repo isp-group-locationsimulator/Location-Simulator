@@ -5,9 +5,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.os.PowerManager
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -20,6 +18,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.test.filters.SdkSuppress
 import com.ispgr5.locationsimulator.core.util.TestTags
 import com.ispgr5.locationsimulator.di.AppModule
+import com.ispgr5.locationsimulator.presentation.LocalThemeState
 import com.ispgr5.locationsimulator.presentation.MainActivity
 import com.ispgr5.locationsimulator.presentation.universalComponents.SnackbarContent
 import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
@@ -52,13 +51,13 @@ class WunschfunktionalitaetenEndToEndTest {
         composeRule.activity.runOnUiThread {
             composeRule.activity.setContent {
                 val navController = rememberNavController()
-                val themeState = mutableStateOf(ThemeState(ThemeType.LIGHT))
                 val snackbarContent: MutableState<SnackbarContent?> = mutableStateOf(null)
                 val context = LocalContext.current
+                val themeState = mutableStateOf(LocalThemeState.current)
                 val powerManager by remember {
                     mutableStateOf(context.getSystemService(Context.POWER_SERVICE) as PowerManager)
                 }
-                LocationSimulatorTheme(themeState.value) {
+                LocationSimulatorTheme {
                     composeRule.activity.NavigationAppHost(
                         navController = navController,
                         themeState = themeState,

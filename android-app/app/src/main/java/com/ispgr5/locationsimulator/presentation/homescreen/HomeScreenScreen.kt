@@ -524,20 +524,19 @@ fun HomeScreenPreview() {
     val snackbarHostState = remember {
         SnackbarHostState()
     }
+
     val themeState = remember {
         mutableStateOf(PreviewData.themePreviewState)
     }
-    LocationSimulatorTheme(themeState = PreviewData.themePreviewState) {
-        HomeScreenScaffold(
-            homeScreenState = state,
-            appTheme = themeState,
-            snackbarHostState = snackbarHostState,
-            onInfoClick = {},
-            onSelectProfile = {},
-            onSelectFavourite = {},
-            onSelectTheme = {},
-            checkBatteryOptimizationStatus = { false },
-            onLaunchBatteryOptimizerDisable = {}
-        )
-    }
+    HomeScreenScaffold(
+        homeScreenState = state,
+        appTheme = themeState,
+        snackbarHostState = snackbarHostState,
+        onInfoClick = {},
+        onSelectProfile = {},
+        onSelectFavourite = {},
+        onSelectTheme = {},
+        checkBatteryOptimizationStatus = { false },
+        onLaunchBatteryOptimizerDisable = {}
+    )
 }

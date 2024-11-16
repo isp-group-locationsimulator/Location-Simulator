@@ -215,7 +215,7 @@ fun DelayScreenPreview() {
     val timerState = remember {
         mutableStateOf(delayScreenInitialTimerState)
     }
-    LocationSimulatorTheme(themeState = themePreviewState) {
+    LocationSimulatorTheme {
         DelayScreenScaffold(
             state = delayScreenPreviewState,
             soundsDirUri = "sounds",

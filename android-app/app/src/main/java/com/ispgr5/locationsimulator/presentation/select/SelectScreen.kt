@@ -385,7 +385,7 @@ fun SelectScreenScaffold(
 @Composable
 @Preview
 fun SelectScreenNormalPreview() {
-    LocationSimulatorTheme(themeState = themePreviewState) {
+    LocationSimulatorTheme {
         SelectScreenPreviewScaffold(selectScreenState = selectScreenPreviewState)
     }
 }
@@ -394,7 +394,7 @@ fun SelectScreenNormalPreview() {
 @Composable
 @Preview
 fun SelectScreenDeleteModePreview() {
-    LocationSimulatorTheme(themeState = themePreviewState) {
+    LocationSimulatorTheme {
         SelectScreenPreviewScaffold(selectScreenState = selectScreenPreviewStateDelete)
     }
 }

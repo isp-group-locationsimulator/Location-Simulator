@@ -80,7 +80,7 @@ fun AddScreen(
 @Composable
 @Preview
 fun AddScreenPreview() {
-    LocationSimulatorTheme(themeState = PreviewData.themePreviewState) {
+    LocationSimulatorTheme {
         AddScreenScaffold(
             addScreenState = addScreenPreviewState,
             onBackClick = {},

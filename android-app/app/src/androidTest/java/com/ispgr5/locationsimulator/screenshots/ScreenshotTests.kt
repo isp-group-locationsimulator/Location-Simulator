@@ -134,7 +134,7 @@ abstract class ScreenshotTests {
     }
 
     @Test
-    fun delayScreenLight() {
+    fun delayScreen() {
         screenshot {
             DelayScreenPreview()
         }

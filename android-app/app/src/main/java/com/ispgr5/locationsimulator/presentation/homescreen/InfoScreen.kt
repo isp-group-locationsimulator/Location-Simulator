@@ -61,7 +61,7 @@ fun InfoScreen(
 @Preview
 @Composable
 fun InfoScreenPreview() {
-    LocationSimulatorTheme(themeState = ThemeState(ThemeType.DARK)) {
+    LocationSimulatorTheme {
         InfoScreenScaffold(onBackClick = {})
     }
 }
