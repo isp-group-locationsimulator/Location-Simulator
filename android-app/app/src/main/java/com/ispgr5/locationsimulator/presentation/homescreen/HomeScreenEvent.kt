@@ -10,4 +10,5 @@ sealed class HomeScreenEvent {
 	data object SelectConfiguration : HomeScreenEvent()
 	class DisableBatteryOptimization(val batteryOptDisableFunction: () -> Unit) : HomeScreenEvent()
 	data class ChangedAppTheme(val activity: MainActivity, val themeState: ThemeState) : HomeScreenEvent()
+	data class ToggleInputFields(val show: Boolean) : HomeScreenEvent()
 }

@@ -4,6 +4,7 @@ import android.os.Build
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,7 +16,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -24,6 +27,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -36,6 +41,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -46,6 +52,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -92,6 +99,7 @@ import kotlinx.coroutines.delay
 @ExperimentalAnimationApi
 @Composable
 fun HomeScreenScreen(
+
     navController: NavController,
     viewModel: HomeScreenViewModel = hiltViewModel(),
     checkBatteryOptimizationStatus: () -> Boolean,
@@ -106,6 +114,7 @@ fun HomeScreenScreen(
     val state = viewModel.state.value
     val context = LocalContext.current
     RenderSnackbarOnChange(snackbarHostState = snackbarHostState, snackbarContent = snackbarContent)
+
 
     HomeScreenScaffold(
         homeScreenState = state,
@@ -168,8 +177,23 @@ fun HomeScreenScreen(
             viewModel.onEvent(HomeScreenEvent.DisableBatteryOptimization {
                 batteryOptDisableFunction()
             })
+
+
         }
+
+
     )
+
+
+    Column(
+        modifier = Modifier.fillMaxWidth().padding(16.dp)
+    ) {
+        if (state.showInputFields) {
+            InputNameLabel()
+            NameInputField()
+            RoleSelectionField()
+        }
+    }
 }
 
 @Composable
@@ -443,6 +467,8 @@ private fun SelectProfileButton(onButtonClick: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth(0.8f)
             .testTag(TestTags.HOME_SELECT_CONFIG_BUTTON)
+            .offset(y = 455.dp)
+
     ) {
         Text(
             text = stringResource(id = R.string.homescreen_btn_select_profile),
@@ -450,6 +476,146 @@ private fun SelectProfileButton(onButtonClick: () -> Unit) {
         )
     }
 }
+
+@Composable
+fun  InputNameLabel() {
+    Box(
+        modifier = Modifier
+
+            .padding(2.dp)
+            .offset(x = 32.dp, y = 325.dp)
+
+
+
+
+
+    ) {
+
+        Text(
+            text = stringResource(id = R.string.input_label),
+            style = typography.bodyMedium,
+            color = Color.Black,
+
+
+
+
+            )
+
+    }
+
+
+}
+
+val customRedColor= Color(0xFFFEE3D9)
+@Composable
+fun NameInputField() {
+
+    var name by remember { mutableStateOf("") }
+
+    // Layout
+    Row(
+        modifier = Modifier
+            .padding(4.dp)
+
+            .offset(x = 32.dp,y=350.dp)
+        ,
+
+        horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.Start),
+        verticalAlignment = Alignment.CenterVertically,
+
+        ) {
+
+        TextField(
+            value = name,
+            onValueChange = { name=it },
+            placeholder = { Text(text = stringResource(id = R.string.enter_name), style = typography.bodySmall) },
+            modifier = Modifier
+
+
+                .width(330.dp)
+                .height(50.dp)
+                .offset(x = -5.dp)
+                .border(1.dp, customRedColor, RoundedCornerShape(4.dp))
+                .background(customRedColor, RoundedCornerShape(4.dp))
+
+                .padding(0.dp),
+
+            singleLine = true,
+            shape = RoundedCornerShape(size = 4.dp),
+
+            )
+    }
+}
+
+@Composable
+
+fun RoleSelectionField() {
+    var expanded by remember { mutableStateOf(false) }
+    var selectedRole by remember { mutableStateOf("Standalone") }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(0.dp)
+            .offset(x = -10.dp, y = -15.dp)
+
+        ,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(text = stringResource(id = R.string.select_role),
+
+            style = typography.bodyMedium,
+            modifier = Modifier.offset(x = -135.dp)
+                .offset(x=10.dp)
+        )
+        Box(
+            modifier = Modifier
+                .fillMaxWidth(0.8f)
+                .clickable { expanded = !expanded }
+                .border(width = 1.dp, color = colorScheme.errorContainer, shape = RoundedCornerShape(4.dp))
+                .padding(16.dp)
+                .height(20.dp)
+
+
+
+
+
+        ) {
+            Text(text = selectedRole)
+            DropdownMenu(
+
+                expanded = expanded,
+                onDismissRequest = { expanded = false },
+                modifier = Modifier.fillMaxWidth().background(customRedColor)
+            ) {
+                DropdownMenuItem(
+                    text = { Text("Trainer") },
+                    onClick = {
+                        selectedRole = "Trainer"
+                        expanded = false
+                    }
+                )
+                DropdownMenuItem(
+                    text = { Text("Remote") },
+                    onClick = {
+                        selectedRole = "Remote"
+                        expanded = false
+                    }
+                )
+                DropdownMenuItem(
+                    text = { Text("Standalone") },
+                    onClick = {
+                        selectedRole = "Standalone"
+                        expanded = false
+                    }
+                )
+            }
+        }
+    }
+}
+
+
 
 @Composable
 private fun AppTopBar(onInfoClick: () -> Unit) {
@@ -526,6 +692,7 @@ fun <K> MultiStateToggle(
     }
 }
 
+
 @Composable
 @AppPreview
 fun HomeScreenPreview() {
@@ -546,6 +713,8 @@ fun HomeScreenPreview() {
     }
     LocationSimulatorTheme {
         HomeScreenScaffold(
+
+
             homeScreenState = state,
             appTheme = themeState,
             snackbarHostState = snackbarHostState,
@@ -554,7 +723,12 @@ fun HomeScreenPreview() {
             onSelectFavourite = {},
             onSelectTheme = {},
             checkBatteryOptimizationStatus = { false },
-            onLaunchBatteryOptimizerDisable = {}
-        )
+            onLaunchBatteryOptimizerDisable = {},
+
+
+
+            )
+
+
     }
 }
