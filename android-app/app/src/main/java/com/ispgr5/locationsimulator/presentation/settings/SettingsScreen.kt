@@ -44,8 +44,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.domain.model.RangeConverter
-import com.ispgr5.locationsimulator.presentation.editTimeline.components.SecText
-import com.ispgr5.locationsimulator.presentation.editTimeline.components.SliderForRange
+import com.ispgr5.locationsimulator.presentation.editTimeline.components.SliderForRangeWithPreciseInputs
 import com.ispgr5.locationsimulator.presentation.previewData.PreviewData.settingsScreenPreviewState
 import com.ispgr5.locationsimulator.presentation.universalComponents.LocationSimulatorTopBar
 import com.ispgr5.locationsimulator.presentation.universalComponents.SnackbarContent
@@ -233,7 +232,7 @@ private fun ColumnScope.SoundCard(
              * The Sound Volume
              */
             Text(text = stringResource(id = R.string.editTimeline_SoundVolume))
-            Text(
+            /*Text(
                 RangeConverter.transformFactorToPercentage(state.minVolumeSound)
                     .toInt().toString() + "% "
                         + stringResource(id = R.string.editTimeline_range) + RangeConverter.transformFactorToPercentage(
@@ -241,8 +240,8 @@ private fun ColumnScope.SoundCard(
                 )
                     .toInt()
                     .toString() + "% "
-            )
-            SliderForRange(
+            )*/
+            SliderForRangeWithPreciseInputs(
                 onValueChange = { value: ClosedFloatingPointRange<Float> ->
                     onChangeEvent(
                         SettingsEvent.ChangedSoundVolume(
@@ -260,11 +259,11 @@ private fun ColumnScope.SoundCard(
              * The Sound Pause
              */
             Text(text = stringResource(id = R.string.editTimeline_Pause))
-            SecText(
+            /*SecText(
                 min = RangeConverter.msToS(state.minPauseSound),
                 max = RangeConverter.msToS(state.maxPauseSound)
-            )
-            SliderForRange(
+            )*/
+            SliderForRangeWithPreciseInputs(
                 onValueChange = { value: ClosedFloatingPointRange<Float> ->
                     onChangeEvent(
                         SettingsEvent.ChangedSoundPause(
@@ -341,7 +340,7 @@ private fun ColumnScope.VibrationCard(
             val (amplitudeControlSupported, _) = LocalContext.current.vibratorHasAmplitudeControlAndReason
             if (amplitudeControlSupported) {
                 Text(text = stringResource(id = R.string.editTimeline_Vibration_Strength))
-                Text(
+                /*Text(
                     RangeConverter.eightBitIntToPercentageFloat(state.minStrengthVibration)
                         .toInt().toString() + "% "
                             + stringResource(id = R.string.editTimeline_range) + RangeConverter.eightBitIntToPercentageFloat(
@@ -349,8 +348,8 @@ private fun ColumnScope.VibrationCard(
                     )
                         .toInt()
                         .toString() + "%"
-                )
-                SliderForRange(
+                )*/
+                SliderForRangeWithPreciseInputs(
                     onValueChange = { value: ClosedFloatingPointRange<Float> ->
                         onChangeEvent(
                             SettingsEvent.ChangedVibStrength(
@@ -369,11 +368,11 @@ private fun ColumnScope.VibrationCard(
              * The Vibration Duration
              */
             Text(text = stringResource(id = R.string.editTimeline_Vibration_duration))
-            SecText(
+            /*SecText(
                 min = RangeConverter.msToS(state.minDurationVibration),
                 max = RangeConverter.msToS(state.maxDurationVibration)
-            )
-            SliderForRange(
+            )*/
+            SliderForRangeWithPreciseInputs(
                 onValueChange = { value: ClosedFloatingPointRange<Float> ->
                     onChangeEvent(
                         SettingsEvent.ChangedVibDuration(
@@ -392,11 +391,11 @@ private fun ColumnScope.VibrationCard(
              * The Vibration Pause
              */
             Text(text = stringResource(id = R.string.editTimeline_Pause))
-            SecText(
+            /*SecText(
                 min = RangeConverter.msToS(state.minPauseVibration),
                 max = RangeConverter.msToS(state.maxPauseVibration)
-            )
-            SliderForRange(
+            )*/
+            SliderForRangeWithPreciseInputs(
                 onValueChange = { value: ClosedFloatingPointRange<Float> ->
                     onChangeEvent(
                         SettingsEvent.ChangedVibPause(
