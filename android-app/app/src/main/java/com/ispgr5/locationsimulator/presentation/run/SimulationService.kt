@@ -304,18 +304,8 @@ class SimulationService : LifecycleService() {
         if (IsPlayingEventBus.value != true) {
             return null
         }
-        if (!vibrator.hasVibrator()) {
-            Log.w(
-                TAG,
-                "Vibrator ${vibrator} has no vibrator")
-        }
         //play the vibration depending on the used android version
         if (Build.VERSION.SDK_INT >= 26) {
-            if (!vibrator.hasAmplitudeControl()) {
-                Log.w(
-                    TAG,
-                    "Vibrator ${vibrator} has no amplitude control")
-            }
             Log.d(
                 TAG,
                 "Creating Vibration... Duration: ${effect.durationMillis} ms, Strength: ${effect.strength}"

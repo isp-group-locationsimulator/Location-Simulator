@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
@@ -37,6 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -45,6 +47,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
@@ -271,10 +274,7 @@ private fun PauseEditor(
         text = stringResource(id = R.string.editTimeline_Pause),
         style = blackSubtitle1
     )
-    /*SecText(
-        min = RangeConverter.msToS(getMinPause()), max =
-        RangeConverter.msToS(getMaxPause())
-    )*/
+
     SliderForRangeWithPreciseInputs(
         modifier = Modifier.testTag(TestTags.EDIT_SLIDER_PAUSE),
         onValueChange = {
@@ -316,22 +316,6 @@ private fun VibrationParameters(
                 ) {
                     append(stringResource(id = R.string.editTimeline_Vibration_Strength))
                 }
-                /*if (hasAmplitudeControl) {
-                    append("\n")
-                    val lowerBound =
-                        RangeConverter.eightBitIntToPercentageFloat(
-                            configComponent.minStrength
-                        ).toInt()
-                    val upperBound =
-                        RangeConverter.eightBitIntToPercentageFloat(
-                            configComponent.maxStrength
-                        ).toInt()
-                    append(lowerBound.toString())
-                    append("% ")
-                    append(stringResource(id = R.string.editTimeline_range))
-                    append(upperBound.toString())
-                    append("%")
-                }*/
             }
         )
         if (!hasAmplitudeControl) {
@@ -380,10 +364,6 @@ private fun VibrationParameters(
         style = blackSubtitle1
     )
 
-    /*SecText(
-        min = RangeConverter.msToS(configComponent.minDuration),
-        max = RangeConverter.msToS(configComponent.maxDuration)
-    )*/
     SliderForRangeWithPreciseInputs(
         modifier = Modifier.testTag(TestTags.EDIT_VIB_SLIDER_DURATION),
         enabled = hasAmplitudeControl,
@@ -431,15 +411,7 @@ private fun SoundParameters(
         text = stringResource(id = R.string.editTimeline_SoundVolume),
         style = blackSubtitle1
     )
-    /*Text(
-        RangeConverter.transformFactorToPercentage(configComponent.minVolume)
-            .toInt().toString() + "% "
-                + stringResource(id = R.string.editTimeline_range) + RangeConverter.transformFactorToPercentage(
-            configComponent.maxVolume
-        )
-            .toInt()
-            .toString() + "% "
-    )*/
+
     SliderForRangeWithPreciseInputs(
         onValueChange = {
             editTimelineEventHandlers?.onSoundValueChanged?.invoke(it)
@@ -493,43 +465,32 @@ fun SliderForRange(
     )
 }
 
-//TODO Finish
 @Composable
 fun FloatInputField(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    value: Float,
+    value: String,
     onValueChange: (String) -> Unit,
-    label: String
+    label: String,
+    onDone: () -> Unit = {}
 ) {
-    val pattern = Regex("\\d*[.,]?\\d*")
-    var v by remember {mutableStateOf("%.2f".format(value))}
     OutlinedTextField(
         textStyle = TextStyle(
             textAlign = TextAlign.Center,
             color = colorScheme.onBackground
         ),
-        value = v, //,
+        value = value,
         enabled = enabled,
         label = {Text(label)},
-        onValueChange = {
-            Log.i("Text Field", "Changed value to $it")
-            v = it
-        },
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+        onValueChange = onValueChange,
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
         singleLine = true,
         modifier = modifier
-            .width(70.dp).height(55.dp)
-            .onFocusChanged { focusState -> {
-                Log.i("Focus", "Focus changed")
-                if(!focusState.isFocused) {
-                    if (v.matches(pattern)) {
-                        onValueChange("%.2f".format(v.toFloat()))
-                    } else {
-                        v = "%.2f".format(value)
-                    }
-                }
-            } }
+            .width(75.dp)
+            .height(55.dp),
+        keyboardActions = KeyboardActions(
+            onDone = {onDone()},
+        )
     )
 }
 
@@ -539,49 +500,67 @@ fun SliderForRangeWithPreciseInputs(
     enabled: Boolean = true,
     onValueChange: (ClosedFloatingPointRange<Float>) -> Unit,
     value: ClosedFloatingPointRange<Float>,
-    range: ClosedFloatingPointRange<Float>
+    range: ClosedFloatingPointRange<Float>,
 ) {
-    Log.i("SliderRange", "Changed range to $value")
-    SliderForRange(modifier, enabled, onValueChange, value, range)
-    Row (modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-        FloatInputField(
-            modifier = modifier,
-            enabled = enabled,
-            value = value.start,
-            onValueChange = {
-            if (it.toFloat() >= range.start && it.toFloat() <= value.endInclusive ) {
-                onValueChange(value)
-            }},
-            label = "Min" //TODO dynamic
-        )
-        FloatInputField(
-            modifier = modifier,
-            enabled = enabled,
-            value = value.endInclusive,
-            onValueChange = {
-            if (it.toFloat() >= value.start && it.toFloat() <= range.endInclusive ) {
-                onValueChange(value.start..it.toFloat())
-            }},
-            label = "Max" //TODO dynamic
-        )
+    val focusManager = LocalFocusManager.current
+    var start by remember {mutableStateOf("%.2f".format(value.start))}
+    var end by remember {mutableStateOf("%.2f".format(value.endInclusive))}
+
+    fun isValidRange(start:String, end:String, min:Float=range.start, max:Float=range.endInclusive): Boolean {
+        return try {
+            if (start.toFloat() in min..end.toFloat() && end.toFloat() in start.toFloat()..max) {
+                true
+            } else {
+                false
+            }
+        }catch (_: Exception) {
+            false
+        }
     }
 
-}
-
-/*@Composable
-fun SecText(min: Float, max: Float, modifier: Modifier = Modifier) {
-    Text(
-        String.format(
-            Locale.US,
-            "%.1f",
-            min
-        ) + "s " + stringResource(id = R.string.editTimeline_range) + String.format(
-            Locale.US,
-            "%.1f",
-            max
-        ) + "s ", modifier = modifier
+    SliderForRange(
+        modifier = modifier,
+        enabled = enabled,
+        onValueChange = {start = "%.2f".format(it.start); end = "%.2f".format(it.endInclusive); onValueChange(it)},
+        value = value,
+        range = range, 
     )
-}*/
+    Row (modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+        FloatInputField(
+            modifier = modifier
+                .onFocusChanged {
+                    if (!it.isFocused) {
+                        if (!isValidRange(start, end)) {
+                            start = "%.2f".format(value.start)
+                        } else {
+                            start = "%.2f".format(start.toFloat()) //ensure consistent formatting
+                        }
+                    }
+                },
+            enabled = enabled,
+            value = start,
+            onValueChange = {start = it; onValueChange((if (isValidRange(it, end)) it.toFloat() else range.start)..value.endInclusive)},
+            label = stringResource(id = R.string.min),
+            onDone = { focusManager.clearFocus() }
+        )
+        FloatInputField(
+            modifier = modifier.onFocusChanged {
+                if (!it.isFocused) {
+                    if (!isValidRange(start, end)) {
+                        end = "%.2f".format(value.endInclusive)
+                    } else {
+                        end = "%.2f".format(end.toFloat()) //ensure consistent formatting
+                    }
+                }
+            },
+            enabled = enabled,
+            value = end,
+            onValueChange = {end = it; onValueChange(value.start..(if (isValidRange(start, it)) it.toFloat() else range.endInclusive))},
+            label = stringResource(id = R.string.max),
+            onDone = { focusManager.clearFocus() }
+        )
+    }
+}
 
 
 enum class VibrationSupportHintMode {

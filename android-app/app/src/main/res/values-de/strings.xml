@@ -114,4 +114,6 @@
     <string name="dynamic">Dynamisch</string>
     <string name="the_back_gesture_is_disabled_please_use_the_bottom_above">Die Zurück-Geste ist hier deaktiviert. Bitte verwenden Sie den Zurück-Knopf oben links.</string>
     <string name="new_configuration">Neue Konfiguration</string>
+    <string name="min">Min</string>
+    <string name="max">Max</string>
 </resources>
