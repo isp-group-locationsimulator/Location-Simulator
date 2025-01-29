@@ -202,6 +202,10 @@ fun Maintainer() {
 fun OriginalDevelopers() {
     Headline(text = stringResource(id = R.string.infoscreen_developer))
     val developers = listOf(
+        "Nihad Beddeiwi",
+        "Lars Fockenga",
+        "Tom Boje",
+        "Brian Rickert",
         "Felix Winkler",
         "Florian Vierkant",
         "Marie Biethahn",
