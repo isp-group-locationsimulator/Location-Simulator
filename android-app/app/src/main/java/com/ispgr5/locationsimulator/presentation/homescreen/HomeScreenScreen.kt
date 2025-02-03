@@ -19,11 +19,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
@@ -32,6 +34,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.material3.MaterialTheme.typography
@@ -516,7 +519,6 @@ fun NameInputField() {
     Row(
         modifier = Modifier
             .padding(4.dp)
-
             .offset(x = 32.dp,y=350.dp)
         ,
 
@@ -525,6 +527,7 @@ fun NameInputField() {
 
         ) {
 
+
         TextField(
             value = name,
             onValueChange = { name=it },
@@ -532,16 +535,14 @@ fun NameInputField() {
             modifier = Modifier
 
 
-                .width(330.dp)
-                .height(50.dp)
-                .offset(x = -5.dp)
+                .fillMaxWidth(0.8f)  // Skaliert auf 90% der Bildschirmbreite
+                .height(55.dp)
+                .offset(x=0.dp, y = -28.dp)
                 .border(1.dp, customRedColor, RoundedCornerShape(4.dp))
-                .background(customRedColor, RoundedCornerShape(4.dp))
-
-                .padding(0.dp),
-
+                .padding(2.dp),
             singleLine = true,
-            shape = RoundedCornerShape(size = 4.dp),
+            shape = RoundedCornerShape(4.dp),
+
 
             )
     }
@@ -557,7 +558,7 @@ fun RoleSelectionField() {
         modifier = Modifier
             .fillMaxSize()
             .padding(0.dp)
-            .offset(x = -10.dp, y = -15.dp)
+            .offset(x = 0.dp, y = -15.dp)
 
         ,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -567,7 +568,8 @@ fun RoleSelectionField() {
 
             style = typography.bodyMedium,
             modifier = Modifier.offset(x = -135.dp)
-                .offset(x=10.dp)
+                .offset(x=15.dp)
+
         )
         Box(
             modifier = Modifier
@@ -588,23 +590,27 @@ fun RoleSelectionField() {
                 expanded = expanded,
                 onDismissRequest = { expanded = false },
                 modifier = Modifier.fillMaxWidth().background(customRedColor)
+
             ) {
                 DropdownMenuItem(
-                    text = { Text("Trainer") },
+                    text = { Text("Trainer", color = Color.Black) },
+
                     onClick = {
                         selectedRole = "Trainer"
                         expanded = false
                     }
                 )
                 DropdownMenuItem(
-                    text = { Text("Remote") },
+                    text = { Text("Remote",color = Color.Black) },
                     onClick = {
                         selectedRole = "Remote"
                         expanded = false
                     }
+
+
                 )
                 DropdownMenuItem(
-                    text = { Text("Standalone") },
+                    text = { Text("Standalone",color = Color.Black) },
                     onClick = {
                         selectedRole = "Standalone"
                         expanded = false
@@ -614,6 +620,7 @@ fun RoleSelectionField() {
         }
     }
 }
+
 
 
 
@@ -731,4 +738,9 @@ fun HomeScreenPreview() {
 
 
     }
+    InputNameLabel()
+    NameInputField()
+    RoleSelectionField()
+
+
 }

@@ -22,6 +22,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.LocationSimulator"
         tools:targetApi="tiramisu">
+
         <activity
             android:name=".vibrationtest.VibrationTestActivity"
             android:exported="true"
@@ -33,22 +34,17 @@
             android:theme="@style/Theme.LocationSimulator">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
-
                 <category android:name="android.intent.category.DEFAULT" />
-
                 <data android:mimeType="application/gzip" />
                 <data android:mimeType="application/x-gzip" />
             </intent-filter>
             <intent-filter tools:ignore="AppLinkUrlError">
                 <action android:name="android.intent.action.VIEW" />
-
                 <category android:name="android.intent.category.DEFAULT" />
-
                 <data android:mimeType="application/gzip" />
                 <data android:mimeType="application/x-gzip" />
             </intent-filter>
@@ -58,7 +54,7 @@
             android:name=".presentation.run.SimulationService"
             android:enabled="true"
             android:exported="false"
-            android:foregroundServiceType="specialUse"
+
             android:stopWithTask="true">
             <property
                 android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
