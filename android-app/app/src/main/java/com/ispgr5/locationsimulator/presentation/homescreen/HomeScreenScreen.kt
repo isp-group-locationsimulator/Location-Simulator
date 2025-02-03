@@ -497,7 +497,7 @@ fun  InputNameLabel() {
         Text(
             text = stringResource(id = R.string.input_label),
             style = typography.bodyMedium,
-            color = Color.Black,
+
 
 
 
@@ -519,7 +519,10 @@ fun NameInputField() {
     Row(
         modifier = Modifier
             .padding(4.dp)
+
             .offset(x = 32.dp,y=350.dp)
+            .width(600.dp)
+
         ,
 
         horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.Start),
@@ -535,7 +538,7 @@ fun NameInputField() {
             modifier = Modifier
 
 
-                .fillMaxWidth(0.8f)  // Skaliert auf 90% der Bildschirmbreite
+                .fillMaxWidth(0.8f)
                 .height(55.dp)
                 .offset(x=0.dp, y = -28.dp)
                 .border(1.dp, customRedColor, RoundedCornerShape(4.dp))
@@ -578,6 +581,7 @@ fun RoleSelectionField() {
                 .border(width = 1.dp, color = customRedColor, shape = RoundedCornerShape(4.dp))
                 .padding(16.dp)
                 .height(20.dp)
+
 
 
 
