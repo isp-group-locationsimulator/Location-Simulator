@@ -575,7 +575,7 @@ fun RoleSelectionField() {
             modifier = Modifier
                 .fillMaxWidth(0.8f)
                 .clickable { expanded = !expanded }
-                .border(width = 1.dp, color = colorScheme.errorContainer, shape = RoundedCornerShape(4.dp))
+                .border(width = 1.dp, color = customRedColor, shape = RoundedCornerShape(4.dp))
                 .padding(16.dp)
                 .height(20.dp)
 
