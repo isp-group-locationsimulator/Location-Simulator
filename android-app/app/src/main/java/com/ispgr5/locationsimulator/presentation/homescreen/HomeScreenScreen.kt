@@ -186,17 +186,6 @@ fun HomeScreenScreen(
 
 
     )
-
-
-    Column(
-        modifier = Modifier.fillMaxWidth().padding(16.dp)
-    ) {
-        if (state.showInputFields) {
-            InputNameLabel()
-            NameInputField()
-            RoleSelectionField()
-        }
-    }
 }
 
 @Composable
@@ -250,15 +239,6 @@ fun HomeScreenContent(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceAround
     ) {
-        Row(
-            modifier = Modifier
-                .height(IntrinsicSize.Min)
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center
-        ) {
-            SelectProfileButton(onSelectProfile)
-        }
-
         Column(
             modifier = Modifier
                 .weight(1f)
@@ -274,6 +254,28 @@ fun HomeScreenContent(
                 homeScreenState, onSelectFavourite
             )
         }
+
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Bottom,
+        ) {
+            if (homeScreenState.showInputFields) {
+                NameInputField()
+                RoleSelectionField()
+            }
+        }
+
+        Row(
+            modifier = Modifier
+                .height(IntrinsicSize.Min)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.Bottom
+        ) {
+            SelectProfileButton(onSelectProfile)
+        }
+
         Column(
             modifier = Modifier
                 .padding(top = 8.dp)
@@ -470,8 +472,6 @@ private fun SelectProfileButton(onButtonClick: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth(0.8f)
             .testTag(TestTags.HOME_SELECT_CONFIG_BUTTON)
-            .offset(y = 455.dp)
-
     ) {
         Text(
             text = stringResource(id = R.string.homescreen_btn_select_profile),
@@ -480,100 +480,54 @@ private fun SelectProfileButton(onButtonClick: () -> Unit) {
     }
 }
 
+val customRedColor = Color(0xFFFEE3D9)
+
 @Composable
-fun  InputNameLabel() {
-    Box(
-        modifier = Modifier
-
-            .padding(2.dp)
-            .offset(x = 32.dp, y = 325.dp)
-
-
-
-
-
-    ) {
-
-        Text(
-            text = stringResource(id = R.string.input_label),
-            style = typography.bodyMedium,
-
-
-
-
-
-            )
-
-    }
-
-
-}
-
-val customRedColor= Color(0xFFFEE3D9)
-@Composable
-fun NameInputField() {
-
+private fun NameInputField() {
     var name by remember { mutableStateOf("") }
 
-    // Layout
-    Row(
-        modifier = Modifier
-            .padding(4.dp)
-
-            .offset(x = 32.dp,y=350.dp)
-            .width(600.dp)
-
-        ,
-
-        horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.Start),
-        verticalAlignment = Alignment.CenterVertically,
-
-        ) {
-
-
-        TextField(
-            value = name,
-            onValueChange = { name=it },
-            placeholder = { Text(text = stringResource(id = R.string.enter_name), style = typography.bodySmall) },
-            modifier = Modifier
-
-
-                .fillMaxWidth(0.8f)
-                .height(55.dp)
-                .offset(x=0.dp, y = -28.dp)
-                .border(1.dp, customRedColor, RoundedCornerShape(4.dp))
-                .padding(2.dp),
-            singleLine = true,
-            shape = RoundedCornerShape(4.dp),
-
-
+    TextField(
+        value = name,
+        onValueChange = { name = it },
+        label = {
+            Text(
+                text = stringResource(id = R.string.input_label),
+                style = typography.bodyMedium,
             )
-    }
+        },
+        placeholder = {
+            Text(
+                text = stringResource(id = R.string.enter_name),
+                style = typography.bodySmall
+            )
+        },
+        modifier = Modifier
+            .fillMaxWidth(0.8f)
+            .border(1.dp, customRedColor, RoundedCornerShape(4.dp))
+            .padding(2.dp),
+        singleLine = true,
+        shape = RoundedCornerShape(4.dp),
+    )
 }
 
 @Composable
-
-fun RoleSelectionField() {
+private fun RoleSelectionField() {
     var expanded by remember { mutableStateOf(false) }
     var selectedRole by remember { mutableStateOf("Standalone") }
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(0.dp)
-            .offset(x = 0.dp, y = -15.dp)
-
-        ,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = stringResource(id = R.string.select_role),
-
-            style = typography.bodyMedium,
-            modifier = Modifier.offset(x = -135.dp)
-                .offset(x=15.dp)
-
-        )
+        Row(
+            modifier = Modifier.fillMaxWidth(0.8f),
+            horizontalArrangement = Arrangement.Absolute.Left
+        ) {
+            Text(
+                text = stringResource(id = R.string.select_role),
+                style = typography.bodyMedium
+            )
+        }
         Box(
             modifier = Modifier
                 .fillMaxWidth(0.8f)
@@ -581,40 +535,31 @@ fun RoleSelectionField() {
                 .border(width = 1.dp, color = customRedColor, shape = RoundedCornerShape(4.dp))
                 .padding(16.dp)
                 .height(20.dp)
-
-
-
-
-
-
         ) {
             Text(text = selectedRole)
             DropdownMenu(
-
                 expanded = expanded,
                 onDismissRequest = { expanded = false },
-                modifier = Modifier.fillMaxWidth().background(customRedColor)
-
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(customRedColor)
             ) {
                 DropdownMenuItem(
                     text = { Text("Trainer", color = Color.Black) },
-
                     onClick = {
                         selectedRole = "Trainer"
                         expanded = false
                     }
                 )
                 DropdownMenuItem(
-                    text = { Text("Remote",color = Color.Black) },
+                    text = { Text("Remote", color = Color.Black) },
                     onClick = {
                         selectedRole = "Remote"
                         expanded = false
                     }
-
-
                 )
                 DropdownMenuItem(
-                    text = { Text("Standalone",color = Color.Black) },
+                    text = { Text("Standalone", color = Color.Black) },
                     onClick = {
                         selectedRole = "Standalone"
                         expanded = false
@@ -624,8 +569,6 @@ fun RoleSelectionField() {
         }
     }
 }
-
-
 
 
 @Composable
@@ -724,8 +667,6 @@ fun HomeScreenPreview() {
     }
     LocationSimulatorTheme {
         HomeScreenScaffold(
-
-
             homeScreenState = state,
             appTheme = themeState,
             snackbarHostState = snackbarHostState,
@@ -735,14 +676,8 @@ fun HomeScreenPreview() {
             onSelectTheme = {},
             checkBatteryOptimizationStatus = { false },
             onLaunchBatteryOptimizerDisable = {},
-
-
-
-            )
-
-
+        )
     }
-    InputNameLabel()
     NameInputField()
     RoleSelectionField()
 
