@@ -120,4 +120,8 @@
     <string name="input_label">Name</string>
     <string name="enter_name" translatable="true">Your name</string>
     <string name="select_role" translatable="true">Select a role</string>
+    <string name="trainer_screen" translatable="false">KEINEAHNUNG</string>
+    <string name="trainer_screen_title" translatable="false">Ausbilderoptionen</string>
+    <string name="start_training" translatable="false">Starten</string>
+    <string name="go_back" translatable="false">Zurück</string>
 </resources>
