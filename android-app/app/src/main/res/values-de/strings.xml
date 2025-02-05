@@ -37,6 +37,7 @@
     <string name="confirmDeleteDialogDismissBtn">Abbrechen</string>
     <string name="confirmDeleteDialogConfirmBtn">Löschen</string>
     <string name="ScreenInfo">Info</string>
+    <string name="ScreenHelp">Hilfe</string>
     <string name="ScreenRun">Konfiguration</string>
     <string name="ScreenSelect">Konfiguration auswählen</string>
     <string name="ScreenSound">Sound auswählen</string>
@@ -91,6 +92,7 @@
     <string name="next_effect">Nächster Effekt</string>
     <string name="long_press_button_to_stop">Den Stop-Knopf lange gedrückt halten, um zu beenden.</string>
     <string name="about">Über</string>
+    <string name="help">Hilfe</string>
     <string name="delete_configuration">Konfiguration löschen</string>
     <string name="maintainer">Wartung und Support</string>
     <string name="location_simulator_is_maintained_by">LocationSimulator wird gewartet durch:</string>
