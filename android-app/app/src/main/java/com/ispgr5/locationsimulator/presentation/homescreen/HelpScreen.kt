@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -21,14 +23,19 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -102,13 +109,49 @@ fun HelpScreenScaffold(onBackClick: () -> Unit) {
                             .verticalScroll(scrollState)
                             .padding(horizontal = 30.dp, vertical = 16.dp),
                         verticalArrangement = Arrangement.Top,
-                        horizontalAlignment = Alignment.CenterHorizontally
+                        horizontalAlignment = Alignment.Start
                     ) {
 
-                        Text("ichu", color = Color.Blue)
+                        //hypertext erstellen für die Fragen
+                        val annotatedString = buildAnnotatedString {
+                            pushStringAnnotation(tag = "help", annotation = "help")
+                            withStyle(
+                                style = SpanStyle(
+                                    color = Color.Blue,
+                                    textDecoration = TextDecoration.Underline
+                                )
+                            ) {
+                                append(stringResource(R.string.help_1))
+                            }
 
+                            pop()
+                        }
 
+                        ClickableText(
+                            text = annotatedString,
+                            onClick = { offset ->
+                                annotatedString.getStringAnnotations("help", offset, offset)
+                                    .firstOrNull()?.let {
+                                        //showImages = true
+                                    }
+                            }
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        // Bilder erscheinen, wenn showImages = true
+//                        if (showImages) {
+//                            Image(
+//                                painter = painterResource(id = R.drawable.help_image),
+//                                contentDescription = "Hilfe-Bild",
+//                                modifier = Modifier
+//                                    .fillMaxWidth()
+//                                    .height(200.dp)
+//                                    .clip(RoundedCornerShape(8.dp))
+//                            )
+//                        }
+//                    }
                     }
+
 
                     Scrollbars(state = scrollbarsState)
                 }

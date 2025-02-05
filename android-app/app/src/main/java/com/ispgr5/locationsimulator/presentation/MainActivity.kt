@@ -48,6 +48,7 @@ import com.ispgr5.locationsimulator.domain.useCase.ConfigurationUseCases
 import com.ispgr5.locationsimulator.presentation.add.AddScreen
 import com.ispgr5.locationsimulator.presentation.delay.DelayScreen
 import com.ispgr5.locationsimulator.presentation.editTimeline.EditTimelineScreen
+import com.ispgr5.locationsimulator.presentation.homescreen.HelpScreen
 import com.ispgr5.locationsimulator.presentation.homescreen.HomeScreenScreen
 import com.ispgr5.locationsimulator.presentation.homescreen.InfoScreen
 import com.ispgr5.locationsimulator.presentation.run.RunScreen
@@ -197,6 +198,9 @@ class MainActivity : ComponentActivity() {
             }
             composable(Screen.InfoScreen.route) {
                 InfoScreen(navController = navController)
+            }
+            composable(Screen.HelpScreen.route) {
+                HelpScreen(navController=navController)
             }
             composable(route = Screen.SelectScreen.route) {
                 SelectScreen(

@@ -207,7 +207,7 @@ fun HomeScreenScaffold(
 ) {
     Scaffold(
         topBar = {
-            AppTopBar(onInfoClick,onHelpClick) ///leichte veränderung
+            AppTopBar(onInfoClick,onHelpClick)
         },
         snackbarHost = {
             AppSnackbarHost(snackbarHostState)
@@ -596,7 +596,7 @@ private fun AppTopBar(onInfoClick: () -> Unit, onHelpClick: () -> Unit) {
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Absolute.Left
+            horizontalArrangement = Arrangement.Absolute.Right
         )
         {
 
@@ -615,7 +615,7 @@ private fun AppTopBar(onInfoClick: () -> Unit, onHelpClick: () -> Unit) {
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Absolute.Right
+            horizontalArrangement = Arrangement.Absolute.Left
         )
 
         {
