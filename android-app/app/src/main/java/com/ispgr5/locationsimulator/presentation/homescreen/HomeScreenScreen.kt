@@ -126,6 +126,10 @@ fun HomeScreenScreen(
         onInfoClick = {
             navController.navigate(Screen.InfoScreen.route)
         },
+        onHelpClick = {
+
+            navController.navigate(Screen.HelpScreen.route)
+        },
         onSelectProfile = {
             viewModel.onEvent(HomeScreenEvent.SelectConfiguration)
             navController.navigate(Screen.SelectScreen.route)
@@ -194,6 +198,7 @@ fun HomeScreenScaffold(
     appTheme: MutableState<ThemeState>,
     snackbarHostState: SnackbarHostState,
     onInfoClick: () -> Unit,
+    onHelpClick:()->Unit,
     onSelectProfile: () -> Unit,
     onSelectFavourite: (Configuration) -> Unit,
     onSelectTheme: (ThemeState) -> Unit,
@@ -202,7 +207,7 @@ fun HomeScreenScaffold(
 ) {
     Scaffold(
         topBar = {
-            AppTopBar(onInfoClick)
+            AppTopBar(onInfoClick,onHelpClick) ///leichte veränderung
         },
         snackbarHost = {
             AppSnackbarHost(snackbarHostState)
@@ -572,7 +577,7 @@ private fun RoleSelectionField() {
 
 
 @Composable
-private fun AppTopBar(onInfoClick: () -> Unit) {
+private fun AppTopBar(onInfoClick: () -> Unit, onHelpClick: () -> Unit) {
     LocationSimulatorTopBar(
         onBackClick = null,
         title = buildAnnotatedString {
@@ -589,16 +594,47 @@ private fun AppTopBar(onInfoClick: () -> Unit) {
         },
         backPossible = false
     ) {
-        IconButton(onClick = onInfoClick, modifier = Modifier.padding(5.dp)) {
-            Icon(
-                painter = painterResource(id = R.drawable.baseline_info_24),
-                contentDescription = stringResource(
-                    id = R.string.about
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Absolute.Left
+        )
+        {
+
+
+            IconButton(onClick = onHelpClick, modifier = Modifier.padding(5.dp)) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_baseline_help_24),
+
+                    contentDescription = stringResource(R.string.help),
+
                 )
-            )
+            }
         }
     }
-}
+
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Absolute.Right
+        )
+
+        {
+            IconButton(onClick = onInfoClick, modifier = Modifier.padding(5.dp)) {
+                Icon(
+                    painter = painterResource(id = R.drawable.baseline_info_24),
+                    contentDescription = stringResource(
+                        id = R.string.about
+                    )
+                )
+
+            }
+        }
+
+
+    }
+
+
+
 
 @Composable
 fun <K> MultiStateToggle(
@@ -671,6 +707,7 @@ fun HomeScreenPreview() {
             appTheme = themeState,
             snackbarHostState = snackbarHostState,
             onInfoClick = {},
+            onHelpClick = {},
             onSelectProfile = {},
             onSelectFavourite = {},
             onSelectTheme = {},

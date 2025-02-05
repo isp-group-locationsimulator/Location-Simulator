@@ -2,8 +2,11 @@ package com.ispgr5.locationsimulator.presentation.util
 
 /**Class to get the Route to the Screens*/
 sealed class Screen(val route: String) {
+
+
     data object HomeScreen : Screen("homeScreen")
     data object InfoScreen : Screen("infoScreen")
+    data object HelpScreen: Screen("HelpScreen")
     data object SelectScreen : Screen("selectScreen")
     data object AddScreen : Screen("addScreen")
     data object SettingsScreen : Screen("settingsScreen")
