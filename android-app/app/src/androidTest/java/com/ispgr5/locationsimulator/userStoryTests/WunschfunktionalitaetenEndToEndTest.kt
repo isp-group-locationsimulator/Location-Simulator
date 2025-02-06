@@ -16,20 +16,20 @@ import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.navigation.compose.rememberNavController
 import androidx.test.filters.SdkSuppress
+import androidx.test.platform.app.InstrumentationRegistry
 import com.ispgr5.locationsimulator.core.util.TestTags
 import com.ispgr5.locationsimulator.di.AppModule
 import com.ispgr5.locationsimulator.presentation.LocalThemeState
 import com.ispgr5.locationsimulator.presentation.MainActivity
 import com.ispgr5.locationsimulator.presentation.universalComponents.SnackbarContent
 import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
-import com.ispgr5.locationsimulator.ui.theme.ThemeState
-import com.ispgr5.locationsimulator.ui.theme.ThemeType
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.UninstallModules
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import com.ispgr5.locationsimulator.R
 
 
 @HiltAndroidTest
@@ -76,7 +76,7 @@ class WunschfunktionalitaetenEndToEndTest {
     um so vielfältige Konfigurationen erstellen zu können.
      */
     @Test
-    fun w2_test_Timeline() {
+    fun test_Timeline() {
 
         //in Home Screen
         composeRule.onNodeWithTag(TestTags.HOME_SELECT_CONFIG_BUTTON).performClick()
@@ -90,6 +90,7 @@ class WunschfunktionalitaetenEndToEndTest {
         //add Config
         val name = "TestName1"
         val description = "TestDescription1"
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
 
         composeRule.onNodeWithTag(TestTags.ADD_NAME_TEXTINPUT).performTextInput(name)
         composeRule.onNodeWithTag(TestTags.ADD_DESCRIPTION_TEXTINPUT).performTextInput(description)
@@ -150,16 +151,16 @@ class WunschfunktionalitaetenEndToEndTest {
          * Sound, Vibration1, Vibration3, Vibration2**/
 
         composeRule.onAllNodesWithTag(TestTags.EDIT_CONFIG_ITEM)[0].performClick()
-        composeRule.onNodeWithTag(TestTags.EDIT_ITEM_NAME_TEXTINPUT).assertTextEquals("Sound")
+        composeRule.onNodeWithTag(TestTags.EDIT_ITEM_NAME_TEXTINPUT).assertTextEquals(context.getString(R.string.editTimeline_name), "Sound")
         composeRule.onAllNodesWithTag(TestTags.EDIT_CONFIG_ITEM)[1].performClick()
-        composeRule.onNodeWithTag(TestTags.EDIT_ITEM_NAME_TEXTINPUT).assertTextEquals("Vibration1")
+        composeRule.onNodeWithTag(TestTags.EDIT_ITEM_NAME_TEXTINPUT).assertTextEquals(context.getString(R.string.editTimeline_name), "Vibration1")
         composeRule.onAllNodesWithTag(TestTags.EDIT_CONFIG_ITEM)[2].performClick()
 
         // composeRule.onNodeWithTag(TestTags.EDIT_NAME_TEXTINPUT).assertTextEquals("Vibration3")
 
         composeRule.onAllNodesWithTag(TestTags.EDIT_CONFIG_ITEM)[3].performClick()
 
-        composeRule.onNodeWithTag(TestTags.EDIT_ITEM_NAME_TEXTINPUT).assertTextEquals("Vibration2")
+        composeRule.onNodeWithTag(TestTags.EDIT_ITEM_NAME_TEXTINPUT).assertTextEquals(context.getString(R.string.editTimeline_name), "Vibration2")
 
     }
 
@@ -170,10 +171,12 @@ class WunschfunktionalitaetenEndToEndTest {
      */
     @SdkSuppress(minSdkVersion = 26) //Screenshots are only available on API 26 and up
     @Test
-    fun w4_testDarkAndLightMode() {
+    fun testDarkAndLightMode() {
         /**Der Dark-Mode-Slider wird gedrückt.**/
         //switch to dark mode
-        composeRule.onNodeWithTag(TestTags.HOME_DARKMODE_SLIDER).performClick()
+        composeRule.onNodeWithTag(TestTags.HOME_DARKMODE).isDisplayed() //TODO remove
+        composeRule.onNodeWithTag(TestTags.HOME_DARKMODE).performClick()
+        composeRule.onNodeWithTag(TestTags.HOME_DARKMODE).isDisplayed() // TODO REMIOVE
 
         /**Es wird überprüft, dass nun im Sytem der Darkmode gesetzt ist.**/
         //check if dark theme is setted in prefs
@@ -205,7 +208,7 @@ class WunschfunktionalitaetenEndToEndTest {
         composeRule.onNodeWithTag(TestTags.TOP_BAR_BACK_BUTTON).performClick()
 
         /**Der Dark-Mode-Slider wird gedrückt.**/
-        composeRule.onNodeWithTag(TestTags.HOME_DARKMODE_SLIDER).performClick()
+        composeRule.onNodeWithTag(TestTags.HOME_DARKMODE).performClick()
 
         /**Es wird überprüft, dass nun im System der Lightmdoe gesetzt ist.**/
         //check if light theme is setted in prefs.
@@ -228,12 +231,12 @@ class WunschfunktionalitaetenEndToEndTest {
      * Identisch zum vorherigen Test nur dass keine Screenshots gemacht werden, da dies nur ab
      * Android API 26 möglich ist.
      */
-    @SdkSuppress(maxSdkVersion = 26)
+    @SdkSuppress(maxSdkVersion = 25)
     @Test
-    fun w4_testDarkAndLightMode_withoutScreenshot() {
+    fun testDarkAndLightMode_withoutScreenshot() {
         /**Der Dark-Mode-Slider wird gedrückt.**/
         //switch to dark mode
-        composeRule.onNodeWithTag(TestTags.HOME_DARKMODE_SLIDER).performClick()
+        composeRule.onNodeWithTag(TestTags.HOME_DARKMODE).performClick()
 
         /**Es wird überprüft, dass nun im Sytem der Darkmode gesetzt ist.**/
         //check if dark theme is setted in prefs
@@ -250,7 +253,7 @@ class WunschfunktionalitaetenEndToEndTest {
         composeRule.onNodeWithTag(TestTags.TOP_BAR_BACK_BUTTON).performClick()
 
         /**Der Dark-Mode-Slider wird gedrückt.**/
-        composeRule.onNodeWithTag(TestTags.HOME_DARKMODE_SLIDER).performClick()
+        composeRule.onNodeWithTag(TestTags.HOME_DARKMODE).performClick()
 
         /**Es wird überprüft, dass nun im System der Lightmdoe gesetzt ist.**/
         //check if light theme is setted in prefs.

@@ -73,7 +73,7 @@ class KernfunktionalitaetEndToEndTest {
     zwischen Vibrationsintervallen einstellen können, für mindestens ein Muster
      */
     @Test
-    fun k5_create_and_play_Configuration() {
+    fun create_and_play_Configuration() {
 
         //in Home Screen go to select Config page
         composeRule.onNodeWithTag(TestTags.HOME_SELECT_CONFIG_BUTTON).assertIsDisplayed()
@@ -112,11 +112,13 @@ class KernfunktionalitaetEndToEndTest {
 
 
         /**Die erste Vibration wird in der Timeline ausgewählt.**/
+        composeRule.onAllNodesWithTag(TestTags.EDIT_CONFIG_ITEM)[0].assertIsDisplayed()
         composeRule.onAllNodesWithTag(TestTags.EDIT_CONFIG_ITEM)[0].performClick()
 
 
         /**Die Länge der Vibration und der nachfolgende Pause der Vibration wird verändert.**/
-
+        composeRule.onAllNodesWithTag(TestTags.EDIT_CONFIG_ITEM)[0].assertIsDisplayed() //TODO Remove
+        composeRule.onNodeWithTag(TestTags.EDIT_VIB_SLIDER_DURATION).assertIsDisplayed()
         composeRule.onNodeWithTag(TestTags.EDIT_VIB_SLIDER_DURATION)
             .performTouchInput { swipeRight() }
         composeRule.onNodeWithTag(TestTags.EDIT_VIB_SLIDER_DURATION)

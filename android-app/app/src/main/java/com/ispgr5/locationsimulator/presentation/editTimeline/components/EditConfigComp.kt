@@ -276,7 +276,7 @@ private fun PauseEditor(
     )
 
     SliderForRangeWithPreciseInputs(
-        modifier = Modifier.testTag(TestTags.EDIT_SLIDER_PAUSE),
+        modifierSlider = Modifier.testTag(TestTags.EDIT_SLIDER_PAUSE),
         onValueChange = {
             editTimelineEventHandlers?.onPauseValueChanged?.invoke(it)
         },
@@ -342,7 +342,7 @@ private fun VibrationParameters(
     }
     if (hasAmplitudeControl) {
         SliderForRangeWithPreciseInputs(
-            modifier = Modifier.testTag(TestTags.EDIT_VIB_SLIDER_STRENGTH),
+            modifierSlider = Modifier.testTag(TestTags.EDIT_VIB_SLIDER_STRENGTH),
             value = RangeConverter.eightBitIntToPercentageFloat(
                 configComponent.minStrength
             )..RangeConverter.eightBitIntToPercentageFloat(
@@ -365,7 +365,7 @@ private fun VibrationParameters(
     )
 
     SliderForRangeWithPreciseInputs(
-        modifier = Modifier.testTag(TestTags.EDIT_VIB_SLIDER_DURATION),
+        modifierSlider = Modifier.testTag(TestTags.EDIT_VIB_SLIDER_DURATION),
         enabled = hasAmplitudeControl,
         onValueChange = {
             editTimelineEventHandlers?.onVibDurationChanged?.invoke(it)
@@ -496,7 +496,8 @@ fun FloatInputField(
 
 @Composable
 fun SliderForRangeWithPreciseInputs(
-    modifier: Modifier = Modifier,
+    modifierSlider: Modifier = Modifier,
+    modifierTextInput: Modifier = Modifier,
     enabled: Boolean = true,
     onValueChange: (ClosedFloatingPointRange<Float>) -> Unit,
     value: ClosedFloatingPointRange<Float>,
@@ -519,7 +520,7 @@ fun SliderForRangeWithPreciseInputs(
     }
 
     SliderForRange(
-        modifier = modifier,
+        modifier = modifierSlider,
         enabled = enabled,
         onValueChange = {start = "%.2f".format(it.start); end = "%.2f".format(it.endInclusive); onValueChange(it)},
         value = value,
@@ -527,7 +528,7 @@ fun SliderForRangeWithPreciseInputs(
     )
     Row (modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
         FloatInputField(
-            modifier = modifier
+            modifier = modifierTextInput
                 .onFocusChanged {
                     if (!it.isFocused) {
                         if (!isValidRange(start, end)) {
@@ -544,7 +545,8 @@ fun SliderForRangeWithPreciseInputs(
             onDone = { focusManager.clearFocus() }
         )
         FloatInputField(
-            modifier = modifier.onFocusChanged {
+            modifier = modifierTextInput
+                .onFocusChanged {
                 if (!it.isFocused) {
                     if (!isValidRange(start, end)) {
                         end = "%.2f".format(value.endInclusive)
