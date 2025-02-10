@@ -144,7 +144,7 @@ fun TrainerScreenTopBar(onGoBack: () -> Unit) {
     TopAppBar(
         title = {
             Text(
-                text = stringResource(id = R.string.trainer_screen),
+                text = "",
                 style = MaterialTheme.typography.titleLarge
             )
         },

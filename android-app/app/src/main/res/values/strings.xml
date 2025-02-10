@@ -127,6 +127,11 @@
     <string name="trainer_screen_title" translatable="false">Ausbilderoptionen</string>
     <string name="start_training" translatable="false">Starten</string>
     <string name="go_back" translatable="false">Zurück</string>
-    <string name="help_1">How to select a profile</string>
+    <string name="help_1">How to start a configuration </string>
+    <string name="help_2">How to edit a configuration and add sounds or vibrations </string>
+    <string name="help_3">How to choose a sound for users or share the configuration as trainer </string>
+    <string name="help_4">How to share the own configuration </string>
+
+
 
 </resources>
