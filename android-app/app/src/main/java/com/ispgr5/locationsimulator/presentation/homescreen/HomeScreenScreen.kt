@@ -522,6 +522,8 @@ fun <K> MultiStateToggle(
                             horizontal = 16.dp,
                         ).conditional(labelStringRes == R.string.dark) {
                             testTag(TestTags.HOME_DARKMODE)
+                        }.conditional(labelStringRes == R.string.light) {
+                            testTag(TestTags.HOME_LIGHTMODE)
                         }
                 )
             }

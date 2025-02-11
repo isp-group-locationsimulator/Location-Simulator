@@ -366,7 +366,6 @@ private fun VibrationParameters(
 
     SliderForRangeWithPreciseInputs(
         modifierSlider = Modifier.testTag(TestTags.EDIT_VIB_SLIDER_DURATION),
-        enabled = hasAmplitudeControl,
         onValueChange = {
             editTimelineEventHandlers?.onVibDurationChanged?.invoke(it)
         },

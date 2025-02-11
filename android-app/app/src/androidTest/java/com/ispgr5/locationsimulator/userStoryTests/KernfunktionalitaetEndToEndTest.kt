@@ -117,16 +117,16 @@ class KernfunktionalitaetEndToEndTest {
 
 
         /**Die Länge der Vibration und der nachfolgende Pause der Vibration wird verändert.**/
-        composeRule.onAllNodesWithTag(TestTags.EDIT_CONFIG_ITEM)[0].assertIsDisplayed() //TODO Remove
-        composeRule.onNodeWithTag(TestTags.EDIT_VIB_SLIDER_DURATION).assertIsDisplayed()
-        composeRule.onNodeWithTag(TestTags.EDIT_VIB_SLIDER_DURATION)
+        composeRule.onNodeWithTag(TestTags.EDIT_VIB_SLIDER_DURATION, useUnmergedTree = true).assertIsDisplayed() //TODO Check if values actually change
+        composeRule.onNodeWithTag(TestTags.EDIT_VIB_SLIDER_DURATION, useUnmergedTree = true)
             .performTouchInput { swipeRight() }
-        composeRule.onNodeWithTag(TestTags.EDIT_VIB_SLIDER_DURATION)
+        composeRule.onNodeWithTag(TestTags.EDIT_VIB_SLIDER_DURATION, useUnmergedTree = true)
             .performTouchInput { swipeRight() }
-        composeRule.onNodeWithTag(TestTags.EDIT_SLIDER_PAUSE).performTouchInput { swipeRight() }
-        composeRule.onNodeWithTag(TestTags.EDIT_SLIDER_PAUSE).performTouchInput { swipeRight() }
+        composeRule.onNodeWithTag(TestTags.EDIT_SLIDER_PAUSE, useUnmergedTree = true).assertIsDisplayed()
+        composeRule.onNodeWithTag(TestTags.EDIT_SLIDER_PAUSE, useUnmergedTree = true).performTouchInput { swipeRight() }
+        composeRule.onNodeWithTag(TestTags.EDIT_SLIDER_PAUSE, useUnmergedTree = true).performTouchInput { swipeRight() }
 
-        composeRule.onNodeWithTag(TestTags.TOP_BAR_BACK_BUTTON).performClick()
+        composeRule.onNodeWithTag(TestTags.TOP_BAR_BACK_BUTTON).performClick() //TODO Test Run actually ended
 
         // in select screen
         /**Die erstellte Konfiguration wird zum Abspielen ausgwählt.**/
@@ -140,6 +140,7 @@ class KernfunktionalitaetEndToEndTest {
 
         //in run screen
         /** Das Abspielen wird gestoppt.**/
+        composeRule.onNodeWithTag(TestTags.RUN_END_BUTTON).isDisplayed()
         composeRule.onNodeWithTag(TestTags.RUN_END_BUTTON).performClick()
     }
 

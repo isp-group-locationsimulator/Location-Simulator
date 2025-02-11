@@ -6,6 +6,7 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.os.PowerManager
 import androidx.activity.compose.setContent
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -30,6 +31,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import com.ispgr5.locationsimulator.R
+import com.ispgr5.locationsimulator.ui.theme.ThemeState
 
 
 @HiltAndroidTest
@@ -53,17 +55,19 @@ class WunschfunktionalitaetenEndToEndTest {
                 val navController = rememberNavController()
                 val snackbarContent: MutableState<SnackbarContent?> = mutableStateOf(null)
                 val context = LocalContext.current
-                val themeState = mutableStateOf(LocalThemeState.current)
+                val themeState = remember { mutableStateOf(ThemeState()) }
                 val powerManager by remember {
                     mutableStateOf(context.getSystemService(Context.POWER_SERVICE) as PowerManager)
                 }
-                LocationSimulatorTheme {
-                    composeRule.activity.NavigationAppHost(
-                        navController = navController,
-                        themeState = themeState,
-                        snackbarContent = snackbarContent,
-                        powerManager = powerManager
-                    )
+                CompositionLocalProvider(LocalThemeState provides themeState.value) {
+                    LocationSimulatorTheme {
+                        composeRule.activity.NavigationAppHost(
+                            navController = navController,
+                            themeState = themeState,
+                            snackbarContent = snackbarContent,
+                            powerManager = powerManager
+                        )
+                    }
                 }
             }
         }
@@ -174,15 +178,12 @@ class WunschfunktionalitaetenEndToEndTest {
     fun testDarkAndLightMode() {
         /**Der Dark-Mode-Slider wird gedrückt.**/
         //switch to dark mode
-        composeRule.onNodeWithTag(TestTags.HOME_DARKMODE).isDisplayed() //TODO remove
         composeRule.onNodeWithTag(TestTags.HOME_DARKMODE).performClick()
-        composeRule.onNodeWithTag(TestTags.HOME_DARKMODE).isDisplayed() // TODO REMIOVE
 
         /**Es wird überprüft, dass nun im Sytem der Darkmode gesetzt ist.**/
         //check if dark theme is setted in prefs
         var isDarkTheme =
-            composeRule.activity.getSharedPreferences("prefs", Context.MODE_PRIVATE)
-                .getBoolean("isDarkTheme", false)
+            (composeRule.activity.getSharedPreferences("prefs", Context.MODE_PRIVATE).getString("themeType", "") == "DARK")
         assert(isDarkTheme)
         //check if screen is dark
         /**Es wird überprüft, dass der Bildschirm dunkel ist.**/
@@ -208,14 +209,13 @@ class WunschfunktionalitaetenEndToEndTest {
         composeRule.onNodeWithTag(TestTags.TOP_BAR_BACK_BUTTON).performClick()
 
         /**Der Dark-Mode-Slider wird gedrückt.**/
-        composeRule.onNodeWithTag(TestTags.HOME_DARKMODE).performClick()
+        composeRule.onNodeWithTag(TestTags.HOME_LIGHTMODE).performClick()
 
         /**Es wird überprüft, dass nun im System der Lightmdoe gesetzt ist.**/
         //check if light theme is setted in prefs.
-        isDarkTheme =
-            composeRule.activity.getSharedPreferences("prefs", Context.MODE_PRIVATE)
-                .getBoolean("isDarkTheme", false)
-        assert(!isDarkTheme)
+        val isLightTheme =
+            (composeRule.activity.getSharedPreferences("prefs", Context.MODE_PRIVATE).getString("themeType", "") == "LIGHT")
+        assert(isLightTheme)
         //check if screen is light
 
         /**Es wird überprüft, dass der Bildschirm nicht mehr dunkel ist.**/
