@@ -12,7 +12,12 @@ class UserSettingsViewModel : ViewModel() {
     fun onEvent(event: UserSettingsEvent) {
         when (event) {
             is UserSettingsEvent.SelectConfiguration -> {
-                _state.value = _state.value.copy(selectedConfiguration = event.configName)
+                _state.value = UserSettingsState(
+                    selectedUser = _state.value.selectedUser,
+                    availableConfigurations = _state.value.availableConfigurations,
+                    selectedConfiguration = event.configName
+                )
+
             }
             is UserSettingsEvent.ExportConfiguration -> {
                 // TODO: Implementiere die Export-Funktion

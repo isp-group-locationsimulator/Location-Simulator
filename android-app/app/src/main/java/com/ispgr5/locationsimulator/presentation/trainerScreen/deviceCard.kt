@@ -15,7 +15,8 @@ import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.material.icons.filled.Pause
+
 
 @Composable
 fun DeviceCard(
@@ -23,6 +24,7 @@ fun DeviceCard(
     deviceName: String,
     activity: String,
     isOnline: Boolean,
+    isPlaying: Boolean,
     onPlayClick: () -> Unit,
     onSettingsClick: () -> Unit
 ) {
@@ -31,9 +33,7 @@ fun DeviceCard(
             .fillMaxWidth()
             .padding(8.dp),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = Color(0xFFFFDAD5)
-        ),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFFFDAD5)),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Box(modifier = Modifier.padding(16.dp)) {
@@ -43,26 +43,24 @@ fun DeviceCard(
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(text = activity, fontWeight = FontWeight.Bold, fontSize = 16.sp)
 
-                // Buttons ausrichten
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 16.dp),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    IconButton(onClick = onPlayClick, modifier = Modifier.padding(start = 8.dp)) {
-                        Icon(imageVector = Icons.Default.PlayArrow, contentDescription = "Play")
+                    IconButton(onClick = onPlayClick) {
+                        Icon(
+                            imageVector = if (isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
+                            contentDescription = if (isPlaying) "Pause" else "Play"
+                        )
                     }
-                    IconButton(
-                        onClick = onSettingsClick,
-                        modifier = Modifier.padding(end = 8.dp)
-                    ) {
+                    IconButton(onClick = onSettingsClick) {
                         Icon(imageVector = Icons.Default.Settings, contentDescription = "Settings")
                     }
                 }
             }
 
-            // Online-/Offline-Indikator
             Box(
                 modifier = Modifier
                     .size(12.dp)

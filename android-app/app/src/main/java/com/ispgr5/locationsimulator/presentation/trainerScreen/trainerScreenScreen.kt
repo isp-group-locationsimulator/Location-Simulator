@@ -8,6 +8,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -18,12 +20,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
 import androidx.navigation.compose.rememberNavController
-
-
-
+import com.ispgr5.locationsimulator.R
+import com.ispgr5.locationsimulator.presentation.util.Screen
 
 
 @Composable
@@ -32,12 +32,16 @@ fun TrainerScreenScreen(
     viewModel: TrainerScreenViewModel = hiltViewModel()
 ) {
     val state = viewModel.state.value
+    val isTrainingActive = remember { mutableStateOf(false) }
 
     TrainerScreenScaffold(
         trainerScreenState = state,
-        onStartTraining = { /* TODO: Action for starting training */ },
+        isTrainingActive = isTrainingActive.value,
+        onStartOrStopTraining = {
+            isTrainingActive.value = !isTrainingActive.value
+                                },
         onGoBack = { navController.navigateUp() },
-        onOptionSelected = { option -> viewModel.onEvent(TrainerScreenEvent.OptionSelected(option)) },
+        onOptionSelected = { navController.navigate(Screen.UserSettingsScreen.createRoute("BeispielUser")) },
         navController = navController
 
     )
@@ -46,7 +50,8 @@ fun TrainerScreenScreen(
 @Composable
 fun TrainerScreenScaffold(
     trainerScreenState: TrainerScreenState,
-    onStartTraining: () -> Unit,
+    isTrainingActive: Boolean,
+    onStartOrStopTraining: () -> Unit,
     onGoBack: () -> Unit,
     onOptionSelected: (String) -> Unit,
     navController: NavController
@@ -59,7 +64,8 @@ fun TrainerScreenScaffold(
             TrainerScreenContent(
                 paddingValues = paddingValues,
                 trainerScreenState = trainerScreenState,
-                onStartTraining = onStartTraining,
+                isTrainingActive = isTrainingActive,
+                onStartOrStopTraining = onStartOrStopTraining,
                 onOptionSelected = onOptionSelected,
                 navController = navController
             )
@@ -71,10 +77,14 @@ fun TrainerScreenScaffold(
 fun TrainerScreenContent(
     paddingValues: PaddingValues,
     trainerScreenState: TrainerScreenState,
-    onStartTraining: () -> Unit, // Später für Funktionalität nutzen
-    onOptionSelected: (String) -> Unit, // Später für Gerätekontrolle nutzen
+    isTrainingActive: Boolean,
+    onStartOrStopTraining: () -> Unit,
+    onOptionSelected: (String) -> Unit,
     navController: NavController
 ) {
+    val isPlayingMap = remember { mutableStateOf(trainerScreenState.devices.associate { it.name to false }) }
+    val trainingActive = remember { mutableStateOf(isTrainingActive) }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -82,7 +92,6 @@ fun TrainerScreenContent(
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Titel ohne Funktion
         Text(
             text = stringResource(id = R.string.trainer_screen_title),
             fontWeight = FontWeight.Bold,
@@ -97,45 +106,64 @@ fun TrainerScreenContent(
             modifier = Modifier.padding(top = 8.dp)
         )
 
-        // Scrollbare Liste im grauen Bereich
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(1f) // Begrenzte Höhe für Scrollbarkeit
+                .weight(1f)
                 .padding(horizontal = 16.dp)
-                .background(Color.LightGray) // Grauer Hintergrund für die Liste
+                .background(Color.LightGray)
         ) {
             LazyColumn(
                 modifier = Modifier.fillMaxSize()
             ) {
                 items(trainerScreenState.devices) { device ->
+                    val isPlaying = isPlayingMap.value[device.name] ?: false
                     DeviceCard(
                         userName = device.user,
                         deviceName = device.name,
-                        activity = "Klopfen und Husten", // Beispieltext, später dynamisch anpassen
+                        activity = "Klopfen und Husten",
                         isOnline = device.isConnected,
-                        onPlayClick = { /* TODO: Play-Button Logik einfügen */ },
+                        isPlaying = isPlaying,
+                        onPlayClick = {
+                            isPlayingMap.value = isPlayingMap.value.toMutableMap().apply {
+                                this[device.name] = !isPlaying
+                            }
+                        },
                         onSettingsClick = {
-                            navController.navigate("userSettingsScreen/${device.user}")
+                            navController.navigate(Screen.UserSettingsScreen.route)
                         }
                     )
                 }
             }
-
         }
 
-        // Start-Button (noch ohne Logik)
+        // Starten/Stoppen-Button
         Button(
-            onClick = onStartTraining,
+            onClick = {
+                if (trainingActive.value) {
+                    // Stoppe alle Geräte
+                    isPlayingMap.value = isPlayingMap.value.mapValues { false }
+                } else {
+                    // Starte nur Geräte, die noch nicht laufen
+                    isPlayingMap.value = isPlayingMap.value.mapValues { (_, isPlaying) -> true }
+                }
+
+                // Zustand umschalten
+                trainingActive.value = !trainingActive.value
+            },
             modifier = Modifier
                 .fillMaxWidth(0.8f)
                 .padding(16.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF8C3300)) // Braune Farbe
+            colors = ButtonDefaults.buttonColors(
+                containerColor = if (trainingActive.value) Color.Red else Color(0xFF8C3300)
+            )
         ) {
-            Text("Starten", fontSize = 18.sp)
+            Text(if (trainingActive.value) "Stoppen" else "Starten", fontSize = 18.sp)
         }
     }
 }
+
+
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -175,7 +203,8 @@ fun TrainerScreenPreview() {
     LocationSimulatorTheme {
         TrainerScreenScaffold(
             trainerScreenState = state,
-            onStartTraining = {},
+            isTrainingActive = false,
+            onStartOrStopTraining = {},
             onGoBack = {},
             onOptionSelected = {},
             navController = navController

@@ -18,7 +18,6 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -27,7 +26,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.compositionLocalOf
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,6 +38,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.ispgr5.locationsimulator.R
+import com.ispgr5.locationsimulator.presentation.trainerScreen.TrainerScreenScreen
 import com.ispgr5.locationsimulator.data.storageManager.ConfigurationStorageManager
 import com.ispgr5.locationsimulator.data.storageManager.SoundStorageManager
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
@@ -48,6 +47,7 @@ import com.ispgr5.locationsimulator.domain.useCase.ConfigurationUseCases
 import com.ispgr5.locationsimulator.presentation.add.AddScreen
 import com.ispgr5.locationsimulator.presentation.delay.DelayScreen
 import com.ispgr5.locationsimulator.presentation.editTimeline.EditTimelineScreen
+import com.ispgr5.locationsimulator.presentation.exportSettings.ExportSettingsScreen
 import com.ispgr5.locationsimulator.presentation.homescreen.HelpScreen
 import com.ispgr5.locationsimulator.presentation.homescreen.HomeScreenScreen
 import com.ispgr5.locationsimulator.presentation.homescreen.InfoScreen
@@ -60,6 +60,7 @@ import com.ispgr5.locationsimulator.presentation.settings.SettingsState
 import com.ispgr5.locationsimulator.presentation.sound.SoundDialog
 import com.ispgr5.locationsimulator.presentation.sound.SoundScreen
 import com.ispgr5.locationsimulator.presentation.universalComponents.SnackbarContent
+import com.ispgr5.locationsimulator.presentation.userSettings.UserSettingsScreen
 import com.ispgr5.locationsimulator.presentation.util.Screen
 import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
 import com.ispgr5.locationsimulator.ui.theme.ThemeState
@@ -272,6 +273,25 @@ class MainActivity : ComponentActivity() {
                     saveAudioFile(fileName)
                     popUpState.value = false
                 }
+            }
+            composable(
+                route = Screen.UserSettingsScreen.route,
+                arguments = listOf(navArgument("userName") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val userName = backStackEntry.arguments?.getString("userName") ?: "Unknown"
+                UserSettingsScreen(navController = navController, userName = userName)
+            }
+
+            composable(Screen.TrainerScreen.route) {
+                TrainerScreenScreen(navController = navController)
+            }
+
+            composable(
+                route = Screen.ExportSettingsScreen.route,
+                arguments = listOf(navArgument("userName") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val userName = backStackEntry.arguments?.getString("userName") ?: "Unknown"
+                ExportSettingsScreen(navController = navController, userName = userName)
             }
         }
     }

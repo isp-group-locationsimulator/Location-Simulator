@@ -22,12 +22,14 @@ import androidx.compose.ui.tooling.preview.Preview
 @Composable
 fun ExportSettingsScreen(
     navController: NavController,
+    userName: String,
     viewModel: ExportSettingsViewModel = hiltViewModel()
 ) {
     val state = viewModel.state.value
 
     ExportSettingsScaffold(
         exportSettingsState = state,
+        userName = userName,
         onGoBack = { navController.navigateUp() },
         onOptionSelected = { option -> viewModel.onEvent(ExportSettingsEvent.SelectConfiguration(option)) },
         onExportConfig = { /* TODO: Implementieren */ },
@@ -38,6 +40,7 @@ fun ExportSettingsScreen(
 @Composable
 fun ExportSettingsScaffold(
     exportSettingsState: ExportSettingsState,
+    userName: String,
     onGoBack: () -> Unit,
     onOptionSelected: (String) -> Unit,
     onExportConfig: () -> Unit,
@@ -47,6 +50,7 @@ fun ExportSettingsScaffold(
         topBar = { ExportSettingsTopBar(onGoBack) },
         content = { paddingValues ->
             ExportSettingsContent(
+                userName = userName,
                 paddingValues = paddingValues,
                 state = exportSettingsState,
                 onOptionSelected = onOptionSelected,
@@ -59,6 +63,7 @@ fun ExportSettingsScaffold(
 
 @Composable
 fun ExportSettingsContent(
+    userName: String,
     paddingValues: PaddingValues,
     state: ExportSettingsState,
     onOptionSelected: (String) -> Unit,
@@ -74,7 +79,7 @@ fun ExportSettingsContent(
     ) {
         // Überschrift
         Text(
-            text = "User1",
+            text = userName,
             fontWeight = FontWeight.Bold,
             style = MaterialTheme.typography.headlineLarge,
             modifier = Modifier.padding(16.dp)
@@ -135,17 +140,15 @@ fun ConfigOptionItem(option: String, onOptionSelected: (String) -> Unit) {
 fun ExportSettingsTopBar(onGoBack: () -> Unit) {
     TopAppBar(
         title = {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
+            Box(
+                modifier = Modifier.fillMaxWidth()
             ) {
-                Spacer(modifier = Modifier.weight(1f)) // Platzhalter für Zentrierung
                 Text(
                     text = "Exportieren",
                     style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.offset(x = 75.dp) // Hier 50.dp nach rechts verschieben
                 )
-                Spacer(modifier = Modifier.weight(1f)) // Platzhalter für Zentrierung
             }
         },
         navigationIcon = {
@@ -161,11 +164,15 @@ fun ExportSettingsTopBar(onGoBack: () -> Unit) {
 fun ExportSettingsPreview() {
     val state = ExportSettingsState(
         selectedUser = "User1",
-        availableConfigurations = listOf("Lautes Atmen", "Husten", "Kratzen")
+        availableConfigurations = listOf("Lautes Atmen", "Husten", "Kratzen"),
+        selectedConfiguration = "Husten"
     )
+
+    val userName = "User1"
     LocationSimulatorTheme {
         ExportSettingsScaffold(
             exportSettingsState = state,
+            userName = userName,
             onGoBack = {},
             onOptionSelected = {},
             onExportConfig = {},
