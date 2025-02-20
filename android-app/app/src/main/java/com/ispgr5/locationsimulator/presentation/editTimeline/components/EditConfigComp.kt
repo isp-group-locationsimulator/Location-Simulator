@@ -366,6 +366,7 @@ private fun VibrationParameters(
 
     SliderForRangeWithPreciseInputs(
         modifierSlider = Modifier.testTag(TestTags.EDIT_VIB_SLIDER_DURATION),
+        modifierTextInput = Modifier.testTag(TestTags.EDIT_VIB_FIELD_DURATION),
         onValueChange = {
             editTimelineEventHandlers?.onVibDurationChanged?.invoke(it)
         },
@@ -530,6 +531,7 @@ fun SliderForRangeWithPreciseInputs(
             modifier = modifierTextInput
                 .onFocusChanged {
                     if (!it.isFocused) {
+                        start = start.replace(",", ".")
                         if (!isValidRange(start, end)) {
                             start = "%.2f".format(value.start)
                         } else {
@@ -547,9 +549,11 @@ fun SliderForRangeWithPreciseInputs(
             modifier = modifierTextInput
                 .onFocusChanged {
                 if (!it.isFocused) {
+                    end = end.replace(",", ".")
                     if (!isValidRange(start, end)) {
                         end = "%.2f".format(value.endInclusive)
                     } else {
+
                         end = "%.2f".format(end.toFloat()) //ensure consistent formatting
                     }
                 }

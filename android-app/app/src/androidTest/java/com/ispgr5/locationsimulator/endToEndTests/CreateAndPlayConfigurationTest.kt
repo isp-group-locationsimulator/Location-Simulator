@@ -12,6 +12,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.navigation.compose.rememberNavController
+import androidx.test.platform.app.InstrumentationRegistry
+import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.core.util.TestTags
 import com.ispgr5.locationsimulator.di.AppModule
 import com.ispgr5.locationsimulator.presentation.MainActivity
@@ -75,6 +77,8 @@ class CreateAndPlayConfigurationTest {
     @Test
     fun create_and_play_Configuration() {
 
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+
         //in Home Screen go to select Config page
         composeRule.onNodeWithTag(TestTags.HOME_SELECT_CONFIG_BUTTON).assertIsDisplayed()
         composeRule.onNodeWithTag(TestTags.HOME_SELECT_CONFIG_BUTTON).performClick()
@@ -125,6 +129,25 @@ class CreateAndPlayConfigurationTest {
         composeRule.onNodeWithTag(TestTags.EDIT_SLIDER_PAUSE, useUnmergedTree = true).assertIsDisplayed()
         composeRule.onNodeWithTag(TestTags.EDIT_SLIDER_PAUSE, useUnmergedTree = true).performTouchInput { swipeRight() }
         composeRule.onNodeWithTag(TestTags.EDIT_SLIDER_PAUSE, useUnmergedTree = true).performTouchInput { swipeRight() }
+
+        /** Die Eingabe von präzisen Werten wird überprüft**/
+        composeRule.onAllNodesWithTag(TestTags.EDIT_VIB_FIELD_DURATION)[0].assertIsDisplayed()
+        composeRule.onAllNodesWithTag(TestTags.EDIT_VIB_FIELD_DURATION)[1].assertIsDisplayed()
+        composeRule.onAllNodesWithTag(TestTags.EDIT_VIB_FIELD_DURATION)[1].performTextReplacement("abcd")
+        val inputs = arrayOf("1.18", "0.5", "2,345", "999999", "-0.78", "abcd")
+        val correctResults = arrayOf("1.18", "0.50", "2.35", "0.00", "0.00", "0.00")
+
+        for (i in inputs.indices) {
+            composeRule.onAllNodesWithTag(TestTags.EDIT_VIB_FIELD_DURATION)[0].performClick()
+            composeRule.onAllNodesWithTag(TestTags.EDIT_VIB_FIELD_DURATION)[0].performTextReplacement(inputs[i])
+            composeRule.onAllNodesWithTag(TestTags.EDIT_VIB_FIELD_DURATION)[0].assertIsDisplayed()
+            composeRule.onAllNodesWithTag(TestTags.EDIT_VIB_FIELD_DURATION)[0].assertTextEquals(
+                context.getString( R.string.min), inputs[i])
+            composeRule.onNodeWithTag(TestTags.EDIT_VIB_SLIDER_DURATION, useUnmergedTree = true).performClick() //Clear focus from field, trigger format check
+            composeRule.onAllNodesWithTag(TestTags.EDIT_VIB_FIELD_DURATION)[0].assertTextEquals(
+                context.getString( R.string.min), correctResults[i])
+        }
+
 
         composeRule.onNodeWithTag(TestTags.TOP_BAR_BACK_BUTTON).performClick() //TODO Test Run actually ended
 
