@@ -1,4 +1,4 @@
-package com.ispgr5.locationsimulator.userStoryTests
+package com.ispgr5.locationsimulator.endToEndTests
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -28,7 +28,7 @@ import org.junit.Test
 
 @HiltAndroidTest
 @UninstallModules(AppModule::class)
-class KernfunktionalitaetEndToEndTest {
+class CreateAndPlayConfigurationTest {
 
     // copy before every Integration or End-to-End-Test
     //Hilt Rule for Hilt Injections

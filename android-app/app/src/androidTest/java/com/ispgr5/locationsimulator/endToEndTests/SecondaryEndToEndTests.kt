@@ -1,4 +1,4 @@
-package com.ispgr5.locationsimulator.userStoryTests
+package com.ispgr5.locationsimulator.endToEndTests
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -36,7 +36,7 @@ import com.ispgr5.locationsimulator.ui.theme.ThemeState
 
 @HiltAndroidTest
 @UninstallModules(AppModule::class)
-class WunschfunktionalitaetenEndToEndTest {
+class SecondaryEndToEndTests {
 
     // copy before every Integration or End-to-End-Test
     @get:Rule(order = 0)
