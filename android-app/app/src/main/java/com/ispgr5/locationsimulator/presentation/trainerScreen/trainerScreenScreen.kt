@@ -8,6 +8,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -23,6 +25,7 @@ import androidx.navigation.NavController
 import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
 import androidx.navigation.compose.rememberNavController
 import com.ispgr5.locationsimulator.R
+import com.ispgr5.locationsimulator.network.ClientHandler
 import com.ispgr5.locationsimulator.presentation.util.Screen
 
 
@@ -31,11 +34,14 @@ fun TrainerScreenScreen(
     navController: NavController,
     viewModel: TrainerScreenViewModel = hiltViewModel()
 ) {
+    val deviceState: ArrayList<Device>? by ClientHandler.deviceList.observeAsState()
+    val devices = deviceState ?: emptyList()
     val state = viewModel.state.value
     val isTrainingActive = remember { mutableStateOf(false) }
 
     TrainerScreenScaffold(
         trainerScreenState = state,
+        deviceList = devices,
         isTrainingActive = isTrainingActive.value,
         onStartOrStopTraining = {
             isTrainingActive.value = !isTrainingActive.value
@@ -50,6 +56,7 @@ fun TrainerScreenScreen(
 @Composable
 fun TrainerScreenScaffold(
     trainerScreenState: TrainerScreenState,
+    deviceList: List<Device>,
     isTrainingActive: Boolean,
     onStartOrStopTraining: () -> Unit,
     onGoBack: () -> Unit,
@@ -64,6 +71,7 @@ fun TrainerScreenScaffold(
             TrainerScreenContent(
                 paddingValues = paddingValues,
                 trainerScreenState = trainerScreenState,
+                deviceList = deviceList,
                 isTrainingActive = isTrainingActive,
                 onStartOrStopTraining = onStartOrStopTraining,
                 onOptionSelected = onOptionSelected,
@@ -77,12 +85,13 @@ fun TrainerScreenScaffold(
 fun TrainerScreenContent(
     paddingValues: PaddingValues,
     trainerScreenState: TrainerScreenState,
+    deviceList: List<Device>,
     isTrainingActive: Boolean,
     onStartOrStopTraining: () -> Unit,
     onOptionSelected: (String) -> Unit,
     navController: NavController
 ) {
-    val isPlayingMap = remember { mutableStateOf(trainerScreenState.devices.associate { it.name to false }) }
+    val isPlayingMap = remember { mutableStateOf(deviceList.associate { it.name to false }) }
     val trainingActive = remember { mutableStateOf(isTrainingActive) }
 
     Column(
@@ -116,7 +125,7 @@ fun TrainerScreenContent(
             LazyColumn(
                 modifier = Modifier.fillMaxSize()
             ) {
-                items(trainerScreenState.devices) { device ->
+                items(deviceList) { device ->
                     val isPlaying = isPlayingMap.value[device.name] ?: false
                     DeviceCard(
                         userName = device.user,
@@ -191,11 +200,10 @@ fun TrainerScreenTopBar(onGoBack: () -> Unit) {
 @Preview(showBackground = true)
 @Composable
 fun TrainerScreenPreview() {
-    val state = TrainerScreenState(
-        devices = listOf(
-            Device(user = "User1", name = "Samsung Galaxy S9+", isConnected = true),
-            Device(user = "User2", name = "Huawei P30 Pro", isConnected = false)
-        )
+    val state = TrainerScreenState()
+    val deviceList =  listOf(
+        Device(user = "User1", name = "Samsung Galaxy S9+", isConnected = true),
+        Device(user = "User2", name = "Huawei P30 Pro", isConnected = false)
     )
 
     val navController = rememberNavController()
@@ -203,6 +211,7 @@ fun TrainerScreenPreview() {
     LocationSimulatorTheme {
         TrainerScreenScaffold(
             trainerScreenState = state,
+            deviceList = deviceList,
             isTrainingActive = false,
             onStartOrStopTraining = {},
             onGoBack = {},

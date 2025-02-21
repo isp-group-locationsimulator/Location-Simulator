@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
+import android.net.wifi.WifiManager
 import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
@@ -38,12 +39,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.ispgr5.locationsimulator.R
-import com.ispgr5.locationsimulator.presentation.trainerScreen.TrainerScreenScreen
 import com.ispgr5.locationsimulator.data.storageManager.ConfigurationStorageManager
 import com.ispgr5.locationsimulator.data.storageManager.SoundStorageManager
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 import com.ispgr5.locationsimulator.domain.model.ConfigurationComponentRoomConverter
 import com.ispgr5.locationsimulator.domain.useCase.ConfigurationUseCases
+import com.ispgr5.locationsimulator.network.ClientSingleton
 import com.ispgr5.locationsimulator.presentation.add.AddScreen
 import com.ispgr5.locationsimulator.presentation.delay.DelayScreen
 import com.ispgr5.locationsimulator.presentation.editTimeline.EditTimelineScreen
@@ -59,6 +60,7 @@ import com.ispgr5.locationsimulator.presentation.settings.SettingsScreen
 import com.ispgr5.locationsimulator.presentation.settings.SettingsState
 import com.ispgr5.locationsimulator.presentation.sound.SoundDialog
 import com.ispgr5.locationsimulator.presentation.sound.SoundScreen
+import com.ispgr5.locationsimulator.presentation.trainerScreen.TrainerScreenScreen
 import com.ispgr5.locationsimulator.presentation.universalComponents.SnackbarContent
 import com.ispgr5.locationsimulator.presentation.userSettings.UserSettingsScreen
 import com.ispgr5.locationsimulator.presentation.util.Screen
@@ -97,6 +99,10 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val wifiManager: WifiManager = this.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
+        ClientSingleton.lock = wifiManager.createMulticastLock("ClientLock")
+
         soundStorageManager = SoundStorageManager(this@MainActivity)
         MainScope().launch {
             installFilesOnFirstStartup()
