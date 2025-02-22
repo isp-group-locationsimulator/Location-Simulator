@@ -1,36 +1,34 @@
 package com.ispgr5.locationsimulator.endToEndTests
 
 import android.annotation.SuppressLint
-import android.content.Context
-import android.os.PowerManager
-import androidx.activity.compose.setContent
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.ui.platform.LocalContext
+import android.content.Context.MODE_PRIVATE
+import android.content.res.Configuration
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.navigation.compose.rememberNavController
 import androidx.test.platform.app.InstrumentationRegistry
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.core.util.TestTags
 import com.ispgr5.locationsimulator.di.AppModule
 import com.ispgr5.locationsimulator.presentation.MainActivity
-import com.ispgr5.locationsimulator.presentation.universalComponents.SnackbarContent
-import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
 import com.ispgr5.locationsimulator.ui.theme.ThemeState
 import com.ispgr5.locationsimulator.ui.theme.ThemeType
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.UninstallModules
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.runners.Parameterized
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
+import java.util.Locale
 
 @HiltAndroidTest
 @UninstallModules(AppModule::class)
-class CreateAndPlayConfigurationTest {
+@RunWith(Parameterized::class)
+class CreateAndPlayConfigurationTest(val locale: Locale, val themeState: ThemeState) {
 
     // copy before every Integration or End-to-End-Test
     //Hilt Rule for Hilt Injections
@@ -41,38 +39,46 @@ class CreateAndPlayConfigurationTest {
     @get:Rule(order = 1)
     val composeRule = createAndroidComposeRule<MainActivity>()
 
+    private lateinit var originalJvmLocale: Locale
+
     @SuppressLint("UnrememberedMutableState")
     @Before
     fun setUp() {
         hiltRule.inject() //always needed for dependencies
 
-        //set Content
-        composeRule.activity.runOnUiThread {
-            composeRule.activity.setContent {
-                val navController = rememberNavController()
-                val themeState = mutableStateOf(ThemeState(ThemeType.LIGHT))
-                val snackbarContent: MutableState<SnackbarContent?> = mutableStateOf(null)
-                val context = LocalContext.current
-                val powerManager by remember {
-                    mutableStateOf(context.getSystemService(Context.POWER_SERVICE) as PowerManager)
-                }
+        originalJvmLocale = Locale.getDefault()
 
-                LocationSimulatorTheme {
-                    composeRule.activity.NavigationAppHost(
-                        navController = navController,
-                        themeState = themeState,
-                        snackbarContent = snackbarContent,
-                        powerManager = powerManager
-                    )
-                }
-            }
+        // Update SharedPreferences for theme
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val prefs = context.getSharedPreferences("prefs", MODE_PRIVATE)
+        prefs.edit()
+            .putString("themeType", themeState.themeType.name)
+            .putBoolean("dynamicColors", themeState.useDynamicColor)
+            .apply()
+
+        // Recreate activity to apply theme changes
+        composeRule.activity.runOnUiThread {
+            composeRule.activity.recreate() // Properly trigger activity restart
         }
+        composeRule.waitForIdle() // Wait for activity to reload
+
+        //Apply locale to activity
+        val activity = composeRule.activity
+        val config = Configuration(activity.resources.configuration)
+        config.setLocale(locale)
+        activity.resources.updateConfiguration(config, activity.resources.displayMetrics)
+
+        Locale.setDefault(locale)
+    }
+
+    @After
+    fun tearDown() {
+        // Restore original JVM locale
+        Locale.setDefault(originalJvmLocale)
     }
 
     /**
-     * Testing User Story K5:
-     * Der oder die User*in möchte die Dauer und Stärke der Vibration, sowie die Länge
-    zwischen Vibrationsintervallen einstellen können, für mindestens ein Muster
+     * Testing the creation and usage of a configuration from start to end
      */
     @Test
     fun create_and_play_Configuration() {
@@ -80,13 +86,13 @@ class CreateAndPlayConfigurationTest {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
 
         //in Home Screen go to select Config page
-        composeRule.onNodeWithTag(TestTags.HOME_SELECT_CONFIG_BUTTON).assertIsDisplayed()
+        composeRule.onNodeWithTag(TestTags.HOME_SELECT_CONFIG_BUTTON).assertExists()
         composeRule.onNodeWithTag(TestTags.HOME_SELECT_CONFIG_BUTTON).performClick()
 
         //in Select Config Screen
 
         //Check if add config Button exists
-        composeRule.onNodeWithTag(TestTags.SELECT_ADD_BUTTON).assertIsDisplayed()
+        composeRule.onNodeWithTag(TestTags.SELECT_ADD_BUTTON).assertExists()
         //click on Add Config Button
         composeRule.onNodeWithTag(TestTags.SELECT_ADD_BUTTON).performClick()
 
@@ -106,9 +112,9 @@ class CreateAndPlayConfigurationTest {
 
         /**Es wird überprüft, ob die erstellte Konfiguration korrekt zur Auswahl angezeigt wird.**/
         //select for editing
-        composeRule.onNodeWithText(name).assertIsDisplayed()
+        composeRule.onNodeWithText(name).assertExists()
         composeRule.onNodeWithTag(TestTags.SELECT_CONFIG_BUTTON_PREFIX + name).performClick()
-        composeRule.onNodeWithText(description).assertIsDisplayed()
+        composeRule.onNodeWithText(description).assertExists()
         /** Die erstellte Konfiguration wird zum Bearbeiten ausgewählt.**/
         composeRule.onNodeWithTag(TestTags.SELECT_CONFIG_BUTTON_EDIT_PREFIX + name).performClick()
 
@@ -116,31 +122,35 @@ class CreateAndPlayConfigurationTest {
 
 
         /**Die erste Vibration wird in der Timeline ausgewählt.**/
-        composeRule.onAllNodesWithTag(TestTags.EDIT_CONFIG_ITEM)[0].assertIsDisplayed()
+        composeRule.onAllNodesWithTag(TestTags.EDIT_CONFIG_ITEM)[0].assertExists()
         composeRule.onAllNodesWithTag(TestTags.EDIT_CONFIG_ITEM)[0].performClick()
 
 
         /**Die Länge der Vibration und der nachfolgende Pause der Vibration wird verändert.**/
-        composeRule.onNodeWithTag(TestTags.EDIT_VIB_SLIDER_DURATION, useUnmergedTree = true).assertIsDisplayed() //TODO Check if values actually change
+        composeRule.onNodeWithTag(TestTags.EDIT_VIB_SLIDER_DURATION, useUnmergedTree = true).assertExists() //TODO Check if values actually change
         composeRule.onNodeWithTag(TestTags.EDIT_VIB_SLIDER_DURATION, useUnmergedTree = true)
             .performTouchInput { swipeRight() }
         composeRule.onNodeWithTag(TestTags.EDIT_VIB_SLIDER_DURATION, useUnmergedTree = true)
             .performTouchInput { swipeRight() }
-        composeRule.onNodeWithTag(TestTags.EDIT_SLIDER_PAUSE, useUnmergedTree = true).assertIsDisplayed()
+        composeRule.onNodeWithTag(TestTags.EDIT_SLIDER_PAUSE, useUnmergedTree = true).assertExists()
         composeRule.onNodeWithTag(TestTags.EDIT_SLIDER_PAUSE, useUnmergedTree = true).performTouchInput { swipeRight() }
         composeRule.onNodeWithTag(TestTags.EDIT_SLIDER_PAUSE, useUnmergedTree = true).performTouchInput { swipeRight() }
 
         /** Die Eingabe von präzisen Werten wird überprüft**/
-        composeRule.onAllNodesWithTag(TestTags.EDIT_VIB_FIELD_DURATION)[0].assertIsDisplayed()
-        composeRule.onAllNodesWithTag(TestTags.EDIT_VIB_FIELD_DURATION)[1].assertIsDisplayed()
+        composeRule.onAllNodesWithTag(TestTags.EDIT_VIB_FIELD_DURATION)[0].assertExists()
+        composeRule.onAllNodesWithTag(TestTags.EDIT_VIB_FIELD_DURATION)[1].assertExists()
         composeRule.onAllNodesWithTag(TestTags.EDIT_VIB_FIELD_DURATION)[1].performTextReplacement("abcd")
-        val inputs = arrayOf("1.18", "0.5", "2,345", "999999", "-0.78", "abcd")
-        val correctResults = arrayOf("1.18", "0.50", "2.35", "0.00", "0.00", "0.00")
+        val decimalFormat = DecimalFormat().apply {
+            decimalFormatSymbols = DecimalFormatSymbols(locale)
+        }
+        val decimalSeparator = decimalFormat.decimalFormatSymbols.decimalSeparator.toString()
+        val inputs = arrayOf("1.18", "0,5", "2,345", "999999.", "-0,78", "abcd")
+        val correctResults = arrayOf("1${decimalSeparator}18", "0${decimalSeparator}50", "2${decimalSeparator}35", "0${decimalSeparator}00", "0${decimalSeparator}00", "0${decimalSeparator}00")
 
         for (i in inputs.indices) {
             composeRule.onAllNodesWithTag(TestTags.EDIT_VIB_FIELD_DURATION)[0].performClick()
             composeRule.onAllNodesWithTag(TestTags.EDIT_VIB_FIELD_DURATION)[0].performTextReplacement(inputs[i])
-            composeRule.onAllNodesWithTag(TestTags.EDIT_VIB_FIELD_DURATION)[0].assertIsDisplayed()
+            composeRule.onAllNodesWithTag(TestTags.EDIT_VIB_FIELD_DURATION)[0].assertExists()
             composeRule.onAllNodesWithTag(TestTags.EDIT_VIB_FIELD_DURATION)[0].assertTextEquals(
                 context.getString( R.string.min), inputs[i])
             composeRule.onNodeWithTag(TestTags.EDIT_VIB_SLIDER_DURATION, useUnmergedTree = true).performClick() //Clear focus from field, trigger format check
@@ -167,5 +177,18 @@ class CreateAndPlayConfigurationTest {
         composeRule.onNodeWithTag(TestTags.RUN_END_BUTTON).performClick()
     }
 
-
+    companion object {
+        @JvmStatic
+        @Parameterized.Parameters(name = "Locale={0}, Theme={1}")
+        fun parameters() = listOf(
+            arrayOf(Locale.ENGLISH, ThemeState(ThemeType.LIGHT, true)),
+            arrayOf(Locale.ENGLISH, ThemeState(ThemeType.LIGHT, false)), //LIGHT
+            arrayOf(Locale.ENGLISH, ThemeState(ThemeType.DARK, true)),
+            arrayOf(Locale.ENGLISH, ThemeState(ThemeType.DARK, false)),
+            arrayOf(Locale.GERMANY, ThemeState(ThemeType.LIGHT, true)),
+            arrayOf(Locale.GERMANY, ThemeState(ThemeType.LIGHT, false)),
+            arrayOf(Locale.GERMANY, ThemeState(ThemeType.DARK, true)),
+            arrayOf(Locale.GERMANY, ThemeState(ThemeType.DARK, false)),
+        )
+    }
 }

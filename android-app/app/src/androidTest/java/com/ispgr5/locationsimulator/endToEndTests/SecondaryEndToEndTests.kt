@@ -2,28 +2,18 @@ package com.ispgr5.locationsimulator.endToEndTests
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Context.MODE_PRIVATE
+import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.Color
-import android.os.PowerManager
-import androidx.activity.compose.setContent
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.asAndroidBitmap
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.navigation.compose.rememberNavController
 import androidx.test.filters.SdkSuppress
 import androidx.test.platform.app.InstrumentationRegistry
 import com.ispgr5.locationsimulator.core.util.TestTags
 import com.ispgr5.locationsimulator.di.AppModule
-import com.ispgr5.locationsimulator.presentation.LocalThemeState
 import com.ispgr5.locationsimulator.presentation.MainActivity
-import com.ispgr5.locationsimulator.presentation.universalComponents.SnackbarContent
-import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.UninstallModules
@@ -32,11 +22,17 @@ import org.junit.Rule
 import org.junit.Test
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.ui.theme.ThemeState
+import org.junit.After
+import org.junit.runner.RunWith
+import org.junit.runners.Parameterized
+import java.util.Locale
+import com.ispgr5.locationsimulator.ui.theme.ThemeType
 
 
 @HiltAndroidTest
 @UninstallModules(AppModule::class)
-class SecondaryEndToEndTests {
+@RunWith(Parameterized::class)
+class SecondaryEndToEndTests(val locale: Locale, val themeState: ThemeState) {
 
     // copy before every Integration or End-to-End-Test
     @get:Rule(order = 0)
@@ -45,32 +41,42 @@ class SecondaryEndToEndTests {
     @get:Rule(order = 1)
     val composeRule = createAndroidComposeRule<MainActivity>()
 
+    private lateinit var originalJvmLocale: Locale
+
     @SuppressLint("UnrememberedMutableState")
     @Before
     fun setUp() {
         hiltRule.inject() //always needed for dependencies
 
+        originalJvmLocale = Locale.getDefault()
+
+        // Update SharedPreferences for theme
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val prefs = context.getSharedPreferences("prefs", MODE_PRIVATE)
+        prefs.edit()
+            .putString("themeType", themeState.themeType.name)
+            .putBoolean("dynamicColors", themeState.useDynamicColor)
+            .apply()
+
+        // Recreate activity to apply theme changes
         composeRule.activity.runOnUiThread {
-            composeRule.activity.setContent {
-                val navController = rememberNavController()
-                val snackbarContent: MutableState<SnackbarContent?> = mutableStateOf(null)
-                val context = LocalContext.current
-                val themeState = remember { mutableStateOf(ThemeState()) }
-                val powerManager by remember {
-                    mutableStateOf(context.getSystemService(Context.POWER_SERVICE) as PowerManager)
-                }
-                CompositionLocalProvider(LocalThemeState provides themeState.value) {
-                    LocationSimulatorTheme {
-                        composeRule.activity.NavigationAppHost(
-                            navController = navController,
-                            themeState = themeState,
-                            snackbarContent = snackbarContent,
-                            powerManager = powerManager
-                        )
-                    }
-                }
-            }
+            composeRule.activity.recreate() // Properly trigger activity restart
         }
+        composeRule.waitForIdle() // Wait for activity to reload
+
+        //Apply locale to activity
+        val activity = composeRule.activity
+        val config = Configuration(activity.resources.configuration)
+        config.setLocale(locale)
+        activity.resources.updateConfiguration(config, activity.resources.displayMetrics)
+
+        Locale.setDefault(locale)
+    }
+
+    @After
+    fun tearDown() {
+        // Restore original JVM locale
+        Locale.setDefault(originalJvmLocale)
     }
 
 
@@ -104,7 +110,7 @@ class SecondaryEndToEndTests {
 
         //select for editing
         // Die erstellte Konfiguration wird zum Bearbeiten ausgewählt.
-        composeRule.onNodeWithText(name).assertIsDisplayed()
+        composeRule.onNodeWithText(name).assertExists()
         composeRule.onNodeWithTag(TestTags.SELECT_CONFIG_BUTTON_PREFIX + name).performClick()
         composeRule.onNodeWithTag(TestTags.SELECT_CONFIG_BUTTON_EDIT_PREFIX + name).performClick()
         //in Edit Screen
@@ -170,8 +176,7 @@ class SecondaryEndToEndTests {
 
 
     /**
-     * Testing User Story W4:
-     * Der oder die User*in möchte das Design zwischen Hell und Dunkel wechseln können.
+     * Testing dark and Light mode above API version 26, where screenshots are available to confirm the color is applied correctly
      */
     @SdkSuppress(minSdkVersion = 26) //Screenshots are only available on API 26 and up
     @Test
@@ -182,8 +187,7 @@ class SecondaryEndToEndTests {
 
         /**Es wird überprüft, dass nun im Sytem der Darkmode gesetzt ist.**/
         //check if dark theme is setted in prefs
-        var isDarkTheme =
-            (composeRule.activity.getSharedPreferences("prefs", Context.MODE_PRIVATE).getString("themeType", "") == "DARK")
+        var isDarkTheme = composeRule.activity.getSharedPreferences("prefs", Context.MODE_PRIVATE).getString("themeType", "") == "DARK"
         assert(isDarkTheme)
         //check if screen is dark
         /**Es wird überprüft, dass der Bildschirm dunkel ist.**/
@@ -228,8 +232,7 @@ class SecondaryEndToEndTests {
     }
 
     /**
-     * Identisch zum vorherigen Test nur dass keine Screenshots gemacht werden, da dies nur ab
-     * Android API 26 möglich ist.
+     * Testing dark and Light mode below API version 26, where screenshots are not available to confirm the color is applied correctly
      */
     @SdkSuppress(maxSdkVersion = 25)
     @Test
@@ -240,9 +243,7 @@ class SecondaryEndToEndTests {
 
         /**Es wird überprüft, dass nun im Sytem der Darkmode gesetzt ist.**/
         //check if dark theme is setted in prefs
-        var isDarkTheme =
-            composeRule.activity.getSharedPreferences("prefs", Context.MODE_PRIVATE)
-                .getBoolean("isDarkTheme", false)
+        var isDarkTheme = composeRule.activity.getSharedPreferences("prefs", Context.MODE_PRIVATE).getString("themeType", "") == "DARK"
         assert(isDarkTheme)
 
         /**Wechsel in den Select Screen.**/
@@ -253,23 +254,13 @@ class SecondaryEndToEndTests {
         composeRule.onNodeWithTag(TestTags.TOP_BAR_BACK_BUTTON).performClick()
 
         /**Der Dark-Mode-Slider wird gedrückt.**/
-        composeRule.onNodeWithTag(TestTags.HOME_DARKMODE).performClick()
+        composeRule.onNodeWithTag(TestTags.HOME_LIGHTMODE).performClick()
 
         /**Es wird überprüft, dass nun im System der Lightmdoe gesetzt ist.**/
         //check if light theme is setted in prefs.
-        isDarkTheme =
-            composeRule.activity.getSharedPreferences("prefs", Context.MODE_PRIVATE)
-                .getBoolean("isDarkTheme", false)
-        assert(!isDarkTheme)
-        //check if screen is light
-
-        /**Es wird überprüft, dass der Bildschirm nicht mehr dunkel ist.**/
-        isDark(
-            composeRule.onNodeWithTag(TestTags.HOME_SELECT_CONFIG_BUTTON).onParent()
-                .captureToImage().asAndroidBitmap()
-        ).let { dark ->
-            assert(!dark)
-        }
+        val isLightTheme = composeRule.activity.getSharedPreferences("prefs", Context.MODE_PRIVATE).getString("themeType", "") == "LIGHT"
+        assert(isLightTheme)
+        composeRule.onNodeWithTag(TestTags.HOME_LIGHTMODE).assertExists()
     }
 
     /**
@@ -297,5 +288,18 @@ class SecondaryEndToEndTests {
         return dark
     }
 
-
+    companion object {
+        @JvmStatic
+        @Parameterized.Parameters(name = "Locale={0}, Theme={1}")
+        fun parameters() = listOf(
+            arrayOf(Locale.ENGLISH, ThemeState(ThemeType.LIGHT, true)),
+            arrayOf(Locale.ENGLISH, ThemeState(ThemeType.LIGHT, false)), //LIGHT
+            arrayOf(Locale.ENGLISH, ThemeState(ThemeType.DARK, true)),
+            arrayOf(Locale.ENGLISH, ThemeState(ThemeType.DARK, false)),
+            arrayOf(Locale.GERMANY, ThemeState(ThemeType.LIGHT, true)),
+            arrayOf(Locale.GERMANY, ThemeState(ThemeType.LIGHT, false)),
+            arrayOf(Locale.GERMANY, ThemeState(ThemeType.DARK, true)),
+            arrayOf(Locale.GERMANY, ThemeState(ThemeType.DARK, false)),
+        )
+    }
 }

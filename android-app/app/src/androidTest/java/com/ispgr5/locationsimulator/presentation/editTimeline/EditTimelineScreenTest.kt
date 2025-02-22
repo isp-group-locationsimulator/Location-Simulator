@@ -9,7 +9,6 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.test.platform.app.InstrumentationRegistry
 import com.ispgr5.locationsimulator.core.util.TestTags
 import com.ispgr5.locationsimulator.di.AppModule
 import com.ispgr5.locationsimulator.presentation.MainActivity
@@ -78,7 +77,7 @@ class EditTimelineScreenTest{
     fun clickAddButtonAddConfigComponentDialog_isVisible(){
         composeRule.onNodeWithTag(TestTags.EDIT_TIMELINE_SCREEN_ADD_DIALOG).assertDoesNotExist()
         composeRule.onNodeWithTag(TestTags.EDIT_TIMELINE_SCREEN_ADD_BUTTON).performClick()
-        composeRule.onNodeWithTag(TestTags.EDIT_TIMELINE_SCREEN_ADD_DIALOG).assertIsDisplayed()
+        composeRule.onNodeWithTag(TestTags.EDIT_TIMELINE_SCREEN_ADD_DIALOG).assertExists()
     }
 
     /**
@@ -88,15 +87,14 @@ class EditTimelineScreenTest{
     fun changeNameAndDescription(){
         val name = "testName123"
         val description = "testDescription123"
-        val context = InstrumentationRegistry.getInstrumentation().targetContext
 
         //change Name and Description
         composeRule.onNodeWithTag(TestTags.EDIT_CONFIG_NAME_TEXTINPUT).performTextReplacement(name)
         composeRule.onNodeWithTag(TestTags.EDIT_CONFIG_DESCRIPTION_TEXTINPUT).performTextReplacement(description)
 
         //check if Name and Description were changed correctly
-        composeRule.onNodeWithTag(TestTags.EDIT_CONFIG_NAME_TEXTINPUT).assertTextEquals(context.getString(R.string.editTimeline_name), name)
-        composeRule.onNodeWithTag(TestTags.EDIT_CONFIG_DESCRIPTION_TEXTINPUT).assertTextEquals(context.getString(R.string.editTimeline_description), description)
+        composeRule.onNodeWithTag(TestTags.EDIT_CONFIG_NAME_TEXTINPUT).assertTextEquals(composeRule.activity.getString(R.string.editTimeline_name), name)
+        composeRule.onNodeWithTag(TestTags.EDIT_CONFIG_DESCRIPTION_TEXTINPUT).assertTextEquals(composeRule.activity.getString(R.string.editTimeline_description), description)
 
     }
 

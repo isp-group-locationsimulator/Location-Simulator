@@ -508,8 +508,10 @@ fun SliderForRangeWithPreciseInputs(
     var end by remember {mutableStateOf("%.2f".format(value.endInclusive))}
 
     fun isValidRange(start:String, end:String, min:Float=range.start, max:Float=range.endInclusive): Boolean {
+        val startEngFormat = start.replace(",", ".")
+        val endEngFormat = end.replace(",", ".")
         return try {
-            if (start.toFloat() in min..end.toFloat() && end.toFloat() in start.toFloat()..max) {
+            if (startEngFormat.toFloat() in min..endEngFormat.toFloat() && endEngFormat.toFloat() in startEngFormat.toFloat()..max) {
                 true
             } else {
                 false
@@ -541,7 +543,7 @@ fun SliderForRangeWithPreciseInputs(
                 },
             enabled = enabled,
             value = start,
-            onValueChange = {start = it; onValueChange((if (isValidRange(it, end)) it.toFloat() else range.start)..value.endInclusive)},
+            onValueChange = {start = it; onValueChange((if (isValidRange(it, end)) it.replace(",", ".").toFloat() else range.start)..value.endInclusive)},
             label = stringResource(id = R.string.min),
             onDone = { focusManager.clearFocus() }
         )
@@ -560,7 +562,7 @@ fun SliderForRangeWithPreciseInputs(
             },
             enabled = enabled,
             value = end,
-            onValueChange = {end = it; onValueChange(value.start..(if (isValidRange(start, it)) it.toFloat() else range.endInclusive))},
+            onValueChange = {end = it; onValueChange(value.start..(if (isValidRange(start, it)) it.replace(",", ".").toFloat() else range.endInclusive))},
             label = stringResource(id = R.string.max),
             onDone = { focusManager.clearFocus() }
         )
