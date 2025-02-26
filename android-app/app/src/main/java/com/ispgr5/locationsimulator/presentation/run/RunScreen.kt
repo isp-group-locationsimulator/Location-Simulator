@@ -32,9 +32,7 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -55,6 +53,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalViewConfiguration
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -72,6 +71,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ispgr5.locationsimulator.R
+import com.ispgr5.locationsimulator.core.util.TestTags
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 import com.ispgr5.locationsimulator.domain.model.Configuration
 import com.ispgr5.locationsimulator.presentation.previewData.AppPreview
@@ -79,7 +79,6 @@ import com.ispgr5.locationsimulator.presentation.previewData.PreviewData
 import com.ispgr5.locationsimulator.presentation.previewData.PreviewData.runScreenPreviewInitialRefresh
 import com.ispgr5.locationsimulator.presentation.previewData.PreviewData.runScreenPreviewStatePaused
 import com.ispgr5.locationsimulator.presentation.previewData.PreviewData.runScreenPreviewStatePlaying
-import com.ispgr5.locationsimulator.presentation.previewData.PreviewData.themePreviewState
 import com.ispgr5.locationsimulator.presentation.universalComponents.SnackbarContent
 import com.ispgr5.locationsimulator.presentation.util.AppSnackbarHost
 import com.ispgr5.locationsimulator.presentation.util.RenderSnackbarOnChange
@@ -87,8 +86,6 @@ import com.ispgr5.locationsimulator.presentation.util.between
 import com.ispgr5.locationsimulator.presentation.util.millisToSeconds
 import com.ispgr5.locationsimulator.presentation.util.vibratorHasAmplitudeControlAndReason
 import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
-import com.ispgr5.locationsimulator.ui.theme.ThemeState
-import com.ispgr5.locationsimulator.ui.theme.ThemeType
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import org.joda.time.Instant
@@ -362,7 +359,7 @@ fun StopButton(interactionSource: MutableInteractionSource) {
         verticalArrangement = Arrangement.Center
     ) {
         Button(interactionSource = interactionSource,
-            modifier = Modifier.height(IntrinsicSize.Min),
+            modifier = Modifier.height(IntrinsicSize.Min).testTag(TestTags.RUN_END_BUTTON),
             onClick = {}) {
             Text(stringResource(id = R.string.run_stop), fontSize = 30.sp)
         }

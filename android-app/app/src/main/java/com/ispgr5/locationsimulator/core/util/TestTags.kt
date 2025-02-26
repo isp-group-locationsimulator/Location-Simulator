@@ -8,7 +8,8 @@ object TestTags {
     const val HOME_SELECT_CONFIG_BUTTON ="SelectConfigButton"
     const val SELECT_ADD_BUTTON ="AddConfigButton"
 
-    const val HOME_DARKMODE_SLIDER ="DarkModeSlider"
+    const val HOME_DARKMODE = "DarkMode"
+    const val HOME_LIGHTMODE = "LightMode"
 
     const val ADD_NAME_TEXTINPUT ="AddNameTextInput"
     const val ADD_DESCRIPTION_TEXTINPUT = "AddDescriptionTextInput"
@@ -43,5 +44,6 @@ object TestTags {
 
     const val SOUND_SELECT_BUTTON = "SoundSelectButton"
 
+    const val EDIT_VIB_FIELD_DURATION = "VibrationDurationMinField"
 
 }

@@ -1,5 +1,6 @@
 package com.ispgr5.locationsimulator.presentation.editTimeline
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -162,13 +164,15 @@ fun EditTimelineScaffold(
     editTimelineEventHandlers: EditTimelineEventHandlers?,
     vibrationSupportHintMode: VibrationSupportHintMode = VibrationSupportHintMode.AUTOMATIC
 ) {
+    val focusManager = LocalFocusManager.current
     Scaffold(
         topBar = {
             EditTimelineTopBar(onBackClick = onBackClick, onSettingsClick = onSettingsClick)
         },
         snackbarHost = {
             AppSnackbarHost(snackbarHostState)
-        }
+        },
+        modifier = Modifier.clickable(interactionSource = null, indication = null, onClick = {focusManager.clearFocus()})
     ) { paddingValues ->
         Column(
             modifier = Modifier

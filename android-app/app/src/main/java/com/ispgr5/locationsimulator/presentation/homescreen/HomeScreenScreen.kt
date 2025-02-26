@@ -520,7 +520,12 @@ fun <K> MultiStateToggle(
                         .padding(
                             vertical = 8.dp,
                             horizontal = 16.dp,
-                        ))
+                        ).conditional(labelStringRes == R.string.dark) {
+                            testTag(TestTags.HOME_DARKMODE)
+                        }.conditional(labelStringRes == R.string.light) {
+                            testTag(TestTags.HOME_LIGHTMODE)
+                        }
+                )
             }
         }
     }
@@ -556,5 +561,13 @@ fun HomeScreenPreview() {
             checkBatteryOptimizationStatus = { false },
             onLaunchBatteryOptimizerDisable = {}
         )
+    }
+}
+
+fun Modifier.conditional(condition : Boolean, modifier : Modifier.() -> Modifier) : Modifier {
+    return if (condition) {
+        then(modifier(Modifier))
+    } else {
+        this
     }
 }

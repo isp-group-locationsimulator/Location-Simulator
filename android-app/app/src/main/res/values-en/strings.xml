@@ -114,4 +114,6 @@
     <string name="dynamic">Dynamic</string>
     <string name="the_back_gesture_is_disabled_please_use_the_bottom_above">The back gesture is disabled, please use the button above.</string>
     <string name="new_configuration">New configuration</string>
+    <string name="min">Min</string>
+    <string name="max">Max</string>
 </resources>
