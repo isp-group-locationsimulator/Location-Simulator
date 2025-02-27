@@ -9,7 +9,6 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -43,13 +42,9 @@ fun TrainerScreenScreen(
         trainerScreenState = state,
         deviceList = devices,
         isTrainingActive = isTrainingActive.value,
-        onStartOrStopTraining = {
-            isTrainingActive.value = !isTrainingActive.value
-                                },
+        onEvent = {ev: TrainerScreenEvent -> viewModel.onEvent(ev)},
         onGoBack = { navController.navigateUp() },
-        onOptionSelected = { navController.navigate(Screen.UserSettingsScreen.createRoute("BeispielUser")) },
         navController = navController
-
     )
 }
 
@@ -58,9 +53,8 @@ fun TrainerScreenScaffold(
     trainerScreenState: TrainerScreenState,
     deviceList: List<Device>,
     isTrainingActive: Boolean,
-    onStartOrStopTraining: () -> Unit,
+    onEvent: (TrainerScreenEvent) -> Unit,
     onGoBack: () -> Unit,
-    onOptionSelected: (String) -> Unit,
     navController: NavController
 ) {
     Scaffold(
@@ -73,8 +67,7 @@ fun TrainerScreenScaffold(
                 trainerScreenState = trainerScreenState,
                 deviceList = deviceList,
                 isTrainingActive = isTrainingActive,
-                onStartOrStopTraining = onStartOrStopTraining,
-                onOptionSelected = onOptionSelected,
+                onEvent = onEvent,
                 navController = navController
             )
         }
@@ -87,11 +80,9 @@ fun TrainerScreenContent(
     trainerScreenState: TrainerScreenState,
     deviceList: List<Device>,
     isTrainingActive: Boolean,
-    onStartOrStopTraining: () -> Unit,
-    onOptionSelected: (String) -> Unit,
+    onEvent: (TrainerScreenEvent) -> Unit,
     navController: NavController
 ) {
-    val isPlayingMap = remember { mutableStateOf(deviceList.associate { it.name to false }) }
     val trainingActive = remember { mutableStateOf(isTrainingActive) }
 
     Column(
@@ -126,20 +117,24 @@ fun TrainerScreenContent(
                 modifier = Modifier.fillMaxSize()
             ) {
                 items(deviceList) { device ->
-                    val isPlaying = isPlayingMap.value[device.name] ?: false
                     DeviceCard(
                         userName = device.user,
                         deviceName = device.name,
-                        activity = "Klopfen und Husten",
+                        activity = device.selectedConfig?.name ?: "Default",
                         isOnline = device.isConnected,
-                        isPlaying = isPlaying,
+                        isPlaying = device.isPlaying,
                         onPlayClick = {
-                            isPlayingMap.value = isPlayingMap.value.toMutableMap().apply {
-                                this[device.name] = !isPlaying
+                            if(device.isPlaying) {
+                                onEvent(TrainerScreenEvent.StopDeviceTraining(device))
+                            } else {
+                                onEvent(TrainerScreenEvent.StartDeviceTraining(device))
                             }
+                            val modifiedDevice = device.copy()
+                            modifiedDevice.isPlaying = !device.isPlaying
+                            ClientHandler.deviceList.updateDevice(modifiedDevice)
                         },
                         onSettingsClick = {
-                            navController.navigate(Screen.UserSettingsScreen.route)
+                            navController.navigate(Screen.UserSettingsScreen.createRoute(device.user))
                         }
                     )
                 }
@@ -151,10 +146,10 @@ fun TrainerScreenContent(
             onClick = {
                 if (trainingActive.value) {
                     // Stoppe alle Geräte
-                    isPlayingMap.value = isPlayingMap.value.mapValues { false }
+                    onEvent(TrainerScreenEvent.StopTraining)
                 } else {
                     // Starte nur Geräte, die noch nicht laufen
-                    isPlayingMap.value = isPlayingMap.value.mapValues { (_, isPlaying) -> true }
+                    onEvent(TrainerScreenEvent.StartTraining)
                 }
 
                 // Zustand umschalten
@@ -202,8 +197,8 @@ fun TrainerScreenTopBar(onGoBack: () -> Unit) {
 fun TrainerScreenPreview() {
     val state = TrainerScreenState()
     val deviceList =  listOf(
-        Device(user = "User1", name = "Samsung Galaxy S9+", isConnected = true),
-        Device(user = "User2", name = "Huawei P30 Pro", isConnected = false)
+        Device(user = "User1", name = "Samsung Galaxy S9+", isPlaying = true, isConnected = true),
+        Device(user = "User2", name = "Huawei P30 Pro", isPlaying = false, isConnected = false)
     )
 
     val navController = rememberNavController()
@@ -213,9 +208,8 @@ fun TrainerScreenPreview() {
             trainerScreenState = state,
             deviceList = deviceList,
             isTrainingActive = false,
-            onStartOrStopTraining = {},
+            onEvent = {},
             onGoBack = {},
-            onOptionSelected = {},
             navController = navController
         )
     }

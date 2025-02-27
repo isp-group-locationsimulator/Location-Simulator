@@ -1,5 +1,8 @@
 package com.ispgr5.locationsimulator.network
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.lifecycle.MutableLiveData
 import com.ispgr5.locationsimulator.presentation.trainerScreen.Device
 import java.io.BufferedReader
@@ -9,6 +12,52 @@ import java.net.Socket
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.concurrent.thread
 
+class ObservableDeviceList {
+    private val deviceList = MutableLiveData<ArrayList<Device>>()
+
+    @Composable
+    fun observeAsState(): State<ArrayList<Device>?> {
+        return deviceList.observeAsState()
+    }
+
+    fun getAsList(): List<Device> {
+        return deviceList.value ?: emptyList()
+    }
+
+    fun addDevice(device: Device) {
+        val newList = ArrayList<Device>()
+        newList.addAll(deviceList.value ?: emptyList())
+        newList.add(device)
+        deviceList.postValue(newList)
+    }
+
+    fun removeDevice(user: String) {
+        val newList = ArrayList<Device>()
+        for (dev in deviceList.value ?: emptyList()) {
+            if (dev.user != user) {
+                newList.add(dev)
+            }
+        }
+        deviceList.postValue(newList)
+    }
+
+    fun updateDevice(device: Device) {
+        var changed = false
+        val newList = ArrayList<Device>()
+
+        newList.addAll(deviceList.value ?: emptyList())
+        for (i in 0..<newList.size) {
+            if (newList[i].user == device.user) {
+                changed = newList[i].isPlaying != device.isPlaying || newList[i].isConnected != device.isPlaying || newList[i].selectedConfig != device.selectedConfig
+                newList[i] = device.copy()
+            }
+        }
+        if (changed) {
+            deviceList.postValue(newList)
+        }
+    }
+}
+
 class ClientHandler(
     private val name: String,
     private val socket: Socket,
@@ -17,24 +66,31 @@ class ClientHandler(
 ) : Thread() {
     companion object {
         val clientHandlers: HashMap<String, ClientHandler> = HashMap()
-        val deviceList = MutableLiveData<ArrayList<Device>>()
+        val deviceList = ObservableDeviceList()
+        private val isCheckConnectionActive = AtomicBoolean(false)
 
-        fun isConnected(name: String): Boolean {
-            val success = AtomicBoolean(true)
+        fun startCheckConnection() {
+            isCheckConnectionActive.set(true)
             thread {
-                try {
-                    val client = clientHandlers[name] ?: throw RuntimeException()
-                    client.writer.write("Check")
-                    client.writer.newLine()
-                    client.writer.flush()
-                } catch (e: Exception) {
-                    success.set(false)
+                while (isCheckConnectionActive.get()) {
+                    sleep(3000)
+                    for (device in deviceList.getAsList()) {
+                        if (device.isConnected != isConnected(device.user)) {
+                            val modifiedDevice = device.copy()
+                            modifiedDevice.isConnected = !device.isConnected
+                            deviceList.updateDevice(modifiedDevice)
+                        }
+                    }
                 }
-            }.join()
-            return success.get()
+            }
+        }
+
+        fun stopCheckConnection() {
+            isCheckConnectionActive.set(false)
         }
 
         fun sendToClient(name: String, message: String) {
+            println("Server to $name: $message")
             clientHandlers[name]?.send(message)
         }
 
@@ -49,6 +105,18 @@ class ClientHandler(
                 clientHandler.close()
             }
         }
+
+        private fun isConnected(name: String): Boolean {
+            try {
+                val client = clientHandlers[name] ?: throw RuntimeException()
+                client.writer.write("check")
+                client.writer.newLine()
+                client.writer.flush()
+            } catch (e: Exception) {
+                return false
+            }
+            return true
+        }
     }
 
     init {
@@ -61,11 +129,14 @@ class ClientHandler(
 
         send("Success")
         clientHandlers[name] = this
-        val newList = ArrayList<Device>()
-        newList.addAll(deviceList.value ?: emptyList())
-        newList.add(Device("User1", name, true))
-        deviceList.postValue(newList)
-        println(deviceList.value!!)
+        deviceList.addDevice(
+            Device(
+                user = name,
+                name = "Google Pixel",
+                isPlaying = false,
+                isConnected = true
+            )
+        )
     }
 
     private fun parseMessage(message: String) {
@@ -79,41 +150,25 @@ class ClientHandler(
         while (!socket.isClosed) {
             try {
                 val line = reader.readLine() ?: break
-                println("ClientHandler received message: $line")
+                println("Server received message: $line")
                 parseMessage(line)
             } catch (e: IOException) {
-                println("ClientHandler unable to read line: $e")
+                println("Server unable to read line: $e")
                 sleep(3000)
             }
         }
     }
 
     fun send(message: String) {
-        println("ClientHandler sending message: $message")
-
         thread {
             try {
                 writer.write(message)
                 writer.newLine()
                 writer.flush()
             } catch (e: Exception) {
-                println("ClientHandler unable to send message: $e")
+                println("Server unable to send message: $e")
             }
         }
-    }
-
-    fun checkConnection(): Boolean {
-        val success = AtomicBoolean(true)
-        thread {
-            try {
-                writer.write("Check")
-                writer.newLine()
-                writer.flush()
-            } catch (e: Exception) {
-                success.set(false)
-            }
-        }.join()
-        return success.get()
     }
 
     fun close() {
@@ -121,12 +176,6 @@ class ClientHandler(
         reader.close()
         writer.close()
         clientHandlers.remove(name)
-        val newList = ArrayList<Device>()
-        for (device in deviceList.value ?: emptyList()) {
-            if (device.name != name) {
-                newList.add(device)
-            }
-        }
-        deviceList.postValue(newList)
+        deviceList.removeDevice(name)
     }
 }

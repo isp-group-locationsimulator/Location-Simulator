@@ -1,7 +1,9 @@
 package com.ispgr5.locationsimulator.presentation.userSettings
 
+import com.ispgr5.locationsimulator.domain.model.Configuration
+
 data class UserSettingsState(
     val selectedUser: String = "User1",
-    val availableConfigurations: List<String> = listOf("Lautes Atmen", "Husten", "Kratzen"),
-    val selectedConfiguration: String? = null
+    val availableConfigurations: List<Configuration> = emptyList(),
+    val selectedConfiguration: Int? = null
 )

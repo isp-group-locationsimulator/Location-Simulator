@@ -20,6 +20,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
 import androidx.compose.ui.tooling.preview.Preview
+import com.ispgr5.locationsimulator.domain.model.Configuration
 import com.ispgr5.locationsimulator.presentation.util.Screen
 
 @Composable
@@ -29,7 +30,6 @@ fun UserSettingsScreen(
     viewModel: UserSettingsViewModel = hiltViewModel()
 ) {
     val state by viewModel.state
-
 
     UserSettingsScaffold(
         userName = userName,
@@ -46,7 +46,7 @@ fun UserSettingsScaffold(
     userName: String,
     userSettingsState: UserSettingsState,
     onGoBack: () -> Unit,
-    onOptionSelected: (String) -> Unit,
+    onOptionSelected: (Int) -> Unit,
     onExportConfig: () -> Unit,
     onSaveConfig: () -> Unit
 ) {
@@ -70,7 +70,7 @@ fun UserSettingsContent(
     userName: String,
     paddingValues: PaddingValues,
     state: UserSettingsState,
-    onOptionSelected: (String) -> Unit,
+    onOptionSelected: (Int) -> Unit,
     onExportConfig: () -> Unit,
     onSaveConfig: () -> Unit
 ) {
@@ -107,9 +107,10 @@ fun UserSettingsContent(
             LazyColumn(
                 modifier = Modifier.fillMaxSize()
             ) {
-                items(state.availableConfigurations) { option ->
+                items(state.availableConfigurations) { configuration ->
                     ConfigOptionItem(
-                        option = option,
+                        option = configuration.id!!,
+                        optionName = configuration.name,
                         selectedOption = state.selectedConfiguration,
                         onOptionSelected = onOptionSelected
                     )
@@ -142,9 +143,10 @@ fun UserSettingsContent(
 
 @Composable
 fun ConfigOptionItem(
-    option: String,
-    selectedOption: String?,
-    onOptionSelected: (String) -> Unit
+    option: Int,
+    optionName: String,
+    selectedOption: Int?,
+    onOptionSelected: (Int) -> Unit
 ) {
     val isSelected = option == selectedOption
 
@@ -161,7 +163,7 @@ fun ConfigOptionItem(
         } else null
     ) {
         Text(
-            text = option,
+            text = optionName,
             color = Color.Black,
             fontSize = 16.sp,
             fontWeight = FontWeight.Bold
@@ -196,15 +198,16 @@ fun UserSettingsTopBar(onGoBack: () -> Unit) {
 
 
 
-
-
 @Preview(showBackground = true)
 @Composable
 fun UserSettingsPreview() {
     val state = UserSettingsState(
         selectedUser = "User1",
-        availableConfigurations = listOf("Lautes Atmen", "Husten", "Kratzen"),
-        selectedConfiguration = "Husten"
+        availableConfigurations = listOf(
+            Configuration("Lautes Atmen", "", false, emptyList(), false, 0),
+            Configuration("Husten", "", true, emptyList(), true, 1),
+            Configuration("Kratzen", "", false, emptyList(), false, 2)),
+        selectedConfiguration = 1
     )
     val userName = "User1"
     LocationSimulatorTheme {

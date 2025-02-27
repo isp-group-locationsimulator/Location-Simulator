@@ -17,11 +17,15 @@ import java.util.concurrent.FutureTask
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.concurrent.thread
 
+sealed class ClientSignal {
+    data class StartTraining(val config: String) : ClientSignal()
+    data object StopTraining : ClientSignal()
+}
 
 object ClientSingleton {
     private var client: Client? = null
     var lock: MulticastLock? = null
-    val simulationSettings = MutableLiveData<String>()
+    val clientSignal = MutableLiveData<ClientSignal?>()
 
     fun tryConnect(name: String): Boolean {
         if (lock == null) {
@@ -121,8 +125,10 @@ private class Client(
     }
 
     private fun parseMessage(message: String) {
-        when (message) {
-
+        val splitMsg = message.split(' ', limit = 2)
+        when (splitMsg.first()) {
+            "start" -> if (splitMsg.size == 2) ClientSingleton.clientSignal.postValue(ClientSignal.StartTraining(splitMsg[1]))
+            "stop" -> ClientSingleton.clientSignal.postValue(ClientSignal.StopTraining)
             else -> println("Unknown message")
         }
     }
@@ -141,7 +147,7 @@ private class Client(
     }
 
     fun send(message: String) {
-        println("Client sending message: $message")
+        println("Client to server: $message")
 
         thread {
             try {

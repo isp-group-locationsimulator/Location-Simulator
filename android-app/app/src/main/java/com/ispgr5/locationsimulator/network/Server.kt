@@ -20,11 +20,13 @@ object ServerSingleton {
     fun start() {
         multicastServer.start()
         server.start()
+        ClientHandler.startCheckConnection()
     }
 
     fun close() {
         multicastServer.stopMulticast()
         multicastServer.close()
+        ClientHandler.stopCheckConnection()
         ClientHandler.closeAllClientHandlers()
         server.close()
     }
