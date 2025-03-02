@@ -601,7 +601,7 @@ private fun AppTopBar(onInfoClick: () -> Unit, onHelpClick: () -> Unit) {
         {
 
 
-            IconButton(onClick = onHelpClick, modifier = Modifier.padding(5.dp)) {
+            IconButton(onClick = onHelpClick, modifier = Modifier.padding(5.dp) ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_baseline_help_24),
 
@@ -614,17 +614,18 @@ private fun AppTopBar(onInfoClick: () -> Unit, onHelpClick: () -> Unit) {
 
 
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth() .offset(y=4.dp),
             horizontalArrangement = Arrangement.Absolute.Left
         )
 
         {
-            IconButton(onClick = onInfoClick, modifier = Modifier.padding(5.dp)) {
+            IconButton(onClick = onInfoClick, modifier = Modifier.padding(5.dp),) {
                 Icon(
                     painter = painterResource(id = R.drawable.baseline_info_24),
                     contentDescription = stringResource(
                         id = R.string.about
                     )
+
                 )
 
             }

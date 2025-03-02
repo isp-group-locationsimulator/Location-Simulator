@@ -35,6 +35,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import com.gigamole.composescrollbars.Scrollbars
@@ -73,6 +74,8 @@ fun HelpScreenScaffold(onBackClick: () -> Unit) {
             LocationSimulatorTopBar(
                 onBackClick = onBackClick,
                 title = stringResource(id = R.string.ScreenHelp)
+
+
             )
         },
         content = { scaffoldPadding ->
@@ -84,6 +87,7 @@ fun HelpScreenScaffold(onBackClick: () -> Unit) {
                     state = scrollState
                 )
             )
+
 
             // Zustand für die Sichtbarkeit der Bilder
             var showHelpImage1 by remember { mutableStateOf(false) }
@@ -106,7 +110,8 @@ fun HelpScreenScaffold(onBackClick: () -> Unit) {
                         pushStringAnnotation(tag = "help1", annotation = "help1")
                         withStyle(
                             style = SpanStyle(
-                                color = Color.Blue,
+                                color = Color.Green,
+                                fontSize = 16.sp,
                                 textDecoration = TextDecoration.Underline
                             )
                         ) {
@@ -133,7 +138,9 @@ fun HelpScreenScaffold(onBackClick: () -> Unit) {
                         pushStringAnnotation(tag = "help2", annotation = "help2")
                         withStyle(
                             style = SpanStyle(
-                                color = Color.Blue,
+                                color = Color.Green,
+                                fontSize = 16.sp,
+
                                 textDecoration = TextDecoration.Underline
                             )
                         ) {
@@ -186,7 +193,9 @@ fun HelpScreenScaffold(onBackClick: () -> Unit) {
                         pushStringAnnotation(tag = "help3", annotation = "help3")
                         withStyle(
                             style = SpanStyle(
-                                color = Color.Blue,
+                                color = Color.Green,
+                                fontSize = 16.sp,
+
                                 textDecoration = TextDecoration.Underline
                             )
                         ) {
@@ -289,7 +298,8 @@ fun HelpScreenScaffold(onBackClick: () -> Unit) {
                         pushStringAnnotation(tag = "help4", annotation = "help4")
                         withStyle(
                             style = SpanStyle(
-                                color = Color.Blue,
+                                color = Color.Green,
+                                fontSize = 18.sp,
                                 textDecoration = TextDecoration.Underline
                             )
                         ) {
