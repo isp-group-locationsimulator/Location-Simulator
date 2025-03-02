@@ -131,7 +131,32 @@ fun HelpScreenScaffold(onBackClick: () -> Unit) {
 
                     )
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                    if (showHelpImage1) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Image(
+                                painter = painterResource(R.drawable.help_image1),
+                                contentDescription = "",
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .width(400.dp)
+                                    .height(400.dp)
+                                    .clickable { showHelpImage1 = false },
+                            )
+                            Image(
+                                painter = painterResource(R.drawable.help_image2),
+                                contentDescription = "",
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .width(400.dp)
+                                    .height(400.dp)
+                                    .clickable { showHelpImage1 = false },
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
 
                     // Zweite Hilfe-Sektion
                     val annotatedString2 = buildAnnotatedString {
@@ -217,32 +242,7 @@ fun HelpScreenScaffold(onBackClick: () -> Unit) {
 
                     )
 
-                    if (showHelpImage1) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Image(
-                                painter = painterResource(R.drawable.help_image1),
-                                contentDescription = "",
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .width(400.dp)
-                                    .height(400.dp)
-                                    .clickable { showHelpImage1 = false },
-                            )
-                            Image(
-                                painter = painterResource(R.drawable.help_image2),
-                                contentDescription = "",
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .width(400.dp)
-                                    .height(400.dp)
-                                    .clickable { showHelpImage1 = false },
-                            )
-                        }
-                        Spacer(modifier = Modifier.height(16.dp))
-                    }
+
 
 
                     if (showHelpImage3) {
