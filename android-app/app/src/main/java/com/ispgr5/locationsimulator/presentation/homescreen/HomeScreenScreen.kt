@@ -596,28 +596,8 @@ private fun AppTopBar(onInfoClick: () -> Unit, onHelpClick: () -> Unit) {
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Absolute.Right
-        )
-        {
-
-
-            IconButton(onClick = onHelpClick, modifier = Modifier.padding(5.dp) ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_baseline_help_24),
-
-                    contentDescription = stringResource(R.string.help),
-
-                )
-            }
-        }
-    }
-
-
-        Row(
-            modifier = Modifier.fillMaxWidth() .offset(y=4.dp),
             horizontalArrangement = Arrangement.Absolute.Left
         )
-
         {
             IconButton(onClick = onInfoClick, modifier = Modifier.padding(5.dp),) {
                 Icon(
@@ -625,14 +605,18 @@ private fun AppTopBar(onInfoClick: () -> Unit, onHelpClick: () -> Unit) {
                     contentDescription = stringResource(
                         id = R.string.about
                     )
-
                 )
-
+            }
+            Spacer(modifier = Modifier.weight(1f))
+            IconButton(onClick = onHelpClick, modifier = Modifier.padding(5.dp) ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_baseline_help_24),
+                    contentDescription = stringResource(R.string.help),
+                )
             }
         }
-
-
     }
+}
 
 
 
