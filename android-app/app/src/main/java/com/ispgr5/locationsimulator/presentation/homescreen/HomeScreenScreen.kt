@@ -116,13 +116,14 @@ fun HomeScreenScreen(
     viewModel.updateConfigurationWithErrorsState(soundStorageManager = soundStorageManager)
     val state = viewModel.state.value
     val context = LocalContext.current
+    val selectedRole = remember { mutableStateOf("Standalone") }
     RenderSnackbarOnChange(snackbarHostState = snackbarHostState, snackbarContent = snackbarContent)
-
 
     HomeScreenScaffold(
         homeScreenState = state,
         appTheme = appTheme,
         snackbarHostState = snackbarHostState,
+        selectedRole = selectedRole,
         onInfoClick = {
             navController.navigate(Screen.InfoScreen.route)
         },
@@ -132,7 +133,17 @@ fun HomeScreenScreen(
         },
         onSelectProfile = {
             viewModel.onEvent(HomeScreenEvent.SelectConfiguration)
-            navController.navigate(Screen.SelectScreen.route)
+            when (selectedRole.value) {
+                "Trainer" -> {
+                    navController.navigate(Screen.TrainerScreen.route)
+                }
+                "Standalone" -> {
+                    navController.navigate(Screen.SelectScreen.route)
+                }
+                else -> {
+                    navController.navigate(Screen.SelectScreen.route)
+                }
+            }
         },
         onSelectFavourite = { configuration ->
             when {
@@ -190,6 +201,7 @@ fun HomeScreenScreen(
 
 
     )
+
 }
 
 @Composable
@@ -197,6 +209,7 @@ fun HomeScreenScaffold(
     homeScreenState: HomeScreenState,
     appTheme: MutableState<ThemeState>,
     snackbarHostState: SnackbarHostState,
+    selectedRole: MutableState<String>,
     onInfoClick: () -> Unit,
     onHelpClick:()->Unit,
     onSelectProfile: () -> Unit,
@@ -217,6 +230,7 @@ fun HomeScreenScaffold(
                 appPadding = appPadding,
                 homeScreenState = homeScreenState,
                 appTheme = appTheme,
+                selectedRole = selectedRole,
                 onSelectProfile = onSelectProfile,
                 onSelectFavourite = onSelectFavourite,
                 onSelectTheme = onSelectTheme,
@@ -231,6 +245,7 @@ fun HomeScreenContent(
     appPadding: PaddingValues,
     homeScreenState: HomeScreenState,
     appTheme: MutableState<ThemeState>,
+    selectedRole: MutableState<String>,
     onSelectProfile: () -> Unit,
     onSelectFavourite: (Configuration) -> Unit,
     onSelectTheme: (ThemeState) -> Unit,
@@ -267,7 +282,7 @@ fun HomeScreenContent(
         ) {
             if (homeScreenState.showInputFields) {
                 NameInputField()
-                RoleSelectionField()
+                RoleSelectionField(selectedRole = selectedRole)
             }
         }
 
@@ -516,9 +531,8 @@ private fun NameInputField() {
 }
 
 @Composable
-private fun RoleSelectionField() {
+private fun RoleSelectionField(selectedRole: MutableState<String>) {
     var expanded by remember { mutableStateOf(false) }
-    var selectedRole by remember { mutableStateOf("Standalone") }
 
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -541,7 +555,7 @@ private fun RoleSelectionField() {
                 .padding(16.dp)
                 .height(20.dp)
         ) {
-            Text(text = selectedRole)
+            Text(text = selectedRole.value)
             DropdownMenu(
                 expanded = expanded,
                 onDismissRequest = { expanded = false },
@@ -552,21 +566,21 @@ private fun RoleSelectionField() {
                 DropdownMenuItem(
                     text = { Text("Trainer", color = Color.Black) },
                     onClick = {
-                        selectedRole = "Trainer"
+                        selectedRole.value = "Trainer"
                         expanded = false
                     }
                 )
                 DropdownMenuItem(
                     text = { Text("Remote", color = Color.Black) },
                     onClick = {
-                        selectedRole = "Remote"
+                        selectedRole.value = "Remote"
                         expanded = false
                     }
                 )
                 DropdownMenuItem(
                     text = { Text("Standalone", color = Color.Black) },
                     onClick = {
-                        selectedRole = "Standalone"
+                        selectedRole.value = "Standalone"
                         expanded = false
                     }
                 )
@@ -686,11 +700,15 @@ fun HomeScreenPreview() {
     val themeState = remember {
         mutableStateOf(PreviewData.themePreviewState)
     }
-    LocationSimulatorTheme {
+
+    val selectedRole = remember { mutableStateOf("Standalone") }
+
+        LocationSimulatorTheme {
         HomeScreenScaffold(
             homeScreenState = state,
             appTheme = themeState,
             snackbarHostState = snackbarHostState,
+            selectedRole = selectedRole,
             onInfoClick = {},
             onHelpClick = {},
             onSelectProfile = {},
@@ -701,7 +719,7 @@ fun HomeScreenPreview() {
         )
     }
     NameInputField()
-    RoleSelectionField()
+    RoleSelectionField(selectedRole = selectedRole)
 
 
 }
