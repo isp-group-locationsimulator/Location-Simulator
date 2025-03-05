@@ -507,8 +507,6 @@ private fun SelectProfileButton(onButtonClick: () -> Unit) {
     }
 }
 
-val customRedColor = Color(0xFFFEE3D9)
-
 @Composable
 private fun NameInputField(name: MutableState<String>) {
     TextField(
@@ -528,7 +526,7 @@ private fun NameInputField(name: MutableState<String>) {
         },
         modifier = Modifier
             .fillMaxWidth(0.8f)
-            .border(1.dp, customRedColor, RoundedCornerShape(4.dp))
+            .border(1.dp, colorScheme.surfaceContainerHigh, RoundedCornerShape(4.dp))
             .padding(2.dp),
         singleLine = true,
         shape = RoundedCornerShape(4.dp),
@@ -556,7 +554,7 @@ private fun RoleSelectionField(selectedRole: MutableState<String>) {
             modifier = Modifier
                 .fillMaxWidth(0.8f)
                 .clickable { expanded = !expanded }
-                .border(width = 1.dp, color = customRedColor, shape = RoundedCornerShape(4.dp))
+                .border(width = 1.dp, color = colorScheme.surfaceContainerHigh, shape = RoundedCornerShape(4.dp))
                 .padding(16.dp)
                 .height(20.dp)
         ) {
@@ -566,24 +564,24 @@ private fun RoleSelectionField(selectedRole: MutableState<String>) {
                 onDismissRequest = { expanded = false },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(customRedColor)
+                    .background(colorScheme.surfaceContainerHigh)
             ) {
                 DropdownMenuItem(
-                    text = { Text("Trainer", color = Color.Black) },
+                    text = { Text("Trainer") },
                     onClick = {
                         selectedRole.value = "Trainer"
                         expanded = false
                     }
                 )
                 DropdownMenuItem(
-                    text = { Text("Remote", color = Color.Black) },
+                    text = { Text("Remote") },
                     onClick = {
                         selectedRole.value = "Remote"
                         expanded = false
                     }
                 )
                 DropdownMenuItem(
-                    text = { Text("Standalone", color = Color.Black) },
+                    text = { Text("Standalone") },
                     onClick = {
                         selectedRole.value = "Standalone"
                         expanded = false
