@@ -118,6 +118,7 @@ fun HomeScreenScreen(
     val state = viewModel.state.value
     val context = LocalContext.current
     val selectedRole = remember { mutableStateOf("Standalone") }
+    val name = remember { mutableStateOf("") }
     RenderSnackbarOnChange(snackbarHostState = snackbarHostState, snackbarContent = snackbarContent)
 
     HomeScreenScaffold(
@@ -125,6 +126,7 @@ fun HomeScreenScreen(
         appTheme = appTheme,
         snackbarHostState = snackbarHostState,
         selectedRole = selectedRole,
+        name = name,
         onInfoClick = {
             navController.navigate(Screen.InfoScreen.route)
         },
@@ -142,7 +144,7 @@ fun HomeScreenScreen(
                     navController.navigate(Screen.SelectScreen.route)
                 }
                 else -> {
-                    ClientSingleton.tryConnect("TestUser")
+                    ClientSingleton.tryConnect(name.value)
                     navController.navigate(Screen.SelectScreen.route)
                 }
             }
@@ -212,6 +214,7 @@ fun HomeScreenScaffold(
     appTheme: MutableState<ThemeState>,
     snackbarHostState: SnackbarHostState,
     selectedRole: MutableState<String>,
+    name: MutableState<String>,
     onInfoClick: () -> Unit,
     onHelpClick:()->Unit,
     onSelectProfile: () -> Unit,
@@ -233,6 +236,7 @@ fun HomeScreenScaffold(
                 homeScreenState = homeScreenState,
                 appTheme = appTheme,
                 selectedRole = selectedRole,
+                name = name,
                 onSelectProfile = onSelectProfile,
                 onSelectFavourite = onSelectFavourite,
                 onSelectTheme = onSelectTheme,
@@ -248,6 +252,7 @@ fun HomeScreenContent(
     homeScreenState: HomeScreenState,
     appTheme: MutableState<ThemeState>,
     selectedRole: MutableState<String>,
+    name: MutableState<String>,
     onSelectProfile: () -> Unit,
     onSelectFavourite: (Configuration) -> Unit,
     onSelectTheme: (ThemeState) -> Unit,
@@ -283,7 +288,7 @@ fun HomeScreenContent(
             verticalArrangement = Arrangement.Bottom,
         ) {
             if (homeScreenState.showInputFields) {
-                NameInputField()
+                NameInputField(name = name)
                 RoleSelectionField(selectedRole = selectedRole)
             }
         }
@@ -505,12 +510,10 @@ private fun SelectProfileButton(onButtonClick: () -> Unit) {
 val customRedColor = Color(0xFFFEE3D9)
 
 @Composable
-private fun NameInputField() {
-    var name by remember { mutableStateOf("") }
-
+private fun NameInputField(name: MutableState<String>) {
     TextField(
-        value = name,
-        onValueChange = { name = it },
+        value = name.value,
+        onValueChange = { name.value = it },
         label = {
             Text(
                 text = stringResource(id = R.string.input_label),
@@ -704,6 +707,7 @@ fun HomeScreenPreview() {
     }
 
     val selectedRole = remember { mutableStateOf("Standalone") }
+    val name = remember { mutableStateOf("") }
 
         LocationSimulatorTheme {
         HomeScreenScaffold(
@@ -711,6 +715,7 @@ fun HomeScreenPreview() {
             appTheme = themeState,
             snackbarHostState = snackbarHostState,
             selectedRole = selectedRole,
+            name = name,
             onInfoClick = {},
             onHelpClick = {},
             onSelectProfile = {},
@@ -720,7 +725,7 @@ fun HomeScreenPreview() {
             onLaunchBatteryOptimizerDisable = {},
         )
     }
-    NameInputField()
+    NameInputField(name = name)
     RoleSelectionField(selectedRole = selectedRole)
 
 
