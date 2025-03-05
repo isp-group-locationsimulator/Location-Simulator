@@ -14,21 +14,31 @@ import java.net.SocketException
 import java.util.concurrent.atomic.AtomicBoolean
 
 object ServerSingleton {
-    private val multicastServer = MulticastServer()
-    private val server = Server()
+    private var multicastServer: MulticastServer? = null
+    private var server: Server? = null
+    private var isActive = false
 
     fun start() {
-        multicastServer.start()
-        server.start()
+        if(isActive) return
+
+        multicastServer = MulticastServer()
+        server = Server()
+
+        multicastServer!!.start()
+        server!!.start()
         ClientHandler.startCheckConnection()
+        isActive = true
     }
 
     fun close() {
-        multicastServer.stopMulticast()
-        multicastServer.close()
+        if(!isActive) return
+
+        multicastServer!!.stopMulticast()
+        multicastServer!!.close()
         ClientHandler.stopCheckConnection()
         ClientHandler.closeAllClientHandlers()
-        server.close()
+        server!!.close()
+        isActive = false
     }
 }
 

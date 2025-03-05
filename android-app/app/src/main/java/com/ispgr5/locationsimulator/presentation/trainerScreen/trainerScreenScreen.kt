@@ -25,6 +25,7 @@ import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
 import androidx.navigation.compose.rememberNavController
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.network.ClientHandler
+import com.ispgr5.locationsimulator.network.ServerSingleton
 import com.ispgr5.locationsimulator.presentation.util.Screen
 
 
@@ -42,8 +43,8 @@ fun TrainerScreenScreen(
         trainerScreenState = state,
         deviceList = devices,
         isTrainingActive = isTrainingActive.value,
-        onEvent = {ev: TrainerScreenEvent -> viewModel.onEvent(ev)},
-        onGoBack = { navController.navigateUp() },
+        onEvent = { ev: TrainerScreenEvent -> viewModel.onEvent(ev) },
+        onGoBack = { ServerSingleton.close(); navController.navigateUp() },
         navController = navController
     )
 }

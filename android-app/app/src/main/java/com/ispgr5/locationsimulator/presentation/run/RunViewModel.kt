@@ -7,8 +7,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ispgr5.locationsimulator.domain.model.Configuration
 import com.ispgr5.locationsimulator.domain.useCase.ConfigurationUseCases
+import com.ispgr5.locationsimulator.network.ClientSignal
+import com.ispgr5.locationsimulator.network.ClientSingleton
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 /**
@@ -24,13 +27,21 @@ class RunViewModel @Inject constructor(
 	val state: State<RunScreenState> = _state
 
 	init {
-		savedStateHandler.get<String>("configurationId")?.let {
-			val id = it.toInt()
-			viewModelScope.launch {
-				configurationUseCases.getConfiguration(id)?.let {conf ->
-					_state.value = _state.value.copy(
-						configuration = conf
-					)
+		val signal = ClientSingleton.clientSignal.value
+		if(signal is ClientSignal.StartTraining) {
+			val conf = Json.decodeFromString<Configuration?>(signal.config)
+			_state.value = _state.value.copy(
+				configuration = conf
+			)
+		} else {
+			savedStateHandler.get<String>("configurationId")?.let {
+				val id = it.toInt()
+				viewModelScope.launch {
+					configurationUseCases.getConfiguration(id)?.let { conf ->
+						_state.value = _state.value.copy(
+							configuration = conf
+						)
+					}
 				}
 			}
 		}

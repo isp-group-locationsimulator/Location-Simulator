@@ -82,6 +82,7 @@ import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.core.util.TestTags
 import com.ispgr5.locationsimulator.data.storageManager.SoundStorageManager
 import com.ispgr5.locationsimulator.domain.model.Configuration
+import com.ispgr5.locationsimulator.network.ClientSingleton
 import com.ispgr5.locationsimulator.presentation.MainActivity
 import com.ispgr5.locationsimulator.presentation.previewData.AppPreview
 import com.ispgr5.locationsimulator.presentation.previewData.PreviewData
@@ -141,6 +142,7 @@ fun HomeScreenScreen(
                     navController.navigate(Screen.SelectScreen.route)
                 }
                 else -> {
+                    ClientSingleton.tryConnect("TestUser")
                     navController.navigate(Screen.SelectScreen.route)
                 }
             }

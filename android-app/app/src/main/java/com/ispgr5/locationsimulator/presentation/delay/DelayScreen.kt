@@ -17,6 +17,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -27,10 +29,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewFontScale
-import androidx.compose.ui.tooling.preview.PreviewLightDark
-import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -39,15 +37,19 @@ import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.core.util.TestTags
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 import com.ispgr5.locationsimulator.domain.model.Configuration
+import com.ispgr5.locationsimulator.network.ClientHandler
+import com.ispgr5.locationsimulator.network.ClientSignal
+import com.ispgr5.locationsimulator.network.ClientSingleton
 import com.ispgr5.locationsimulator.presentation.editTimeline.components.Timeline
 import com.ispgr5.locationsimulator.presentation.previewData.AppPreview
 import com.ispgr5.locationsimulator.presentation.previewData.PreviewData.delayScreenInitialTimerState
 import com.ispgr5.locationsimulator.presentation.previewData.PreviewData.delayScreenPreviewState
-import com.ispgr5.locationsimulator.presentation.previewData.PreviewData.themePreviewState
+import com.ispgr5.locationsimulator.presentation.trainerScreen.Device
 import com.ispgr5.locationsimulator.presentation.universalComponents.LocationSimulatorTopBar
 import com.ispgr5.locationsimulator.presentation.util.Screen
 import com.ispgr5.locationsimulator.presentation.util.millisToSeconds
 import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
+import kotlinx.serialization.json.Json
 
 private const val TAG = "DelayScreen"
 
@@ -68,6 +70,15 @@ fun DelayScreen(
     val state = viewModel.state.value
     val timerState = remember {
         mutableStateOf(TimerState(inhibitStart = false))
+    }
+
+    val clientMessage: ClientSignal? by ClientSingleton.clientSignal.observeAsState()
+    if(clientMessage is ClientSignal.StartTraining) {
+        val conf = Json.decodeFromString<Configuration?>((clientMessage as ClientSignal.StartTraining).config)
+        if(conf != null) {
+            startServiceFunction(conf.name, conf.components, conf.randomOrderPlayback)
+            navController.navigate(Screen.RunScreen.route)
+        }
     }
 
     DelayScreenScaffold(

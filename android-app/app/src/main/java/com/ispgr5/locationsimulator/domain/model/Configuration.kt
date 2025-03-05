@@ -5,12 +5,14 @@ import android.media.MediaMetadataRetriever
 import android.net.Uri
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import kotlinx.serialization.Serializable
 import java.math.BigDecimal
 
 
 /**
  * The Configuration Entity that the Database stores in the Entry's
  */
+@Serializable
 @Entity
 data class Configuration(
     val name: String,

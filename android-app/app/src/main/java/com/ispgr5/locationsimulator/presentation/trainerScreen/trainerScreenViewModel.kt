@@ -2,26 +2,27 @@ package com.ispgr5.locationsimulator.presentation.trainerScreen
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import com.ispgr5.locationsimulator.domain.model.ConfigurationComponentRoomConverter
 import com.ispgr5.locationsimulator.network.ClientHandler
-import kotlinx.serialization.ExperimentalSerializationApi
+import com.ispgr5.locationsimulator.network.ServerSingleton
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 class TrainerScreenViewModel : ViewModel() {
     var state = mutableStateOf(TrainerScreenState())
         private set
 
-    @OptIn(ExperimentalSerializationApi::class)
+    init {
+        ServerSingleton.start()
+    }
+
     fun onEvent(event: TrainerScreenEvent) {
         when (event) {
             is TrainerScreenEvent.StartTraining -> {
-                val conv = ConfigurationComponentRoomConverter()
                 for (device in ClientHandler.deviceList.getAsList()) {
                     if (!device.isPlaying) {
+                        val serializedConfig = Json.encodeToString(device.selectedConfig)
                         ClientHandler.sendToClient(
-                            device.user,
-                            "start " + conv.componentListToString(
-                                device.selectedConfig?.components ?: emptyList()
-                            )
+                            device.user, "start $serializedConfig"
                         )
                         val modifiedDevice = device.copy()
                         modifiedDevice.isPlaying = true
@@ -45,12 +46,9 @@ class TrainerScreenViewModel : ViewModel() {
             }
 
             is TrainerScreenEvent.StartDeviceTraining -> {
-                val conv = ConfigurationComponentRoomConverter()
+                val serializedConfig = Json.encodeToString(event.device.selectedConfig)
                 ClientHandler.sendToClient(
-                    event.device.user, "start " +
-                            conv.componentListToString(
-                                event.device.selectedConfig?.components ?: emptyList()
-                            )
+                    event.device.user, "start $serializedConfig"
                 )
             }
 
