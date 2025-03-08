@@ -13,11 +13,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -25,6 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -47,6 +53,7 @@ import com.gigamole.composescrollbars.scrolltype.knobtype.ScrollbarsStaticKnobTy
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.presentation.universalComponents.LocationSimulatorTopBar
 import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
+
 
 
 @Composable
@@ -74,8 +81,6 @@ fun HelpScreenScaffold(onBackClick: () -> Unit) {
             LocationSimulatorTopBar(
                 onBackClick = onBackClick,
                 title = stringResource(id = R.string.ScreenHelp)
-
-
             )
         },
         content = { scaffoldPadding ->
@@ -88,265 +93,78 @@ fun HelpScreenScaffold(onBackClick: () -> Unit) {
                 )
             )
 
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(scaffoldPadding)
+                    .verticalScroll(scrollState)
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.Start
+            ) {
+                HelpCard(
+                    title = stringResource(R.string.help_1),
+                    imageIds = listOf(R.drawable.help_image1, R.drawable.help_image2)
+                )
+                HelpCard(
+                    title = stringResource(R.string.help_2),
+                    imageIds = listOf(R.drawable.help_image3, R.drawable.help_image4)
+                )
+                HelpCard(
+                    title = stringResource(R.string.help_3),
+                    imageIds = listOf(R.drawable.help_image5, R.drawable.help_image6, R.drawable.help_image7)
+                )
+                HelpCard(
+                    title = stringResource(R.string.help_4),
+                    imageIds = listOf(R.drawable.help_image1, R.drawable.help_image8)
+                )
+            }
 
-            // Zustand für die Sichtbarkeit der Bilder
-            var showHelpImage1 by remember { mutableStateOf(false) }
-            var showHelpImage2 by remember { mutableStateOf(false) }
-            var showHelpImage3 by remember { mutableStateOf(false) }
-            var showHelpImage4 by remember { mutableStateOf(false) }
+            Scrollbars(state = scrollbarsState)
+        }
+    )
+}
 
-            Box(modifier = Modifier.fillMaxSize()) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(scaffoldPadding)
-                        .verticalScroll(scrollState)
-                        .padding(horizontal = 30.dp, vertical = 16.dp),
-                    verticalArrangement = Arrangement.Top,
-                    horizontalAlignment = Alignment.Start
-                ) {
-                    // Erste Hilfe-Sektion
-                    val annotatedString1 = buildAnnotatedString {
-                        pushStringAnnotation(tag = "help1", annotation = "help1")
-                        withStyle(
-                            style = SpanStyle(
-                                color = Color.Green,
-                                fontSize = 16.sp,
-                                textDecoration = TextDecoration.Underline
-                            )
-                        ) {
-                            append(stringResource(R.string.help_1))
-                        }
-                        pop()
-                    }
+@Composable
+fun HelpCard(title: String, imageIds: List<Int>) {
+    var expanded by remember { mutableStateOf(false) }
+    val pagerState = rememberPagerState { imageIds.size }
 
-                    ClickableText(
-                        text = annotatedString1,
-                        onClick = { offset ->
-                            annotatedString1.getStringAnnotations("help1", offset, offset)
-                                .firstOrNull()?.let {
-                                    showHelpImage1 = !showHelpImage1 // Toggle visibility
-                                }
-                        }, modifier = Modifier.padding(top = 20.dp)
-
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
+            .clickable { expanded = !expanded },
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFFFDAD5))
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = title,
+                color = Color.Black,
+                fontSize = 16.sp,
+                textDecoration = TextDecoration.Underline
+            )
+            if (expanded) {
+                Spacer(modifier = Modifier.height(8.dp))
+                HorizontalPager(
+                    state = pagerState,
+                    modifier = Modifier.fillMaxWidth()
+                ) { page ->
+                    Image(
+                        painter = painterResource(imageIds[page]),
+                        contentDescription = "",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(500.dp) // Größere Bilder
+                            .clip(RoundedCornerShape(12.dp))
                     )
-
-                    if (showHelpImage1) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Image(
-                                painter = painterResource(R.drawable.help_image1),
-                                contentDescription = "",
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .width(400.dp)
-                                    .height(400.dp)
-                                    .clickable { showHelpImage1 = false },
-                            )
-                            Image(
-                                painter = painterResource(R.drawable.help_image2),
-                                contentDescription = "",
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .width(400.dp)
-                                    .height(400.dp)
-                                    .clickable { showHelpImage1 = false },
-                            )
-                        }
-                        Spacer(modifier = Modifier.height(16.dp))
-                    }
-
-                    // Zweite Hilfe-Sektion
-                    val annotatedString2 = buildAnnotatedString {
-                        pushStringAnnotation(tag = "help2", annotation = "help2")
-                        withStyle(
-                            style = SpanStyle(
-                                color = Color.Green,
-                                fontSize = 16.sp,
-
-                                textDecoration = TextDecoration.Underline
-                            )
-                        ) {
-                            append(stringResource(R.string.help_2))
-                        }
-                        pop()
-                    }
-
-                    ClickableText(
-                        text = annotatedString2,
-                        onClick = { offset ->
-                            annotatedString2.getStringAnnotations("help2", offset, offset)
-                                .firstOrNull()?.let {
-                                    showHelpImage2 = !showHelpImage2 // Toggle visibility
-                                }
-                        },
-                        modifier = Modifier.padding(top = 40.dp)
-
-                    )
-
-                    if (showHelpImage2) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Image(
-                                painter = painterResource(R.drawable.help_image3),
-                                contentDescription = "",
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .width(400.dp)
-                                    .height(400.dp)
-                                    .clickable { showHelpImage2 = false },
-                            )
-                            Image(
-                                painter = painterResource(R.drawable.help_image4),
-                                contentDescription = "",
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .width(400.dp)
-                                    .height(400.dp)
-                                    .clickable { showHelpImage2 = false },
-                            )
-                        }
-                        Spacer(modifier = Modifier.height(16.dp))
-                    }
-
-                    // Dritte Hilfe-Sektion
-                    val annotatedString3 = buildAnnotatedString {
-                        pushStringAnnotation(tag = "help3", annotation = "help3")
-                        withStyle(
-                            style = SpanStyle(
-                                color = Color.Green,
-                                fontSize = 16.sp,
-
-                                textDecoration = TextDecoration.Underline
-                            )
-                        ) {
-                            append(stringResource(R.string.help_3))
-                        }
-                        pop()
-                    }
-
-                    ClickableText(
-
-                        text = annotatedString3,
-                        onClick = { offset ->
-                            annotatedString3.getStringAnnotations("help3", offset, offset)
-                                .firstOrNull()?.let {
-                                    showHelpImage3 = !showHelpImage3 // Toggle visibility
-                                }
-                        },
-                        modifier = Modifier.padding(top = 60.dp)
-
-                    )
-
-
-
-
-                    if (showHelpImage3) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .zIndex(1f) // Höherer zIndex, um über allem zu liegen
-                        ) {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 30.dp, vertical = 16.dp),
-                                horizontalArrangement = Arrangement.SpaceBetween
-                            ) {
-                                Image(
-                                    painter = painterResource(R.drawable.help_image5),
-                                    contentDescription = "",
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .width(400.dp)
-                                        .height(400.dp)
-                                        .clickable { showHelpImage3 = false },
-                                )
-                                Image(
-                                    painter = painterResource(R.drawable.help_image6),
-                                    contentDescription = "",
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .width(400.dp)
-                                        .height(400.dp)
-                                        .clickable { showHelpImage3 = false },
-                                )
-                                Image(
-                                    painter = painterResource(R.drawable.help_image7),
-                                    contentDescription = "",
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .width(400.dp)
-                                        .height(400.dp)
-                                        .clickable { showHelpImage3 = false },
-                                )
-                            }
-                            Spacer(modifier = Modifier.height(16.dp))
-
-                        }
-                    }
-
-                    Scrollbars(state = scrollbarsState)
-
-
-                    // Vierte  Hilfe-Sektion
-                    val annotatedString4 = buildAnnotatedString {
-                        pushStringAnnotation(tag = "help4", annotation = "help4")
-                        withStyle(
-                            style = SpanStyle(
-                                color = Color.Green,
-                                fontSize = 18.sp,
-                                textDecoration = TextDecoration.Underline
-                            )
-                        ) {
-                            append(stringResource(R.string.help_4))
-                        }
-                        pop()
-                    }
-
-                    ClickableText(
-                        text = annotatedString4,
-                        onClick = { offset ->
-                            annotatedString4.getStringAnnotations("help4", offset, offset)
-                                .firstOrNull()?.let {
-                                    showHelpImage4 = !showHelpImage4 // Toggle visibility
-                                }
-                        }, modifier = Modifier.padding(top = 80.dp)
-
-                    )
-                    if (showHelpImage4) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Image(
-                                painter = painterResource(R.drawable.help_image1),
-                                contentDescription = "",
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .width(400.dp)
-                                    .height(400.dp)
-                                    .clickable { showHelpImage4 = false },
-                            )
-                            Image(
-                                painter = painterResource(R.drawable.help_image8),
-                                contentDescription = "",
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .width(400.dp)
-                                    .height(400.dp)
-                                    .clickable { showHelpImage4 = false },
-                            )
-                        }
-                        Spacer(modifier = Modifier.height(16.dp))
-                    }
                 }
             }
         }
-
-    )
+    }
 }
