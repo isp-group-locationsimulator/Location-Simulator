@@ -120,23 +120,34 @@ class ClientHandler(
     }
 
     init {
-        if (clientHandlers.containsKey(name)) {
-            socket.close()
-            reader.close()
-            writer.close()
-            throw RuntimeException("Name $name is already taken")
+        var wasConnected = false
+        for (device in deviceList.getAsList()) {
+            if(name == device.user) {
+                if(device.isConnected) {
+                    socket.close()
+                    reader.close()
+                    writer.close()
+                    throw RuntimeException("Name $name is already taken")
+                }
+                else {
+                    wasConnected = true
+                }
+            }
         }
 
         send("Success")
         clientHandlers[name] = this
-        deviceList.addDevice(
-            Device(
-                user = name,
-                name = "Google Pixel",
-                isPlaying = false,
-                isConnected = true
+
+        if(!wasConnected) {
+            deviceList.addDevice(
+                Device(
+                    user = name,
+                    name = "Google Pixel",
+                    isPlaying = false,
+                    isConnected = true
+                )
             )
-        )
+        }
     }
 
     private fun parseMessage(message: String) {
