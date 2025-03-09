@@ -48,7 +48,7 @@ class ObservableDeviceList {
         newList.addAll(deviceList.value ?: emptyList())
         for (i in 0..<newList.size) {
             if (newList[i].user == device.user) {
-                changed = newList[i].isPlaying != device.isPlaying || newList[i].isConnected != device.isPlaying || newList[i].selectedConfig != device.selectedConfig
+                changed = newList[i].isPlaying != device.isPlaying || newList[i].isConnected != device.isConnected || newList[i].selectedConfig != device.selectedConfig
                 newList[i] = device.copy()
             }
         }
