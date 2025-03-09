@@ -123,6 +123,12 @@
     <string name="help_2">Wie kann man eine Konfiguration bearbeiten und Geräusche und Vibrationen hinfügen </string>
     <string name="help_3">Wie wählt man als Trainer Geräusche für User oder teilt sie </string>
     <string name="help_4">Wie kann man die eigene Konfiguration teilen </string>
+    <string name="ScreenConnection">Mit einem Trainer verbinden</string>
+    <string name="cancel">Abbrechen</string>
+    <string name="Name">Name</string>
+    <string name="retry">Erneut versuchen</string>
+    <string name="searching_for_trainer">Trainer wird gesucht</string>
+    <string name="search_failed">Suche nach Trainer fehlgeschlagen</string>
 
 
 </resources>

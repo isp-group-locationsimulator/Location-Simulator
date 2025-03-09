@@ -26,23 +26,30 @@ object ClientSingleton {
     private var client: Client? = null
     var lock: MulticastLock? = null
     val clientSignal = MutableLiveData<ClientSignal?>()
+    private var connectionClient: ConnectionClient? = null
 
     fun tryConnect(name: String): Boolean {
         if (lock == null) {
             return false
         }
 
-        lock!!.acquire()
-        val connectionClient = ConnectionClient(name)
+        connectionClient = ConnectionClient(name)
+        try {
+            lock!!.acquire()
 
-        val futureTask = FutureTask(connectionClient)
-        val t = Thread(futureTask)
-        t.start()
+            val futureTask = FutureTask(connectionClient)
+            val t = Thread(futureTask)
+            t.start()
 
-        client = futureTask.get()
-        connectionClient.close()
-        lock!!.release()
-        client?.start()
+            client = futureTask.get()
+            client?.start()
+        } catch (e: Exception) {
+            return false
+        } finally {
+            connectionClient?.close()
+            lock!!.release()
+        }
+
         return client != null
     }
 
@@ -55,6 +62,7 @@ object ClientSingleton {
     }
 
     fun close() {
+        connectionClient?.close()
         client?.close()
     }
 }
@@ -103,8 +111,9 @@ private class ConnectionClient(private val name: String) : Callable<Client> {
     }
 
     fun close() {
-        multicastSocket.leaveGroup(inetSocketAddress, null)
-        multicastSocket.close()
+        if (!multicastSocket.isClosed) {
+            multicastSocket.close()
+        }
     }
 }
 
@@ -127,7 +136,12 @@ private class Client(
     private fun parseMessage(message: String) {
         val splitMsg = message.split(' ', limit = 2)
         when (splitMsg.first()) {
-            "start" -> if (splitMsg.size == 2) ClientSingleton.clientSignal.postValue(ClientSignal.StartTraining(splitMsg[1]))
+            "start" -> if (splitMsg.size == 2) ClientSingleton.clientSignal.postValue(
+                ClientSignal.StartTraining(
+                    splitMsg[1]
+                )
+            )
+
             "stop" -> ClientSingleton.clientSignal.postValue(ClientSignal.StopTraining)
             else -> println("Unknown message")
         }
@@ -175,8 +189,10 @@ private class Client(
     }
 
     fun close() {
-        socket.close()
-        reader.close()
-        writer.close()
+        if (!socket.isClosed) {
+            socket.close()
+            reader.close()
+            writer.close()
+        }
     }
 }

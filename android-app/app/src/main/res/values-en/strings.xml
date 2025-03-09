@@ -124,8 +124,12 @@
     <string name="help_2">How to edit a configuration and add sounds or vibrations </string>
     <string name="help_3">How to choose a sound for users or share the configuration as trainer </string>
     <string name="help_4">How to share the own configuration </string>
-
-
+    <string name="ScreenConnection">Connect to Trainer</string>
+    <string name="cancel">Cancel</string>
+    <string name="Name">Name</string>
+    <string name="retry">Retry</string>
+    <string name="searching_for_trainer">Searching for trainer</string>
+    <string name="search_failed">Search for trainer failed</string>
 
 
 </resources>
