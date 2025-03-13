@@ -4,7 +4,8 @@ import com.ispgr5.locationsimulator.domain.model.Configuration
 
 data class TrainerScreenState(
     val showInputFields: Boolean = true,
-    val isPlayingMap: Map<String, Boolean> = emptyMap()
+    val isPlayingMap: Map<String, Boolean> = emptyMap(),
+    val defaultConfig: Configuration? = null
 )
 
 

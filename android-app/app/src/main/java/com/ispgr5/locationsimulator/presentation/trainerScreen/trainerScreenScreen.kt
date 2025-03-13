@@ -118,6 +118,9 @@ fun TrainerScreenContent(
                 modifier = Modifier.fillMaxSize()
             ) {
                 items(deviceList) { device ->
+                    if(device.selectedConfig == null) {
+                        device.selectedConfig = trainerScreenState.defaultConfig
+                    }
                     DeviceCard(
                         userName = device.user,
                         deviceName = device.name,
