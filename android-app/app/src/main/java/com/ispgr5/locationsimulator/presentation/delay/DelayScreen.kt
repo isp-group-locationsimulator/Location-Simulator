@@ -32,6 +32,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.core.util.TestTags
@@ -74,11 +75,13 @@ fun DelayScreen(
 
     val clientMessage: ClientSignal? by ClientSingleton.clientSignal.observeAsState()
     if(clientMessage is ClientSignal.StartTraining) {
-        val conf = Json.decodeFromString<Configuration?>((clientMessage as ClientSignal.StartTraining).config)
-        if(conf != null) {
-            startServiceFunction(conf.name, conf.components, conf.randomOrderPlayback)
-            navController.navigate(Screen.RunScreen.route)
-        }
+        val configStr = (clientMessage as ClientSignal.StartTraining).config
+        ClientSingleton.clientSignal.value = null
+        viewModel.onEvent(DelayEvent.RemoteStart(configStr, startServiceFunction))
+        navController.navigate(route = Screen.RunScreen.createRoute(-1, configStr))
+    }
+    if(clientMessage is ClientSignal.StopTraining) {    // ignore message
+        ClientSingleton.clientSignal.value = null
     }
 
     DelayScreenScaffold(
@@ -95,7 +98,7 @@ fun DelayScreen(
         // button in the timer composable
         if (!timerState.value.inhibitStart) {
             viewModel.onEvent(DelayEvent.StartClicked(startServiceFunction))
-            navController.navigate(route = Screen.RunScreen.createRoute(configurationId))
+            navController.navigate(route = Screen.RunScreen.createRoute(configurationId, ""))
         } else {
             Log.w(TAG, "start vibration fired, but inhibited: $timerState")
         }

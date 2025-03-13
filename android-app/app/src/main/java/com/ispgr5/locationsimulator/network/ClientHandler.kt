@@ -150,9 +150,30 @@ class ClientHandler(
         }
     }
 
+    private fun deviceStarted() {
+        for(device in deviceList.getAsList()) {
+            if(device.user == name && !device.isPlaying) {
+                val modifiedDevice = device.copy()
+                modifiedDevice.isPlaying = true
+                deviceList.updateDevice(modifiedDevice)
+            }
+        }
+    }
+
+    private fun deviceStopped() {
+        for(device in deviceList.getAsList()) {
+            if(device.user == name && device.isPlaying) {
+                val modifiedDevice = device.copy()
+                modifiedDevice.isPlaying = false
+                deviceList.updateDevice(modifiedDevice)
+            }
+        }
+    }
+
     private fun parseMessage(message: String) {
         when (message) {
-
+            "localStart" -> deviceStarted()
+            "localStop" -> deviceStopped()
             else -> println("Unknown message")
         }
     }

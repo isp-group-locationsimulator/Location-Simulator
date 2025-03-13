@@ -246,7 +246,10 @@ class MainActivity : ComponentActivity() {
                     soundsDirUri = this@MainActivity.filesDir.toString() + "/Sounds/",
                 )
             }
-            composable(Screen.RunScreen.route) {
+            composable(
+                route = Screen.RunScreen.route,
+                arguments = listOf(navArgument("configStr") { type = NavType.StringType })
+            ) {
                 RunScreen(
                     navController = navController,
                     snackbarHostState = snackbarHostState,

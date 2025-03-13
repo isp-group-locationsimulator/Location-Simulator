@@ -122,9 +122,13 @@ fun RunScreen(
 
     val clientMessage: ClientSignal? by ClientSingleton.clientSignal.observeAsState()
     if(clientMessage is ClientSignal.StopTraining) {
+        ClientSingleton.clientSignal.value = null
         SimulationService.IsPlayingEventBus.postValue(false)
         viewModel.onEvent(RunEvent.StopClicked(stopServiceFunction))
         navController.popBackStack()
+    }
+    if(clientMessage is ClientSignal.StartTraining) {   // ignore message
+        ClientSingleton.clientSignal.value = null
     }
 
     val effectState: EffectTimelineState? by SimulationService.EffectTimelineStateBus.observeAsState()
@@ -168,6 +172,7 @@ fun RunScreen(
             snackbarContentState = snackbarContentState,
             initialRefreshInstant = initialRefreshInstant
         ) {
+            ClientSingleton.send("localStop")
             SimulationService.IsPlayingEventBus.postValue(false)
             viewModel.onEvent(RunEvent.StopClicked(stopServiceFunction))
             navController.popBackStack()

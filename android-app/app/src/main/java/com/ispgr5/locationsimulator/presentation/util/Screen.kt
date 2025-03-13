@@ -28,8 +28,8 @@ sealed class Screen(val route: String) {
         fun createRoute(userName: String) = "exportSettingsScreen?userName=$userName"
     }
 
-    data object RunScreen : Screen("runScreen?configurationId={configurationId}") {
-        fun createRoute(configurationId: Int) = "runScreen?configurationId=$configurationId"
+    data object RunScreen : Screen("runScreen?configurationId={configurationId},configStr={configStr}") {
+        fun createRoute(configurationId: Int, configStr: String) = "runScreen?configurationId=$configurationId,configStr=$configStr"
     }
 
     data object StopService :
