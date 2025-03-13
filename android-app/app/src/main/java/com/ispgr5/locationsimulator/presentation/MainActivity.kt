@@ -208,7 +208,9 @@ class MainActivity : ComponentActivity() {
                 InfoScreen(navController = navController)
             }
             composable(Screen.HelpScreen.route) {
-                HelpScreen(navController=navController)
+                HelpScreen(
+                    navController=navController, appTheme = themeState
+                )
             }
             composable(route = Screen.SelectScreen.route) {
                 SelectScreen(
