@@ -77,8 +77,10 @@ fun DelayScreen(
     if(clientMessage is ClientSignal.StartTraining) {
         val configStr = (clientMessage as ClientSignal.StartTraining).config
         ClientSingleton.clientSignal.value = null
-        viewModel.onEvent(DelayEvent.RemoteStart(configStr, startServiceFunction))
-        navController.navigate(route = Screen.RunScreen.createRoute(-1, configStr))
+        if(configStr != "null") {
+            viewModel.onEvent(DelayEvent.RemoteStart(configStr, startServiceFunction))
+            navController.navigate(route = Screen.RunScreen.createRoute(-1, configStr))
+        }
     }
     if(clientMessage is ClientSignal.StopTraining) {    // ignore message
         ClientSingleton.clientSignal.value = null
