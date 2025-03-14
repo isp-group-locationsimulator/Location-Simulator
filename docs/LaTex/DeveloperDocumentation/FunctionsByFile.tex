@@ -1,0 +1,62 @@
+\section{\en{Project Structure} \de{Projektaufbau}}
+\en{The following section refer to all the packages found in\\ android-app/app/src/main/java/com/ispgr5/locationsimulator.}
+\de{Die folgenden Abschnitte beziehen sich auf die Packages, die in\\ android-app/app/src/main/java/com/ispgr5/locationsimulator gefunden werden können.}
+
+\subsection{core.util}
+\begin{itemize}
+	\item \textbf{TestTags} \en{Contains all the test tags which can be used to test the app with it's UI. The most common use cases would be to check if a UI element exists, to get it's value or to click on it.}
+		\de{Enthält alle Test Tags die verwendet werden können, um die App über ihre UI zu testen. Typische Verwendungsfalle wären um zu überprüfen, ob ein UI Element existiert, um seinen Wert zu erhalten, oder um auf es zu klicken.}
+\end{itemize}
+
+\subsection{data}
+
+\subsubsection{repository}
+\begin{itemize}
+	\item \textbf{ConfigurationRepositoryImpl} \en{Implements all the function that can be called to read configurations from the database, or write them to it.}
+	\de{Implementiert alle Funktionen, mit denen Konfigurationen von der Datenbank gelesen oder auf die Datenbank geschrieben werden können.}
+\end{itemize}
+\subsubsection{source}
+\begin{itemize}
+	\item \textbf{ConfigurationDao} \en{Data Access Object for the Database where SQL queries are defined.}
+		\de{Data Access Object fü die Datenbank, welches die SQL Queries definiert, um auf die Datenbank zuzugreifen.}
+	\item \textbf{ConfigurationDatabase} \en{Defines the database which stores the configurations.}
+		\de{Definiert die Datenbank, welche die Konfigurationen speichert.}
+\end{itemize}
+\subsubsection{storageManager}
+\begin{itemize}
+	\item \textbf{ConfigurationStorageManager} \en{This class is responsible for importing and exporting configurations. It turns sound files into a base64 string, creates a json for the configuration, and compresses them using gzip.}
+		\de{Diese Klassen stellt die Funktionalitäten fü das Importieren und Exportieren von Konfigurationen zur Verfügung. Dabei werden Audio Dateien in Base64 Strings umgewandelt und die Konfiguration in eine JSON Datei verwandelt, welche mit GZIP komprimiert wird.}
+	\item \textbf{SoundStorageManager} \en{This class allows us to use the sound files, which are stored on the devices main storage.}
+		\de{Diese Funktion ermöglicht es uns die Audio Dateien zu verwenden, welche auf dem Hauptspeicher des Geräts gespeichert sind.}
+\end{itemize}
+
+\subsection{di}
+\begin{itemize}
+	\item \textbf{AppModule} \en{This data injection module loads the database when starting the app and provides it's interface to the view models.}
+		\de{Diese Data Injection Modul lädt die Datenbank und gibt den View Models ein Interface, um mit der Datanbank zu interagieren.}
+\end{itemize}
+
+\subsection{domain}
+\subsubsection{model}
+\subsubsection{repository}
+\subsubsection{useCase}
+
+\subsection{presentation}
+\subsubsection{add}
+\subsubsection{delay}
+\subsubsection{editTimeline}
+\subsubsection{homescreen}
+\subsubsection{previewData}
+\subsubsection{run}
+\subsubsection{select}
+\subsubsection{settings}
+\subsubsection{sound}
+\subsubsection{universalComponents}
+\subsubsection{util}
+
+\subsection{ui.theme}
+
+\subsection{vibrationtest}
+
+
+\section{\en{Files outside the main app} \de{Dateien außerhalb von App}}
