@@ -1,0 +1,22 @@
+\documentclass[10pt,a4paper]{article}
+
+\title{Developer Documentation for}
+
+% Support for multiple languages
+\newif\ifen
+\newif\ifde
+
+\newcommand{\en}[1]{\ifen#1\fi}
+\newcommand{\de}[1]{\ifde#1\fi}
+
+%Enable correct language 
+\detrue
+
+
+
+\begin{document}
+	
+	\maketitle
+	
+	\include{DeveloperDocumentation/Installation}
+\end{document}
