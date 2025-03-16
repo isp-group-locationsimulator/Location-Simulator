@@ -1,6 +1,7 @@
 package com.ispgr5.locationsimulator.presentation.trainerScreen
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -16,6 +17,8 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.filled.Pause
+import androidx.compose.material.icons.filled.Speaker
+import androidx.compose.material.icons.filled.Vibration
 
 
 @Composable
@@ -26,15 +29,15 @@ fun DeviceCard(
     isOnline: Boolean,
     isPlaying: Boolean,
     onPlayClick: () -> Unit,
+    vibrationInteractionSource: MutableInteractionSource,
+    soundInteractionSource: MutableInteractionSource,
     onSettingsClick: () -> Unit
 ) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp),
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFFFFDAD5)),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        shape = RoundedCornerShape(16.dp)
     ) {
         Box(modifier = Modifier.padding(16.dp)) {
             Column(modifier = Modifier.fillMaxWidth()) {
@@ -47,7 +50,7 @@ fun DeviceCard(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 16.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    horizontalArrangement = Arrangement.Absolute.Left
                 ) {
                     IconButton(onClick = onPlayClick) {
                         Icon(
@@ -55,6 +58,19 @@ fun DeviceCard(
                             contentDescription = if (isPlaying) "Pause" else "Play"
                         )
                     }
+                    IconButton(onClick = {}, interactionSource = vibrationInteractionSource) {
+                        Icon(
+                            imageVector = Icons.Default.Vibration,
+                            contentDescription = "Vibration"
+                        )
+                    }
+                    IconButton(onClick = {}, interactionSource = soundInteractionSource) {
+                        Icon(
+                            imageVector = Icons.Default.Speaker,
+                            contentDescription = "Sound"
+                        )
+                    }
+                    Spacer(modifier = Modifier.weight(1f))
                     IconButton(onClick = onSettingsClick) {
                         Icon(imageVector = Icons.Default.Settings, contentDescription = "Settings")
                     }

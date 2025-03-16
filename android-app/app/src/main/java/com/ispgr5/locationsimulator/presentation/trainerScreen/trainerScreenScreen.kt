@@ -1,6 +1,8 @@
 package com.ispgr5.locationsimulator.presentation.trainerScreen
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -8,6 +10,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,6 +30,8 @@ import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.network.ClientHandler
 import com.ispgr5.locationsimulator.network.ServerSingleton
 import com.ispgr5.locationsimulator.presentation.util.Screen
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 
 
 @Composable
@@ -121,6 +126,39 @@ fun TrainerScreenContent(
                     if(device.selectedConfig == null) {
                         device.selectedConfig = trainerScreenState.defaultConfig
                     }
+
+                    val vibrationInteractionSource = remember {
+                        MutableInteractionSource()
+                    }
+                    val soundInteractionSource = remember {
+                        MutableInteractionSource()
+                    }
+
+                    LaunchedEffect(vibrationInteractionSource) {
+                        vibrationInteractionSource.interactions.collectLatest { interaction ->
+                            when (interaction) {
+                                is PressInteraction.Press -> {
+                                    onEvent(TrainerScreenEvent.TestVibrationPress(device))
+                                }
+                                is PressInteraction.Release -> {
+                                    onEvent(TrainerScreenEvent.StopDeviceTraining(device))
+                                }
+                            }
+                        }
+                    }
+                    LaunchedEffect(soundInteractionSource) {
+                        soundInteractionSource.interactions.collectLatest { interaction ->
+                            when (interaction) {
+                                is PressInteraction.Press -> {
+                                    onEvent(TrainerScreenEvent.TestSoundPress(device))
+                                }
+                                is PressInteraction.Release -> {
+                                    onEvent(TrainerScreenEvent.StopDeviceTraining(device))
+                                }
+                            }
+                        }
+                    }
+
                     DeviceCard(
                         userName = device.user,
                         deviceName = device.name,
@@ -137,6 +175,8 @@ fun TrainerScreenContent(
                             modifiedDevice.isPlaying = !device.isPlaying
                             ClientHandler.deviceList.updateDevice(modifiedDevice)
                         },
+                        vibrationInteractionSource = vibrationInteractionSource,
+                        soundInteractionSource = soundInteractionSource,
                         onSettingsClick = {
                             navController.navigate(Screen.UserSettingsScreen.createRoute(device.user))
                         }

@@ -3,9 +3,12 @@ package com.ispgr5.locationsimulator.presentation.trainerScreen
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ispgr5.locationsimulator.domain.model.ConfigComponent
+import com.ispgr5.locationsimulator.domain.model.Configuration
 import com.ispgr5.locationsimulator.domain.useCase.ConfigurationUseCases
 import com.ispgr5.locationsimulator.network.ClientHandler
 import com.ispgr5.locationsimulator.network.ServerSingleton
+import com.ispgr5.locationsimulator.presentation.util.Screen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
@@ -60,6 +63,26 @@ class TrainerScreenViewModel @Inject constructor(
 
             is TrainerScreenEvent.StartDeviceTraining -> {
                 val serializedConfig = Json.encodeToString(event.device.selectedConfig)
+                ClientHandler.sendToClient(
+                    event.device.user, "start $serializedConfig"
+                )
+            }
+
+            is TrainerScreenEvent.TestVibrationPress -> {
+                val config = Configuration("testVibration", "",false, listOf(
+                    ConfigComponent.Vibration(0, "testVibration", 255, 255, 0, 0, 10000, 10000)
+                ))
+                val serializedConfig = Json.encodeToString(config)
+                ClientHandler.sendToClient(
+                    event.device.user, "start $serializedConfig"
+                )
+            }
+
+            is TrainerScreenEvent.TestSoundPress -> {
+                val config = Configuration("testSound", "",false, listOf(
+                    ConfigComponent.Sound(0, "Bellen.mp3", "testSound", 1f, 1f, 0, 0)
+                ))
+                val serializedConfig = Json.encodeToString(config)
                 ClientHandler.sendToClient(
                     event.device.user, "start $serializedConfig"
                 )
