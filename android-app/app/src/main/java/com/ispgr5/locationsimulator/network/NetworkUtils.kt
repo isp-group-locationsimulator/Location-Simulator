@@ -8,6 +8,24 @@ import java.util.Locale
 import kotlin.time.Duration
 import kotlin.time.TimeSource
 
+data object Commands {
+    const val BROADCAST = "LOCATION_SIMULATOR_BROADCAST"
+    const val PING = "LOCATION_SIMULATOR_PING"
+    const val SUCCESS = "SUCCESS"
+    const val NAME = "NAME"
+    const val START = "START"
+    const val STOP = "STOP"
+    const val LOCAL_START = "LOCAL_START"
+    const val LOCAL_STOP = "LOCAL_STOP"
+
+    fun formatName(name: String) : String {
+        return "$NAME $name"
+    }
+    fun formatStart(config: String) : String {
+        return "$START $config"
+    }
+}
+
 fun getIPAddress(): String? {
     try {
         val interfaces = Collections.list(NetworkInterface.getNetworkInterfaces())

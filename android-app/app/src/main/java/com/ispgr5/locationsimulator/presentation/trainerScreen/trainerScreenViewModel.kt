@@ -7,8 +7,8 @@ import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 import com.ispgr5.locationsimulator.domain.model.Configuration
 import com.ispgr5.locationsimulator.domain.useCase.ConfigurationUseCases
 import com.ispgr5.locationsimulator.network.ClientHandler
+import com.ispgr5.locationsimulator.network.Commands
 import com.ispgr5.locationsimulator.network.ServerSingleton
-import com.ispgr5.locationsimulator.presentation.util.Screen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
@@ -38,7 +38,7 @@ class TrainerScreenViewModel @Inject constructor(
                     if (!device.isPlaying) {
                         val serializedConfig = Json.encodeToString(device.selectedConfig)
                         ClientHandler.sendToClient(
-                            device.user, "start $serializedConfig"
+                            device.user, Commands.formatStart(serializedConfig)
                         )
                         val modifiedDevice = device.copy()
                         modifiedDevice.isPlaying = true
@@ -52,7 +52,7 @@ class TrainerScreenViewModel @Inject constructor(
                     if (device.isPlaying) {
                         ClientHandler.sendToClient(
                             device.user,
-                            "stop"
+                            Commands.STOP
                         )
                         val modifiedDevice = device.copy()
                         modifiedDevice.isPlaying = false
@@ -64,32 +64,36 @@ class TrainerScreenViewModel @Inject constructor(
             is TrainerScreenEvent.StartDeviceTraining -> {
                 val serializedConfig = Json.encodeToString(event.device.selectedConfig)
                 ClientHandler.sendToClient(
-                    event.device.user, "start $serializedConfig"
+                    event.device.user, Commands.formatStart(serializedConfig)
                 )
             }
 
             is TrainerScreenEvent.TestVibrationPress -> {
-                val config = Configuration("testVibration", "",false, listOf(
-                    ConfigComponent.Vibration(0, "testVibration", 255, 255, 0, 0, 10000, 10000)
-                ))
+                val config = Configuration(
+                    "testVibration", "", false, listOf(
+                        ConfigComponent.Vibration(0, "testVibration", 255, 255, 0, 0, 10000, 10000)
+                    )
+                )
                 val serializedConfig = Json.encodeToString(config)
                 ClientHandler.sendToClient(
-                    event.device.user, "start $serializedConfig"
+                    event.device.user, Commands.formatStart(serializedConfig)
                 )
             }
 
             is TrainerScreenEvent.TestSoundPress -> {
-                val config = Configuration("testSound", "",false, listOf(
-                    ConfigComponent.Sound(0, "Bellen.mp3", "testSound", 1f, 1f, 0, 0)
-                ))
+                val config = Configuration(
+                    "testSound", "", false, listOf(
+                        ConfigComponent.Sound(0, "Bellen.mp3", "testSound", 1f, 1f, 0, 0)
+                    )
+                )
                 val serializedConfig = Json.encodeToString(config)
                 ClientHandler.sendToClient(
-                    event.device.user, "start $serializedConfig"
+                    event.device.user, Commands.formatStart(serializedConfig)
                 )
             }
 
             is TrainerScreenEvent.StopDeviceTraining -> {
-                ClientHandler.sendToClient(event.device.user, "stop")
+                ClientHandler.sendToClient(event.device.user, Commands.STOP)
             }
 
             is TrainerScreenEvent.ToggleInputFields -> {

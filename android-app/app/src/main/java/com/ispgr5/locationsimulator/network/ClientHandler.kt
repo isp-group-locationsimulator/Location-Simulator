@@ -130,8 +130,8 @@ class ClientHandler(
             }
         }
 
-        send("Success")
-        send("locationSimulatorPing")
+        send(Commands.SUCCESS)
+        send(Commands.PING)
         timeoutChecker.startTimer()
         clientHandlers[name] = this
 
@@ -152,7 +152,7 @@ class ClientHandler(
         thread {
             sleep(3000)
             try {
-                writer.write("locationSimulatorPing")
+                writer.write(Commands.PING)
                 writer.newLine()
                 writer.flush()
             } catch (_: Exception) {
@@ -182,9 +182,9 @@ class ClientHandler(
 
     private fun parseMessage(message: String) {
         when (message) {
-            "locationSimulatorPing" -> pingReceived()
-            "localStart" -> deviceStarted()
-            "localStop" -> deviceStopped()
+            Commands.PING -> pingReceived()
+            Commands.LOCAL_START -> deviceStarted()
+            Commands.LOCAL_STOP -> deviceStopped()
             else -> println("Unknown message")
         }
     }

@@ -118,7 +118,7 @@ private class ConnectionClient(private val name: String) : Callable<Client> {
             )
             val split = received.split(' ')
 
-            if (split.count() == 2 && split[0] == "TestBroadcast") {
+            if (split.count() == 2 && split[0] == Commands.BROADCAST) {
                 println("Client connecting to server...")
                 var socket: Socket? = null
                 var reader: BufferedReader? = null
@@ -156,11 +156,11 @@ private class Client(
     val timeoutChecker = TimeoutChecker(10.seconds)
 
     init {
-        send("Name $name")
+        send(Commands.formatName(name))
         timeoutChecker.startTimer()
 
         val line = reader.readLine() ?: throw RuntimeException("ErrorNullAnswer")
-        if (line != "Success") {
+        if (line != Commands.SUCCESS) {
             throw RuntimeException("ErrorUnknownAnswer")
         }
     }
@@ -170,7 +170,7 @@ private class Client(
         thread {
             sleep(3000)
             try {
-                writer.write("locationSimulatorPing")
+                writer.write(Commands.PING)
                 writer.newLine()
                 writer.flush()
             } catch (_: Exception) {
@@ -181,13 +181,13 @@ private class Client(
     private fun parseMessage(message: String) {
         val splitMsg = message.split(' ', limit = 2)
         when (splitMsg.first()) {
-            "locationSimulatorPing" -> pingReceived()
-            "start" -> if (splitMsg.size == 2) ClientSingleton.clientSignal.postValue(
+            Commands.PING -> pingReceived()
+            Commands.START -> if (splitMsg.size == 2) ClientSingleton.clientSignal.postValue(
                 ClientSignal.StartTraining(
                     splitMsg[1]
                 )
             )
-            "stop" -> ClientSingleton.clientSignal.postValue(ClientSignal.StopTraining)
+            Commands.STOP -> ClientSingleton.clientSignal.postValue(ClientSignal.StopTraining)
             else -> println("Unknown message")
         }
     }

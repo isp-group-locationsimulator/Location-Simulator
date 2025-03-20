@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.ispgr5.locationsimulator.domain.model.Configuration
 import com.ispgr5.locationsimulator.domain.useCase.ConfigurationUseCases
 import com.ispgr5.locationsimulator.network.ClientSingleton
+import com.ispgr5.locationsimulator.network.Commands
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
@@ -47,7 +48,7 @@ class DelayViewModel @Inject constructor(
 	fun onEvent(event: DelayEvent) {
 		when (event) {
 			is DelayEvent.StartClicked -> {
-				ClientSingleton.send("localStart")
+				ClientSingleton.send(Commands.LOCAL_START)
 				if (state.value.configuration != null)
 					event.startServiceFunction(
 						state.value.configuration!!.name,

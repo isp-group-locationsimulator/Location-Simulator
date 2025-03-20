@@ -74,6 +74,7 @@ import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 import com.ispgr5.locationsimulator.domain.model.Configuration
 import com.ispgr5.locationsimulator.network.ClientSignal
 import com.ispgr5.locationsimulator.network.ClientSingleton
+import com.ispgr5.locationsimulator.network.Commands
 import com.ispgr5.locationsimulator.presentation.previewData.AppPreview
 import com.ispgr5.locationsimulator.presentation.previewData.PreviewData
 import com.ispgr5.locationsimulator.presentation.previewData.PreviewData.runScreenPreviewInitialRefresh
@@ -172,7 +173,7 @@ fun RunScreen(
             snackbarContentState = snackbarContentState,
             initialRefreshInstant = initialRefreshInstant
         ) {
-            ClientSingleton.send("localStop")
+            ClientSingleton.send(Commands.LOCAL_STOP)
             SimulationService.IsPlayingEventBus.postValue(false)
             viewModel.onEvent(RunEvent.StopClicked(stopServiceFunction))
             navController.popBackStack()

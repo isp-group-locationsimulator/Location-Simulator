@@ -19,7 +19,7 @@ object ServerSingleton {
     private var isActive = false
 
     fun start() {
-        if(isActive) return
+        if (isActive) return
 
         multicastServer = MulticastServer()
         server = Server()
@@ -31,7 +31,7 @@ object ServerSingleton {
     }
 
     fun close() {
-        if(!isActive) return
+        if (!isActive) return
 
         multicastServer!!.stopMulticast()
         multicastServer!!.close()
@@ -51,7 +51,8 @@ private class MulticastServer : Thread() {
         while (isActive.get()) {
             try {
                 sleep(2000)
-                val buf = "TestBroadcast ".toByteArray() + ipAddress.toByteArray()
+                val buf =
+                    Commands.BROADCAST.toByteArray() + " ".toByteArray() + ipAddress.toByteArray()
                 val group = InetAddress.getByName("230.0.0.0")
 
                 val packet = DatagramPacket(buf, buf.size, group, 4445)
@@ -87,7 +88,7 @@ class Server : Thread() {
             val line = reader.readLine() ?: return false
             val split = line.split(' ')
 
-            if (split.count() == 2 && split[0] == "Name") {
+            if (split.count() == 2 && split[0] == Commands.NAME) {
                 val handler = ClientHandler(split[1], socket, reader, writer)
                 handler.start()
             }
