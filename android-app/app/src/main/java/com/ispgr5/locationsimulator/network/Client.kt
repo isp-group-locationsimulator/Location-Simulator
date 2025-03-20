@@ -7,6 +7,7 @@ import java.io.BufferedWriter
 import java.io.IOException
 import java.io.InputStreamReader
 import java.io.OutputStreamWriter
+import java.lang.Thread.sleep
 import java.net.DatagramPacket
 import java.net.InetAddress
 import java.net.InetSocketAddress
@@ -14,6 +15,7 @@ import java.net.MulticastSocket
 import java.net.Socket
 import java.util.concurrent.Callable
 import java.util.concurrent.FutureTask
+import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.concurrent.thread
 import kotlin.time.Duration.Companion.seconds
 
@@ -23,12 +25,33 @@ sealed class ClientSignal {
 }
 
 object ClientSingleton {
-    private var client: Client? = null
     var lock: MulticastLock? = null
     val clientSignal = MutableLiveData<ClientSignal?>()
     private var connectionClient: ConnectionClient? = null
+    private var client: Client? = null
+    private var currentClientName: String? = null
+    private val isCheckConnectionActive = AtomicBoolean(false)
 
-    fun tryConnect(name: String): Boolean {
+    fun start(name: String): Boolean {
+        if(tryConnect(name = name)) {
+            currentClientName = name
+            startCheckConnection()
+            return true
+        }
+        return false
+    }
+
+    fun send(message: String) {
+        client?.send(message)
+    }
+
+    fun close() {
+        stopCheckConnection()
+        connectionClient?.close()
+        client?.close()
+    }
+
+    private fun tryConnect(name: String) : Boolean {
         if (lock == null) {
             return false
         }
@@ -49,21 +72,27 @@ object ClientSingleton {
             connectionClient?.close()
             lock!!.release()
         }
-
         return client != null
     }
 
-    fun send(message: String) {
-        client?.send(message)
-    }
-
-    fun isConnected(): Boolean {
+    private fun isConnected(): Boolean {
         return client?.timeoutChecker?.isNotTimedOut() ?: false
     }
 
-    fun close() {
-        connectionClient?.close()
-        client?.close()
+    private fun startCheckConnection() {
+        isCheckConnectionActive.set(true)
+        thread {
+            while (isCheckConnectionActive.get() && currentClientName != null) {
+                sleep(3000)
+                if (!isConnected()) {
+                    tryConnect(currentClientName!!)
+                }
+            }
+        }
+    }
+
+    private fun stopCheckConnection() {
+        isCheckConnectionActive.set(false)
     }
 }
 

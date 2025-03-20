@@ -30,7 +30,7 @@ class ConnectionViewModel @Inject constructor(
         state.postValue(ConnectionScreenState(ConnectionStatus.CONNECTING))
 
         tryThread = Thread {
-            if (ClientSingleton.tryConnect(name)) {
+            if (ClientSingleton.start(name)) {
                 state.postValue(ConnectionScreenState(ConnectionStatus.SUCCESS))
             } else {
                 state.postValue(ConnectionScreenState(ConnectionStatus.FAILED))
