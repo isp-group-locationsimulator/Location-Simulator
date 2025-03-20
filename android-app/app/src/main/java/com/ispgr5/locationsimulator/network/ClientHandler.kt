@@ -11,6 +11,7 @@ import java.io.IOException
 import java.net.Socket
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.concurrent.thread
+import kotlin.time.Duration.Companion.seconds
 
 class ObservableDeviceList {
     private val deviceList = MutableLiveData<ArrayList<Device>>()
@@ -64,6 +65,8 @@ class ClientHandler(
     private val reader: BufferedReader,
     private val writer: BufferedWriter,
 ) : Thread() {
+    private val timeoutChecker = TimeoutChecker(10.seconds)
+
     companion object {
         val clientHandlers: HashMap<String, ClientHandler> = HashMap()
         val deviceList = ObservableDeviceList()
@@ -107,15 +110,7 @@ class ClientHandler(
         }
 
         private fun isConnected(name: String): Boolean {
-            try {
-                val client = clientHandlers[name] ?: throw RuntimeException()
-                client.writer.write("check")
-                client.writer.newLine()
-                client.writer.flush()
-            } catch (e: Exception) {
-                return false
-            }
-            return true
+           return clientHandlers[name]?.timeoutChecker?.isNotTimedOut() ?: false
         }
     }
 
@@ -136,6 +131,8 @@ class ClientHandler(
         }
 
         send("Success")
+        send("locationSimulatorPing")
+        timeoutChecker.startTimer()
         clientHandlers[name] = this
 
         if(!wasConnected) {
@@ -147,6 +144,19 @@ class ClientHandler(
                     isConnected = true
                 )
             )
+        }
+    }
+
+    private fun pingReceived() {
+        timeoutChecker.startTimer()
+        thread {
+            sleep(3000)
+            try {
+                writer.write("locationSimulatorPing")
+                writer.newLine()
+                writer.flush()
+            } catch (_: Exception) {
+            }
         }
     }
 
@@ -172,6 +182,7 @@ class ClientHandler(
 
     private fun parseMessage(message: String) {
         when (message) {
+            "locationSimulatorPing" -> pingReceived()
             "localStart" -> deviceStarted()
             "localStop" -> deviceStopped()
             else -> println("Unknown message")

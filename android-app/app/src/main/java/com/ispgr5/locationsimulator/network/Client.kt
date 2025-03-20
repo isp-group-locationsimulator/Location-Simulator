@@ -14,8 +14,8 @@ import java.net.MulticastSocket
 import java.net.Socket
 import java.util.concurrent.Callable
 import java.util.concurrent.FutureTask
-import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.concurrent.thread
+import kotlin.time.Duration.Companion.seconds
 
 sealed class ClientSignal {
     data class StartTraining(val config: String) : ClientSignal()
@@ -58,7 +58,7 @@ object ClientSingleton {
     }
 
     fun isConnected(): Boolean {
-        return client?.checkConnection() ?: false
+        return client?.timeoutChecker?.isNotTimedOut() ?: false
     }
 
     fun close() {
@@ -124,8 +124,11 @@ private class Client(
     private val reader: BufferedReader,
     private val writer: BufferedWriter
 ) : Thread() {
+    val timeoutChecker = TimeoutChecker(10.seconds)
+
     init {
         send("Name $name")
+        timeoutChecker.startTimer()
 
         val line = reader.readLine() ?: throw RuntimeException("ErrorNullAnswer")
         if (line != "Success") {
@@ -133,15 +136,28 @@ private class Client(
         }
     }
 
+    private fun pingReceived() {
+        timeoutChecker.startTimer()
+        thread {
+            sleep(3000)
+            try {
+                writer.write("locationSimulatorPing")
+                writer.newLine()
+                writer.flush()
+            } catch (_: Exception) {
+            }
+        }
+    }
+
     private fun parseMessage(message: String) {
         val splitMsg = message.split(' ', limit = 2)
         when (splitMsg.first()) {
+            "locationSimulatorPing" -> pingReceived()
             "start" -> if (splitMsg.size == 2) ClientSingleton.clientSignal.postValue(
                 ClientSignal.StartTraining(
                     splitMsg[1]
                 )
             )
-
             "stop" -> ClientSingleton.clientSignal.postValue(ClientSignal.StopTraining)
             else -> println("Unknown message")
         }
@@ -172,20 +188,6 @@ private class Client(
                 println("Server unable to send message: $e")
             }
         }
-    }
-
-    fun checkConnection(): Boolean {
-        val success = AtomicBoolean(true)
-        thread {
-            try {
-                writer.write("Check")
-                writer.newLine()
-                writer.flush()
-            } catch (e: Exception) {
-                success.set(false)
-            }
-        }.join()
-        return success.get()
     }
 
     fun close() {

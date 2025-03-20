@@ -5,6 +5,8 @@ import java.net.NetworkInterface
 import java.net.SocketException
 import java.util.Collections
 import java.util.Locale
+import kotlin.time.Duration
+import kotlin.time.TimeSource
 
 fun getIPAddress(): String? {
     try {
@@ -23,4 +25,19 @@ fun getIPAddress(): String? {
     }
     println("Unable to get IPAddress: No IPV4 address found")
     return null
+}
+
+class TimeoutChecker(
+    private val timeoutDuration: Duration
+) {
+    private val timeSource = TimeSource.Monotonic
+    private var timeoutForPing = timeSource.markNow()
+
+    fun startTimer() {
+        timeoutForPing = timeSource.markNow() + timeoutDuration
+    }
+
+    fun isNotTimedOut(): Boolean {
+        return timeoutForPing.hasNotPassedNow()
+    }
 }
