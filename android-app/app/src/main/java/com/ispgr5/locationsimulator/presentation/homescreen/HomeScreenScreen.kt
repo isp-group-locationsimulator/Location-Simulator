@@ -82,6 +82,7 @@ import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.core.util.TestTags
 import com.ispgr5.locationsimulator.data.storageManager.SoundStorageManager
 import com.ispgr5.locationsimulator.domain.model.Configuration
+import com.ispgr5.locationsimulator.network.ServerSingleton
 import com.ispgr5.locationsimulator.presentation.MainActivity
 import com.ispgr5.locationsimulator.presentation.previewData.AppPreview
 import com.ispgr5.locationsimulator.presentation.previewData.PreviewData
@@ -140,10 +141,12 @@ fun HomeScreenScreen(
                     navController.navigate(Screen.TrainerScreen.route)
                 }
                 "Standalone" -> {
+                    ServerSingleton.remoteName = null
                     navController.navigate(Screen.SelectScreen.route)
                 }
                 else -> {
-                    navController.navigate(Screen.ConnectionScreen.createRoute(name.value))
+                    ServerSingleton.remoteName = name.value
+                    navController.navigate(Screen.SelectScreen.route)
                 }
             }
         },

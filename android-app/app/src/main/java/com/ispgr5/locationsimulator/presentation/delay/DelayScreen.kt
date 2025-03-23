@@ -41,6 +41,7 @@ import com.ispgr5.locationsimulator.domain.model.Configuration
 import com.ispgr5.locationsimulator.network.ClientHandler
 import com.ispgr5.locationsimulator.network.ClientSignal
 import com.ispgr5.locationsimulator.network.ClientSingleton
+import com.ispgr5.locationsimulator.network.ServerSingleton
 import com.ispgr5.locationsimulator.presentation.editTimeline.components.Timeline
 import com.ispgr5.locationsimulator.presentation.previewData.AppPreview
 import com.ispgr5.locationsimulator.presentation.previewData.PreviewData.delayScreenInitialTimerState
@@ -73,17 +74,17 @@ fun DelayScreen(
         mutableStateOf(TimerState(inhibitStart = false))
     }
 
-    val clientMessage: ClientSignal? by ClientSingleton.clientSignal.observeAsState()
+    val clientMessage: ClientSignal? by ClientHandler.clientSignal.observeAsState()
     if(clientMessage is ClientSignal.StartTraining) {
         val configStr = (clientMessage as ClientSignal.StartTraining).config
-        ClientSingleton.clientSignal.value = null
+        ClientHandler.clientSignal.value = null
         if(configStr != "null") {
             viewModel.onEvent(DelayEvent.RemoteStart(configStr, startServiceFunction))
             navController.navigate(route = Screen.RunScreen.createRoute(-1, configStr))
         }
     }
     if(clientMessage is ClientSignal.StopTraining) {    // ignore message
-        ClientSingleton.clientSignal.value = null
+        ClientHandler.clientSignal.value = null
     }
 
     DelayScreenScaffold(
@@ -92,6 +93,7 @@ fun DelayScreen(
         soundsDirUri = soundsDirUri,
         onBackClick = {
             timerState.value = timerState.value.reset(inhibitStart = true)
+            ServerSingleton.close()
             navController.popBackStack()
         }
     ) { configurationId ->

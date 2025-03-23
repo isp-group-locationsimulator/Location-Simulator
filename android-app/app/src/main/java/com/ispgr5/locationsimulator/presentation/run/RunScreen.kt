@@ -72,8 +72,8 @@ import androidx.navigation.NavController
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 import com.ispgr5.locationsimulator.domain.model.Configuration
+import com.ispgr5.locationsimulator.network.ClientHandler
 import com.ispgr5.locationsimulator.network.ClientSignal
-import com.ispgr5.locationsimulator.network.ClientSingleton
 import com.ispgr5.locationsimulator.network.Commands
 import com.ispgr5.locationsimulator.presentation.previewData.AppPreview
 import com.ispgr5.locationsimulator.presentation.previewData.PreviewData
@@ -121,15 +121,15 @@ fun RunScreen(
         snackbarContent = snackbarContentState
     )
 
-    val clientMessage: ClientSignal? by ClientSingleton.clientSignal.observeAsState()
+    val clientMessage: ClientSignal? by ClientHandler.clientSignal.observeAsState()
     if(clientMessage is ClientSignal.StopTraining) {
-        ClientSingleton.clientSignal.value = null
+        ClientHandler.clientSignal.value = null
         SimulationService.IsPlayingEventBus.postValue(false)
         viewModel.onEvent(RunEvent.StopClicked(stopServiceFunction))
         navController.popBackStack()
     }
     if(clientMessage is ClientSignal.StartTraining) {   // ignore message
-        ClientSingleton.clientSignal.value = null
+        ClientHandler.clientSignal.value = null
     }
 
     val effectState: EffectTimelineState? by SimulationService.EffectTimelineStateBus.observeAsState()
@@ -173,7 +173,7 @@ fun RunScreen(
             snackbarContentState = snackbarContentState,
             initialRefreshInstant = initialRefreshInstant
         ) {
-            ClientSingleton.send(Commands.LOCAL_STOP)
+            ClientHandler.sendToClients(Commands.LOCAL_STOP)
             SimulationService.IsPlayingEventBus.postValue(false)
             viewModel.onEvent(RunEvent.StopClicked(stopServiceFunction))
             navController.popBackStack()

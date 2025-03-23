@@ -6,9 +6,8 @@ import androidx.lifecycle.viewModelScope
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 import com.ispgr5.locationsimulator.domain.model.Configuration
 import com.ispgr5.locationsimulator.domain.useCase.ConfigurationUseCases
-import com.ispgr5.locationsimulator.network.ClientHandler
+import com.ispgr5.locationsimulator.network.ClientSingleton
 import com.ispgr5.locationsimulator.network.Commands
-import com.ispgr5.locationsimulator.network.ServerSingleton
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
@@ -27,44 +26,48 @@ class TrainerScreenViewModel @Inject constructor(
         private set
 
     init {
-        ServerSingleton.start()
+        ClientSingleton.start()
         addDefaultConfiguration()
     }
 
     fun onEvent(event: TrainerScreenEvent) {
         when (event) {
             is TrainerScreenEvent.StartTraining -> {
-                for (device in ClientHandler.deviceList.getAsList()) {
+                val modifiedDevices = ArrayList<Device>()
+                for (device in ClientSingleton.deviceList.getAsList()) {
                     if (!device.isPlaying) {
                         val serializedConfig = Json.encodeToString(device.selectedConfig)
-                        ClientHandler.sendToClient(
-                            device.user, Commands.formatStart(serializedConfig)
+                        ClientSingleton.send(
+                            device.ipAddress, Commands.formatStart(serializedConfig)
                         )
                         val modifiedDevice = device.copy()
                         modifiedDevice.isPlaying = true
-                        ClientHandler.deviceList.updateDevice(modifiedDevice)
+                        modifiedDevices.add(modifiedDevice)
                     }
                 }
+                ClientSingleton.deviceList.updateDevices(modifiedDevices)
             }
 
             is TrainerScreenEvent.StopTraining -> {
-                for (device in ClientHandler.deviceList.getAsList()) {
+                val modifiedDevices = ArrayList<Device>()
+                for (device in ClientSingleton.deviceList.getAsList()) {
                     if (device.isPlaying) {
-                        ClientHandler.sendToClient(
-                            device.user,
+                        ClientSingleton.send(
+                            device.ipAddress,
                             Commands.STOP
                         )
                         val modifiedDevice = device.copy()
                         modifiedDevice.isPlaying = false
-                        ClientHandler.deviceList.updateDevice(modifiedDevice)
+                        modifiedDevices.add(modifiedDevice)
                     }
                 }
+                ClientSingleton.deviceList.updateDevices(modifiedDevices)
             }
 
             is TrainerScreenEvent.StartDeviceTraining -> {
                 val serializedConfig = Json.encodeToString(event.device.selectedConfig)
-                ClientHandler.sendToClient(
-                    event.device.user, Commands.formatStart(serializedConfig)
+                ClientSingleton.send(
+                    event.device.ipAddress, Commands.formatStart(serializedConfig)
                 )
             }
 
@@ -75,8 +78,8 @@ class TrainerScreenViewModel @Inject constructor(
                     )
                 )
                 val serializedConfig = Json.encodeToString(config)
-                ClientHandler.sendToClient(
-                    event.device.user, Commands.formatStart(serializedConfig)
+                ClientSingleton.send(
+                    event.device.ipAddress, Commands.formatStart(serializedConfig)
                 )
             }
 
@@ -87,13 +90,13 @@ class TrainerScreenViewModel @Inject constructor(
                     )
                 )
                 val serializedConfig = Json.encodeToString(config)
-                ClientHandler.sendToClient(
-                    event.device.user, Commands.formatStart(serializedConfig)
+                ClientSingleton.send(
+                    event.device.ipAddress, Commands.formatStart(serializedConfig)
                 )
             }
 
             is TrainerScreenEvent.StopDeviceTraining -> {
-                ClientHandler.sendToClient(event.device.user, Commands.STOP)
+                ClientSingleton.send(event.device.ipAddress, Commands.STOP)
             }
 
             is TrainerScreenEvent.ToggleInputFields -> {

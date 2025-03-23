@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ispgr5.locationsimulator.domain.model.Configuration
 import com.ispgr5.locationsimulator.domain.useCase.ConfigurationUseCases
-import com.ispgr5.locationsimulator.network.ClientHandler.Companion.deviceList
+import com.ispgr5.locationsimulator.network.ClientSingleton
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
@@ -21,7 +21,7 @@ class UserSettingsViewModel @Inject constructor(
 ) : ViewModel() {
     private var getConfigurationJob: Job? = null
 
-    private val _state = mutableStateOf(UserSettingsState(selectedUser = savedStateHandle.get<String>("userName")!!))
+    private val _state = mutableStateOf(UserSettingsState(selectedUser = savedStateHandle.get<String>("userIpAddress")!!))
     val state: State<UserSettingsState> = _state
 
     init {
@@ -37,11 +37,11 @@ class UserSettingsViewModel @Inject constructor(
                     selectedConfiguration = event.configID
                 )
                 val selectedConfig = _state.value.selectedConfiguration?.let { getConfigFromID(it) }
-                for(device in deviceList.getAsList()) {
-                    if(device.user == _state.value.selectedUser) {
+                for(device in ClientSingleton.deviceList.getAsList()) {
+                    if(device.ipAddress == _state.value.selectedUser) {
                         val modifiedDevice = device.copy()
                         modifiedDevice.selectedConfig = selectedConfig
-                        deviceList.updateDevice(modifiedDevice)
+                        ClientSingleton.deviceList.updateDevice(modifiedDevice)
                     }
                 }
             }

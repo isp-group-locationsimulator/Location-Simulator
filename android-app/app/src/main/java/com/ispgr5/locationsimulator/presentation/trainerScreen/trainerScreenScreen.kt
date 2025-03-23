@@ -27,10 +27,8 @@ import androidx.navigation.NavController
 import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
 import androidx.navigation.compose.rememberNavController
 import com.ispgr5.locationsimulator.R
-import com.ispgr5.locationsimulator.network.ClientHandler
-import com.ispgr5.locationsimulator.network.ServerSingleton
+import com.ispgr5.locationsimulator.network.ClientSingleton
 import com.ispgr5.locationsimulator.presentation.util.Screen
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 
 
@@ -39,7 +37,7 @@ fun TrainerScreenScreen(
     navController: NavController,
     viewModel: TrainerScreenViewModel = hiltViewModel()
 ) {
-    val deviceState: ArrayList<Device>? by ClientHandler.deviceList.observeAsState()
+    val deviceState: ArrayList<Device>? by ClientSingleton.deviceList.observeAsState()
     val devices = deviceState ?: emptyList()
     val state = viewModel.state.value
     val isTrainingActive = remember { mutableStateOf(false) }
@@ -49,7 +47,7 @@ fun TrainerScreenScreen(
         deviceList = devices,
         isTrainingActive = isTrainingActive.value,
         onEvent = { ev: TrainerScreenEvent -> viewModel.onEvent(ev) },
-        onGoBack = { ServerSingleton.close(); navController.navigateUp() },
+        onGoBack = { ClientSingleton.close(); navController.navigateUp() },
         navController = navController
     )
 }
@@ -161,7 +159,7 @@ fun TrainerScreenContent(
 
                     DeviceCard(
                         userName = device.user,
-                        deviceName = device.name,
+                        deviceIpAddress = device.ipAddress,
                         activity = device.selectedConfig?.name ?: "Default",
                         isOnline = device.isConnected,
                         isPlaying = device.isPlaying,
@@ -173,12 +171,12 @@ fun TrainerScreenContent(
                             }
                             val modifiedDevice = device.copy()
                             modifiedDevice.isPlaying = !device.isPlaying
-                            ClientHandler.deviceList.updateDevice(modifiedDevice)
+                            ClientSingleton.deviceList.updateDevice(modifiedDevice)
                         },
                         vibrationInteractionSource = vibrationInteractionSource,
                         soundInteractionSource = soundInteractionSource,
                         onSettingsClick = {
-                            navController.navigate(Screen.UserSettingsScreen.createRoute(device.user))
+                            navController.navigate(Screen.UserSettingsScreen.createRoute(device.user, device.ipAddress))
                         }
                     )
                 }
@@ -241,8 +239,8 @@ fun TrainerScreenTopBar(onGoBack: () -> Unit) {
 fun TrainerScreenPreview() {
     val state = TrainerScreenState()
     val deviceList =  listOf(
-        Device(user = "User1", name = "Samsung Galaxy S9+", isPlaying = true, isConnected = true),
-        Device(user = "User2", name = "Huawei P30 Pro", isPlaying = false, isConnected = false)
+        Device(ipAddress = "127.0.0.1", user = "User1", isPlaying = true, isConnected = true),
+        Device(ipAddress = "127.0.0.1", user = "User2", isPlaying = false, isConnected = false)
     )
 
     val navController = rememberNavController()

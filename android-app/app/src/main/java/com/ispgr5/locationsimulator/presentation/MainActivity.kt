@@ -46,7 +46,6 @@ import com.ispgr5.locationsimulator.domain.model.ConfigurationComponentRoomConve
 import com.ispgr5.locationsimulator.domain.useCase.ConfigurationUseCases
 import com.ispgr5.locationsimulator.network.ClientSingleton
 import com.ispgr5.locationsimulator.presentation.add.AddScreen
-import com.ispgr5.locationsimulator.presentation.connection.ConnectionScreen
 import com.ispgr5.locationsimulator.presentation.delay.DelayScreen
 import com.ispgr5.locationsimulator.presentation.editTimeline.EditTimelineScreen
 import com.ispgr5.locationsimulator.presentation.exportSettings.ExportSettingsScreen
@@ -304,14 +303,6 @@ class MainActivity : ComponentActivity() {
             ) { backStackEntry ->
                 val userName = backStackEntry.arguments?.getString("userName") ?: "Unknown"
                 ExportSettingsScreen(navController = navController, userName = userName)
-            }
-
-            composable(
-                route = Screen.ConnectionScreen.route,
-                arguments = listOf(navArgument("userName") { type = NavType.StringType })
-            ) { backStackEntry ->
-                val userName = backStackEntry.arguments?.getString("userName") ?: "Unknown"
-                ConnectionScreen(navController = navController, userName = userName)
             }
         }
     }

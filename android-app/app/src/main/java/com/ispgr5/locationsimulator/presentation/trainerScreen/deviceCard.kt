@@ -24,7 +24,7 @@ import androidx.compose.material.icons.filled.Vibration
 @Composable
 fun DeviceCard(
     userName: String,
-    deviceName: String,
+    deviceIpAddress: String,
     activity: String,
     isOnline: Boolean,
     isPlaying: Boolean,
@@ -42,7 +42,7 @@ fun DeviceCard(
         Box(modifier = Modifier.padding(16.dp)) {
             Column(modifier = Modifier.fillMaxWidth()) {
                 Text(text = userName, fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                Text(text = deviceName, fontSize = 14.sp, color = Color.Gray)
+                Text(text = deviceIpAddress, fontSize = 14.sp, color = Color.Gray)
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(text = activity, fontWeight = FontWeight.Bold, fontSize = 16.sp)
 

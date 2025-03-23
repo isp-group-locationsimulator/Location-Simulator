@@ -1,7 +1,7 @@
 package com.ispgr5.locationsimulator.network
 
 import android.net.wifi.WifiManager.MulticastLock
-import androidx.lifecycle.MutableLiveData
+import com.ispgr5.locationsimulator.presentation.trainerScreen.Device
 import java.io.BufferedReader
 import java.io.BufferedWriter
 import java.io.IOException
@@ -13,79 +13,68 @@ import java.net.InetAddress
 import java.net.InetSocketAddress
 import java.net.MulticastSocket
 import java.net.Socket
-import java.util.concurrent.Callable
-import java.util.concurrent.FutureTask
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.concurrent.thread
 import kotlin.time.Duration.Companion.seconds
 
-sealed class ClientSignal {
-    data class StartTraining(val config: String) : ClientSignal()
-    data object StopTraining : ClientSignal()
-}
 
 object ClientSingleton {
     var lock: MulticastLock? = null
-    val clientSignal = MutableLiveData<ClientSignal?>()
+    val deviceList = ObservableDeviceList()
+    val clients = HashMap<String, Client>()
     private var connectionClient: ConnectionClient? = null
-    private var client: Client? = null
-    private var currentClientName: String? = null
     private val isCheckConnectionActive = AtomicBoolean(false)
 
-    fun start(name: String): Boolean {
-        if(tryConnect(name = name)) {
-            currentClientName = name
-            startCheckConnection()
-            return true
+    fun start() {
+        if (lock == null) {
+            println("Multicast lock missing")
+            return
         }
-        return false
+
+        try {
+            lock!!.acquire()
+
+            connectionClient = ConnectionClient()
+            connectionClient?.start()
+            startCheckConnection()
+        } catch (e: Exception) {
+            println("Unable to start connection client: $e")
+            return
+        }
     }
 
-    fun send(message: String) {
-        client?.send(message)
+    fun send(ipAddress: String, message: String) {
+        clients[ipAddress]?.send(message)
     }
 
     fun close() {
         stopCheckConnection()
         connectionClient?.close()
-        client?.close()
-    }
-
-    private fun tryConnect(name: String) : Boolean {
-        if (lock == null) {
-            return false
+        lock?.release()
+        for ((_, client) in clients) {
+            client.close()
         }
-
-        connectionClient = ConnectionClient(name)
-        try {
-            lock!!.acquire()
-
-            val futureTask = FutureTask(connectionClient)
-            val t = Thread(futureTask)
-            t.start()
-
-            client = futureTask.get()
-            client?.start()
-        } catch (e: Exception) {
-            return false
-        } finally {
-            connectionClient?.close()
-            lock!!.release()
-        }
-        return client != null
-    }
-
-    private fun isConnected(): Boolean {
-        return client?.timeoutChecker?.isNotTimedOut() ?: false
+        clients.clear()
+        deviceList.clear()
     }
 
     private fun startCheckConnection() {
         isCheckConnectionActive.set(true)
         thread {
-            while (isCheckConnectionActive.get() && currentClientName != null) {
+            while (isCheckConnectionActive.get()) {
                 sleep(3000)
-                if (!isConnected()) {
-                    tryConnect(currentClientName!!)
+                for ((ipAddress, client) in clients) {
+                    if (client.timeoutChecker.isTimedOut()) {
+                        client.close()
+                        for (device in deviceList.getAsList()) {
+                            if (device.ipAddress == ipAddress) {
+                                val modifiedDevice = device.copy()
+                                modifiedDevice.isConnected = false
+                                deviceList.updateDevice(modifiedDevice)
+                                break
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -96,13 +85,16 @@ object ClientSingleton {
     }
 }
 
-private class ConnectionClient(private val name: String) : Callable<Client> {
+private class ConnectionClient : Thread() {
     private val multicastSocket: MulticastSocket = MulticastSocket(4445)
     private val inetSocketAddress = InetSocketAddress("230.0.0.0", 4445)
-    private var buf: ByteArray = ByteArray(256)
 
-    override fun call(): Client? {
+    init {
         multicastSocket.joinGroup(inetSocketAddress, null)
+    }
+
+    override fun run() {
+        val buf = ByteArray(256)
         val packet = DatagramPacket(buf, buf.size)
 
         while (true) {
@@ -110,30 +102,48 @@ private class ConnectionClient(private val name: String) : Callable<Client> {
                 multicastSocket.receive(packet)
             } catch (e: IOException) {
                 println("Client unable to receive multicast packet: $e")
-                return null
+                break
             }
 
             val received = String(
                 packet.data, 0, packet.length
             )
             val split = received.split(' ')
+            if (split.count() != 3 || split[0] != Commands.BROADCAST) {
+                continue
+            }
 
-            if (split.count() == 2 && split[0] == Commands.BROADCAST) {
+            val ipAddress = split[1]
+            val name = split[2]
+
+            val isNewClient = !ClientSingleton.clients.containsKey(ipAddress)
+            val isConnected =
+                !(ClientSingleton.clients[ipAddress]?.timeoutChecker?.isTimedOut() ?: true)
+
+            if (isNewClient || !isConnected) {
                 println("Client connecting to server...")
                 var socket: Socket? = null
                 var reader: BufferedReader? = null
                 var writer: BufferedWriter? = null
                 try {
-                    socket = Socket(InetAddress.getByName(split[1]), 4445)
+                    socket = Socket(InetAddress.getByName(ipAddress), 4445)
                     reader = BufferedReader(InputStreamReader(socket.getInputStream()))
                     writer = BufferedWriter(OutputStreamWriter(socket.getOutputStream()))
-                    return Client(name, socket, reader, writer)
+                    ClientSingleton.clients[ipAddress] = Client(socket, reader, writer)
+                    ClientSingleton.deviceList.updateDevice(
+                        Device(
+                            ipAddress = ipAddress,
+                            user = name,
+                            isPlaying = false,
+                            isConnected = true
+                        )
+                    )
+                    ClientSingleton.clients[ipAddress]?.start()
                 } catch (e: Exception) {
                     println("ConnectionClient unable to create Client: $e")
                     socket?.close()
                     reader?.close()
                     writer?.close()
-                    return null
                 }
             }
         }
@@ -147,8 +157,7 @@ private class ConnectionClient(private val name: String) : Callable<Client> {
 }
 
 
-private class Client(
-    name: String,
+class Client(
     private val socket: Socket,
     private val reader: BufferedReader,
     private val writer: BufferedWriter
@@ -156,13 +165,7 @@ private class Client(
     val timeoutChecker = TimeoutChecker(10.seconds)
 
     init {
-        send(Commands.formatName(name))
         timeoutChecker.startTimer()
-
-        val line = reader.readLine() ?: throw RuntimeException("ErrorNullAnswer")
-        if (line != Commands.SUCCESS) {
-            throw RuntimeException("ErrorUnknownAnswer")
-        }
     }
 
     private fun pingReceived() {
@@ -178,16 +181,31 @@ private class Client(
         }
     }
 
+    private fun localStartReceived() {
+        for (device in ClientSingleton.deviceList.getAsList()) {
+            if (device.user == name && !device.isPlaying) {
+                val modifiedDevice = device.copy()
+                modifiedDevice.isPlaying = true
+                ClientSingleton.deviceList.updateDevice(modifiedDevice)
+            }
+        }
+    }
+
+    private fun localStopReceived() {
+        for (device in ClientSingleton.deviceList.getAsList()) {
+            if (device.user == name && device.isPlaying) {
+                val modifiedDevice = device.copy()
+                modifiedDevice.isPlaying = false
+                ClientSingleton.deviceList.updateDevice(modifiedDevice)
+            }
+        }
+    }
+
     private fun parseMessage(message: String) {
-        val splitMsg = message.split(' ', limit = 2)
-        when (splitMsg.first()) {
+        when (message) {
             Commands.PING -> pingReceived()
-            Commands.START -> if (splitMsg.size == 2) ClientSingleton.clientSignal.postValue(
-                ClientSignal.StartTraining(
-                    splitMsg[1]
-                )
-            )
-            Commands.STOP -> ClientSingleton.clientSignal.postValue(ClientSignal.StopTraining)
+            Commands.LOCAL_START -> localStartReceived()
+            Commands.LOCAL_STOP -> localStopReceived()
             else -> println("Unknown message")
         }
     }

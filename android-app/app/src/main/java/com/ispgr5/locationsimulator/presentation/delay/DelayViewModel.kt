@@ -7,8 +7,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ispgr5.locationsimulator.domain.model.Configuration
 import com.ispgr5.locationsimulator.domain.useCase.ConfigurationUseCases
-import com.ispgr5.locationsimulator.network.ClientSingleton
+import com.ispgr5.locationsimulator.network.ClientHandler
 import com.ispgr5.locationsimulator.network.Commands
+import com.ispgr5.locationsimulator.network.ServerSingleton
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
@@ -31,6 +32,11 @@ class DelayViewModel @Inject constructor(
 	 * Get the selected Configuration from Database
 	 */
 	init {
+		val remoteName = ServerSingleton.remoteName
+		if(remoteName != null) {
+			ServerSingleton.start(remoteName)
+		}
+
 		savedStateHandle.get<Int>("configurationId")?.let { configurationId ->
 			viewModelScope.launch {
 				configurationUseCases.getConfiguration(configurationId)?.also { configuration ->
@@ -48,7 +54,7 @@ class DelayViewModel @Inject constructor(
 	fun onEvent(event: DelayEvent) {
 		when (event) {
 			is DelayEvent.StartClicked -> {
-				ClientSingleton.send(Commands.LOCAL_START)
+				ClientHandler.sendToClients(Commands.LOCAL_START)
 				if (state.value.configuration != null)
 					event.startServiceFunction(
 						state.value.configuration!!.name,
