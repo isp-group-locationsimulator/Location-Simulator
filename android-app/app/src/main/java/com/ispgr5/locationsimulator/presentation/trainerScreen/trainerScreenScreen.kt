@@ -55,6 +55,7 @@ fun TrainerScreenScreen(
         isTrainingActive = isTrainingActive.value,
         onEvent = { ev: TrainerScreenEvent -> viewModel.onEvent(ev) },
         onGoBack = { ClientSingleton.close(); navController.navigateUp() },
+        onTimerClick = { navController.navigate(Screen.DelayScreen) },
         navController = navController,
         appTheme = appTheme
     )
@@ -67,6 +68,7 @@ fun TrainerScreenScaffold(
     isTrainingActive: Boolean,
     onEvent: (TrainerScreenEvent) -> Unit,
     onGoBack: () -> Unit,
+    onTimerClick: () -> Unit,
     navController: NavController,
     appTheme: MutableState<ThemeState>
 ) {
@@ -81,6 +83,7 @@ fun TrainerScreenScaffold(
                 deviceList = deviceList,
                 isTrainingActive = isTrainingActive,
                 onEvent = onEvent,
+                onTimerClick = onTimerClick,
                 navController = navController,
                 appTheme = appTheme
             )
@@ -95,6 +98,7 @@ fun TrainerScreenContent(
     deviceList: List<Device>,
     isTrainingActive: Boolean,
     onEvent: (TrainerScreenEvent) -> Unit,
+    onTimerClick: () -> Unit,
     navController: NavController,
     appTheme: MutableState<ThemeState>
 ) {
@@ -193,7 +197,8 @@ fun TrainerScreenContent(
                         soundInteractionSource = soundInteractionSource,
                         onSettingsClick = {
                             navController.navigate(Screen.UserSettingsScreen.createRoute(device.user, device.ipAddress))
-                        }
+                        },
+                        onTimerClick = onTimerClick
                     )
                 }
             }
@@ -276,6 +281,7 @@ fun TrainerScreenPreview() {
             isTrainingActive = false,
             onEvent = {},
             onGoBack = {},
+            onTimerClick = {},
             navController = navController,
             appTheme = themeState
         )
