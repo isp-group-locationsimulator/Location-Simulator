@@ -15,11 +15,10 @@ import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.filled.AccessAlarm
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.Speaker
-import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material.icons.filled.Vibration
+
 
 @Composable
 fun DeviceCard(
@@ -31,10 +30,8 @@ fun DeviceCard(
     onPlayClick: () -> Unit,
     vibrationInteractionSource: MutableInteractionSource,
     soundInteractionSource: MutableInteractionSource,
-    onSettingsClick: () -> Unit,
-    onTimerClick:()-> Unit
-
-    ) {
+    onSettingsClick: () -> Unit
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -91,12 +88,6 @@ fun DeviceCard(
                             imageVector = Icons.Default.Speaker,
                             contentDescription = "Sound",
                             tint = MaterialTheme.colorScheme.onSurface
-                        )
-                    }
-                    IconButton(onClick = onTimerClick) {
-                        Icon(
-                            imageVector = Icons.Default.Timer,
-                            contentDescription = "Countdown until start"
                         )
                     }
                     Spacer(modifier = Modifier.weight(1f))
