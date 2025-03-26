@@ -294,7 +294,7 @@ class MainActivity : ComponentActivity() {
             }
 
             composable(Screen.TrainerScreen.route) {
-                TrainerScreenScreen(navController = navController)
+                TrainerScreenScreen(navController = navController, appTheme = themeState)
             }
 
             composable(

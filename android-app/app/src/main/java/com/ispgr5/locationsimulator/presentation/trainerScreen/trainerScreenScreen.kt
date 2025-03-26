@@ -3,6 +3,7 @@ package com.ispgr5.locationsimulator.presentation.trainerScreen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -11,6 +12,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,14 +30,19 @@ import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
 import androidx.navigation.compose.rememberNavController
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.network.ClientSingleton
+import com.ispgr5.locationsimulator.network.ClientHandler
+import com.ispgr5.locationsimulator.network.ServerSingleton
+import com.ispgr5.locationsimulator.presentation.previewData.PreviewData
 import com.ispgr5.locationsimulator.presentation.util.Screen
 import kotlinx.coroutines.flow.collectLatest
+import com.ispgr5.locationsimulator.ui.theme.ThemeState
 
 
 @Composable
 fun TrainerScreenScreen(
     navController: NavController,
-    viewModel: TrainerScreenViewModel = hiltViewModel()
+    viewModel: TrainerScreenViewModel = hiltViewModel(),
+    appTheme: MutableState<ThemeState>
 ) {
     val deviceState: ArrayList<Device>? by ClientSingleton.deviceList.observeAsState()
     val devices = deviceState ?: emptyList()
@@ -48,7 +55,8 @@ fun TrainerScreenScreen(
         isTrainingActive = isTrainingActive.value,
         onEvent = { ev: TrainerScreenEvent -> viewModel.onEvent(ev) },
         onGoBack = { ClientSingleton.close(); navController.navigateUp() },
-        navController = navController
+        navController = navController,
+        appTheme = appTheme
     )
 }
 
@@ -59,7 +67,8 @@ fun TrainerScreenScaffold(
     isTrainingActive: Boolean,
     onEvent: (TrainerScreenEvent) -> Unit,
     onGoBack: () -> Unit,
-    navController: NavController
+    navController: NavController,
+    appTheme: MutableState<ThemeState>
 ) {
     Scaffold(
         topBar = {
@@ -72,7 +81,8 @@ fun TrainerScreenScaffold(
                 deviceList = deviceList,
                 isTrainingActive = isTrainingActive,
                 onEvent = onEvent,
-                navController = navController
+                navController = navController,
+                appTheme = appTheme
             )
         }
     )
@@ -85,7 +95,8 @@ fun TrainerScreenContent(
     deviceList: List<Device>,
     isTrainingActive: Boolean,
     onEvent: (TrainerScreenEvent) -> Unit,
-    navController: NavController
+    navController: NavController,
+    appTheme: MutableState<ThemeState>
 ) {
     val trainingActive = remember { mutableStateOf(isTrainingActive) }
 
@@ -100,6 +111,7 @@ fun TrainerScreenContent(
             text = stringResource(id = R.string.trainer_screen_title),
             fontWeight = FontWeight.Bold,
             style = MaterialTheme.typography.headlineLarge,
+            color = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier.padding(16.dp)
         )
 
@@ -107,6 +119,7 @@ fun TrainerScreenContent(
             text = "Bereits verbunden",
             fontWeight = FontWeight.Bold,
             style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier.padding(top = 8.dp)
         )
 
@@ -115,7 +128,10 @@ fun TrainerScreenContent(
                 .fillMaxWidth()
                 .weight(1f)
                 .padding(horizontal = 16.dp)
-                .background(Color.LightGray)
+                .background(
+                    if (isSystemInDarkTheme()) Color(0xFF80FFD1)
+                    else Color.LightGray
+                    )
         ) {
             LazyColumn(
                 modifier = Modifier.fillMaxSize()
@@ -201,10 +217,15 @@ fun TrainerScreenContent(
                 .fillMaxWidth(0.8f)
                 .padding(16.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = if (trainingActive.value) Color.Red else Color(0xFF8C3300)
+                containerColor = if (trainingActive.value) MaterialTheme.colorScheme.error
+                else MaterialTheme.colorScheme.primary
             )
         ) {
-            Text(if (trainingActive.value) "Stoppen" else "Starten", fontSize = 18.sp)
+            Text(
+                if (trainingActive.value) "Stoppen" else "Starten",
+                fontSize = 18.sp,
+                color = MaterialTheme.colorScheme.onPrimary
+            )
         }
     }
 }
@@ -244,6 +265,9 @@ fun TrainerScreenPreview() {
     )
 
     val navController = rememberNavController()
+    val themeState = remember {
+        mutableStateOf(PreviewData.themePreviewState)
+    }
 
     LocationSimulatorTheme {
         TrainerScreenScaffold(
@@ -252,7 +276,8 @@ fun TrainerScreenPreview() {
             isTrainingActive = false,
             onEvent = {},
             onGoBack = {},
-            navController = navController
+            navController = navController,
+            appTheme = themeState
         )
     }
 }
