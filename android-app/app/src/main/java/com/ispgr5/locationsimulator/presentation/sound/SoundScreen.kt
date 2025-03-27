@@ -8,12 +8,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.data.storageManager.SoundStorageManager
+import com.ispgr5.locationsimulator.presentation.previewData.AppPreview
 import com.ispgr5.locationsimulator.presentation.previewData.PreviewData.soundScreenPreviewState
 import com.ispgr5.locationsimulator.presentation.settings.SettingsState
 import com.ispgr5.locationsimulator.presentation.universalComponents.ConfirmDeleteDialog
@@ -114,10 +114,8 @@ fun SoundScreenScaffold(
             )
         }
     ) {
-        Spacer(modifier = Modifier.height(it.calculateTopPadding()))
-
         Column(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize().padding(top = it.calculateTopPadding()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Row(
@@ -202,7 +200,7 @@ fun SoundScreenPreviewScaffold(
 
 
 @Composable
-@Preview
+@AppPreview
 fun SoundScreenPlayingPreview() {
     SoundScreenPreviewScaffold(
         state = soundScreenPreviewState,
@@ -211,7 +209,7 @@ fun SoundScreenPlayingPreview() {
 }
 
 @Composable
-@Preview
+@AppPreview
 fun SoundScreenStoppedPreview() {
     SoundScreenPreviewScaffold(
         state = soundScreenPreviewState
@@ -219,7 +217,7 @@ fun SoundScreenStoppedPreview() {
 }
 
 @Composable
-@Preview
+@AppPreview
 fun SoundScreenForDeletionPreview() {
     SoundScreenPreviewScaffold(
         state = soundScreenPreviewState,

@@ -40,13 +40,13 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.domain.model.RangeConverter
 import com.ispgr5.locationsimulator.presentation.editTimeline.components.SliderForRangeWithPreciseInputs
+import com.ispgr5.locationsimulator.presentation.previewData.AppPreview
 import com.ispgr5.locationsimulator.presentation.previewData.PreviewData.settingsScreenPreviewState
 import com.ispgr5.locationsimulator.presentation.universalComponents.LocationSimulatorTopBar
 import com.ispgr5.locationsimulator.presentation.universalComponents.SnackbarContent
@@ -407,7 +407,7 @@ fun SettingsScreenScreenshotPreview(state: SettingsState, pagerState: PagerState
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-@Preview
+@AppPreview
 fun SettingsScreenVibrationPreview() {
     SettingsScreenScreenshotPreview(
         state = settingsScreenPreviewState,
@@ -418,7 +418,7 @@ fun SettingsScreenVibrationPreview() {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-@Preview
+@AppPreview
 fun SettingsScreenSoundPreview() {
     SettingsScreenScreenshotPreview(
         state = settingsScreenPreviewState,

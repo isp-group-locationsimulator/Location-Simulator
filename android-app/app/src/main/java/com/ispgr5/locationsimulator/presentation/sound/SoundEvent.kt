@@ -12,8 +12,6 @@ sealed class SoundEvent {
 	data class TestPlaySound(val soundsDirUri: String, val soundName: String) : SoundEvent()
 	data object StopPlayback : SoundEvent()
 	data class SelectSound(val soundName: String, val navController: NavController, val getDefaultValues : () -> SettingsState) : SoundEvent()
-	data class DeleteSound(val soundName: String, val soundStorageManager: SoundStorageManager) :
-		SoundEvent()
-
+	data class DeleteSound(val soundName: String, val soundStorageManager: SoundStorageManager) : SoundEvent()
 	data class ImportSound(val soundStorageManager: SoundStorageManager) : SoundEvent()
 }

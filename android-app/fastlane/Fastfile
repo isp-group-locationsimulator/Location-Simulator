@@ -32,7 +32,7 @@ platform :android do
         app_apk_path: 'app/build/outputs/apk/debug/app-debug.apk',
         test_instrumentation_runner: 'com.ispgr5.locationsimulator.HiltTestRunner',
         use_tests_in_packages: 'com.ispgr5.locationsimulator.screenshots.phone',
-        output_directory: '../docs/Writerside/images/screenshots'
+        output_directory: '../docs/fastlane-screenshots'
     )
   end
 

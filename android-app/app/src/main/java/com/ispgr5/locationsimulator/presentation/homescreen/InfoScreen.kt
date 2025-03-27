@@ -27,7 +27,6 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -39,12 +38,11 @@ import com.gigamole.composescrollbars.scrolltype.ScrollbarsScrollType
 import com.gigamole.composescrollbars.scrolltype.knobtype.ScrollbarsStaticKnobType
 import com.ispgr5.locationsimulator.BuildConfig
 import com.ispgr5.locationsimulator.R
+import com.ispgr5.locationsimulator.presentation.previewData.AppPreview
 import com.ispgr5.locationsimulator.presentation.universalComponents.ClickableLink
 import com.ispgr5.locationsimulator.presentation.universalComponents.ClickableLinkDefaults
 import com.ispgr5.locationsimulator.presentation.universalComponents.LocationSimulatorTopBar
 import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
-import com.ispgr5.locationsimulator.ui.theme.ThemeState
-import com.ispgr5.locationsimulator.ui.theme.ThemeType
 
 /**
  * The Info Screen that shows Information about the developers and similar things.
@@ -58,7 +56,7 @@ fun InfoScreen(
     }
 }
 
-@Preview
+@AppPreview
 @Composable
 fun InfoScreenPreview() {
     LocationSimulatorTheme {

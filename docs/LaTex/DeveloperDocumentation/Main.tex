@@ -1,3 +1,24 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage{tikz, hyperref, graphicx, float}
+\usepackage{etoolbox, needspace}
+
+\de{\usepackage[german]{babel}}
+\en{\usepackage[english]{babel}}
+
+\de{\title{Entwicklerdokumentation für Ortungssimulator}}
+\en{\title{Developer Documentation for Location Simulator}}
+
+\en{\graphicspath{{../../fastlane-screenshots/en-US/images/phoneScreenshots}}}
+\de{\graphicspath{{../../fastlane-screenshots/de-DE/images/phoneScreenshots}}}
+
+\newcommand{\subsubsubsection}[1]{\paragraph{#1}\mbox{{}\\}}
+\setcounter{secnumdepth}{4}
+\setcounter{tocdepth}{4}
+
+%Try to have subsubsections not start right at the end of a page, only used in ProjectStructure
+\newlength{\sectionbuffer}
+\setlength{\sectionbuffer}{0.0\textheight}
+\pretocmd{\subsubsection}{\needspace{\sectionbuffer}}{}{}
 
 \begin{document}
 	
@@ -5,9 +26,9 @@
 	
 	\tableofcontents
 	
-	\include{DeveloperDocumentation/Installation}
-	\include{DeveloperDocumentation/GeneralInformation}
-	\include{DeveloperDocumentation/FunctionsByFile}
-	\include{DeveloperDocumentation/FunctionsByFlow}
-	\include{DeveloperDocumentation/Tests}
+	\include{Installation}
+	\include{GeneralInformation}
+	\include{ProjectStructure}
+	\include{AdditionalFiles}
+	\include{Tests}
 \end{document}

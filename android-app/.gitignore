@@ -13,3 +13,9 @@
 .externalNativeBuild
 .cxx
 local.properties
+.bundle
+.kotlin
+fastlane
+path
+vendor
+fastlane_logs.txt

@@ -508,6 +508,7 @@ fun SliderForRangeWithPreciseInputs(
     var start by remember {mutableStateOf(inputFormat.format(value.start))}
     var end by remember {mutableStateOf(inputFormat.format(value.endInclusive))}
 
+    //TODO: All of this should be implemented in the ViewModel
     fun isValidRange(start:String, end:String, min:Float=range.start, max:Float=range.endInclusive): Boolean {
         val startEngFormat = start.replace(",", ".")
         val endEngFormat = end.replace(",", ".")

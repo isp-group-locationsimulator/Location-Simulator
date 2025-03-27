@@ -1,9 +1,7 @@
 package com.ispgr5.locationsimulator.presentation.select.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.runtime.Composable
@@ -12,14 +10,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.core.util.TestTags
 import com.ispgr5.locationsimulator.domain.model.Configuration
+import com.ispgr5.locationsimulator.presentation.previewData.AppPreview
 import com.ispgr5.locationsimulator.presentation.previewData.PreviewData.previewConfigurations
-import com.ispgr5.locationsimulator.presentation.previewData.PreviewData.themePreviewState
 import com.ispgr5.locationsimulator.ui.theme.DISABLED_ALPHA
 import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
 
@@ -243,7 +240,7 @@ fun RowScope.OneConfigurationListMember(
     }
 }
 
-@Preview
+@AppPreview
 @Composable
 fun ConfigurationListMemberCollapsedPreview() {
     LocationSimulatorTheme {
@@ -270,7 +267,7 @@ fun ConfigurationListMemberCollapsedPreview() {
 }
 
 
-@Preview
+@AppPreview
 @Composable
 fun ConfigurationListMemberExpandedPreview() {
     LocationSimulatorTheme {
