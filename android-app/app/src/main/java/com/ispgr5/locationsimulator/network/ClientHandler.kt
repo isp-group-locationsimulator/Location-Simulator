@@ -11,7 +11,7 @@ import kotlin.concurrent.thread
 import kotlin.time.Duration.Companion.seconds
 
 sealed class ClientSignal {
-    data class StartTraining(val config: String) : ClientSignal()
+    data class StartTraining(val config: String, val hours: Long, val minutes: Long, val seconds: Long) : ClientSignal()
     data object StopTraining : ClientSignal()
 }
 
@@ -85,8 +85,24 @@ class ClientHandler(
     }
 
     private fun startReceived(split: List<String>) {
-        if (split.size == 2) clientSignal.postValue(
-            ClientSignal.StartTraining(split[1])
+        if(split.size != 3) {
+            return
+        }
+
+        val config = split[2]
+        var hours = 0L
+        var minutes = 0L
+        var seconds = 0L
+
+        val splitTime = split[1].split(':', limit = 3)
+        if (splitTime.size == 3) {
+            hours = splitTime[0].toLongOrNull() ?: 0L
+            minutes = splitTime[1].toLongOrNull() ?: 0L
+            seconds = splitTime[2].toLongOrNull() ?: 0L
+        }
+
+        clientSignal.postValue(
+            ClientSignal.StartTraining(config, hours, minutes, seconds)
         )
     }
 
@@ -95,7 +111,7 @@ class ClientHandler(
     }
 
     private fun parseMessage(message: String) {
-        val splitMsg = message.split(' ', limit = 2)
+        val splitMsg = message.split(' ', limit = 3)
         when (splitMsg.first()) {
             Commands.PING -> pingReceived()
             Commands.START -> startReceived(splitMsg)

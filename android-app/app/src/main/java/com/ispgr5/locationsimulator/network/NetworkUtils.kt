@@ -25,8 +25,8 @@ data object Commands {
         return "$BROADCAST $ipAddress $name"
     }
 
-    fun formatStart(config: String): String {
-        return "$START $config"
+    fun formatStart(config: String, hours: Long = 0, minutes: Long = 0, seconds: Long = 0): String {
+        return "$START $hours:$minutes:$seconds $config"
     }
 }
 

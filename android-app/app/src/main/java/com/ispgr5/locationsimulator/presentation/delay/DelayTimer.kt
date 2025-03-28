@@ -96,6 +96,7 @@ private class DelayCountdownTimer(
 fun DelayTimer(
     timerState: MutableState<TimerState>,
     onFinishTimer: (configurationId: Int) -> Unit,
+    onTrainerTimerStart: (Long, Long, Long) -> Boolean,
     configurationId: Int
 ) {
 
@@ -184,20 +185,22 @@ fun DelayTimer(
         }
         Button(
             onClick = {
-                when {
-                    timerState.value.isZero() -> onStartVibration(
-                        configurationId = configurationId,
-                        onFinishTimer = onFinishTimer,
-                        timerState = timerState,
-                        countDownTimer = countDownTimer
-                    )
+                if(!onTrainerTimerStart(timerState.value.setHours, timerState.value.setMinutes, timerState.value.setSeconds)) {
+                    when {
+                        timerState.value.isZero() -> onStartVibration(
+                            configurationId = configurationId,
+                            onFinishTimer = onFinishTimer,
+                            timerState = timerState,
+                            countDownTimer = countDownTimer
+                        )
 
-                    timerState.value.isRunning -> timerState.value =
-                        timerState.value.reset(inhibitStart = true)
+                        timerState.value.isRunning -> timerState.value =
+                            timerState.value.reset(inhibitStart = true)
 
-                    else -> timerState.value = timerState.value.copy(
-                        isRunning = true, inhibitStart = false
-                    )
+                        else -> timerState.value = timerState.value.copy(
+                            isRunning = true, inhibitStart = false, remoteConfigStr = null
+                        )
+                    }
                 }
             },
             enabled = true,
@@ -311,6 +314,7 @@ fun calculateTimerValue(value: String): Long {
 data class TimerState(
     val isRunning: Boolean = false,
     val inhibitStart: Boolean = false,
+    val remoteConfigStr: String? = null,
     val setHours: Long = 0,
     val setMinutes: Long = 0,
     val setSeconds: Long = 0,
@@ -365,6 +369,7 @@ fun DelayTimerStoppedPreview() {
         DelayTimer(
             timerState = timerState,
             onFinishTimer = {},
+            onTrainerTimerStart = fun(_: Long, _: Long, _: Long) : Boolean { return false },
             configurationId = PreviewData.previewConfigurations.first().id!!
         )
     }
@@ -380,6 +385,7 @@ fun DelayTimerRunningPreview() {
         DelayTimer(
             timerState = timerState,
             onFinishTimer = {},
+            onTrainerTimerStart = fun(_: Long, _: Long, _: Long) : Boolean { return false },
             configurationId = PreviewData.previewConfigurations.first().id!!
         )
     }

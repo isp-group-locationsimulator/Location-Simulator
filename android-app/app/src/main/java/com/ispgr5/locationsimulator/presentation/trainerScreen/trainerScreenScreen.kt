@@ -1,5 +1,6 @@
 package com.ispgr5.locationsimulator.presentation.trainerScreen
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
@@ -37,6 +38,7 @@ import com.ispgr5.locationsimulator.presentation.util.Screen
 import kotlinx.coroutines.flow.collectLatest
 import com.ispgr5.locationsimulator.ui.theme.ThemeState
 
+private const val TAG = "TrainerScreen"
 
 @Composable
 fun TrainerScreenScreen(
@@ -55,7 +57,6 @@ fun TrainerScreenScreen(
         isTrainingActive = isTrainingActive.value,
         onEvent = { ev: TrainerScreenEvent -> viewModel.onEvent(ev) },
         onGoBack = { ClientSingleton.close(); navController.navigateUp() },
-        onTimerClick = { navController.navigate(Screen.DelayScreen) },
         navController = navController,
         appTheme = appTheme
     )
@@ -68,7 +69,6 @@ fun TrainerScreenScaffold(
     isTrainingActive: Boolean,
     onEvent: (TrainerScreenEvent) -> Unit,
     onGoBack: () -> Unit,
-    onTimerClick: () -> Unit,
     navController: NavController,
     appTheme: MutableState<ThemeState>
 ) {
@@ -83,7 +83,6 @@ fun TrainerScreenScaffold(
                 deviceList = deviceList,
                 isTrainingActive = isTrainingActive,
                 onEvent = onEvent,
-                onTimerClick = onTimerClick,
                 navController = navController,
                 appTheme = appTheme
             )
@@ -98,7 +97,6 @@ fun TrainerScreenContent(
     deviceList: List<Device>,
     isTrainingActive: Boolean,
     onEvent: (TrainerScreenEvent) -> Unit,
-    onTimerClick: () -> Unit,
     navController: NavController,
     appTheme: MutableState<ThemeState>
 ) {
@@ -135,7 +133,7 @@ fun TrainerScreenContent(
                 .background(
                     if (isSystemInDarkTheme()) Color(0xFF80FFD1)
                     else Color.LightGray
-                    )
+                )
         ) {
             LazyColumn(
                 modifier = Modifier.fillMaxSize()
@@ -198,7 +196,13 @@ fun TrainerScreenContent(
                         onSettingsClick = {
                             navController.navigate(Screen.UserSettingsScreen.createRoute(device.user, device.ipAddress))
                         },
-                        onTimerClick = onTimerClick
+                        onTimerClick = {
+                            if(device.selectedConfig?.id != null) { // should always be true but checking won't hurt
+                                navController.navigate(Screen.DelayScreen.createRoute(device.selectedConfig!!.id!!, device.ipAddress))
+                            } else {
+                                Log.w(TAG, "selectedConfig was null")
+                            }
+                        }
                     )
                 }
             }
@@ -281,7 +285,6 @@ fun TrainerScreenPreview() {
             isTrainingActive = false,
             onEvent = {},
             onGoBack = {},
-            onTimerClick = {},
             navController = navController,
             appTheme = themeState
         )

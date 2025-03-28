@@ -155,7 +155,8 @@ fun HomeScreenScreen(
                 state.configurationsWithErrors.find { conf -> conf.id == configuration.id } == null -> {
                     navController.navigate(
                         Screen.DelayScreen.createRoute(
-                            configuration.id!!
+                            configuration.id!!,
+                            "127.0.0.1"
                         )
                     )
                 }

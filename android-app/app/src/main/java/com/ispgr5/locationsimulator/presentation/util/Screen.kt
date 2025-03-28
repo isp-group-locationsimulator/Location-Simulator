@@ -11,9 +11,9 @@ sealed class Screen(val route: String) {
     data object AddScreen : Screen("addScreen")
     data object SettingsScreen : Screen("settingsScreen")
     data object TrainerScreen: Screen("trainerScreen")
-    data object DelayScreen : Screen("delayScreen?configurationId={configurationId}")
+    data object DelayScreen : Screen("delayScreen?configurationId={configurationId},userIpAddress={userIpAddress}")
     {
-        fun createRoute(configurationId: Int) = "delayScreen?configurationId=$configurationId"
+        fun createRoute(configurationId: Int, userIpAddress: String) = "delayScreen?configurationId=$configurationId,userIpAddress=$userIpAddress"
     }
     data object UserSettingsScreen : Screen("userSettingsScreen?userName={userName},userIpAddress={userIpAddress}")
     {

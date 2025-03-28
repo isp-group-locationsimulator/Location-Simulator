@@ -237,12 +237,14 @@ class MainActivity : ComponentActivity() {
             }
             composable(
                 route = Screen.DelayScreen.route,
-                arguments = listOf(NavigationArguments.configurationId)
-            ) {
+                arguments = listOf(NavigationArguments.configurationId, navArgument("userIpAddress") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val userIpAddress = backStackEntry.arguments?.getString("userIpAddress") ?: "127.0.0.1"
                 DelayScreen(
                     navController = navController,
                     startServiceFunction = startService,
                     soundsDirUri = this@MainActivity.filesDir.toString() + "/Sounds/",
+                    userIpAddress = userIpAddress
                 )
             }
             composable(

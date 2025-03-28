@@ -41,16 +41,17 @@ import com.ispgr5.locationsimulator.domain.model.Configuration
 import com.ispgr5.locationsimulator.network.ClientHandler
 import com.ispgr5.locationsimulator.network.ClientSignal
 import com.ispgr5.locationsimulator.network.ClientSingleton
+import com.ispgr5.locationsimulator.network.Commands
 import com.ispgr5.locationsimulator.network.ServerSingleton
 import com.ispgr5.locationsimulator.presentation.editTimeline.components.Timeline
 import com.ispgr5.locationsimulator.presentation.previewData.AppPreview
 import com.ispgr5.locationsimulator.presentation.previewData.PreviewData.delayScreenInitialTimerState
 import com.ispgr5.locationsimulator.presentation.previewData.PreviewData.delayScreenPreviewState
-import com.ispgr5.locationsimulator.presentation.trainerScreen.Device
 import com.ispgr5.locationsimulator.presentation.universalComponents.LocationSimulatorTopBar
 import com.ispgr5.locationsimulator.presentation.util.Screen
 import com.ispgr5.locationsimulator.presentation.util.millisToSeconds
 import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 private const val TAG = "DelayScreen"
@@ -67,6 +68,7 @@ fun DelayScreen(
     viewModel: DelayViewModel = hiltViewModel(),
     startServiceFunction: (String, List<ConfigComponent>, Boolean) -> Unit,
     soundsDirUri: String, //the sounds Directory Uri needed for calculating Sound Length
+    userIpAddress: String,
 ) {
     //The state from viewmodel
     val state = viewModel.state.value
@@ -76,11 +78,17 @@ fun DelayScreen(
 
     val clientMessage: ClientSignal? by ClientHandler.clientSignal.observeAsState()
     if(clientMessage is ClientSignal.StartTraining) {
-        val configStr = (clientMessage as ClientSignal.StartTraining).config
+        val msg = (clientMessage as ClientSignal.StartTraining)
+        val configStr = msg.config
+        val timeIsZero = msg.hours == 0L && msg.minutes == 0L && msg.seconds == 0L
         ClientHandler.clientSignal.value = null
-        if(configStr != "null") {
+        if(timeIsZero && configStr != "null") {
             viewModel.onEvent(DelayEvent.RemoteStart(configStr, startServiceFunction))
             navController.navigate(route = Screen.RunScreen.createRoute(-1, configStr))
+        } else if (configStr != "null") {
+            timerState.value = timerState.value.copy(
+                isRunning = true, inhibitStart = false, remoteConfigStr = configStr, setHours = msg.hours, setMinutes = msg.minutes, setSeconds = msg.seconds
+            )
         }
     }
     if(clientMessage is ClientSignal.StopTraining) {    // ignore message
@@ -95,19 +103,33 @@ fun DelayScreen(
             timerState.value = timerState.value.reset(inhibitStart = true)
             ServerSingleton.close()
             navController.popBackStack()
+        },
+        onTrainerTimerStart = fun(hours: Long, minutes: Long, seconds: Long): Boolean {
+            if(userIpAddress != "127.0.0.1") {
+                val serializedConfig = Json.encodeToString(state.configuration)
+                ClientSingleton.send(userIpAddress, Commands.formatStart(serializedConfig, hours, minutes, seconds))
+                navController.popBackStack()
+                return true
+            }
+            return false
         }
     ) { configurationId ->
         // make very sure that the simulation doesn't start when the timer has been cancelled,
         // either by clicking the "back' button in the scaffold, or by clicking the big "cancel"
         // button in the timer composable
         if (!timerState.value.inhibitStart) {
-            viewModel.onEvent(DelayEvent.StartClicked(startServiceFunction))
-            navController.navigate(route = Screen.RunScreen.createRoute(configurationId, ""))
+            val configStr = timerState.value.remoteConfigStr
+            if(configStr != null) {
+                viewModel.onEvent(DelayEvent.RemoteStart(configStr, startServiceFunction))
+                navController.navigate(route = Screen.RunScreen.createRoute(-1, configStr))
+            } else {
+                viewModel.onEvent(DelayEvent.StartClicked(startServiceFunction))
+                navController.navigate(route = Screen.RunScreen.createRoute(configurationId, ""))
+            }
         } else {
             Log.w(TAG, "start vibration fired, but inhibited: $timerState")
         }
     }
-
 }
 
 @Composable
@@ -116,7 +138,8 @@ fun DelayScreenScaffold(
     timerState: MutableState<TimerState>,
     soundsDirUri: String,
     onBackClick: () -> Unit,
-    onFinishTimer: (configurationId: Int) -> Unit
+    onTrainerTimerStart: (Long, Long, Long) -> Boolean,
+    onFinishTimer: (configurationId: Int) -> Unit,
 ) {
     val context = LocalContext.current
     Scaffold(
@@ -137,7 +160,8 @@ fun DelayScreenScaffold(
                         timerState = timerState,
                         context = context,
                         soundsDirUri = soundsDirUri,
-                        onFinishTimer = onFinishTimer
+                        onFinishTimer = onFinishTimer,
+                        onTrainerTimerStart = onTrainerTimerStart
                     )
                 }
             }
@@ -150,7 +174,8 @@ fun DelayScreenContent(
     timerState: MutableState<TimerState>,
     context: Context,
     soundsDirUri: String,
-    onFinishTimer: (configurationId: Int) -> Unit
+    onFinishTimer: (configurationId: Int) -> Unit,
+    onTrainerTimerStart: (Long, Long, Long) -> Boolean
 ) {
     Column(
         Modifier
@@ -222,7 +247,8 @@ fun DelayScreenContent(
         DelayTimer(
             timerState = timerState,
             configurationId = configuration.id!!,
-            onFinishTimer = onFinishTimer
+            onFinishTimer = onFinishTimer,
+            onTrainerTimerStart = onTrainerTimerStart
         )
     }
 }
@@ -239,6 +265,7 @@ fun DelayScreenPreview() {
             soundsDirUri = "sounds",
             timerState = timerState,
             onBackClick = {},
+            onTrainerTimerStart = fun(_: Long, _: Long, _: Long) : Boolean { return false },
             onFinishTimer = { }
         )
     }

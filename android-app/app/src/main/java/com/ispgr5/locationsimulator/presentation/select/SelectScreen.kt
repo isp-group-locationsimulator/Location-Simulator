@@ -99,7 +99,8 @@ fun SelectScreen(
         onSelectConfiguration = { configuration ->
             navController.navigate(
                 Screen.DelayScreen.createRoute(
-                    configuration.id!!
+                    configuration.id!!,
+                    "127.0.0.1"
                 )
             )
         },
