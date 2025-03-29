@@ -33,35 +33,25 @@ class TrainerScreenViewModel @Inject constructor(
     fun onEvent(event: TrainerScreenEvent) {
         when (event) {
             is TrainerScreenEvent.StartTraining -> {
-                val modifiedDevices = ArrayList<Device>()
                 for (device in ClientSingleton.deviceList.getAsList()) {
                     if (!device.isPlaying) {
                         val serializedConfig = Json.encodeToString(device.selectedConfig)
                         ClientSingleton.send(
                             device.ipAddress, Commands.formatStart(serializedConfig)
                         )
-                        val modifiedDevice = device.copy()
-                        modifiedDevice.isPlaying = true
-                        modifiedDevices.add(modifiedDevice)
                     }
                 }
-                ClientSingleton.deviceList.updateDevices(modifiedDevices)
             }
 
             is TrainerScreenEvent.StopTraining -> {
-                val modifiedDevices = ArrayList<Device>()
                 for (device in ClientSingleton.deviceList.getAsList()) {
                     if (device.isPlaying) {
                         ClientSingleton.send(
                             device.ipAddress,
                             Commands.STOP
                         )
-                        val modifiedDevice = device.copy()
-                        modifiedDevice.isPlaying = false
-                        modifiedDevices.add(modifiedDevice)
                     }
                 }
-                ClientSingleton.deviceList.updateDevices(modifiedDevices)
             }
 
             is TrainerScreenEvent.StartDeviceTraining -> {

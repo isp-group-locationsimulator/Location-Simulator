@@ -18,8 +18,8 @@ data object Commands {
     const val PING = "LOCATION_SIMULATOR_PING"
     const val START = "START"
     const val STOP = "STOP"
-    const val LOCAL_START = "LOCAL_START"
-    const val LOCAL_STOP = "LOCAL_STOP"
+    const val IS_PLAYING = "IS_PLAYING"
+    const val IS_NOT_PLAYING = "IS_NOT_PLAYING"
 
     fun formatBroadcast(ipAddress: String, name: String): String {
         return "$BROADCAST $ipAddress $name"

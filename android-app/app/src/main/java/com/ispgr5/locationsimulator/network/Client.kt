@@ -129,7 +129,7 @@ private class ConnectionClient : Thread() {
                     socket = Socket(InetAddress.getByName(ipAddress), 4445)
                     reader = BufferedReader(InputStreamReader(socket.getInputStream()))
                     writer = BufferedWriter(OutputStreamWriter(socket.getOutputStream()))
-                    ClientSingleton.clients[ipAddress] = Client(socket, reader, writer)
+                    ClientSingleton.clients[ipAddress] = Client(socket, reader, writer, ipAddress)
                     ClientSingleton.deviceList.updateDevice(
                         Device(
                             ipAddress = ipAddress,
@@ -160,7 +160,8 @@ private class ConnectionClient : Thread() {
 class Client(
     private val socket: Socket,
     private val reader: BufferedReader,
-    private val writer: BufferedWriter
+    private val writer: BufferedWriter,
+    private val ipAddress: String
 ) : Thread() {
     val timeoutChecker = TimeoutChecker(10.seconds)
 
@@ -181,9 +182,9 @@ class Client(
         }
     }
 
-    private fun localStartReceived() {
+    private fun isPlayingReceived() {
         for (device in ClientSingleton.deviceList.getAsList()) {
-            if (device.user == name && !device.isPlaying) {
+            if (device.ipAddress == ipAddress && !device.isPlaying) {
                 val modifiedDevice = device.copy()
                 modifiedDevice.isPlaying = true
                 ClientSingleton.deviceList.updateDevice(modifiedDevice)
@@ -191,9 +192,9 @@ class Client(
         }
     }
 
-    private fun localStopReceived() {
+    private fun isNotPlayingReceived() {
         for (device in ClientSingleton.deviceList.getAsList()) {
-            if (device.user == name && device.isPlaying) {
+            if (device.ipAddress == ipAddress && device.isPlaying) {
                 val modifiedDevice = device.copy()
                 modifiedDevice.isPlaying = false
                 ClientSingleton.deviceList.updateDevice(modifiedDevice)
@@ -204,8 +205,8 @@ class Client(
     private fun parseMessage(message: String) {
         when (message) {
             Commands.PING -> pingReceived()
-            Commands.LOCAL_START -> localStartReceived()
-            Commands.LOCAL_STOP -> localStopReceived()
+            Commands.IS_PLAYING -> isPlayingReceived()
+            Commands.IS_NOT_PLAYING -> isNotPlayingReceived()
             else -> println("Unknown message")
         }
     }

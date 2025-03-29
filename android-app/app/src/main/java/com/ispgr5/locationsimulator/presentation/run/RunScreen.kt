@@ -116,6 +116,14 @@ fun RunScreen(
         mutableStateOf<SnackbarContent?>(null)
     }
 
+    val onStop: () -> Unit = {
+        ClientHandler.sendToClients(Commands.IS_NOT_PLAYING)
+        ClientHandler.isPlayingState.set(false)
+        SimulationService.IsPlayingEventBus.postValue(false)
+        viewModel.onEvent(RunEvent.StopClicked(stopServiceFunction))
+        navController.popBackStack()
+    }
+
     RenderSnackbarOnChange(
         snackbarHostState = snackbarHostState,
         snackbarContent = snackbarContentState
@@ -124,9 +132,7 @@ fun RunScreen(
     val clientMessage: ClientSignal? by ClientHandler.clientSignal.observeAsState()
     if(clientMessage is ClientSignal.StopTraining) {
         ClientHandler.clientSignal.value = null
-        SimulationService.IsPlayingEventBus.postValue(false)
-        viewModel.onEvent(RunEvent.StopClicked(stopServiceFunction))
-        navController.popBackStack()
+        onStop()
     }
     if(clientMessage is ClientSignal.StartTraining) {   // ignore message
         ClientHandler.clientSignal.value = null
@@ -171,13 +177,9 @@ fun RunScreen(
             currentPauseDuration = currentPauseDuration,
             snackbarHostState = snackbarHostState,
             snackbarContentState = snackbarContentState,
-            initialRefreshInstant = initialRefreshInstant
-        ) {
-            ClientHandler.sendToClients(Commands.LOCAL_STOP)
-            SimulationService.IsPlayingEventBus.postValue(false)
-            viewModel.onEvent(RunEvent.StopClicked(stopServiceFunction))
-            navController.popBackStack()
-        }
+            initialRefreshInstant = initialRefreshInstant,
+            onStop = onStop
+        )
     }
 
 }

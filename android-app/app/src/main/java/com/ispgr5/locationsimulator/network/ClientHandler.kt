@@ -36,6 +36,7 @@ class ClientHandler(
     companion object {
         val clientHandlers = HashSet<ClientHandler>()
         val clientSignal = MutableLiveData<ClientSignal?>()
+        val isPlayingState = AtomicBoolean(false)
 
         private val isCheckConnectionActive = AtomicBoolean(false)
 
@@ -69,6 +70,9 @@ class ClientHandler(
     init {
         timeoutChecker.startTimer()
         clientHandlers.add(this)
+        if(isPlayingState.get()) {
+            send(Commands.IS_PLAYING)
+        }
     }
 
     private fun pingReceived() {

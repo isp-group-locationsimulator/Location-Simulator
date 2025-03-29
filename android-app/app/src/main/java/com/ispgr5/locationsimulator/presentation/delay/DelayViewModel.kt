@@ -54,23 +54,28 @@ class DelayViewModel @Inject constructor(
 	fun onEvent(event: DelayEvent) {
 		when (event) {
 			is DelayEvent.StartClicked -> {
-				ClientHandler.sendToClients(Commands.LOCAL_START)
-				if (state.value.configuration != null)
+				if (state.value.configuration != null) {
+					ClientHandler.sendToClients(Commands.IS_PLAYING)
+					ClientHandler.isPlayingState.set(true)
 					event.startServiceFunction(
 						state.value.configuration!!.name,
 						state.value.configuration!!.components,
 						state.value.configuration!!.randomOrderPlayback
 					)
+				}
 			}
 
 			is DelayEvent.RemoteStart -> {
 				val conf = Json.decodeFromString<Configuration?>(event.configStr)
-				if (conf != null)
+				if (conf != null) {
+					ClientHandler.sendToClients(Commands.IS_PLAYING)
+					ClientHandler.isPlayingState.set(true)
 					event.startServiceFunction(
 						conf.name,
 						conf.components,
 						conf.randomOrderPlayback
 					)
+				}
 			}
 		}
 	}

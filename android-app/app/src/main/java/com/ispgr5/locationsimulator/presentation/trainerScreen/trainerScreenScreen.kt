@@ -102,6 +102,14 @@ fun TrainerScreenContent(
 ) {
     val trainingActive = remember { mutableStateOf(isTrainingActive) }
 
+    if (deviceList.all { it.isPlaying }) {
+        trainingActive.value = true
+    }
+
+    if (deviceList.all { !it.isPlaying }) {
+        trainingActive.value = false
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -187,9 +195,6 @@ fun TrainerScreenContent(
                             } else {
                                 onEvent(TrainerScreenEvent.StartDeviceTraining(device))
                             }
-                            val modifiedDevice = device.copy()
-                            modifiedDevice.isPlaying = !device.isPlaying
-                            ClientSingleton.deviceList.updateDevice(modifiedDevice)
                         },
                         vibrationInteractionSource = vibrationInteractionSource,
                         soundInteractionSource = soundInteractionSource,
