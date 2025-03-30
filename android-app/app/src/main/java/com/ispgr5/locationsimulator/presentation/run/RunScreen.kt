@@ -117,7 +117,7 @@ fun RunScreen(
     }
 
     val onStop: () -> Unit = {
-        ClientHandler.sendToClients(Commands.IS_NOT_PLAYING)
+        ClientHandler.sendToClients(Commands.IS_IDLE)
         ClientHandler.isPlayingState.set(false)
         SimulationService.IsPlayingEventBus.postValue(false)
         viewModel.onEvent(RunEvent.StopClicked(stopServiceFunction))

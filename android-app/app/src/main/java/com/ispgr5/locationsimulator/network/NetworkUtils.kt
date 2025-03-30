@@ -18,8 +18,9 @@ data object Commands {
     const val PING = "LOCATION_SIMULATOR_PING"
     const val START = "START"
     const val STOP = "STOP"
+    const val TIMER_STATE = "TIMER_STATE"
     const val IS_PLAYING = "IS_PLAYING"
-    const val IS_NOT_PLAYING = "IS_NOT_PLAYING"
+    const val IS_IDLE = "IS_IDLE"
 
     fun formatBroadcast(ipAddress: String, name: String): String {
         return "$BROADCAST $ipAddress $name"
@@ -27,6 +28,10 @@ data object Commands {
 
     fun formatStart(config: String, hours: Long = 0, minutes: Long = 0, seconds: Long = 0): String {
         return "$START $hours:$minutes:$seconds $config"
+    }
+
+    fun formatTimerState(hours: Long = 0, minutes: Long = 0, seconds: Long = 0): String {
+        return "$TIMER_STATE $hours:$minutes:$seconds"
     }
 }
 

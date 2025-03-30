@@ -39,6 +39,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.core.util.TestTags
+import com.ispgr5.locationsimulator.network.ClientHandler
+import com.ispgr5.locationsimulator.network.Commands
 import com.ispgr5.locationsimulator.presentation.previewData.AppPreview
 import com.ispgr5.locationsimulator.presentation.previewData.PreviewData
 import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
@@ -194,12 +196,19 @@ fun DelayTimer(
                             countDownTimer = countDownTimer
                         )
 
-                        timerState.value.isRunning -> timerState.value =
-                            timerState.value.reset(inhibitStart = true)
+                        timerState.value.isRunning -> {
+                            timerState.value =
+                                timerState.value.reset(inhibitStart = true)
+                            ClientHandler.sendToClients(Commands.IS_IDLE)
+                        }
 
-                        else -> timerState.value = timerState.value.copy(
-                            isRunning = true, inhibitStart = false, remoteConfigStr = null
-                        )
+                        else -> {
+                            timerState.value = timerState.value.copy(
+                                isRunning = true, inhibitStart = false, remoteConfigStr = null
+                            )
+                            ClientHandler.sendToClients(
+                                Commands.formatTimerState(timerState.value.setHours, timerState.value.setMinutes, timerState.value.setSeconds))
+                        }
                     }
                 }
             },

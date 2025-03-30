@@ -182,31 +182,50 @@ class Client(
         }
     }
 
-    private fun isPlayingReceived() {
+    private fun timerStateReceived(split: List<String>) {
+        if(split.size != 2) {
+            return
+        }
+
         for (device in ClientSingleton.deviceList.getAsList()) {
-            if (device.ipAddress == ipAddress && !device.isPlaying) {
+            if (device.ipAddress == ipAddress) {
                 val modifiedDevice = device.copy()
                 modifiedDevice.isPlaying = true
+                modifiedDevice.timerState = split[1]
                 ClientSingleton.deviceList.updateDevice(modifiedDevice)
             }
         }
     }
 
-    private fun isNotPlayingReceived() {
+    private fun isPlayingReceived() {
+        for (device in ClientSingleton.deviceList.getAsList()) {
+            if (device.ipAddress == ipAddress && !device.isPlaying) {
+                val modifiedDevice = device.copy()
+                modifiedDevice.isPlaying = true
+                modifiedDevice.timerState = null
+                ClientSingleton.deviceList.updateDevice(modifiedDevice)
+            }
+        }
+    }
+
+    private fun isIdleReceived() {
         for (device in ClientSingleton.deviceList.getAsList()) {
             if (device.ipAddress == ipAddress && device.isPlaying) {
                 val modifiedDevice = device.copy()
                 modifiedDevice.isPlaying = false
+                modifiedDevice.timerState = null
                 ClientSingleton.deviceList.updateDevice(modifiedDevice)
             }
         }
     }
 
     private fun parseMessage(message: String) {
-        when (message) {
+        val splitMsg = message.split(' ', limit = 2)
+        when (splitMsg.first()) {
             Commands.PING -> pingReceived()
+            Commands.TIMER_STATE -> timerStateReceived(splitMsg)
             Commands.IS_PLAYING -> isPlayingReceived()
-            Commands.IS_NOT_PLAYING -> isNotPlayingReceived()
+            Commands.IS_IDLE -> isIdleReceived()
             else -> println("Unknown message")
         }
     }

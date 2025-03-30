@@ -89,10 +89,13 @@ fun DelayScreen(
             timerState.value = timerState.value.copy(
                 isRunning = true, inhibitStart = false, remoteConfigStr = configStr, setHours = msg.hours, setMinutes = msg.minutes, setSeconds = msg.seconds
             )
+            ClientHandler.sendToClients(Commands.formatTimerState(msg.hours, msg.minutes, msg.seconds))
         }
     }
-    if(clientMessage is ClientSignal.StopTraining) {    // ignore message
+    if(clientMessage is ClientSignal.StopTraining) {
         ClientHandler.clientSignal.value = null
+        timerState.value = timerState.value.reset(inhibitStart = true)
+        ClientHandler.sendToClients(Commands.IS_IDLE)
     }
 
     DelayScreenScaffold(

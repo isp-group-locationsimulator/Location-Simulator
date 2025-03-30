@@ -12,6 +12,7 @@ data class TrainerScreenState(
 data class Device(
     val ipAddress: String,
     val user: String,
+    var timerState: String? = null,
     var isPlaying: Boolean,
     var isConnected: Boolean,
     var selectedConfig: Configuration? = null
