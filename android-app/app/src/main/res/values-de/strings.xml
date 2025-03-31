@@ -129,6 +129,10 @@
     <string name="retry">Erneut versuchen</string>
     <string name="searching_for_trainer">Trainer wird gesucht</string>
     <string name="search_failed">Suche nach Trainer fehlgeschlagen</string>
+    <string name="trainer_screen_title">Ausbilderoptionen</string>
+    <string name="already_connected">Bereits verbunden</string>
+    <string name="start">Starten</string>
+    <string name="stop">Stoppen</string>
 
 
 </resources>

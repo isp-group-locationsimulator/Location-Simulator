@@ -130,6 +130,10 @@
     <string name="retry">Retry</string>
     <string name="searching_for_trainer">Searching for trainer</string>
     <string name="search_failed">Search for trainer failed</string>
+    <string name="trainer_screen_title">Trainer Options</string>
+    <string name="already_connected">Already connected</string>
+    <string name="start">Start</string>
+    <string name="stop">Stop</string>
 
 
 </resources>

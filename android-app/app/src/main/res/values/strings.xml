@@ -123,10 +123,6 @@
     <string name="input_label">Name</string>
     <string name="enter_name" translatable="true">Your name</string>
     <string name="select_role" translatable="true">Select a role</string>
-    <string name="trainer_screen" translatable="false">KEINEAHNUNG</string>
-    <string name="trainer_screen_title" translatable="false">Ausbilderoptionen</string>
-    <string name="start_training" translatable="false">Starten</string>
-    <string name="go_back" translatable="false">Zurück</string>
     <string name="help_1">How to start a configuration </string>
     <string name="help_2">How to edit a configuration and add sounds or vibrations </string>
     <string name="help_3">How to choose a sound for users or share the configuration as trainer </string>
@@ -137,6 +133,10 @@
     <string name="retry">Retry</string>
     <string name="searching_for_trainer">Searching for trainer</string>
     <string name="search_failed">Search for trainer failed</string>
+    <string name="trainer_screen_title">Trainer Options</string>
+    <string name="already_connected">Already connected</string>
+    <string name="start">Start</string>
+    <string name="stop">Stop</string>
 
 
 </resources>

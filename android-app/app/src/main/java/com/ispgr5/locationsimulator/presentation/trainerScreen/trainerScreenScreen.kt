@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -20,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -34,9 +36,12 @@ import com.ispgr5.locationsimulator.network.ClientSingleton
 import com.ispgr5.locationsimulator.network.ClientHandler
 import com.ispgr5.locationsimulator.network.ServerSingleton
 import com.ispgr5.locationsimulator.presentation.previewData.PreviewData
+import com.ispgr5.locationsimulator.presentation.universalComponents.LocationSimulatorTopBar
 import com.ispgr5.locationsimulator.presentation.util.Screen
 import kotlinx.coroutines.flow.collectLatest
 import com.ispgr5.locationsimulator.ui.theme.ThemeState
+import java.lang.Thread.sleep
+import kotlin.concurrent.thread
 
 private const val TAG = "TrainerScreen"
 
@@ -56,7 +61,14 @@ fun TrainerScreenScreen(
         deviceList = devices,
         isTrainingActive = isTrainingActive.value,
         onEvent = { ev: TrainerScreenEvent -> viewModel.onEvent(ev) },
-        onGoBack = { ClientSingleton.close(); navController.navigateUp() },
+        onGoBack = {
+            ClientSingleton.close()
+            navController.navigateUp()
+        },
+        onRefresh = {
+            ClientSingleton.close()
+            ClientSingleton.start()
+        },
         navController = navController,
         appTheme = appTheme
     )
@@ -69,12 +81,16 @@ fun TrainerScreenScaffold(
     isTrainingActive: Boolean,
     onEvent: (TrainerScreenEvent) -> Unit,
     onGoBack: () -> Unit,
+    onRefresh: () -> Unit,
     navController: NavController,
     appTheme: MutableState<ThemeState>
 ) {
     Scaffold(
         topBar = {
-            TrainerScreenTopBar(onGoBack)
+            TrainerScreenTopBar(
+                onGoBack = onGoBack,
+                onRefresh = onRefresh
+            )
         },
         content = { paddingValues ->
             TrainerScreenContent(
@@ -118,15 +134,7 @@ fun TrainerScreenContent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = stringResource(id = R.string.trainer_screen_title),
-            fontWeight = FontWeight.Bold,
-            style = MaterialTheme.typography.headlineLarge,
-            color = MaterialTheme.colorScheme.onBackground,
-            modifier = Modifier.padding(16.dp)
-        )
-
-        Text(
-            text = "Bereits verbunden",
+            text = stringResource(id = R.string.already_connected),
             fontWeight = FontWeight.Bold,
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onBackground,
@@ -236,7 +244,11 @@ fun TrainerScreenContent(
             )
         ) {
             Text(
-                if (trainingActive.value) "Stoppen" else "Starten",
+                if (trainingActive.value) {
+                    stringResource(id = R.string.stop)
+                } else {
+                    stringResource(id = R.string.start)
+                },
                 fontSize = 18.sp,
                 color = MaterialTheme.colorScheme.onPrimary
             )
@@ -249,19 +261,16 @@ fun TrainerScreenContent(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TrainerScreenTopBar(onGoBack: () -> Unit) {
-    TopAppBar(
-        title = {
-            Text(
-                text = "",
-                style = MaterialTheme.typography.titleLarge
-            )
-        },
-        navigationIcon = {
-            IconButton(onClick = onGoBack) {
+fun TrainerScreenTopBar(onGoBack: () -> Unit, onRefresh: () -> Unit) {
+    LocationSimulatorTopBar(
+        onBackClick = onGoBack,
+        title = stringResource(id = R.string.trainer_screen_title),
+        extraActions = {
+            IconButton(
+                onClick = onRefresh) {
                 Icon(
-                    imageVector = Icons.Default.ArrowBack, // Zurück-Pfeil
-                    contentDescription = "Zurück"
+                    imageVector = Icons.Default.Refresh,
+                    contentDescription = "Refresh"
                 )
             }
         }
@@ -290,6 +299,7 @@ fun TrainerScreenPreview() {
             isTrainingActive = false,
             onEvent = {},
             onGoBack = {},
+            onRefresh = {},
             navController = navController,
             appTheme = themeState
         )
