@@ -82,7 +82,7 @@ class ObservableDeviceList {
     }
 
     fun clear() {
-        deviceList.value?.clear()
+        deviceList.value = ArrayList()
     }
 
     fun updateDevice(device: Device) {

@@ -1,5 +1,6 @@
 package com.ispgr5.locationsimulator.network
 
+import android.net.wifi.WifiManager
 import android.net.wifi.WifiManager.MulticastLock
 import com.ispgr5.locationsimulator.presentation.trainerScreen.Device
 import java.io.BufferedReader
@@ -19,16 +20,35 @@ import kotlin.time.Duration.Companion.seconds
 
 
 object ClientSingleton {
-    var lock: MulticastLock? = null
+    var wifiManager: WifiManager? = null
     val deviceList = ObservableDeviceList()
     val clients = HashMap<String, Client>()
+    private var lock: MulticastLock? = null
     private var connectionClient: ConnectionClient? = null
     private val isCheckConnectionActive = AtomicBoolean(false)
+    private val isShutDown = AtomicBoolean(true)
 
     fun start() {
+        if (wifiManager == null) {
+             println("WifiManager missing")
+             return
+        }
+
+        lock = wifiManager?.createMulticastLock("ClientLock")
+
         if (lock == null) {
             println("Multicast lock missing")
             return
+        }
+
+        var attempts = 0
+        while(!isShutDown.get()) {
+            sleep(500)
+            attempts++
+            if(attempts > 15) {
+                println("Tried to start client when it wasn't shut down")
+                return
+            }
         }
 
         try {
@@ -37,8 +57,11 @@ object ClientSingleton {
             connectionClient = ConnectionClient()
             connectionClient?.start()
             startCheckConnection()
+
+            isShutDown.set(false)
         } catch (e: Exception) {
             println("Unable to start connection client: $e")
+            close()
             return
         }
     }
@@ -48,7 +71,11 @@ object ClientSingleton {
     }
 
     fun close() {
-        stopCheckConnection()
+        if(isShutDown.get()) {
+            println("ClientSingleton is already shut down")
+            return
+        }
+
         connectionClient?.close()
         lock?.release()
         for ((_, client) in clients) {
@@ -56,6 +83,7 @@ object ClientSingleton {
         }
         clients.clear()
         deviceList.clear()
+        stopCheckConnection()
     }
 
     private fun startCheckConnection() {
@@ -77,6 +105,7 @@ object ClientSingleton {
                     }
                 }
             }
+            isShutDown.set(true)
         }
     }
 

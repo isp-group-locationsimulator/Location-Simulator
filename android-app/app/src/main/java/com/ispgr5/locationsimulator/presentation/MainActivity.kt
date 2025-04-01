@@ -100,8 +100,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val wifiManager: WifiManager = this.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
-        ClientSingleton.lock = wifiManager.createMulticastLock("ClientLock")
+        ClientSingleton.wifiManager = this.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
 
         soundStorageManager = SoundStorageManager(this@MainActivity)
         MainScope().launch {
