@@ -70,11 +70,11 @@ class TimeoutChecker(
 }
 
 class ObservableDeviceList {
-    private val deviceList = MutableLiveData<ArrayList<Device>>()
+    private val deviceList = MutableLiveData<List<Device>>()
     private var internalList = ArrayList<Device>()
 
     @Composable
-    fun observeAsState(): State<ArrayList<Device>?> {
+    fun observeAsState(): State<List<Device>?> {
         return deviceList.observeAsState()
     }
 

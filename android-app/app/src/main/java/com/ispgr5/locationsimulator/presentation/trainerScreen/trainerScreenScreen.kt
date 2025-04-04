@@ -51,7 +51,7 @@ fun TrainerScreenScreen(
     viewModel: TrainerScreenViewModel = hiltViewModel(),
     appTheme: MutableState<ThemeState>
 ) {
-    val deviceState: ArrayList<Device>? by ClientSingleton.deviceList.observeAsState()
+    val deviceState: List<Device>? by ClientSingleton.deviceList.observeAsState()
     val devices = deviceState ?: emptyList()
     val state = viewModel.state.value
     val isTrainingActive = remember { mutableStateOf(false) }
