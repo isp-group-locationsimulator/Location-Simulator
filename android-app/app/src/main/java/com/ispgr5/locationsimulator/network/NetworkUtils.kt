@@ -71,6 +71,7 @@ class TimeoutChecker(
 
 class ObservableDeviceList {
     private val deviceList = MutableLiveData<ArrayList<Device>>()
+    private var internalList = ArrayList<Device>()
 
     @Composable
     fun observeAsState(): State<ArrayList<Device>?> {
@@ -82,54 +83,35 @@ class ObservableDeviceList {
     }
 
     fun clear() {
-        deviceList.value = ArrayList()
+        synchronized(internalList) {
+            internalList = ArrayList()
+            deviceList.value = ArrayList()
+        }
     }
 
     fun updateDevice(device: Device) {
-        var changed = false
-        var exists = false
-        val newList = ArrayList<Device>()
-
-        newList.addAll(deviceList.value ?: emptyList())
-        for (i in 0..<newList.size) {
-            if (newList[i].ipAddress == device.ipAddress) {
-                changed =
-                    newList[i].user != device.user || newList[i].isPlaying != device.isPlaying || newList[i].isConnected != device.isConnected || newList[i].selectedConfig != device.selectedConfig
-                exists = true
-                newList[i] = device.copy()
-            }
-        }
-        if (!exists) {
-            newList.add(device)
-            changed = true
-        }
-        if (changed) {
-            deviceList.postValue(newList)
-        }
-    }
-
-    fun updateDevices(devices: List<Device>) {
-        var changed = false
-        val newList = ArrayList<Device>()
-        newList.addAll(deviceList.value ?: emptyList())
-
-        for (device in devices) {
+        synchronized(internalList) {
+            var changed = false
             var exists = false
-            for (i in 0..<newList.size) {
-                if (newList[i].ipAddress == device.ipAddress) {
+            val newInternalList = ArrayList<Device>()
+            newInternalList.addAll(internalList)
+
+            for (i in 0..<newInternalList.size) {
+                if (newInternalList[i].ipAddress == device.ipAddress) {
                     changed =
-                        newList[i].user != device.user || newList[i].isPlaying != device.isPlaying || newList[i].isConnected != device.isConnected || newList[i].selectedConfig != device.selectedConfig
+                        newInternalList[i].user != device.user || newInternalList[i].isPlaying != device.isPlaying || newInternalList[i].isConnected != device.isConnected || newInternalList[i].selectedConfig != device.selectedConfig
                     exists = true
-                    newList[i] = device.copy()
+                    newInternalList[i] = device.copy()
                 }
             }
             if (!exists) {
-                newList.add(device)
+                newInternalList.add(device)
                 changed = true
             }
-        }
-        if (changed) {
-            deviceList.postValue(newList)
+            if (changed) {
+                internalList = newInternalList
+                deviceList.postValue(internalList)
+            }
         }
     }
 }
