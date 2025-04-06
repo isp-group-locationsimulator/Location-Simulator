@@ -45,6 +45,7 @@ import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 import com.ispgr5.locationsimulator.domain.model.ConfigurationComponentRoomConverter
 import com.ispgr5.locationsimulator.domain.useCase.ConfigurationUseCases
 import com.ispgr5.locationsimulator.network.ClientSingleton
+import com.ispgr5.locationsimulator.network.ServerSingleton
 import com.ispgr5.locationsimulator.presentation.add.AddScreen
 import com.ispgr5.locationsimulator.presentation.delay.DelayScreen
 import com.ispgr5.locationsimulator.presentation.editTimeline.EditTimelineScreen
@@ -87,6 +88,8 @@ class MainActivity : ComponentActivity() {
     private var popUpState = mutableStateOf(false)
     private var recordedAudioUri: Uri? = null
 
+    private var keepScreenOnCount = 0
+
     private val snackbarContent: MutableState<SnackbarContent?> = mutableStateOf(null)
 
     @Inject
@@ -100,7 +103,9 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        ClientSingleton.wifiManager = this.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
+        ClientSingleton.wifiManager = this.applicationContext.getSystemService(WIFI_SERVICE) as WifiManager
+        ServerSingleton.keepScreenOn = keepScreenOn
+        ServerSingleton.doNotKeepScreenOn = doNotKeepScreenOn
 
         soundStorageManager = SoundStorageManager(this@MainActivity)
         MainScope().launch {
@@ -315,7 +320,7 @@ class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalSerializationApi::class)
     val startService: (String, List<ConfigComponent>, Boolean) -> Unit =
         fun(patternName: String, config: List<ConfigComponent>, randomOrderPlayback: Boolean) {
-            window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            keepScreenOn()
             val intent = Intent(this, SimulationService::class.java).apply {
                 action = "START"
                 putExtra(
@@ -340,7 +345,7 @@ class MainActivity : ComponentActivity() {
      * Stops the background service
      */
     private fun stopService() {
-        window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        doNotKeepScreenOn()
         Intent(this, SimulationService::class.java).also {
             it.action = "STOP"
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -348,6 +353,21 @@ class MainActivity : ComponentActivity() {
             } else {
                 startService(it)
             }
+        }
+    }
+
+    private val keepScreenOn: () -> Unit = {
+        keepScreenOnCount++
+        if(keepScreenOnCount == 1) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        }
+    }
+
+    private val doNotKeepScreenOn: () -> Unit = {
+        keepScreenOnCount--
+        if(keepScreenOnCount <= 0) {
+            keepScreenOnCount = 0
+            window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         }
     }
 

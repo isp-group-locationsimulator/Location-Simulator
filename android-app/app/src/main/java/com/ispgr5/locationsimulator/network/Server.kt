@@ -13,6 +13,9 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 object ServerSingleton {
     var remoteName: String? = null
+    var keepScreenOn: () -> Unit = {}
+    var doNotKeepScreenOn: () -> Unit = {}
+
     private var multicastServer: MulticastServer? = null
     private var server: Server? = null
     private var isActive = false
@@ -26,6 +29,7 @@ object ServerSingleton {
         multicastServer!!.start()
         server!!.start()
         ClientHandler.startCheckConnection()
+        keepScreenOn()
         isActive = true
     }
 
@@ -37,6 +41,7 @@ object ServerSingleton {
         ClientHandler.stopCheckConnection()
         ClientHandler.closeAllClientHandlers()
         server!!.close()
+        doNotKeepScreenOn()
         isActive = false
     }
 }
