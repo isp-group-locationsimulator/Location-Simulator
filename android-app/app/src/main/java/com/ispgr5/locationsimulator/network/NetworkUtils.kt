@@ -79,18 +79,44 @@ class ObservableDeviceList {
     }
 
     fun getAsList(): List<Device> {
-        return deviceList.value ?: emptyList()
+        val listCopy = ArrayList<Device>()
+
+        synchronized(this) { listCopy.addAll(deviceList.value ?: emptyList()) }
+
+        return listCopy
     }
 
     fun clear() {
-        synchronized(internalList) {
+        synchronized(this) {
             internalList = ArrayList()
             deviceList.value = ArrayList()
         }
     }
 
     fun updateDevice(device: Device) {
-        synchronized(internalList) {
+        synchronized(this) {
+            val newInternalList = ArrayList<Device>()
+            newInternalList.addAll(internalList)
+
+            for (i in 0..<newInternalList.size) {
+                if (newInternalList[i].ipAddress == device.ipAddress) {
+                    if (newInternalList[i].user != device.user ||
+                        newInternalList[i].isPlaying != device.isPlaying ||
+                        newInternalList[i].isConnected != device.isConnected ||
+                        newInternalList[i].selectedConfig != device.selectedConfig
+                    ) {
+                        newInternalList[i] = device.copy()
+                        internalList = newInternalList
+                        deviceList.postValue(internalList)
+                        break
+                    }
+                }
+            }
+        }
+    }
+
+    fun updateOrAddDevice(device: Device) {
+        synchronized(this) {
             var changed = false
             var exists = false
             val newInternalList = ArrayList<Device>()

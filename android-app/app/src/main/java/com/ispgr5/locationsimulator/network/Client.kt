@@ -14,6 +14,7 @@ import java.net.InetAddress
 import java.net.InetSocketAddress
 import java.net.MulticastSocket
 import java.net.Socket
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.concurrent.thread
 import kotlin.time.Duration.Companion.seconds
@@ -21,8 +22,10 @@ import kotlin.time.Duration.Companion.seconds
 
 object ClientSingleton {
     var wifiManager: WifiManager? = null
+
     val deviceList = ObservableDeviceList()
-    val clients = HashMap<String, Client>()
+    val clients = ConcurrentHashMap<String, Client>()
+
     private var lock: MulticastLock? = null
     private var connectionClient: ConnectionClient? = null
     private val isCheckConnectionActive = AtomicBoolean(false)
@@ -159,7 +162,7 @@ private class ConnectionClient : Thread() {
                     reader = BufferedReader(InputStreamReader(socket.getInputStream()))
                     writer = BufferedWriter(OutputStreamWriter(socket.getOutputStream()))
                     ClientSingleton.clients[ipAddress] = Client(socket, reader, writer, ipAddress)
-                    ClientSingleton.deviceList.updateDevice(
+                    ClientSingleton.deviceList.updateOrAddDevice(
                         Device(
                             ipAddress = ipAddress,
                             user = name,
