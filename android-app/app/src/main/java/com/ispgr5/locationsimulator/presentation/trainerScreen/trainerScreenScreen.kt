@@ -5,23 +5,31 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material3.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -29,19 +37,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
 import androidx.navigation.compose.rememberNavController
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.network.ClientSingleton
-import com.ispgr5.locationsimulator.network.ClientHandler
-import com.ispgr5.locationsimulator.network.ServerSingleton
 import com.ispgr5.locationsimulator.presentation.previewData.PreviewData
 import com.ispgr5.locationsimulator.presentation.universalComponents.LocationSimulatorTopBar
 import com.ispgr5.locationsimulator.presentation.util.Screen
-import kotlinx.coroutines.flow.collectLatest
+import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
 import com.ispgr5.locationsimulator.ui.theme.ThemeState
-import java.lang.Thread.sleep
-import kotlin.concurrent.thread
+import kotlinx.coroutines.flow.collectLatest
 
 private const val TAG = "TrainerScreen"
 
@@ -54,6 +58,7 @@ fun TrainerScreenScreen(
     val deviceState: List<Device>? by ClientSingleton.deviceList.observeAsState()
     val devices = deviceState ?: emptyList()
     val state = viewModel.state.value
+    val isRefreshing = viewModel.isRestartClientThreadAlive.observeAsState().value == true
     val isTrainingActive = remember { mutableStateOf(false) }
 
     TrainerScreenScaffold(
@@ -62,13 +67,13 @@ fun TrainerScreenScreen(
         isTrainingActive = isTrainingActive.value,
         onEvent = { ev: TrainerScreenEvent -> viewModel.onEvent(ev) },
         onGoBack = {
-            ClientSingleton.close()
-            navController.navigateUp()
+            if(!isRefreshing) {
+                ClientSingleton.close()
+                navController.navigateUp()
+            }
         },
-        onRefresh = {
-            ClientSingleton.close()
-            ClientSingleton.start()
-        },
+        isRefreshing = isRefreshing,
+        onRefresh = { viewModel.onEvent(TrainerScreenEvent.Refresh) },
         navController = navController,
         appTheme = appTheme
     )
@@ -81,16 +86,14 @@ fun TrainerScreenScaffold(
     isTrainingActive: Boolean,
     onEvent: (TrainerScreenEvent) -> Unit,
     onGoBack: () -> Unit,
+    isRefreshing: Boolean,
     onRefresh: () -> Unit,
     navController: NavController,
     appTheme: MutableState<ThemeState>
 ) {
     Scaffold(
         topBar = {
-            TrainerScreenTopBar(
-                onGoBack = onGoBack,
-                onRefresh = onRefresh
-            )
+            TrainerScreenTopBar(onGoBack = onGoBack)
         },
         content = { paddingValues ->
             TrainerScreenContent(
@@ -99,6 +102,8 @@ fun TrainerScreenScaffold(
                 deviceList = deviceList,
                 isTrainingActive = isTrainingActive,
                 onEvent = onEvent,
+                isRefreshing = isRefreshing,
+                onRefresh = onRefresh,
                 navController = navController,
                 appTheme = appTheme
             )
@@ -106,6 +111,7 @@ fun TrainerScreenScaffold(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TrainerScreenContent(
     paddingValues: PaddingValues,
@@ -113,6 +119,8 @@ fun TrainerScreenContent(
     deviceList: List<Device>,
     isTrainingActive: Boolean,
     onEvent: (TrainerScreenEvent) -> Unit,
+    isRefreshing: Boolean,
+    onRefresh: () -> Unit,
     navController: NavController,
     appTheme: MutableState<ThemeState>
 ) {
@@ -141,7 +149,9 @@ fun TrainerScreenContent(
             modifier = Modifier.padding(top = 8.dp)
         )
 
-        Box(
+        PullToRefreshBox(
+            isRefreshing = isRefreshing,
+            onRefresh = onRefresh,
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
@@ -261,19 +271,10 @@ fun TrainerScreenContent(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TrainerScreenTopBar(onGoBack: () -> Unit, onRefresh: () -> Unit) {
+fun TrainerScreenTopBar(onGoBack: () -> Unit) {
     LocationSimulatorTopBar(
         onBackClick = onGoBack,
-        title = stringResource(id = R.string.trainer_screen_title),
-        extraActions = {
-            IconButton(
-                onClick = onRefresh) {
-                Icon(
-                    imageVector = Icons.Default.Refresh,
-                    contentDescription = "Refresh"
-                )
-            }
-        }
+        title = stringResource(id = R.string.trainer_screen_title)
     )
 }
 
@@ -299,6 +300,7 @@ fun TrainerScreenPreview() {
             isTrainingActive = false,
             onEvent = {},
             onGoBack = {},
+            isRefreshing = false,
             onRefresh = {},
             navController = navController,
             appTheme = themeState

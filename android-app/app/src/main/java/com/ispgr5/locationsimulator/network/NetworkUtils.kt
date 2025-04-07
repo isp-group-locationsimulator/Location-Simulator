@@ -89,7 +89,7 @@ class ObservableDeviceList {
     fun clear() {
         synchronized(this) {
             internalList = ArrayList()
-            deviceList.value = ArrayList()
+            deviceList.postValue(ArrayList())
         }
     }
 

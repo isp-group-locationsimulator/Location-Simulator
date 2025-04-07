@@ -16,11 +16,16 @@ import java.net.MulticastSocket
 import java.net.Socket
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicReference
 import kotlin.concurrent.thread
 import kotlin.time.Duration.Companion.seconds
 
 
 object ClientSingleton {
+    enum class ActiveState {
+        IS_CLOSED, IS_CLOSING, IS_STARTED, IS_STARTING
+    }
+
     var wifiManager: WifiManager? = null
 
     val deviceList = ObservableDeviceList()
@@ -29,29 +34,25 @@ object ClientSingleton {
     private var lock: MulticastLock? = null
     private var connectionClient: ConnectionClient? = null
     private val isCheckConnectionActive = AtomicBoolean(false)
-    private val isShutDown = AtomicBoolean(true)
+    private val activeState = AtomicReference<ActiveState>(ActiveState.IS_CLOSED)
 
-    fun start() {
+    fun start(): Boolean {
+        if(activeState.get() != ActiveState.IS_CLOSED) {
+            return false
+        }
+        activeState.set(ActiveState.IS_STARTING)
+
         if (wifiManager == null) {
              println("WifiManager missing")
-             return
+             activeState.set(ActiveState.IS_CLOSED)
+             return false
         }
 
         lock = wifiManager?.createMulticastLock("ClientLock")
-
         if (lock == null) {
-            println("Multicast lock missing")
-            return
-        }
-
-        var attempts = 0
-        while(!isShutDown.get()) {
-            sleep(500)
-            attempts++
-            if(attempts > 15) {
-                println("Tried to start client when it wasn't shut down")
-                return
-            }
+            println("Unable to create multicast lock")
+            activeState.set(ActiveState.IS_CLOSED)
+            return false
         }
 
         try {
@@ -60,13 +61,13 @@ object ClientSingleton {
             connectionClient = ConnectionClient()
             connectionClient?.start()
             startCheckConnection()
-
-            isShutDown.set(false)
         } catch (e: Exception) {
             println("Unable to start connection client: $e")
             close()
-            return
+            return false
         }
+        activeState.set(ActiveState.IS_STARTED)
+        return true
     }
 
     fun send(ipAddress: String, message: String) {
@@ -74,10 +75,11 @@ object ClientSingleton {
     }
 
     fun close() {
-        if(isShutDown.get()) {
-            println("ClientSingleton is already shut down")
+        if(activeState.get() != ActiveState.IS_STARTING && activeState.get() != ActiveState.IS_STARTED) {
+            println("ClientSingleton is already shut down or shutting down")
             return
         }
+        activeState.set(ActiveState.IS_CLOSING)
 
         connectionClient?.close()
         lock?.release()
@@ -108,11 +110,14 @@ object ClientSingleton {
                     }
                 }
             }
-            isShutDown.set(true)
+            activeState.set(ActiveState.IS_CLOSED)
         }
     }
 
     private fun stopCheckConnection() {
+        if(!isCheckConnectionActive.get()) {
+            activeState.set(ActiveState.IS_CLOSED)
+        }
         isCheckConnectionActive.set(false)
     }
 }

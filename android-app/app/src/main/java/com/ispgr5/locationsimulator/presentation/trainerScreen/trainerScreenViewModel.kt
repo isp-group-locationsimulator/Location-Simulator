@@ -1,6 +1,7 @@
 package com.ispgr5.locationsimulator.presentation.trainerScreen
 
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
@@ -14,6 +15,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import java.lang.Thread.sleep
 import javax.inject.Inject
 
 @HiltViewModel
@@ -21,7 +23,9 @@ class TrainerScreenViewModel @Inject constructor(
     private val configurationUseCases: ConfigurationUseCases
 ) : ViewModel() {
     private var getConfigurationJob: Job? = null
+    private var restartClientThread: Thread? = null
 
+    var isRestartClientThreadAlive = MutableLiveData(false)
     var state = mutableStateOf(TrainerScreenState())
         private set
 
@@ -32,6 +36,22 @@ class TrainerScreenViewModel @Inject constructor(
 
     fun onEvent(event: TrainerScreenEvent) {
         when (event) {
+            is TrainerScreenEvent.Refresh -> {
+                if(restartClientThread?.isAlive != true) {
+                    restartClientThread = Thread {
+                        ClientSingleton.close()
+                        var attempts = 0
+                        while (!ClientSingleton.start() && attempts < 20) {
+                            attempts++
+                            sleep(300)
+                        }
+                        isRestartClientThreadAlive.postValue(false)
+                    }
+                    isRestartClientThreadAlive.value = true
+                    restartClientThread?.start()
+                }
+            }
+
             is TrainerScreenEvent.StartTraining -> {
                 for (device in ClientSingleton.deviceList.getAsList()) {
                     if (!device.isPlaying) {

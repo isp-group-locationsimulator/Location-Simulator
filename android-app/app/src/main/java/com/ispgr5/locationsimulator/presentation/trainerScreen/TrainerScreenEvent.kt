@@ -1,6 +1,7 @@
 package com.ispgr5.locationsimulator.presentation.trainerScreen
 
 sealed class TrainerScreenEvent {
+    data object Refresh: TrainerScreenEvent()
     data object StartTraining : TrainerScreenEvent()
     data object StopTraining : TrainerScreenEvent()
     data class StartDeviceTraining(val device: Device): TrainerScreenEvent()
