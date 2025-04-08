@@ -27,14 +27,14 @@
 	\item \textbf{SoundStorageManager} \en{This class allows us to use the sound files, which are stored on the devices main storage.} \de{Diese Funktion ermöglicht es uns die Audio Dateien zu verwenden, welche auf dem Hauptspeicher des Geräts gespeichert sind.}
 \end{itemize}
 
-\subsection{di}
+\subsection{di} \label{sec:di}
 \begin{itemize}
 	\item \textbf{AppModule} \en{This data injection module loads the database when starting the app and provides it's interface to the view models.} \de{Diese Data Injection Modul lädt die Datenbank und gibt den View Models ein Interface, um mit der Datenbank zu interagieren.}
 \end{itemize}
 
 \subsection{domain}
 \en{Contains a variety of classes to represent a configuration on the database.} \de{Enthält eine Vielzahl an Klassen, um eine Konfiguration auf der Datenbank zu repräsentieren.}
-\subsubsection{model}
+\subsubsection{model} \label{sec:model}
 \begin{itemize}
 	\item \textbf{ConfigComponent} \en{Super Class for any configuration components. Contains subclasses for both vibration and sound components.} \de{Superklasse für jegliche Configurations Komponenten. Enthält Subklassen für Vibration und Sound.}
 	\item \textbf{Configuration} \en{Class that represents the configuration, allows it to be stored on the database.}  \de{Klasse für eine gesamte Konfiguration, die auch auf der Datenbank gespeichert wird.}
@@ -73,7 +73,7 @@
 	\item \textbf{AddScreenState} \en{Contains the state of the add screen.} \de{Speichert den Zustand der Hinzufügen Ansicht.}
 	\item \textbf{AddViewModel} \en{View Model for the add screen. Reacts to all UI events on this screen.} \de{View Model der Hinzufügen Ansicht. Reagiert auf alle UI Events in dieser Ansicht.}
 \end{itemize}
-\subsubsection{delay}
+\subsubsection{delay} \label{sec:delay}
 \en{Contains all classes for the ''Start Configuration'' screen, where the user can start the configuration and set a delay for the start.} \de{Enthält alle Klassen für die ''Konfiguration starten'' Ansicht, in welcher der Nutzer die Konfiguration starten kann und eine Verzögerung dafür setzten kann.}
 \begin{figure}[H]
 	\centering
@@ -86,7 +86,7 @@
 	\item \textbf{DelayTimer} \en{Implementation for the delay timer. Includes both busness logic, as well as composables.} \de{Implementierung des Verzögerungstimers. Enthält sowohl Geschaftslogik, als auch Composables.}
 	\item \textbf{DelayViewModel} \en{View Model for the delay/start screen. Reacts to all UI events on this screen.} \de{View Model der Verzögern/Start Ansicht. Reagiert auf alle UI Events in dieser Ansicht.}
 \end{itemize}
-\subsubsection{editTimeline}
+\subsubsection{editTimeline} \label{sec:editTimeline}
 \en{Contains all classes for the ''Edit Configuration'' screen.} \de{Enthält alle Klassen für die ''Konfiguration bearbeiten'' Ansicht.}
 \begin{figure}[H]
 	\centering

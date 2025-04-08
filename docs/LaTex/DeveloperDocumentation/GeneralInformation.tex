@@ -4,9 +4,9 @@
 \subsection{Architektur}
 This app uses the Model View ViewModel (MVVM) architecture, which is a common architecture, splitting the software into three layers:
 \begin{itemize}
-	\item \textbf{The Model} contains the data, which can be modified by the ViewModel. The data is independent of the other layers, meaning multiple views implementations can use the same model. It might also contain some business logic, like accessing the devices main memory.
-	\item \textbf{The ViewModel} takes user inputs from the View and modifies the models data accordingly. It also iffer the view access to the state of the model, so any changes can be reflected in the UI.
-	\item \textbf{The View} reacts to changes in the ViewModel and reflects those changes in the UI. It should contain no business logic.
+	\item \textbf{The Model} contains the data, which can be modified by the ViewModel. The data is independent of the other layers, meaning multiple views implementations can use the same model. It might also contain some business logic, like accessing the devices main memory. For this project, the Models will be called XYZState.
+	\item \textbf{The ViewModel} takes user inputs from the View and modifies the models data accordingly. It also iffer the view access to the state of the model, so any changes can be reflected in the UI. For this project, the View Models will be called XYZViewModel, with event that can happen being called XYZEvent.
+	\item \textbf{The View} reacts to changes in the ViewModel and reflects those changes in the UI. It should contain no business logic. For this project, the Views will be called XYZScreen.
 \end{itemize}
 This architecture was used as the apps UI used Jetpack Compose, which is made to work with a ViewModel. The separation of the layers also allows for independent changes between UI and business logic, as well as bester testability, as no complex UI tests are needed to test the business logic.
 

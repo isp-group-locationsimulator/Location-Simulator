@@ -1,1 +1,52 @@
 \section{Tests}
+
+\subsection{AndroidTest}
+\en{These tests test interacting with the app via the UI.} \de{Diese Tests testen die App durch Interaktionen mit der UI.}
+\begin{itemize}
+	\item \textbf{ExampleInstrumentedTest} \en{Short example of an instrumented test.} \de{Kurzer Beispiel eines instrumentierten Tests.}
+	\item \textbf{HiltTestRunner} \en{Replaces the real apps application class with an instrumented HiltTestApplication. This is specified in the build.gradle script.} \de{Ersetzte die Application Klasse der echten Anwendung mit einer instumentierten HiltTestApplication. Dies wird in einem build.gradle Skript spezifiziert.}
+\end{itemize}
+\subsubsection{di}
+\en{Test for automatically testing the di package (\ref{sec:di}).} \de{Tests um das di Package (\ref{sec:di}) automatisch zu testen.}
+\begin{itemize}
+	\item \textbf{TestAppModule} \en{Creates an in-memory environment for testing, specifically it replaces the database and repository with fake version which can easily be reset between tests.} \de{Erstellt eine In-Memory Environment, insbesondere eine Datenbank und ein Repository, welche zwischen Tests schnell zurück gesetzt werden können.}
+\end{itemize}
+
+\subsubsection{endToEndTests}
+\en{These tests test a full workflow, from home screen to the end. This is similar to classical integration test.} \de{Diese tests testen einen kompletten Arbeitsvorgang, von Home Screen bis zum Ende. Dies its ähnlich zu klassischen Integrationstest.}
+\begin{itemize}
+	\item \textbf{CreateAndPlayConfigurationTest} \en{Tests going from the home screen to creating a new configuration, editing it and then starting and stopping it.} \de{Testet von dem Start Bildschirm aus eine Konfiguration zu erstellen, sie zu bearbeiten und sie dann abzuspielen und zu stoppen.}
+	\item \textbf{SecondaryEndToEndTests} \en{Test workflows not warrenting a own test class. The are currently arranging configuration components in a timeline, and switching between dark and light mode.} \de{Tests Arbeitsabläufe, welche keine eigene Test Klasse rechtfertigen, wie das anordnen von Konfigurationskomponenten in der Zeitachse, oder das wechseln zwischen hellem und dunklem Farbschema.}
+\end{itemize}
+
+\subsubsection{presentation.editTimeline}
+\en{Tests for automatically testing the editTimeline package (\ref{sec:editTimeline}).} \de{Test um automatisch das editTimeline Package zu testen (\ref{sec:editTimeline}).} 
+\begin{itemize}
+	\item \textbf{EditTimelineScreenTest} \en{Test adding a component and changing the configuration name and description on the edit screen.} \de{Testet das hinzufügen einer Komponente und das bearbeited von Name und Beschreibung in der ''Konfiguration bearbeiten'' Ansicht.}
+\end{itemize}
+
+\subsubsection{screenshots}
+\en{Test for automatically creating screenshots using Fastlane.} \de{Test um mit Fastlane automatisiert Screenshots zu erstellen.}
+\begin{itemize}
+	\item \textbf{ScreenshotTests} \en{An abstract base class for automatically taking screenshots using Fastlane.} \de{Eine abstrakte Grundklasse um mit Fastlane automatisch Screenshots zu erstellen.}
+\end{itemize}
+\subsubsubsection{phone}
+\begin{itemize}
+	\item \textbf{PhoneScreenshotTests} \en{Implementation of ScreenshotTests for taking screenshots on a phone.} \de{Implementierung von ScreenshotTests um Screenshots auf einem Handy aufzunehmen.}
+\end{itemize}
+
+\subsection{Test}
+\en{These tests test function not specifically related to android.} \de{Diese Tests testen Funktion, welche nicht von Android abhängig sind.}
+\subsubsection{domain.model}
+\en{These tests test function from the model package (\ref{sec:model}).} \de{Diese Tests testen Funktionen aus dem model Package (\ref{sec:model}).}
+\begin{itemize}
+	\item \textbf{ConfigurationComponentRoomConverterTest} \en{Test that the ConfigurationComponentRoomConverter  correctly converts config components into strings, and vice versa.} \de{Überpüft, dass der ConfigurationComponentRoomConverter eine Konfigurations-Komponente korrekt in einen String überträgt, und anders herum.}
+	\item \textbf{RangeConverterTest} \en{Tests the RangeConverter.} \de{Testet den RangeConverter.}
+	\item \textbf{SoundConverterTest} \en{Tests the SoundConverter.} \de{Testet den SoundConverter.}
+\end{itemize}
+
+\subsubsection{presentation.delay}
+\en{These tests test function from the delay package (\ref{sec:delay}).} \de{Diese tests testen Funktionen aus  dem delay Package (\ref{sec:delay}).}
+\begin{itemize}
+	\item \textbf{TimerTest} \en{Tests that the DelayTimer correctly calculates the timer value from a string.} \de{Testet, dass der DelayTimer einen String in die korrekte Verzögerung umwandelt.}
+\end{itemize}
