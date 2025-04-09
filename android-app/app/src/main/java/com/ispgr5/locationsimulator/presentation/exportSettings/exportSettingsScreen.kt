@@ -7,10 +7,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -82,6 +82,7 @@ fun ExportSettingsContent(
             text = userName,
             fontWeight = FontWeight.Bold,
             style = MaterialTheme.typography.headlineLarge,
+            color = colorScheme.onBackground,
             modifier = Modifier.padding(16.dp)
         )
 
@@ -89,6 +90,7 @@ fun ExportSettingsContent(
             text = "Konfiguration auswählen",
             fontWeight = FontWeight.Bold,
             style = MaterialTheme.typography.bodyLarge,
+            color = colorScheme.onBackground,
             modifier = Modifier.padding(top = 8.dp)
         )
 
@@ -98,7 +100,7 @@ fun ExportSettingsContent(
                 .fillMaxWidth()
                 .weight(1f)
                 .padding(horizontal = 16.dp)
-                .background(Color.LightGray)
+                .background(colorScheme.surfaceContainerLow)
         ) {
             LazyColumn(
                 modifier = Modifier.fillMaxSize()
@@ -115,9 +117,9 @@ fun ExportSettingsContent(
             modifier = Modifier
                 .fillMaxWidth(0.8f)
                 .padding(8.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF8B4513))
+            colors = ButtonDefaults.buttonColors(containerColor = colorScheme.primary)
         ) {
-            Text("Exportieren", fontSize = 16.sp)
+            Text("Exportieren", fontSize = 16.sp, color = colorScheme.onPrimary)
         }
     }
 }
@@ -129,9 +131,9 @@ fun ConfigOptionItem(option: String, onOptionSelected: (String) -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(4.dp),
-        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFDAD5)) // Hellorange
+        colors = ButtonDefaults.buttonColors(containerColor = colorScheme.surfaceContainerHigh) // Hellorange
     ) {
-        Text(text = option, color = Color.Black,fontSize = 16.sp, fontWeight = FontWeight.Bold)
+        Text(text = option, color = colorScheme.onBackground,fontSize = 16.sp, fontWeight = FontWeight.Bold)
     }
 }
 
@@ -147,13 +149,14 @@ fun ExportSettingsTopBar(onGoBack: () -> Unit) {
                     text = "Exportieren",
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
+                    color = colorScheme.onBackground,
                     modifier = Modifier.offset(x = 75.dp) // Hier 50.dp nach rechts verschieben
                 )
             }
         },
         navigationIcon = {
             IconButton(onClick = onGoBack) {
-                Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Zurück")
+                Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Zurück", tint = colorScheme.onSurface)
             }
         }
     )

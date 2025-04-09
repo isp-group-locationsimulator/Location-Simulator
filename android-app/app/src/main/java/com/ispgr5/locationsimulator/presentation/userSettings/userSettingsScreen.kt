@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -86,6 +87,7 @@ fun UserSettingsContent(
             text = userName,
             fontWeight = FontWeight.Bold,
             style = MaterialTheme.typography.headlineLarge,
+            color = colorScheme.onBackground,
             modifier = Modifier.padding(16.dp)
         )
 
@@ -93,6 +95,7 @@ fun UserSettingsContent(
             text = "Konfiguration auswählen",
             fontWeight = FontWeight.Bold,
             style = MaterialTheme.typography.bodyLarge,
+            color = colorScheme.onBackground,
             modifier = Modifier.padding(top = 8.dp)
         )
 
@@ -102,7 +105,7 @@ fun UserSettingsContent(
                 .fillMaxWidth()
                 .weight(1f)
                 .padding(horizontal = 16.dp)
-                .background(Color.LightGray)
+                .background(colorScheme.surfaceContainerLow)
         ) {
             LazyColumn(
                 modifier = Modifier.fillMaxSize()
@@ -124,9 +127,9 @@ fun UserSettingsContent(
             modifier = Modifier
                 .fillMaxWidth(0.8f)
                 .padding(8.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF8B4513))
+            colors = ButtonDefaults.buttonColors(containerColor = colorScheme.primary)
         ) {
-            Text("Konfiguration exportieren", fontSize = 16.sp)
+            Text("Konfiguration exportieren", fontSize = 16.sp, color = colorScheme.onPrimary)
         }
 
         Button(
@@ -134,9 +137,9 @@ fun UserSettingsContent(
             modifier = Modifier
                 .fillMaxWidth(0.8f)
                 .padding(8.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF8B4513))
+            colors = ButtonDefaults.buttonColors(containerColor = colorScheme.primary)
         ) {
-            Text("Speichern", fontSize = 16.sp)
+            Text("Speichern", fontSize = 16.sp, color = colorScheme.onPrimary)
         }
     }
 }
@@ -156,7 +159,7 @@ fun ConfigOptionItem(
             .fillMaxWidth()
             .padding(4.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = if (isSelected) Color(0xFFFFA500) else Color(0xFFFFDAD5) // Orange wenn ausgewählt
+            containerColor = if (isSelected) Color(0xFFFFA500) else colorScheme.surfaceContainerHigh // Orange wenn ausgewählt
         ),
         border = if (isSelected) {
             BorderStroke(2.dp, Color.Black) // Schwarze Umrandung, wenn ausgewählt
@@ -164,7 +167,7 @@ fun ConfigOptionItem(
     ) {
         Text(
             text = optionName,
-            color = Color.Black,
+            color = colorScheme.onBackground,
             fontSize = 16.sp,
             fontWeight = FontWeight.Bold
         )
@@ -184,13 +187,18 @@ fun UserSettingsTopBar(onGoBack: () -> Unit) {
                     text = "Einstellungen",
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
+                    color = colorScheme.onBackground,
                     modifier = Modifier.offset(x = 75.dp) // Hier 50.dp nach rechts verschieben
                 )
             }
         },
         navigationIcon = {
             IconButton(onClick = onGoBack) {
-                Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Zurück")
+                Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = "Zurück",
+                        tint = colorScheme.onSurface
+                    )
             }
         }
     )
