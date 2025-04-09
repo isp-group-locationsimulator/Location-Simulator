@@ -8,14 +8,19 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -40,6 +45,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.network.ClientSingleton
+import com.ispgr5.locationsimulator.presentation.ChosenRole
 import com.ispgr5.locationsimulator.presentation.previewData.PreviewData
 import com.ispgr5.locationsimulator.presentation.universalComponents.LocationSimulatorTopBar
 import com.ispgr5.locationsimulator.presentation.util.Screen
@@ -220,8 +226,12 @@ fun TrainerScreenContent(
                             navController.navigate(Screen.UserSettingsScreen.createRoute(device.user, device.ipAddress))
                         },
                         onTimerClick = {
-                            if(device.selectedConfig?.id != null) { // should always be true but checking won't hurt
-                                navController.navigate(Screen.DelayScreen.createRoute(device.selectedConfig!!.id!!, device.ipAddress))
+                            val id = device.selectedConfig?.id
+                            if(id != null) { // should always be true but checking won't hurt
+                                navController.navigate(Screen.DelayScreen.createRoute(
+                                    id,
+                                    ChosenRole.TRAINER.value,
+                                    device.ipAddress))
                             } else {
                                 Log.w(TAG, "selectedConfig was null")
                             }
@@ -231,37 +241,55 @@ fun TrainerScreenContent(
             }
         }
 
-        // Starten/Stoppen-Button
-        Button(
-            onClick = {
-                if (trainingActive.value) {
-                    // Stoppe alle Geräte
-                    onEvent(TrainerScreenEvent.StopTraining)
-                } else {
-                    // Starte nur Geräte, die noch nicht laufen
-                    onEvent(TrainerScreenEvent.StartTraining)
-                }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        )
+        {
+            // Starten/Stoppen-Button
+            Button(
+                onClick = {
+                    if (trainingActive.value) {
+                        // Stoppe alle Geräte
+                        onEvent(TrainerScreenEvent.StopTraining)
+                    } else {
+                        // Starte nur Geräte, die noch nicht laufen
+                        onEvent(TrainerScreenEvent.StartTraining)
+                    }
 
-                // Zustand umschalten
-                trainingActive.value = !trainingActive.value
-            },
-            modifier = Modifier
-                .fillMaxWidth(0.8f)
-                .padding(16.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = if (trainingActive.value) MaterialTheme.colorScheme.error
-                else MaterialTheme.colorScheme.primary
-            )
-        ) {
-            Text(
-                if (trainingActive.value) {
-                    stringResource(id = R.string.stop)
-                } else {
-                    stringResource(id = R.string.start)
+                    // Zustand umschalten
+                    trainingActive.value = !trainingActive.value
                 },
-                fontSize = 18.sp,
-                color = MaterialTheme.colorScheme.onPrimary
-            )
+                modifier = Modifier
+                    .fillMaxWidth(0.8f)
+                    .padding(16.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = if (trainingActive.value) MaterialTheme.colorScheme.error
+                    else MaterialTheme.colorScheme.primary
+                )
+            ) {
+                Text(
+                    if (trainingActive.value) {
+                        stringResource(id = R.string.stop)
+                    } else {
+                        stringResource(id = R.string.start)
+                    },
+                    fontSize = 18.sp,
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+            }
+            IconButton(
+                onClick = {
+                    navController.navigate(Screen.DelayScreen.createRoute(-1, ChosenRole.TRAINER.value))
+                }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Timer,
+                    contentDescription = "Countdown until start",
+                    tint = MaterialTheme.colorScheme.onSurface
+                )
+            }
         }
     }
 }

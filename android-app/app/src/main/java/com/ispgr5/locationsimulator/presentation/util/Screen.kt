@@ -1,5 +1,7 @@
 package com.ispgr5.locationsimulator.presentation.util
 
+import com.ispgr5.locationsimulator.presentation.ChosenRole
+
 /**Class to get the Route to the Screens*/
 sealed class Screen(val route: String) {
 
@@ -7,13 +9,17 @@ sealed class Screen(val route: String) {
     data object HomeScreen : Screen("homeScreen")
     data object InfoScreen : Screen("infoScreen")
     data object HelpScreen: Screen("helpScreen")
-    data object SelectScreen : Screen("selectScreen")
+    data object SelectScreen : Screen("selectScreen?chosenRole={chosenRole}")
+    {
+        fun createRoute(chosenRole: Int = ChosenRole.STANDALONE.value) = "selectScreen?chosenRole=$chosenRole"
+    }
     data object AddScreen : Screen("addScreen")
     data object SettingsScreen : Screen("settingsScreen")
     data object TrainerScreen: Screen("trainerScreen")
-    data object DelayScreen : Screen("delayScreen?configurationId={configurationId},userIpAddress={userIpAddress}")
+    data object DelayScreen : Screen("delayScreen?configurationId={configurationId},chosenRole={chosenRole},remoteIpAddress={remoteIpAddress}")
     {
-        fun createRoute(configurationId: Int, userIpAddress: String) = "delayScreen?configurationId=$configurationId,userIpAddress=$userIpAddress"
+        fun createRoute(configurationId: Int, chosenRole: Int = 0, remoteIpAddress: String = "255.255.255.255") =
+            "delayScreen?configurationId=$configurationId,chosenRole=$chosenRole,remoteIpAddress=$remoteIpAddress"
     }
     data object UserSettingsScreen : Screen("userSettingsScreen?userName={userName},userIpAddress={userIpAddress}")
     {

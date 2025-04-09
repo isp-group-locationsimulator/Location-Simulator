@@ -41,6 +41,7 @@ import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.core.util.TestTags
 import com.ispgr5.locationsimulator.network.ClientHandler
 import com.ispgr5.locationsimulator.network.Commands
+import com.ispgr5.locationsimulator.presentation.ChosenRole
 import com.ispgr5.locationsimulator.presentation.previewData.AppPreview
 import com.ispgr5.locationsimulator.presentation.previewData.PreviewData
 import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
@@ -97,8 +98,9 @@ private class DelayCountdownTimer(
 @Composable
 fun DelayTimer(
     timerState: MutableState<TimerState>,
+    chosenRole: ChosenRole,
     onFinishTimer: (configurationId: Int) -> Unit,
-    onTrainerTimerStart: (Long, Long, Long) -> Boolean,
+    onTrainerTimerStart: (Long, Long, Long) -> Unit,
     configurationId: Int
 ) {
 
@@ -187,7 +189,10 @@ fun DelayTimer(
         }
         Button(
             onClick = {
-                if(!onTrainerTimerStart(timerState.value.setHours, timerState.value.setMinutes, timerState.value.setSeconds)) {
+                if(chosenRole == ChosenRole.TRAINER) {
+                    onTrainerTimerStart(timerState.value.setHours, timerState.value.setMinutes, timerState.value.setSeconds)
+                }
+                else {
                     when {
                         timerState.value.isZero() -> onStartVibration(
                             configurationId = configurationId,
@@ -207,7 +212,12 @@ fun DelayTimer(
                                 isRunning = true, inhibitStart = false, remoteConfigStr = null
                             )
                             ClientHandler.sendToClients(
-                                Commands.formatTimerState(timerState.value.setHours, timerState.value.setMinutes, timerState.value.setSeconds))
+                                Commands.formatTimerState(
+                                    timerState.value.setHours,
+                                    timerState.value.setMinutes,
+                                    timerState.value.setSeconds
+                                )
+                            )
                         }
                     }
                 }
@@ -377,8 +387,9 @@ fun DelayTimerStoppedPreview() {
     LocationSimulatorTheme {
         DelayTimer(
             timerState = timerState,
+            chosenRole = ChosenRole.STANDALONE,
             onFinishTimer = {},
-            onTrainerTimerStart = fun(_: Long, _: Long, _: Long) : Boolean { return false },
+            onTrainerTimerStart = fun(_: Long, _: Long, _: Long) { },
             configurationId = PreviewData.previewConfigurations.first().id!!
         )
     }
@@ -393,8 +404,9 @@ fun DelayTimerRunningPreview() {
     LocationSimulatorTheme {
         DelayTimer(
             timerState = timerState,
+            chosenRole = ChosenRole.STANDALONE,
             onFinishTimer = {},
-            onTrainerTimerStart = fun(_: Long, _: Long, _: Long) : Boolean { return false },
+            onTrainerTimerStart = fun(_: Long, _: Long, _: Long) { },
             configurationId = PreviewData.previewConfigurations.first().id!!
         )
     }

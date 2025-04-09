@@ -79,6 +79,16 @@ val LocalThemeState = compositionLocalOf {
     ThemeState(themeType = ThemeType.AUTO)
 }
 
+enum class ChosenRole(val value: Int) {
+    STANDALONE(1),
+    REMOTE(2),
+    TRAINER(3);
+
+    companion object {
+        fun valueOf(value: Int?) = ChosenRole.entries.find { it.value == value }
+    }
+}
+
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
@@ -173,7 +183,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-
     /**
      * create Navigation App Host controller, which is responsible for all navigation
      */
@@ -215,11 +224,17 @@ class MainActivity : ComponentActivity() {
                     navController=navController, appTheme = themeState
                 )
             }
-            composable(route = Screen.SelectScreen.route) {
+            composable(
+                route = Screen.SelectScreen.route,
+                arguments = listOf(navArgument("chosenRole") { type = NavType.IntType },)
+            ) { backStackEntry ->
+                val chosenRole =
+                    ChosenRole.valueOf(backStackEntry.arguments?.getInt("chosenRole")) ?: ChosenRole.STANDALONE
                 SelectScreen(
                     navController = navController,
                     configurationStorageManager = configurationStorageManager,
                     soundStorageManager = soundStorageManager,
+                    chosenRole = chosenRole,
                     snackbarHostState = snackbarHostState,
                     snackbarContent = snackbarContent
                 )
@@ -241,14 +256,18 @@ class MainActivity : ComponentActivity() {
             }
             composable(
                 route = Screen.DelayScreen.route,
-                arguments = listOf(NavigationArguments.configurationId, navArgument("userIpAddress") { type = NavType.StringType })
+                arguments = listOf(
+                    NavigationArguments.configurationId,
+                    navArgument("chosenRole") { type = NavType.IntType },
+                    navArgument("remoteIpAddress") { type = NavType.StringType })
             ) { backStackEntry ->
-                val userIpAddress = backStackEntry.arguments?.getString("userIpAddress") ?: "127.0.0.1"
+                val chosenRole =
+                    ChosenRole.valueOf(backStackEntry.arguments?.getInt("chosenRole")) ?: ChosenRole.STANDALONE
                 DelayScreen(
                     navController = navController,
                     startServiceFunction = startService,
                     soundsDirUri = this@MainActivity.filesDir.toString() + "/Sounds/",
-                    userIpAddress = userIpAddress
+                    chosenRole = chosenRole
                 )
             }
             composable(

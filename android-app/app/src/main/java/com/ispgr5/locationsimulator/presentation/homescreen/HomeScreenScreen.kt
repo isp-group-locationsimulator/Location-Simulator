@@ -83,6 +83,7 @@ import com.ispgr5.locationsimulator.core.util.TestTags
 import com.ispgr5.locationsimulator.data.storageManager.SoundStorageManager
 import com.ispgr5.locationsimulator.domain.model.Configuration
 import com.ispgr5.locationsimulator.network.ServerSingleton
+import com.ispgr5.locationsimulator.presentation.ChosenRole
 import com.ispgr5.locationsimulator.presentation.MainActivity
 import com.ispgr5.locationsimulator.presentation.previewData.AppPreview
 import com.ispgr5.locationsimulator.presentation.previewData.PreviewData
@@ -142,11 +143,11 @@ fun HomeScreenScreen(
                 }
                 "Standalone" -> {
                     ServerSingleton.remoteName = null
-                    navController.navigate(Screen.SelectScreen.route)
+                    navController.navigate(Screen.SelectScreen.createRoute(chosenRole = ChosenRole.STANDALONE.value))
                 }
                 else -> {
                     ServerSingleton.remoteName = name.value
-                    navController.navigate(Screen.SelectScreen.route)
+                    navController.navigate(Screen.SelectScreen.createRoute(chosenRole = ChosenRole.REMOTE.value))
                 }
             }
         },
@@ -154,10 +155,7 @@ fun HomeScreenScreen(
             when {
                 state.configurationsWithErrors.find { conf -> conf.id == configuration.id } == null -> {
                     navController.navigate(
-                        Screen.DelayScreen.createRoute(
-                            configuration.id!!,
-                            "127.0.0.1"
-                        )
+                        Screen.DelayScreen.createRoute(configuration.id!!, ChosenRole.STANDALONE.value)
                     )
                 }
 

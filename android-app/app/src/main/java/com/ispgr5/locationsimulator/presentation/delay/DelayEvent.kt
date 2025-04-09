@@ -12,6 +12,10 @@ sealed class DelayEvent {
     data class RemoteStart(
         val configStr: String,
         val startServiceFunction: (String, List<ConfigComponent>, Boolean) -> Unit
-    ) :
-        DelayEvent()
+    ) : DelayEvent()
+
+    data class TrainerStart(
+        val hours: Long, val minutes: Long, val seconds: Long,
+        val startServiceFunction: (String, List<ConfigComponent>, Boolean) -> Unit
+    ) : DelayEvent()
 }
