@@ -45,14 +45,18 @@ class ClientHandler(
             thread {
                 while (isCheckConnectionActive.get()) {
                     sleep(3000)
-                    clientHandlers.removeIfCompat{ it.timeoutChecker.isTimedOut() }
+                    synchronized(clientHandlers) {
+                        clientHandlers.removeIfCompat{ it.timeoutChecker.isTimedOut() }
+                    }
                 }
             }
         }
 
         fun sendToClients(message: String) {
-            for (clientHandler in clientHandlers) {
-                clientHandler.send(message)
+            synchronized(clientHandlers) {
+                for (clientHandler in clientHandlers) {
+                    clientHandler.send(message)
+                }
             }
         }
 
@@ -61,15 +65,18 @@ class ClientHandler(
         }
 
         fun closeAllClientHandlers() {
-            for (clientHandler in clientHandlers) {
-                clientHandler.close()
+            synchronized(clientHandlers) {
+                for (clientHandler in clientHandlers) {
+                    clientHandler.close()
+                }
+                clientHandlers.clear()
             }
         }
     }
 
     init {
         timeoutChecker.startTimer()
-        clientHandlers.add(this)
+        synchronized(clientHandlers) { clientHandlers.add(this) }
         if(isPlayingState.get()) {
             send(Commands.IS_PLAYING)
         }
@@ -156,6 +163,5 @@ class ClientHandler(
         socket.close()
         reader.close()
         writer.close()
-        clientHandlers.remove(this)
     }
 }
