@@ -133,6 +133,8 @@
     <string name="already_connected">Bereits verbunden</string>
     <string name="start">Starten</string>
     <string name="stop">Stoppen</string>
+    <string name="user_settings">Nutzereinstellungen</string>
+    <string name="user_select_configuration">Konfiguration auswählen</string>
 
 
 </resources>

@@ -25,6 +25,7 @@ class UserSettingsViewModel @Inject constructor(
     val state: State<UserSettingsState> = _state
 
     init {
+        getSelectedConfigID()
         getConfigurations()
     }
 
@@ -45,12 +46,6 @@ class UserSettingsViewModel @Inject constructor(
                     }
                 }
             }
-            is UserSettingsEvent.ExportConfiguration -> {
-                // TODO: Implementiere die Export-Funktion
-            }
-            is UserSettingsEvent.SaveSettings -> {
-                // TODO: Implementiere die Speicher-Funktion
-            }
         }
     }
 
@@ -66,6 +61,18 @@ class UserSettingsViewModel @Inject constructor(
                 )
             }
             .launchIn(viewModelScope)
+    }
+
+    private fun getSelectedConfigID() {
+        var configID: Int? = null
+        for(device in ClientSingleton.deviceList.getAsList()) {
+            if(device.ipAddress == _state.value.selectedUser) {
+                configID = device.selectedConfig?.id
+            }
+        }
+        _state.value = _state.value.copy(
+            selectedConfiguration = configID
+        )
     }
 
     private fun getConfigFromID(id: Int) : Configuration? {

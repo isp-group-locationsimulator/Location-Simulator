@@ -134,6 +134,8 @@
     <string name="already_connected">Already connected</string>
     <string name="start">Start</string>
     <string name="stop">Stop</string>
+    <string name="user_settings">User Settings</string>
+    <string name="user_select_configuration">Select Configuration</string>
 
 
 </resources>

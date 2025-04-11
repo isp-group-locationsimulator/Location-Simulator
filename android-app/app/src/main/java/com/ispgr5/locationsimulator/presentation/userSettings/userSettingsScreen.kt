@@ -2,27 +2,38 @@ package com.ispgr5.locationsimulator.presentation.userSettings
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
-import androidx.compose.ui.tooling.preview.Preview
+import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.domain.model.Configuration
-import com.ispgr5.locationsimulator.presentation.util.Screen
+import com.ispgr5.locationsimulator.presentation.universalComponents.LocationSimulatorTopBar
+import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
 
 @Composable
 fun UserSettingsScreen(
@@ -36,9 +47,13 @@ fun UserSettingsScreen(
         userName = userName,
         userSettingsState = state,
         onGoBack = { navController.navigateUp() },
-        onOptionSelected = { option -> viewModel.onEvent(UserSettingsEvent.SelectConfiguration(option)) },
-        onExportConfig = { navController.navigate(Screen.ExportSettingsScreen.createRoute(userName)) },
-        onSaveConfig = { /* TODO: Implementieren */ }
+        onOptionSelected = { option ->
+            viewModel.onEvent(
+                UserSettingsEvent.SelectConfiguration(
+                    option
+                )
+            )
+        }
     )
 }
 
@@ -47,9 +62,7 @@ fun UserSettingsScaffold(
     userName: String,
     userSettingsState: UserSettingsState,
     onGoBack: () -> Unit,
-    onOptionSelected: (Int) -> Unit,
-    onExportConfig: () -> Unit,
-    onSaveConfig: () -> Unit
+    onOptionSelected: (Int) -> Unit
 ) {
     Scaffold(
         topBar = { UserSettingsTopBar(onGoBack) },
@@ -58,9 +71,8 @@ fun UserSettingsScaffold(
                 userName = userName,
                 paddingValues = paddingValues,
                 state = userSettingsState,
-                onOptionSelected = onOptionSelected,
-                onExportConfig = onExportConfig,
-                onSaveConfig = onSaveConfig
+                onGoBack = onGoBack,
+                onOptionSelected = onOptionSelected
             )
         }
     )
@@ -71,9 +83,8 @@ fun UserSettingsContent(
     userName: String,
     paddingValues: PaddingValues,
     state: UserSettingsState,
-    onOptionSelected: (Int) -> Unit,
-    onExportConfig: () -> Unit,
-    onSaveConfig: () -> Unit
+    onGoBack: () -> Unit,
+    onOptionSelected: (Int) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -92,14 +103,14 @@ fun UserSettingsContent(
         )
 
         Text(
-            text = "Konfiguration auswählen",
+            text = stringResource(R.string.user_select_configuration),
             fontWeight = FontWeight.Bold,
             style = MaterialTheme.typography.bodyLarge,
             color = colorScheme.onBackground,
             modifier = Modifier.padding(top = 8.dp)
         )
 
-        // Scrollbare Liste im beigen Bereich
+        // Scrollbare Liste
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -121,25 +132,18 @@ fun UserSettingsContent(
             }
         }
 
-        // Buttons unten
         Button(
-            onClick = onExportConfig,
+            onClick = onGoBack,
             modifier = Modifier
                 .fillMaxWidth(0.8f)
                 .padding(8.dp),
             colors = ButtonDefaults.buttonColors(containerColor = colorScheme.primary)
         ) {
-            Text("Konfiguration exportieren", fontSize = 16.sp, color = colorScheme.onPrimary)
-        }
-
-        Button(
-            onClick = onSaveConfig,
-            modifier = Modifier
-                .fillMaxWidth(0.8f)
-                .padding(8.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = colorScheme.primary)
-        ) {
-            Text("Speichern", fontSize = 16.sp, color = colorScheme.onPrimary)
+            Text(
+                stringResource(R.string.edit_Save),
+                fontSize = 16.sp,
+                color = colorScheme.onPrimary
+            )
         }
     }
 }
@@ -178,32 +182,11 @@ fun ConfigOptionItem(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UserSettingsTopBar(onGoBack: () -> Unit) {
-    TopAppBar(
-        title = {
-            Box(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(
-                    text = "Einstellungen",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
-                    color = colorScheme.onBackground,
-                    modifier = Modifier.offset(x = 75.dp) // Hier 50.dp nach rechts verschieben
-                )
-            }
-        },
-        navigationIcon = {
-            IconButton(onClick = onGoBack) {
-                Icon(
-                        imageVector = Icons.Default.ArrowBack,
-                        contentDescription = "Zurück",
-                        tint = colorScheme.onSurface
-                    )
-            }
-        }
+    LocationSimulatorTopBar(
+        onBackClick = onGoBack,
+        title = stringResource(id = R.string.user_settings)
     )
 }
-
 
 
 @Preview(showBackground = true)
@@ -214,7 +197,8 @@ fun UserSettingsPreview() {
         availableConfigurations = listOf(
             Configuration("Lautes Atmen", "", false, emptyList(), false, 0),
             Configuration("Husten", "", true, emptyList(), true, 1),
-            Configuration("Kratzen", "", false, emptyList(), false, 2)),
+            Configuration("Kratzen", "", false, emptyList(), false, 2)
+        ),
         selectedConfiguration = 1
     )
     val userName = "User1"
@@ -223,9 +207,7 @@ fun UserSettingsPreview() {
             userSettingsState = state,
             userName = userName,
             onGoBack = {},
-            onOptionSelected = {},
-            onExportConfig = {},
-            onSaveConfig = {}
+            onOptionSelected = {}
         )
     }
 }
