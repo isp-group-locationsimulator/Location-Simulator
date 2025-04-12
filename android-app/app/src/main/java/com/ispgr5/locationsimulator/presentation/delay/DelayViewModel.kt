@@ -79,7 +79,7 @@ class DelayViewModel @Inject constructor(
 			is DelayEvent.StartClicked -> {
 				if (state.value.configuration != null) {
 					ClientHandler.sendToClients(Commands.IS_PLAYING)
-					ClientHandler.isPlayingState.set(true)
+					ClientHandler.deviceState.set(ClientHandler.DeviceState(true, null))
 					event.startServiceFunction(
 						state.value.configuration!!.name,
 						state.value.configuration!!.components,
@@ -92,7 +92,7 @@ class DelayViewModel @Inject constructor(
 				val conf = Json.decodeFromString<Configuration?>(event.configStr)
 				if (conf != null) {
 					ClientHandler.sendToClients(Commands.IS_PLAYING)
-					ClientHandler.isPlayingState.set(true)
+					ClientHandler.deviceState.set(ClientHandler.DeviceState(true, null))
 					event.startServiceFunction(
 						conf.name,
 						conf.components,

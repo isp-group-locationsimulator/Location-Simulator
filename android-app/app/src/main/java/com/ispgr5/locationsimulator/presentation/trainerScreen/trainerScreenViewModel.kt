@@ -65,7 +65,7 @@ class TrainerScreenViewModel @Inject constructor(
 
             is TrainerScreenEvent.StopTraining -> {
                 for (device in ClientSingleton.deviceList.getAsList()) {
-                    if (device.isPlaying) {
+                    if (device.isPlaying || device.timerState != null) {
                         ClientSingleton.send(
                             device.ipAddress,
                             Commands.STOP

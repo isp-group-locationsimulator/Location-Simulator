@@ -30,8 +30,12 @@ data object Commands {
         return "$START $hours:$minutes:$seconds $config"
     }
 
+    fun timerStateToString(hours: Long = 0, minutes: Long = 0, seconds: Long = 0): String {
+        return "$hours:$minutes:$seconds"
+    }
+
     fun formatTimerState(hours: Long = 0, minutes: Long = 0, seconds: Long = 0): String {
-        return "$TIMER_STATE $hours:$minutes:$seconds"
+        return "$TIMER_STATE ${timerStateToString(hours, minutes, seconds)}"
     }
 }
 
@@ -101,6 +105,7 @@ class ObservableDeviceList {
             for (i in 0..<newInternalList.size) {
                 if (newInternalList[i].ipAddress == device.ipAddress) {
                     if (newInternalList[i].user != device.user ||
+                        newInternalList[i].timerState != device.timerState ||
                         newInternalList[i].isPlaying != device.isPlaying ||
                         newInternalList[i].isConnected != device.isConnected ||
                         newInternalList[i].selectedConfig != device.selectedConfig

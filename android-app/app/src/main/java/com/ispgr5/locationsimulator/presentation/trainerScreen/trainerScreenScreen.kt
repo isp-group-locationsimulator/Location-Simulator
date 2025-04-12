@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Timer
+import androidx.compose.material.icons.filled.TimerOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -66,11 +67,13 @@ fun TrainerScreenScreen(
     val state = viewModel.state.value
     val isRefreshing = viewModel.isRestartClientThreadAlive.observeAsState().value == true
     val isTrainingActive = remember { mutableStateOf(false) }
+    val isTimerActive = remember { mutableStateOf(false) }
 
     TrainerScreenScaffold(
         trainerScreenState = state,
         deviceList = devices,
         isTrainingActive = isTrainingActive.value,
+        isTimerActive = isTimerActive.value,
         onEvent = { ev: TrainerScreenEvent -> viewModel.onEvent(ev) },
         onGoBack = {
             if(!isRefreshing) {
@@ -90,6 +93,7 @@ fun TrainerScreenScaffold(
     trainerScreenState: TrainerScreenState,
     deviceList: List<Device>,
     isTrainingActive: Boolean,
+    isTimerActive: Boolean,
     onEvent: (TrainerScreenEvent) -> Unit,
     onGoBack: () -> Unit,
     isRefreshing: Boolean,
@@ -107,6 +111,7 @@ fun TrainerScreenScaffold(
                 trainerScreenState = trainerScreenState,
                 deviceList = deviceList,
                 isTrainingActive = isTrainingActive,
+                isTimerActive = isTimerActive,
                 onEvent = onEvent,
                 isRefreshing = isRefreshing,
                 onRefresh = onRefresh,
@@ -124,6 +129,7 @@ fun TrainerScreenContent(
     trainerScreenState: TrainerScreenState,
     deviceList: List<Device>,
     isTrainingActive: Boolean,
+    isTimerActive: Boolean,
     onEvent: (TrainerScreenEvent) -> Unit,
     isRefreshing: Boolean,
     onRefresh: () -> Unit,
@@ -131,14 +137,10 @@ fun TrainerScreenContent(
     appTheme: MutableState<ThemeState>
 ) {
     val trainingActive = remember { mutableStateOf(isTrainingActive) }
+    val timerActive = remember { mutableStateOf(isTimerActive) }
 
-    if (deviceList.all { it.isPlaying }) {
-        trainingActive.value = true
-    }
-
-    if (deviceList.all { !it.isPlaying }) {
-        trainingActive.value = false
-    }
+    trainingActive.value = deviceList.isNotEmpty() && deviceList.all { it.isPlaying }
+    timerActive.value = deviceList.isNotEmpty() && deviceList.all { it.timerState != null }
 
     Column(
         modifier = Modifier
@@ -213,6 +215,7 @@ fun TrainerScreenContent(
                         activity = device.selectedConfig?.name ?: "Default",
                         isOnline = device.isConnected,
                         isPlaying = device.isPlaying,
+                        isTimerActive = device.timerState != null,
                         onPlayClick = {
                             if(device.isPlaying) {
                                 onEvent(TrainerScreenEvent.StopDeviceTraining(device))
@@ -226,14 +229,21 @@ fun TrainerScreenContent(
                             navController.navigate(Screen.UserSettingsScreen.createRoute(device.user, device.ipAddress))
                         },
                         onTimerClick = {
-                            val id = device.selectedConfig?.id
-                            if(id != null) { // should always be true but checking won't hurt
-                                navController.navigate(Screen.DelayScreen.createRoute(
-                                    id,
-                                    ChosenRole.TRAINER.value,
-                                    device.ipAddress))
+                            if(device.timerState == null) {
+                                val id = device.selectedConfig?.id
+                                if (id != null) { // should always be true but checking won't hurt
+                                    navController.navigate(
+                                        Screen.DelayScreen.createRoute(
+                                            id,
+                                            ChosenRole.TRAINER.value,
+                                            device.ipAddress
+                                        )
+                                    )
+                                } else {
+                                    Log.w(TAG, "selectedConfig was null")
+                                }
                             } else {
-                                Log.w(TAG, "selectedConfig was null")
+                                onEvent(TrainerScreenEvent.StopDeviceTraining(device))
                             }
                         }
                     )
@@ -257,9 +267,6 @@ fun TrainerScreenContent(
                         // Starte nur Geräte, die noch nicht laufen
                         onEvent(TrainerScreenEvent.StartTraining)
                     }
-
-                    // Zustand umschalten
-                    trainingActive.value = !trainingActive.value
                 },
                 modifier = Modifier
                     .fillMaxWidth(0.8f)
@@ -281,11 +288,15 @@ fun TrainerScreenContent(
             }
             IconButton(
                 onClick = {
-                    navController.navigate(Screen.DelayScreen.createRoute(-1, ChosenRole.TRAINER.value))
+                    if(timerActive.value) {
+                        onEvent(TrainerScreenEvent.StopTraining)
+                    } else {
+                        navController.navigate(Screen.DelayScreen.createRoute(-1, ChosenRole.TRAINER.value))
+                    }
                 }
             ) {
                 Icon(
-                    imageVector = Icons.Default.Timer,
+                    imageVector = if (timerActive.value) Icons.Default.TimerOff else Icons.Default.Timer,
                     contentDescription = "Countdown until start",
                     tint = MaterialTheme.colorScheme.onSurface
                 )
@@ -326,6 +337,7 @@ fun TrainerScreenPreview() {
             trainerScreenState = state,
             deviceList = deviceList,
             isTrainingActive = false,
+            isTimerActive = false,
             onEvent = {},
             onGoBack = {},
             isRefreshing = false,

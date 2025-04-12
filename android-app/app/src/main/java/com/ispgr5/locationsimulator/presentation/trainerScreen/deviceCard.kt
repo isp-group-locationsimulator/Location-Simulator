@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.Speaker
 import androidx.compose.material.icons.filled.Timer
+import androidx.compose.material.icons.filled.TimerOff
 import androidx.compose.material.icons.filled.Vibration
 
 
@@ -28,6 +29,7 @@ fun DeviceCard(
     activity: String,
     isOnline: Boolean,
     isPlaying: Boolean,
+    isTimerActive: Boolean,
     onPlayClick: () -> Unit,
     vibrationInteractionSource: MutableInteractionSource,
     soundInteractionSource: MutableInteractionSource,
@@ -95,7 +97,7 @@ fun DeviceCard(
                     Spacer(modifier = Modifier.weight(1f))
                     IconButton(onClick = onTimerClick) {
                         Icon(
-                            imageVector = Icons.Default.Timer,
+                            imageVector = if (isTimerActive) Icons.Default.TimerOff else Icons.Default.Timer,
                             contentDescription = "Countdown until start",
                             tint = MaterialTheme.colorScheme.onSurface
                         )

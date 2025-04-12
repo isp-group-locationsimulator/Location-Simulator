@@ -7,6 +7,7 @@ import java.io.IOException
 import java.net.Socket
 import java.util.Objects
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicReference
 import kotlin.concurrent.thread
 import kotlin.time.Duration.Companion.seconds
 
@@ -31,12 +32,14 @@ class ClientHandler(
     private val reader: BufferedReader,
     private val writer: BufferedWriter,
 ) : Thread() {
+    data class DeviceState(val isPlaying: Boolean = false, val timerState: String? = null)
+
     private val timeoutChecker = TimeoutChecker(10.seconds)
 
     companion object {
         val clientHandlers = HashSet<ClientHandler>()
         val clientSignal = MutableLiveData<ClientSignal?>()
-        val isPlayingState = AtomicBoolean(false)
+        val deviceState = AtomicReference(DeviceState())
 
         private val isCheckConnectionActive = AtomicBoolean(false)
 
@@ -77,8 +80,12 @@ class ClientHandler(
     init {
         timeoutChecker.startTimer()
         synchronized(clientHandlers) { clientHandlers.add(this) }
-        if(isPlayingState.get()) {
+        if(deviceState.get().isPlaying) {
             send(Commands.IS_PLAYING)
+        }
+        val timerState = deviceState.get().timerState
+        if(timerState != null) {
+            send("${Commands.TIMER_STATE} $timerState")
         }
     }
 

@@ -118,7 +118,7 @@ fun RunScreen(
 
     val onStop: () -> Unit = {
         ClientHandler.sendToClients(Commands.IS_IDLE)
-        ClientHandler.isPlayingState.set(false)
+        ClientHandler.deviceState.set(ClientHandler.DeviceState())
         SimulationService.IsPlayingEventBus.postValue(false)
         viewModel.onEvent(RunEvent.StopClicked(stopServiceFunction))
         navController.popBackStack()

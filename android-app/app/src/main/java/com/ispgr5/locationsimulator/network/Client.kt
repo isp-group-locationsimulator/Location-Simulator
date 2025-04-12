@@ -227,7 +227,7 @@ class Client(
         for (device in ClientSingleton.deviceList.getAsList()) {
             if (device.ipAddress == ipAddress) {
                 val modifiedDevice = device.copy()
-                modifiedDevice.isPlaying = true
+                modifiedDevice.isPlaying = false
                 modifiedDevice.timerState = split[1]
                 ClientSingleton.deviceList.updateDevice(modifiedDevice)
             }
@@ -236,7 +236,7 @@ class Client(
 
     private fun isPlayingReceived() {
         for (device in ClientSingleton.deviceList.getAsList()) {
-            if (device.ipAddress == ipAddress && !device.isPlaying) {
+            if (device.ipAddress == ipAddress) {
                 val modifiedDevice = device.copy()
                 modifiedDevice.isPlaying = true
                 modifiedDevice.timerState = null
@@ -247,7 +247,7 @@ class Client(
 
     private fun isIdleReceived() {
         for (device in ClientSingleton.deviceList.getAsList()) {
-            if (device.ipAddress == ipAddress && device.isPlaying) {
+            if (device.ipAddress == ipAddress) {
                 val modifiedDevice = device.copy()
                 modifiedDevice.isPlaying = false
                 modifiedDevice.timerState = null

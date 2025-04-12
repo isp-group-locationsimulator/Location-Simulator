@@ -32,15 +32,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.core.util.TestTags
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
-import com.ispgr5.locationsimulator.domain.model.Configuration
 import com.ispgr5.locationsimulator.network.ClientHandler
 import com.ispgr5.locationsimulator.network.ClientSignal
-import com.ispgr5.locationsimulator.network.ClientSingleton
 import com.ispgr5.locationsimulator.network.Commands
 import com.ispgr5.locationsimulator.network.ServerSingleton
 import com.ispgr5.locationsimulator.presentation.ChosenRole
@@ -52,8 +49,6 @@ import com.ispgr5.locationsimulator.presentation.universalComponents.LocationSim
 import com.ispgr5.locationsimulator.presentation.util.Screen
 import com.ispgr5.locationsimulator.presentation.util.millisToSeconds
 import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 
 private const val TAG = "DelayScreen"
 
@@ -77,7 +72,7 @@ fun DelayScreen(
         mutableStateOf(TimerState(inhibitStart = false))
     }
 
-    if(chosenRole == ChosenRole.REMOTE) {
+    if (chosenRole == ChosenRole.REMOTE) {
         val clientMessage: ClientSignal? by ClientHandler.clientSignal.observeAsState()
         if (clientMessage is ClientSignal.StartTraining) {
             val msg = (clientMessage as ClientSignal.StartTraining)
@@ -85,6 +80,7 @@ fun DelayScreen(
             val timeIsZero = msg.hours == 0L && msg.minutes == 0L && msg.seconds == 0L
             ClientHandler.clientSignal.value = null
             if (timeIsZero && configStr != "null") {
+                timerState.value = timerState.value.reset(inhibitStart = true)
                 viewModel.onEvent(DelayEvent.RemoteStart(configStr, startServiceFunction))
                 navController.navigate(route = Screen.RunScreen.createRoute(-1, configStr))
             } else if (configStr != "null") {
@@ -95,6 +91,15 @@ fun DelayScreen(
                     setHours = msg.hours,
                     setMinutes = msg.minutes,
                     setSeconds = msg.seconds
+                )
+                ClientHandler.deviceState.set(
+                    ClientHandler.DeviceState(
+                        false, Commands.timerStateToString(
+                            msg.hours,
+                            msg.minutes,
+                            msg.seconds
+                        )
+                    )
                 )
                 ClientHandler.sendToClients(
                     Commands.formatTimerState(
@@ -123,7 +128,14 @@ fun DelayScreen(
             navController.popBackStack()
         },
         onTrainerTimerStart = fun(hours: Long, minutes: Long, seconds: Long) {
-            viewModel.onEvent(DelayEvent.TrainerStart(hours, minutes, seconds, startServiceFunction))
+            viewModel.onEvent(
+                DelayEvent.TrainerStart(
+                    hours,
+                    minutes,
+                    seconds,
+                    startServiceFunction
+                )
+            )
             timerState.value = timerState.value.reset(inhibitStart = true)
             navController.popBackStack()
         }
@@ -133,7 +145,7 @@ fun DelayScreen(
         // button in the timer composable
         if (!timerState.value.inhibitStart) {
             val configStr = timerState.value.remoteConfigStr
-            if(configStr != null) {
+            if (configStr != null) {
                 viewModel.onEvent(DelayEvent.RemoteStart(configStr, startServiceFunction))
                 navController.navigate(route = Screen.RunScreen.createRoute(-1, configStr))
             } else {
@@ -284,7 +296,7 @@ fun DelayScreenPreview() {
             timerState = timerState,
             chosenRole = ChosenRole.STANDALONE,
             onBackClick = {},
-            onTrainerTimerStart = fun(_: Long, _: Long, _: Long) : Unit {  },
+            onTrainerTimerStart = fun(_: Long, _: Long, _: Long): Unit {},
             onFinishTimer = { }
         )
     }

@@ -211,6 +211,15 @@ fun DelayTimer(
                             timerState.value = timerState.value.copy(
                                 isRunning = true, inhibitStart = false, remoteConfigStr = null
                             )
+                            ClientHandler.deviceState.set(
+                                ClientHandler.DeviceState(
+                                    false, Commands.timerStateToString(
+                                        timerState.value.setHours,
+                                        timerState.value.setMinutes,
+                                        timerState.value.setSeconds
+                                    )
+                                )
+                            )
                             ClientHandler.sendToClients(
                                 Commands.formatTimerState(
                                     timerState.value.setHours,
