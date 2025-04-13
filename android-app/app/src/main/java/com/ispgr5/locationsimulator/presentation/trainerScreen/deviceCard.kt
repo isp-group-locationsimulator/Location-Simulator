@@ -20,6 +20,7 @@ import androidx.compose.material.icons.filled.Speaker
 import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material.icons.filled.TimerOff
 import androidx.compose.material.icons.filled.Vibration
+import androidx.compose.ui.graphics.Color
 
 
 @Composable
@@ -117,7 +118,7 @@ fun DeviceCard(
                 modifier = Modifier
                     .size(12.dp)
                     .background(
-                        if (isOnline) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.error,
+                        if (isOnline) Color(0xFF4CAF50) else MaterialTheme.colorScheme.error,
                         CircleShape
                     )
                     .align(Alignment.TopEnd)
