@@ -135,6 +135,7 @@
     <string name="stop">Stoppen</string>
     <string name="user_settings">Nutzereinstellungen</string>
     <string name="user_select_configuration">Konfiguration auswählen</string>
+    <string name="error_invalid_name">Name darf nicht leer sein und darf keine Leerzeichen enthalten</string>
 
 
 </resources>

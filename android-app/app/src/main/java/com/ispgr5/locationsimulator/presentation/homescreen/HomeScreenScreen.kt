@@ -146,7 +146,13 @@ fun HomeScreenScreen(
                 }
                 else -> {
                     isNameInvalid.value = !validateRemoteName(name.value)
-                    if(!isNameInvalid.value) {
+                    if(isNameInvalid.value) {
+                        snackbarContent.value = SnackbarContent(
+                            text = context.getString(R.string.error_invalid_name),
+                            snackbarDuration = SnackbarDuration.Short
+                        )
+                    }
+                    else {
                         ServerSingleton.remoteName = name.value
                         navController.navigate(Screen.SelectScreen.createRoute(chosenRole = ChosenRole.REMOTE.value))
                     }
@@ -523,16 +529,6 @@ private fun NameInputField(name: MutableState<String>, isNameInvalid: MutableSta
                 Icon(Icons.Filled.Error, "error", tint = colorScheme.error)
             }
         },
-// TODO
-//        supportingText = {
-//            if (isNameInvalid.value) {
-//                Text(
-//                    modifier = Modifier.fillMaxWidth(),
-//                    text = "Name can't be empty and can't contain whitespace",
-//                    color = colorScheme.error
-//                )
-//            }
-//        },
         label = {
             Text(
                 text = stringResource(id = R.string.input_label),

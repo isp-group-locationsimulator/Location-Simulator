@@ -139,6 +139,7 @@
     <string name="stop">Stop</string>
     <string name="user_settings">User Settings</string>
     <string name="user_select_configuration">Select configuration</string>
+    <string name="error_invalid_name">Name can\'t be empty and can\'t contain whitespace</string>
 
 
 </resources>
