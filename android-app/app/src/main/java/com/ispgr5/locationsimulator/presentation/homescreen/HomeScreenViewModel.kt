@@ -70,11 +70,6 @@ class HomeScreenViewModel @Inject constructor(
                 editor.putBoolean("dynamicColors", event.themeState.useDynamicColor)
                 editor.apply()
             }
-            is HomeScreenEvent.ToggleInputFields ->{
-
-                _state.value = _state.value.copy(
-                    showInputFields = event.show)
-            }
         }
     }
 
