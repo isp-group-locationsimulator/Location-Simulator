@@ -58,6 +58,10 @@ fun getIPAddress(): String? {
     return null
 }
 
+fun validateRemoteName(name: String): Boolean {
+    return name.isNotEmpty() && name.all { !it.isWhitespace() }
+}
+
 class TimeoutChecker(
     private val timeoutDuration: Duration
 ) {

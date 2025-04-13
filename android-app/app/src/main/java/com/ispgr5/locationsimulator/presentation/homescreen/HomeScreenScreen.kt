@@ -25,6 +25,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -83,6 +85,7 @@ import com.ispgr5.locationsimulator.core.util.TestTags
 import com.ispgr5.locationsimulator.data.storageManager.SoundStorageManager
 import com.ispgr5.locationsimulator.domain.model.Configuration
 import com.ispgr5.locationsimulator.network.ServerSingleton
+import com.ispgr5.locationsimulator.network.validateRemoteName
 import com.ispgr5.locationsimulator.presentation.ChosenRole
 import com.ispgr5.locationsimulator.presentation.MainActivity
 import com.ispgr5.locationsimulator.presentation.previewData.AppPreview
@@ -120,6 +123,7 @@ fun HomeScreenScreen(
     val context = LocalContext.current
     val selectedRole = remember { mutableStateOf("Standalone") }
     val name = remember { mutableStateOf("") }
+    val isNameInvalid = remember { mutableStateOf(false) }
     RenderSnackbarOnChange(snackbarHostState = snackbarHostState, snackbarContent = snackbarContent)
 
     HomeScreenScaffold(
@@ -128,6 +132,7 @@ fun HomeScreenScreen(
         snackbarHostState = snackbarHostState,
         selectedRole = selectedRole,
         name = name,
+        isNameInvalid = isNameInvalid,
         onInfoClick = {
             navController.navigate(Screen.InfoScreen.route)
         },
@@ -146,8 +151,11 @@ fun HomeScreenScreen(
                     navController.navigate(Screen.SelectScreen.createRoute(chosenRole = ChosenRole.STANDALONE.value))
                 }
                 else -> {
-                    ServerSingleton.remoteName = name.value
-                    navController.navigate(Screen.SelectScreen.createRoute(chosenRole = ChosenRole.REMOTE.value))
+                    isNameInvalid.value = !validateRemoteName(name.value)
+                    if(!isNameInvalid.value) {
+                        ServerSingleton.remoteName = name.value
+                        navController.navigate(Screen.SelectScreen.createRoute(chosenRole = ChosenRole.REMOTE.value))
+                    }
                 }
             }
         },
@@ -215,6 +223,7 @@ fun HomeScreenScaffold(
     snackbarHostState: SnackbarHostState,
     selectedRole: MutableState<String>,
     name: MutableState<String>,
+    isNameInvalid: MutableState<Boolean>,
     onInfoClick: () -> Unit,
     onHelpClick:()->Unit,
     onSelectProfile: () -> Unit,
@@ -237,6 +246,7 @@ fun HomeScreenScaffold(
                 appTheme = appTheme,
                 selectedRole = selectedRole,
                 name = name,
+                isNameInvalid = isNameInvalid,
                 onSelectProfile = onSelectProfile,
                 onSelectFavourite = onSelectFavourite,
                 onSelectTheme = onSelectTheme,
@@ -253,6 +263,7 @@ fun HomeScreenContent(
     appTheme: MutableState<ThemeState>,
     selectedRole: MutableState<String>,
     name: MutableState<String>,
+    isNameInvalid: MutableState<Boolean>,
     onSelectProfile: () -> Unit,
     onSelectFavourite: (Configuration) -> Unit,
     onSelectTheme: (ThemeState) -> Unit,
@@ -288,7 +299,7 @@ fun HomeScreenContent(
             verticalArrangement = Arrangement.Bottom,
         ) {
             if (homeScreenState.showInputFields) {
-                NameInputField(name = name)
+                NameInputField(name = name, isNameInvalid = isNameInvalid)
                 RoleSelectionField(selectedRole = selectedRole)
             }
         }
@@ -508,16 +519,35 @@ private fun SelectProfileButton(onButtonClick: () -> Unit) {
 }
 
 @Composable
-private fun NameInputField(name: MutableState<String>) {
+private fun NameInputField(name: MutableState<String>, isNameInvalid: MutableState<Boolean>) {
     TextField(
         value = name.value,
-        onValueChange = { name.value = it },
+        onValueChange = {
+            name.value = it
+            isNameInvalid.value = false
+        },
+        trailingIcon = {
+            if (isNameInvalid.value) {
+                Icon(Icons.Filled.Error, "error", tint = colorScheme.error)
+            }
+        },
+// TODO
+//        supportingText = {
+//            if (isNameInvalid.value) {
+//                Text(
+//                    modifier = Modifier.fillMaxWidth(),
+//                    text = "Name can't be empty and can't contain whitespace",
+//                    color = colorScheme.error
+//                )
+//            }
+//        },
         label = {
             Text(
                 text = stringResource(id = R.string.input_label),
                 style = typography.bodyMedium,
             )
         },
+        isError = isNameInvalid.value,
         placeholder = {
             Text(
                 text = stringResource(id = R.string.enter_name),
@@ -706,6 +736,7 @@ fun HomeScreenPreview() {
 
     val selectedRole = remember { mutableStateOf("Standalone") }
     val name = remember { mutableStateOf("") }
+    val isNameInvalid = remember { mutableStateOf(false) }
 
         LocationSimulatorTheme {
         HomeScreenScaffold(
@@ -714,6 +745,7 @@ fun HomeScreenPreview() {
             snackbarHostState = snackbarHostState,
             selectedRole = selectedRole,
             name = name,
+            isNameInvalid = isNameInvalid,
             onInfoClick = {},
             onHelpClick = {},
             onSelectProfile = {},
@@ -723,7 +755,7 @@ fun HomeScreenPreview() {
             onLaunchBatteryOptimizerDisable = {},
         )
     }
-    NameInputField(name = name)
+    NameInputField(name = name, isNameInvalid = isNameInvalid)
     RoleSelectionField(selectedRole = selectedRole)
 
 
