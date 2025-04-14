@@ -16,6 +16,9 @@ import kotlin.time.TimeSource
 
 private const val TAG = "NetworkUtils"
 
+/**
+ * All commands that can be used by the networking classes
+ */
 data object Commands {
     const val BROADCAST = "LOCATION_SIMULATOR_BROADCAST"
     const val PING = "LOCATION_SIMULATOR_PING"
@@ -42,6 +45,11 @@ data object Commands {
     }
 }
 
+/**
+ * Get the IPv4-Address for this device
+ *
+ * @return the IP-Address or null on error
+ */
 fun getIPAddress(): String? {
     try {
         val interfaces = Collections.list(NetworkInterface.getNetworkInterfaces())
@@ -61,10 +69,18 @@ fun getIPAddress(): String? {
     return null
 }
 
+/**
+ * Used to validate the name of a remote device
+ *
+ * @return true if the name is valid
+ */
 fun validateRemoteName(name: String): Boolean {
     return name.isNotEmpty() && name.all { !it.isWhitespace() }
 }
 
+/**
+ * Can be used to check whether a certain amount of time has passed
+ */
 class TimeoutChecker(
     private val timeoutDuration: Duration
 ) {
@@ -80,6 +96,10 @@ class TimeoutChecker(
     }
 }
 
+/**
+ * Data structure to store a list of devices.
+ * It can also be observed and allows for thread safe modification
+ */
 class ObservableDeviceList {
     private val deviceList = MutableLiveData<List<Device>>()
     private var internalList = ArrayList<Device>()
@@ -89,6 +109,11 @@ class ObservableDeviceList {
         return deviceList.observeAsState()
     }
 
+    /**
+     * Get a copy of the device list
+     *
+     * @return the list of devices
+     */
     fun getAsList(): List<Device> {
         val listCopy = ArrayList<Device>()
 
@@ -97,6 +122,9 @@ class ObservableDeviceList {
         return listCopy
     }
 
+    /**
+     * Remove all devices from the list
+     */
     fun clear() {
         synchronized(this) {
             internalList = ArrayList()
@@ -104,6 +132,13 @@ class ObservableDeviceList {
         }
     }
 
+    /**
+     * Updates the device passed as parameter with new data if a device with the same IP-Address is
+     * found.
+     * If no device with the same IP-Address is found, the list won't be updated
+     *
+     * @param device the device to modify
+     */
     fun updateDevice(device: Device) {
         synchronized(this) {
             val newInternalList = ArrayList<Device>()
@@ -127,6 +162,13 @@ class ObservableDeviceList {
         }
     }
 
+    /**
+     * Updates the device passed as parameter with new data if a device with the same IP-Address is
+     * found.
+     * If no device with the same IP-Address is found, the device will be inserted as a new device
+     *
+     * @param device the device to modify or add
+     */
     fun updateOrAddDevice(device: Device) {
         synchronized(this) {
             var changed = false

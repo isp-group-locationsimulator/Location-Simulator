@@ -23,21 +23,33 @@ import kotlin.time.Duration.Companion.seconds
 
 private const val TAG = "Client"
 
+// Map of clients only used in this file
+private val clients = ConcurrentHashMap<String, Client>()
+
+/**
+ * The ClientSingleton is used for easy global interaction with client related classes.
+ * It is used for Trainer devices
+ */
 object ClientSingleton {
     enum class ActiveState {
         IS_CLOSED, IS_CLOSING, IS_STARTED, IS_STARTING
     }
 
+    // global variables that need to be modified for various features to work
     var wifiManager: WifiManager? = null
-
     val deviceList = ObservableDeviceList()
-    val clients = ConcurrentHashMap<String, Client>()
 
     private var lock: MulticastLock? = null
     private var connectionClient: ConnectionClient? = null
     private val isCheckConnectionActive = AtomicBoolean(false)
     private val activeState = AtomicReference<ActiveState>(ActiveState.IS_CLOSED)
 
+    /**
+     * Starts the client.
+     * Will listen for multicasts and initialize new connections
+     *
+     * @return true on success
+     */
     fun start(): Boolean {
         if(activeState.get() != ActiveState.IS_CLOSED) {
             return false
@@ -72,10 +84,20 @@ object ClientSingleton {
         return true
     }
 
+    /**
+     * Sends a message from the specified client
+     *
+     * @param ipAddress the IP-Address of the client to send the message from
+     * @param message the message to send
+     */
     fun send(ipAddress: String, message: String) {
         clients[ipAddress]?.send(message)
     }
 
+    /**
+     * Closes the client.
+     * Will no longer listen for multicasts and will not initialize new connections
+     */
     fun close() {
         if(activeState.get() != ActiveState.IS_STARTING && activeState.get() != ActiveState.IS_STARTED) {
             Log.w(TAG, "ClientSingleton is already shut down or shutting down")
@@ -124,6 +146,10 @@ object ClientSingleton {
     }
 }
 
+/**
+ * The ConnectionClient listens for multicast messages from a server and initializes a connection
+ * if a server is found
+ */
 private class ConnectionClient : Thread() {
     private val multicastSocket: MulticastSocket = MulticastSocket(4445)
     private val inetSocketAddress = InetSocketAddress("230.0.0.0", 4445)
@@ -155,9 +181,9 @@ private class ConnectionClient : Thread() {
             val ipAddress = split[1]
             val name = split[2]
 
-            val isNewClient = !ClientSingleton.clients.containsKey(ipAddress)
+            val isNewClient = !clients.containsKey(ipAddress)
             val isConnected =
-                !(ClientSingleton.clients[ipAddress]?.timeoutChecker?.isTimedOut() ?: true)
+                !(clients[ipAddress]?.timeoutChecker?.isTimedOut() ?: true)
 
             if (isNewClient || !isConnected) {
                 Log.i(TAG, "Client connecting to server...")
@@ -168,7 +194,7 @@ private class ConnectionClient : Thread() {
                     socket = Socket(InetAddress.getByName(ipAddress), 4445)
                     reader = BufferedReader(InputStreamReader(socket.getInputStream()))
                     writer = BufferedWriter(OutputStreamWriter(socket.getOutputStream()))
-                    ClientSingleton.clients[ipAddress] = Client(socket, reader, writer, ipAddress)
+                    clients[ipAddress] = Client(socket, reader, writer, ipAddress)
                     ClientSingleton.deviceList.updateOrAddDevice(
                         Device(
                             ipAddress = ipAddress,
@@ -177,7 +203,7 @@ private class ConnectionClient : Thread() {
                             isConnected = true
                         )
                     )
-                    ClientSingleton.clients[ipAddress]?.start()
+                    clients[ipAddress]?.start()
                 } catch (e: Exception) {
                     Log.w(TAG, "ConnectionClient unable to create Client: $e")
                     socket?.close()
@@ -195,8 +221,10 @@ private class ConnectionClient : Thread() {
     }
 }
 
-
-class Client(
+/**
+ * The Client handles the communication between the server and client on the client side
+ */
+private class Client(
     private val socket: Socket,
     private val reader: BufferedReader,
     private val writer: BufferedWriter,

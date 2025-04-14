@@ -14,6 +14,9 @@ import kotlin.time.Duration.Companion.seconds
 
 private const val TAG = "ClientHandler"
 
+/**
+ * Allows the ClientHandler to send signals to UI classes
+ */
 sealed class ClientSignal {
     data class StartTraining(val config: String, val hours: Long, val minutes: Long, val seconds: Long) : ClientSignal()
     data object StopTraining : ClientSignal()
@@ -30,6 +33,9 @@ fun<E> MutableCollection<E>.removeIfCompat(filter: (E) -> Boolean) {
     }
 }
 
+/**
+ * The ClientHandler handles the communication between the server and client on the server side
+ */
 class ClientHandler(
     private val socket: Socket,
     private val reader: BufferedReader,
@@ -39,6 +45,9 @@ class ClientHandler(
 
     private val timeoutChecker = TimeoutChecker(10.seconds)
 
+    /**
+     * Global object for features that are not specific to a class instance
+     */
     companion object {
         val clientHandlers = HashSet<ClientHandler>()
         val clientSignal = MutableLiveData<ClientSignal?>()
@@ -46,6 +55,9 @@ class ClientHandler(
 
         private val isCheckConnectionActive = AtomicBoolean(false)
 
+        /**
+         * Periodically check whether any of the clients is timed out
+         */
         fun startCheckConnection() {
             isCheckConnectionActive.set(true)
             thread {
@@ -58,6 +70,11 @@ class ClientHandler(
             }
         }
 
+        /**
+         * Send a message to all clients
+         *
+         * @param message the message to send
+         */
         fun sendToClients(message: String) {
             synchronized(clientHandlers) {
                 for (clientHandler in clientHandlers) {
@@ -66,10 +83,16 @@ class ClientHandler(
             }
         }
 
+        /**
+         * Stops checking for timed out clients
+         */
         fun stopCheckConnection() {
             isCheckConnectionActive.set(false)
         }
 
+        /**
+         * Closes all client handlers
+         */
         fun closeAllClientHandlers() {
             synchronized(clientHandlers) {
                 for (clientHandler in clientHandlers) {
@@ -169,7 +192,7 @@ class ClientHandler(
         }
     }
 
-    fun close() {
+    private fun close() {
         socket.close()
         reader.close()
         writer.close()

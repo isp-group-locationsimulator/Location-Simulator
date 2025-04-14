@@ -14,7 +14,12 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 private const val TAG = "Server"
 
+/**
+ * The ServerSingleton is used for easy global interaction with server related classes.
+ * It is used for Remote devices
+ */
 object ServerSingleton {
+    // global variables that need to be modified for various features to work
     var remoteName: String? = null
     var keepScreenOn: () -> Unit = {}
     var doNotKeepScreenOn: () -> Unit = {}
@@ -23,6 +28,11 @@ object ServerSingleton {
     private var server: Server? = null
     private var isActive = false
 
+    /**
+     * Starts the server.
+     * Multicasts will be send to allow clients to find the server and connections from clients will
+     * be accepted
+     */
     fun start(name: String) {
         if (isActive) return
 
@@ -36,6 +46,10 @@ object ServerSingleton {
         isActive = true
     }
 
+    /**
+     * Closes the server.
+     * Multicasts will no longer be send and clients will not be able to connect
+     */
     fun close() {
         if (!isActive) return
 
@@ -49,6 +63,9 @@ object ServerSingleton {
     }
 }
 
+/**
+ * The MulticastServer multicasts messages to allow clients to find the server
+ */
 private class MulticastServer(val userName: String) : Thread() {
     private var ipAddress = getIPAddress().toString()
     private val broadcastSocket = DatagramSocket()
@@ -84,7 +101,11 @@ private class MulticastServer(val userName: String) : Thread() {
     }
 }
 
-class Server : Thread() {
+/**
+ * The Server accepts new client connections and creates a new ClientHandler for each client that
+ * connects
+ */
+private class Server : Thread() {
     private val serverSocket: ServerSocket = ServerSocket(4445)
 
     override fun run() {
