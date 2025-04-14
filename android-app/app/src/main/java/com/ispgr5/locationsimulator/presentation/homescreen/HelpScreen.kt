@@ -32,6 +32,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
@@ -93,6 +94,7 @@ fun HelpScreenScaffold(
             )
         },
         content = { scaffoldPadding ->
+            val isGerman = LocalContext.current.resources.configuration.locale.language == "de"
             val scrollState = rememberScrollState()
             val scrollbarsState = rememberScrollbarsState(
                 config = ScrollbarsConfig(orientation = ScrollbarsOrientation.Vertical),
@@ -113,19 +115,32 @@ fun HelpScreenScaffold(
             ) {
                 HelpCard(
                     title = stringResource(R.string.help_1),
-                    imageIds = listOf(R.drawable.help_image1, R.drawable.help_image2)
+                    imageIds = if (isGerman)
+                        listOf(R.drawable.help_image1_de, R.drawable.help_image2_de)
+                    else
+                        listOf(R.drawable.help_image1_en, R.drawable.help_image2_en)
                 )
                 HelpCard(
                     title = stringResource(R.string.help_2),
-                    imageIds = listOf(R.drawable.help_image3, R.drawable.help_image4)
+                    imageIds = if (isGerman)
+                        listOf(R.drawable.help_image3_de, R.drawable.help_image4_de)
+                    else
+                        listOf(R.drawable.help_image3_en, R.drawable.help_image4_en)
                 )
                 HelpCard(
                     title = stringResource(R.string.help_3),
-                    imageIds = listOf(R.drawable.help_image5, R.drawable.help_image6, R.drawable.help_image7)
+                    //TODO Images 6 and 7 still need to be translated and updated, because they show an older version of the app
+                    imageIds = if (isGerman)
+                        listOf(R.drawable.help_image5_de, R.drawable.help_image6_de, R.drawable.help_image7_de)
+                    else
+                        listOf(R.drawable.help_image5_en, R.drawable.help_image6_de, R.drawable.help_image7_de)
                 )
                 HelpCard(
                     title = stringResource(R.string.help_4),
-                    imageIds = listOf(R.drawable.help_image1, R.drawable.help_image8)
+                    imageIds = if (isGerman)
+                        listOf(R.drawable.help_image1_de, R.drawable.help_image8_de)
+                    else
+                        listOf(R.drawable.help_image1_en, R.drawable.help_image8_en)
                 )
             }
 
