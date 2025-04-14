@@ -1,5 +1,6 @@
 package com.ispgr5.locationsimulator.network
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.livedata.observeAsState
@@ -12,6 +13,8 @@ import java.util.Collections
 import java.util.Locale
 import kotlin.time.Duration
 import kotlin.time.TimeSource
+
+private const val TAG = "NetworkUtils"
 
 data object Commands {
     const val BROADCAST = "LOCATION_SIMULATOR_BROADCAST"
@@ -51,10 +54,10 @@ fun getIPAddress(): String? {
             }
         }
     } catch (e: SocketException) {
-        println("Unable to get IPAddress: $e")
+        Log.w(TAG, "Unable to get IPAddress: $e")
         return null
     }
-    println("Unable to get IPAddress: No IPV4 address found")
+    Log.w(TAG, "Unable to get IPAddress: No IPV4 address found")
     return null
 }
 

@@ -1,5 +1,6 @@
 package com.ispgr5.locationsimulator.network
 
+import android.util.Log
 import java.io.BufferedReader
 import java.io.BufferedWriter
 import java.io.InputStreamReader
@@ -10,6 +11,8 @@ import java.net.InetAddress
 import java.net.ServerSocket
 import java.net.Socket
 import java.util.concurrent.atomic.AtomicBoolean
+
+private const val TAG = "Server"
 
 object ServerSingleton {
     var remoteName: String? = null
@@ -63,10 +66,10 @@ private class MulticastServer(val userName: String) : Thread() {
                 val packet = DatagramPacket(buf, buf.size, group, 4445)
                 broadcastSocket.send(packet)
             } catch (e: InterruptedException) {
-                println("Server unable to wait between sending packets: $e")
+                Log.w(TAG, "Server unable to wait between sending packets: $e")
                 return
             } catch (e: Exception) {
-                println("Server unable to send multicast packet: $e")
+                Log.w(TAG, "Server unable to send multicast packet: $e")
             }
 
         }
@@ -91,12 +94,12 @@ class Server : Thread() {
             var writer: BufferedWriter? = null
             try {
                 socket = serverSocket.accept()
-                println("Server connecting to client...")
+                Log.i(TAG, "Server connecting to client...")
                 reader = BufferedReader(InputStreamReader(socket.getInputStream()))
                 writer = BufferedWriter(OutputStreamWriter(socket.getOutputStream()))
                 ClientHandler(socket, reader, writer).start()
             } catch (e: Exception) {
-                println("Server unable to accept client: $e")
+                Log.w(TAG, "Server unable to accept client: $e")
                 socket?.close()
                 reader?.close()
                 writer?.close()

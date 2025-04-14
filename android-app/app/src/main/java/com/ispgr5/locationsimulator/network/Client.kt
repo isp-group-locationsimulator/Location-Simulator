@@ -2,6 +2,7 @@ package com.ispgr5.locationsimulator.network
 
 import android.net.wifi.WifiManager
 import android.net.wifi.WifiManager.MulticastLock
+import android.util.Log
 import com.ispgr5.locationsimulator.presentation.trainerScreen.Device
 import java.io.BufferedReader
 import java.io.BufferedWriter
@@ -20,6 +21,7 @@ import java.util.concurrent.atomic.AtomicReference
 import kotlin.concurrent.thread
 import kotlin.time.Duration.Companion.seconds
 
+private const val TAG = "Client"
 
 object ClientSingleton {
     enum class ActiveState {
@@ -43,14 +45,14 @@ object ClientSingleton {
         activeState.set(ActiveState.IS_STARTING)
 
         if (wifiManager == null) {
-             println("WifiManager missing")
+             Log.w(TAG, "WifiManager missing")
              activeState.set(ActiveState.IS_CLOSED)
              return false
         }
 
         lock = wifiManager?.createMulticastLock("ClientLock")
         if (lock == null) {
-            println("Unable to create multicast lock")
+            Log.w(TAG, "Unable to create multicast lock")
             activeState.set(ActiveState.IS_CLOSED)
             return false
         }
@@ -62,7 +64,7 @@ object ClientSingleton {
             connectionClient?.start()
             startCheckConnection()
         } catch (e: Exception) {
-            println("Unable to start connection client: $e")
+            Log.w(TAG, "Unable to start connection client: $e")
             close()
             return false
         }
@@ -76,7 +78,7 @@ object ClientSingleton {
 
     fun close() {
         if(activeState.get() != ActiveState.IS_STARTING && activeState.get() != ActiveState.IS_STARTED) {
-            println("ClientSingleton is already shut down or shutting down")
+            Log.w(TAG, "ClientSingleton is already shut down or shutting down")
             return
         }
         activeState.set(ActiveState.IS_CLOSING)
@@ -138,7 +140,7 @@ private class ConnectionClient : Thread() {
             try {
                 multicastSocket.receive(packet)
             } catch (e: IOException) {
-                println("Client unable to receive multicast packet: $e")
+                Log.i(TAG, "Client unable to receive multicast packet: $e")
                 break
             }
 
@@ -158,7 +160,7 @@ private class ConnectionClient : Thread() {
                 !(ClientSingleton.clients[ipAddress]?.timeoutChecker?.isTimedOut() ?: true)
 
             if (isNewClient || !isConnected) {
-                println("Client connecting to server...")
+                Log.i(TAG, "Client connecting to server...")
                 var socket: Socket? = null
                 var reader: BufferedReader? = null
                 var writer: BufferedWriter? = null
@@ -177,7 +179,7 @@ private class ConnectionClient : Thread() {
                     )
                     ClientSingleton.clients[ipAddress]?.start()
                 } catch (e: Exception) {
-                    println("ConnectionClient unable to create Client: $e")
+                    Log.w(TAG, "ConnectionClient unable to create Client: $e")
                     socket?.close()
                     reader?.close()
                     writer?.close()
@@ -263,7 +265,7 @@ class Client(
             Commands.TIMER_STATE -> timerStateReceived(splitMsg)
             Commands.IS_PLAYING -> isPlayingReceived()
             Commands.IS_IDLE -> isIdleReceived()
-            else -> println("Unknown message")
+            else -> Log.w(TAG, "Unknown message: $message")
         }
     }
 
@@ -271,17 +273,17 @@ class Client(
         while (!socket.isClosed) {
             try {
                 val line = reader.readLine() ?: break
-                println("Client received message: $line")
+                Log.i(TAG, "Client received message: $line")
                 parseMessage(line)
             } catch (e: IOException) {
-                println("Client unable to read line: $e")
+                Log.i(TAG, "Client unable to read line: $e")
                 sleep(3000)
             }
         }
     }
 
     fun send(message: String) {
-        println("Client to server: $message")
+        Log.i(TAG, "Client to server: $message")
 
         thread {
             try {
@@ -289,7 +291,7 @@ class Client(
                 writer.newLine()
                 writer.flush()
             } catch (e: Exception) {
-                println("Server unable to send message: $e")
+                Log.w(TAG, "Server unable to send message: $e")
             }
         }
     }

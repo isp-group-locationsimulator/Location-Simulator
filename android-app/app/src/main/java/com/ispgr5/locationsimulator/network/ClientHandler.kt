@@ -1,5 +1,6 @@
 package com.ispgr5.locationsimulator.network
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import java.io.BufferedReader
 import java.io.BufferedWriter
@@ -10,6 +11,8 @@ import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.concurrent.thread
 import kotlin.time.Duration.Companion.seconds
+
+private const val TAG = "ClientHandler"
 
 sealed class ClientSignal {
     data class StartTraining(val config: String, val hours: Long, val minutes: Long, val seconds: Long) : ClientSignal()
@@ -134,7 +137,7 @@ class ClientHandler(
             Commands.PING -> pingReceived()
             Commands.START -> startReceived(splitMsg)
             Commands.STOP -> stopReceived()
-            else -> println("Unknown message")
+            else -> Log.w(TAG, "Unknown message: $message")
         }
     }
 
@@ -143,17 +146,17 @@ class ClientHandler(
         while (!socket.isClosed) {
             try {
                 val line = reader.readLine() ?: break
-                println("Server received message: $line")
+                Log.i(TAG, "Server received message: $line")
                 parseMessage(line)
             } catch (e: IOException) {
-                println("Server unable to read line: $e")
+                Log.i(TAG, "Server unable to read line: $e")
                 sleep(3000)
             }
         }
     }
 
     private fun send(message: String) {
-        println("Server to client: $message")
+        Log.i(TAG, "Server to client: $message")
 
         thread {
             try {
@@ -161,7 +164,7 @@ class ClientHandler(
                 writer.newLine()
                 writer.flush()
             } catch (e: Exception) {
-                println("Server unable to send message: $e")
+                Log.w(TAG, "Server unable to send message: $e")
             }
         }
     }
