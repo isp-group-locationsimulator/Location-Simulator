@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.AnnotatedString
+import androidx.lifecycle.compose.dropUnlessResumed
 import com.ispgr5.locationsimulator.core.util.TestTags
 
 /**
@@ -53,7 +54,7 @@ fun LocationSimulatorTopBar(
     backPossible: Boolean = true,  // Whether going back should be possible or not
     extraActions: @Composable (RowScope.() -> Unit) = {},
 ) = LocationSimulatorTopBar(
-    onBackClick=onBackClick,
+    onBackClick = dropUnlessResumed { onBackClick?.invoke() },
     title = AnnotatedString(title),
     backPossible = backPossible,
     extraActions = extraActions
