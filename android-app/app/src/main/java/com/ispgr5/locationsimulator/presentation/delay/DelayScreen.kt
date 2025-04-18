@@ -2,6 +2,8 @@ package com.ispgr5.locationsimulator.presentation.delay
 
 import android.content.Context
 import android.util.Log
+import androidx.activity.OnBackPressedDispatcher
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -117,16 +119,23 @@ fun DelayScreen(
         }
     }
 
+    val onBack = {
+        timerState.value = timerState.value.reset(inhibitStart = true)
+        ServerSingleton.close()
+        navController.popBackStack()
+        Unit
+    }
+
+    BackHandler {
+        onBack()
+    }
+
     DelayScreenScaffold(
         state = state,
         timerState = timerState,
         soundsDirUri = soundsDirUri,
         chosenRole = chosenRole,
-        onBackClick = {
-            timerState.value = timerState.value.reset(inhibitStart = true)
-            ServerSingleton.close()
-            navController.popBackStack()
-        },
+        onBackClick = onBack,
         onTrainerTimerStart = fun(hours: Long, minutes: Long, seconds: Long) {
             viewModel.onEvent(
                 DelayEvent.TrainerStart(

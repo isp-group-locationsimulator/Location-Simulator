@@ -46,7 +46,7 @@ fun UserSettingsScreen(
     UserSettingsScaffold(
         userName = userName,
         userSettingsState = state,
-        onGoBack = { navController.navigateUp() },
+        onGoBack = { navController.popBackStack() },
         onOptionSelected = { option ->
             viewModel.onEvent(
                 UserSettingsEvent.SelectConfiguration(

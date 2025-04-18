@@ -1,6 +1,7 @@
 package com.ispgr5.locationsimulator.presentation.trainerScreen
 
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
@@ -46,6 +47,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.network.ClientSingleton
+import com.ispgr5.locationsimulator.network.ServerSingleton
 import com.ispgr5.locationsimulator.presentation.ChosenRole
 import com.ispgr5.locationsimulator.presentation.previewData.PreviewData
 import com.ispgr5.locationsimulator.presentation.universalComponents.LocationSimulatorTopBar
@@ -69,18 +71,24 @@ fun TrainerScreenScreen(
     val isTrainingActive = remember { mutableStateOf(false) }
     val isTimerActive = remember { mutableStateOf(false) }
 
+    val onBack = {
+        if(!isRefreshing) {
+            ClientSingleton.close()
+            navController.popBackStack()
+        }
+    }
+
+    BackHandler {
+        onBack()
+    }
+
     TrainerScreenScaffold(
         trainerScreenState = state,
         deviceList = devices,
         isTrainingActive = isTrainingActive.value,
         isTimerActive = isTimerActive.value,
         onEvent = { ev: TrainerScreenEvent -> viewModel.onEvent(ev) },
-        onGoBack = {
-            if(!isRefreshing) {
-                ClientSingleton.close()
-                navController.navigateUp()
-            }
-        },
+        onGoBack = onBack,
         isRefreshing = isRefreshing,
         onRefresh = { viewModel.onEvent(TrainerScreenEvent.Refresh) },
         navController = navController,
