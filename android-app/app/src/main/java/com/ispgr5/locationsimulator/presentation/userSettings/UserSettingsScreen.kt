@@ -29,6 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.dropUnlessResumed
 import androidx.navigation.NavController
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.domain.model.Configuration
@@ -133,7 +134,7 @@ fun UserSettingsContent(
         }
 
         Button(
-            onClick = onGoBack,
+            onClick = dropUnlessResumed { onGoBack() },
             modifier = Modifier
                 .fillMaxWidth(0.8f)
                 .padding(8.dp),

@@ -24,6 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.dropUnlessResumed
 import androidx.navigation.NavController
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.core.util.TestTags
@@ -60,7 +61,7 @@ fun AddScreen(
             )
         },
         onDescriptionChange = { viewModel.onEvent(event = AddEvent.EnteredDescription(it)) },
-        onSave = {
+        onSave = dropUnlessResumed {
             viewModel.onEvent(
                 event = AddEvent.SaveConfiguration(getDefaultValuesFunction)
             )

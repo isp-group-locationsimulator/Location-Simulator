@@ -37,6 +37,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.dropUnlessResumed
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.core.util.TestTags
 import com.ispgr5.locationsimulator.network.ClientHandler
@@ -188,7 +189,7 @@ fun DelayTimer(
             else -> stringResource(id = R.string.delay_btn_start)
         }
         Button(
-            onClick = {
+            onClick = dropUnlessResumed {
                 if(chosenRole == ChosenRole.TRAINER) {
                     onTrainerTimerStart(timerState.value.setHours, timerState.value.setMinutes, timerState.value.setSeconds)
                 }
