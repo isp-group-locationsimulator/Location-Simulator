@@ -198,7 +198,7 @@ fun TrainerScreenContent(
                                 is PressInteraction.Press -> {
                                     onEvent(TrainerScreenEvent.TestVibrationPress(device))
                                 }
-                                is PressInteraction.Release -> {
+                                is PressInteraction.Release, is PressInteraction.Cancel -> {
                                     onEvent(TrainerScreenEvent.StopDeviceTraining(device))
                                 }
                             }
@@ -210,7 +210,7 @@ fun TrainerScreenContent(
                                 is PressInteraction.Press -> {
                                     onEvent(TrainerScreenEvent.TestSoundPress(device))
                                 }
-                                is PressInteraction.Release -> {
+                                is PressInteraction.Release, is PressInteraction.Cancel -> {
                                     onEvent(TrainerScreenEvent.StopDeviceTraining(device))
                                 }
                             }
