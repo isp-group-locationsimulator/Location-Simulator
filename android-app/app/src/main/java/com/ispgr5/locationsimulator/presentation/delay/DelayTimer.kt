@@ -206,6 +206,7 @@ fun DelayTimer(
                             timerState.value =
                                 timerState.value.reset(inhibitStart = true)
                             ClientHandler.sendToClients(Commands.IS_IDLE)
+                            ClientHandler.deviceState.set(ClientHandler.DeviceState())
                         }
 
                         else -> {
