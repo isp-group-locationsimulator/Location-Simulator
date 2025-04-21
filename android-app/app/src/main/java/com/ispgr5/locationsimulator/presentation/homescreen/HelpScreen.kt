@@ -129,11 +129,10 @@ fun HelpScreenScaffold(
                 )
                 HelpCard(
                     title = stringResource(R.string.help_3),
-                    //TODO Images 6 and 7 still need to be translated and updated, because they show an older version of the app
                     imageIds = if (isGerman)
                         listOf(R.drawable.help_image5_de, R.drawable.help_image6_de, R.drawable.help_image7_de)
                     else
-                        listOf(R.drawable.help_image5_en, R.drawable.help_image6_de, R.drawable.help_image7_de)
+                        listOf(R.drawable.help_image5_en, R.drawable.help_image6_en, R.drawable.help_image7_en)
                 )
                 HelpCard(
                     title = stringResource(R.string.help_4),
