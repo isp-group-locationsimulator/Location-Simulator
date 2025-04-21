@@ -1,5 +1,6 @@
 package com.ispgr5.locationsimulator.presentation.editTimeline.components
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -8,8 +9,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -30,8 +35,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -40,6 +47,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
@@ -60,7 +69,6 @@ import com.ispgr5.locationsimulator.presentation.universalComponents.ConfirmDele
 import com.ispgr5.locationsimulator.presentation.util.vibratorHasAmplitudeControlAndReason
 import com.ispgr5.locationsimulator.ui.theme.DISABLED_ALPHA
 import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
-import java.util.Locale
 
 /**
  * The composable for showing and Editing a ConfigComponent(Sound or Vibration).
@@ -266,12 +274,9 @@ private fun PauseEditor(
         text = stringResource(id = R.string.editTimeline_Pause),
         style = blackSubtitle1
     )
-    SecText(
-        min = RangeConverter.msToS(getMinPause()), max =
-        RangeConverter.msToS(getMaxPause())
-    )
-    SliderForRange(
-        modifier = Modifier.testTag(TestTags.EDIT_SLIDER_PAUSE),
+
+    SliderForRangeWithPreciseInputs(
+        modifierSlider = Modifier.testTag(TestTags.EDIT_SLIDER_PAUSE),
         onValueChange = {
             editTimelineEventHandlers?.onPauseValueChanged?.invoke(it)
         },
@@ -311,22 +316,6 @@ private fun VibrationParameters(
                 ) {
                     append(stringResource(id = R.string.editTimeline_Vibration_Strength))
                 }
-                if (hasAmplitudeControl) {
-                    append("\n")
-                    val lowerBound =
-                        RangeConverter.eightBitIntToPercentageFloat(
-                            configComponent.minStrength
-                        ).toInt()
-                    val upperBound =
-                        RangeConverter.eightBitIntToPercentageFloat(
-                            configComponent.maxStrength
-                        ).toInt()
-                    append(lowerBound.toString())
-                    append("% ")
-                    append(stringResource(id = R.string.editTimeline_range))
-                    append(upperBound.toString())
-                    append("%")
-                }
             }
         )
         if (!hasAmplitudeControl) {
@@ -352,8 +341,8 @@ private fun VibrationParameters(
         }
     }
     if (hasAmplitudeControl) {
-        SliderForRange(
-            modifier = Modifier.testTag(TestTags.EDIT_VIB_SLIDER_STRENGTH),
+        SliderForRangeWithPreciseInputs(
+            modifierSlider = Modifier.testTag(TestTags.EDIT_VIB_SLIDER_STRENGTH),
             value = RangeConverter.eightBitIntToPercentageFloat(
                 configComponent.minStrength
             )..RangeConverter.eightBitIntToPercentageFloat(
@@ -375,13 +364,9 @@ private fun VibrationParameters(
         style = blackSubtitle1
     )
 
-    SecText(
-        min = RangeConverter.msToS(configComponent.minDuration),
-        max = RangeConverter.msToS(configComponent.maxDuration)
-    )
-    SliderForRange(
-        modifier = Modifier.testTag(TestTags.EDIT_VIB_SLIDER_DURATION),
-        enabled = hasAmplitudeControl,
+    SliderForRangeWithPreciseInputs(
+        modifierSlider = Modifier.testTag(TestTags.EDIT_VIB_SLIDER_DURATION),
+        modifierTextInput = Modifier.testTag(TestTags.EDIT_VIB_FIELD_DURATION),
         onValueChange = {
             editTimelineEventHandlers?.onVibDurationChanged?.invoke(it)
         },
@@ -426,16 +411,8 @@ private fun SoundParameters(
         text = stringResource(id = R.string.editTimeline_SoundVolume),
         style = blackSubtitle1
     )
-    Text(
-        RangeConverter.transformFactorToPercentage(configComponent.minVolume)
-            .toInt().toString() + "% "
-                + stringResource(id = R.string.editTimeline_range) + RangeConverter.transformFactorToPercentage(
-            configComponent.maxVolume
-        )
-            .toInt()
-            .toString() + "% "
-    )
-    SliderForRange(
+
+    SliderForRangeWithPreciseInputs(
         onValueChange = {
             editTimelineEventHandlers?.onSoundValueChanged?.invoke(it)
         },
@@ -489,18 +466,107 @@ fun SliderForRange(
 }
 
 @Composable
-fun SecText(min: Float, max: Float, modifier: Modifier = Modifier) {
-    Text(
-        String.format(
-            Locale.US,
-            "%.1f",
-            min
-        ) + "s " + stringResource(id = R.string.editTimeline_range) + String.format(
-            Locale.US,
-            "%.1f",
-            max
-        ) + "s ", modifier = modifier
+fun FloatInputField(
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: String,
+    onDone: () -> Unit = {}
+) {
+    OutlinedTextField(
+        textStyle = TextStyle(
+            textAlign = TextAlign.Center,
+            color = colorScheme.onBackground
+        ),
+        value = value,
+        enabled = enabled,
+        label = {Text(label)},
+        onValueChange = onValueChange,
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
+        singleLine = true,
+        modifier = modifier
+            .width(75.dp)
+            .height(55.dp),
+        keyboardActions = KeyboardActions(
+            onDone = {onDone()},
+        )
     )
+}
+
+@Composable
+fun SliderForRangeWithPreciseInputs(
+    modifierSlider: Modifier = Modifier,
+    modifierTextInput: Modifier = Modifier,
+    enabled: Boolean = true,
+    onValueChange: (ClosedFloatingPointRange<Float>) -> Unit,
+    value: ClosedFloatingPointRange<Float>,
+    range: ClosedFloatingPointRange<Float>,
+) {
+    val focusManager = LocalFocusManager.current
+    var start by remember {mutableStateOf("%.2f".format(value.start))}
+    var end by remember {mutableStateOf("%.2f".format(value.endInclusive))}
+
+    fun isValidRange(start:String, end:String, min:Float=range.start, max:Float=range.endInclusive): Boolean {
+        val startEngFormat = start.replace(",", ".")
+        val endEngFormat = end.replace(",", ".")
+        return try {
+            if (startEngFormat.toFloat() in min..endEngFormat.toFloat() && endEngFormat.toFloat() in startEngFormat.toFloat()..max) {
+                true
+            } else {
+                false
+            }
+        }catch (_: Exception) {
+            false
+        }
+    }
+
+    SliderForRange(
+        modifier = modifierSlider,
+        enabled = enabled,
+        onValueChange = {start = "%.2f".format(it.start); end = "%.2f".format(it.endInclusive); onValueChange(it)},
+        value = value,
+        range = range, 
+    )
+    Row (modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+        FloatInputField(
+            modifier = modifierTextInput
+                .onFocusChanged {
+                    if (!it.isFocused) {
+                        start = start.replace(",", ".")
+                        if (!isValidRange(start, end)) {
+                            start = "%.2f".format(value.start)
+                        } else {
+                            start = "%.2f".format(start.toFloat()) //ensure consistent formatting
+                        }
+                    }
+                },
+            enabled = enabled,
+            value = start,
+            onValueChange = {start = it; onValueChange((if (isValidRange(it, end)) it.replace(",", ".").toFloat() else range.start)..value.endInclusive)},
+            label = stringResource(id = R.string.min),
+            onDone = { focusManager.clearFocus() }
+        )
+        FloatInputField(
+            modifier = modifierTextInput
+                .onFocusChanged {
+                if (!it.isFocused) {
+                    end = end.replace(",", ".")
+                    if (!isValidRange(start, end)) {
+                        end = "%.2f".format(value.endInclusive)
+                    } else {
+
+                        end = "%.2f".format(end.toFloat()) //ensure consistent formatting
+                    }
+                }
+            },
+            enabled = enabled,
+            value = end,
+            onValueChange = {end = it; onValueChange(value.start..(if (isValidRange(start, it)) it.replace(",", ".").toFloat() else range.endInclusive))},
+            label = stringResource(id = R.string.max),
+            onDone = { focusManager.clearFocus() }
+        )
+    }
 }
 
 

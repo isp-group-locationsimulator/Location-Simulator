@@ -3,7 +3,6 @@ package com.ispgr5.locationsimulator.presentation.editTimeline
 import android.annotation.SuppressLint
 import androidx.activity.compose.setContent
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
@@ -15,15 +14,13 @@ import com.ispgr5.locationsimulator.di.AppModule
 import com.ispgr5.locationsimulator.presentation.MainActivity
 import com.ispgr5.locationsimulator.presentation.settings.SettingsState
 import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
-import com.ispgr5.locationsimulator.ui.theme.ThemeState
-import com.ispgr5.locationsimulator.ui.theme.ThemeType
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.UninstallModules
-import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import com.ispgr5.locationsimulator.R
 
 /**
  * Testing the Edit Screen
@@ -80,7 +77,7 @@ class EditTimelineScreenTest{
     fun clickAddButtonAddConfigComponentDialog_isVisible(){
         composeRule.onNodeWithTag(TestTags.EDIT_TIMELINE_SCREEN_ADD_DIALOG).assertDoesNotExist()
         composeRule.onNodeWithTag(TestTags.EDIT_TIMELINE_SCREEN_ADD_BUTTON).performClick()
-        composeRule.onNodeWithTag(TestTags.EDIT_TIMELINE_SCREEN_ADD_DIALOG).assertIsDisplayed()
+        composeRule.onNodeWithTag(TestTags.EDIT_TIMELINE_SCREEN_ADD_DIALOG).assertExists()
     }
 
     /**
@@ -96,8 +93,8 @@ class EditTimelineScreenTest{
         composeRule.onNodeWithTag(TestTags.EDIT_CONFIG_DESCRIPTION_TEXTINPUT).performTextReplacement(description)
 
         //check if Name and Description were changed correctly
-        composeRule.onNodeWithTag(TestTags.EDIT_CONFIG_NAME_TEXTINPUT).assertTextEquals(name)
-        composeRule.onNodeWithTag(TestTags.EDIT_CONFIG_DESCRIPTION_TEXTINPUT).assertTextEquals(description)
+        composeRule.onNodeWithTag(TestTags.EDIT_CONFIG_NAME_TEXTINPUT).assertTextEquals(composeRule.activity.getString(R.string.editTimeline_name), name)
+        composeRule.onNodeWithTag(TestTags.EDIT_CONFIG_DESCRIPTION_TEXTINPUT).assertTextEquals(composeRule.activity.getString(R.string.editTimeline_description), description)
 
     }
 

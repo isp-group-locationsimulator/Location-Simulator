@@ -13,7 +13,6 @@ import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 import com.ispgr5.locationsimulator.domain.model.ConfigurationComponentRoomConverter
 import com.ispgr5.locationsimulator.presentation.MainActivity
-import kotlinx.coroutines.*
 import kotlinx.serialization.ExperimentalSerializationApi
 import org.joda.time.Instant
 import java.io.File
@@ -57,7 +56,7 @@ class SimulationService : LifecycleService() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             val vibratorManager =
                 getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
-            Log.d(TAG, "Vibration manager IDs: ${vibratorManager.vibratorIds.joinToString()}")
+            Log.d(TAG, "Vibration manager IDs(${vibratorManager.vibratorIds.size}): ${vibratorManager.vibratorIds.joinToString()}")
             vibratorManager.defaultVibrator.also {
                 Log.d(TAG, "Using vibrator with ID ${it.id}")
             }
@@ -378,8 +377,9 @@ class SimulationService : LifecycleService() {
             ).apply {
                 description =
                     applicationContext.getString(R.string.service_notification_channel_description)
+                vibrationPattern = longArrayOf(1)
                 enableVibration(false)
-                vibrationPattern = longArrayOf(0)
+
             }
             notificationManager.createNotificationChannel(channel)
         }
