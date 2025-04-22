@@ -107,7 +107,7 @@
     <string name="stop_timer">Stop timer</string>
     <string name="playback_in_order">In Order</string>
     <string name="playback_random_order">Random</string>
-    <string name="android_current_but_no_amplitude_control">Your Android version is new enough, but the hardware in your smartphone reports that it doesn\'t support amplitude control.</string>
+    <string name="android_current_but_no_amplitude_control">check Android version is new enough, but the hardware in your smartphone reports that it doesn\'t support amplitude control.</string>
     <string name="android_to_old_oreo_required">Your Android version is too old. Vibration amplitude control was added by Google in Android \"O\" (version 8.x and above)</string>
     <string name="default_configuration_name">Default configuration</string>
     <string name="default_configuration_description">This is the default vibration the app ships with, with two vibration events.</string>
