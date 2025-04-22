@@ -8,6 +8,7 @@ import com.ispgr5.locationsimulator.presentation.delay.DelayScreenPreview
 import com.ispgr5.locationsimulator.presentation.editTimeline.EditTimelineDialogShownPreview
 import com.ispgr5.locationsimulator.presentation.editTimeline.EditTimelineNormalPreview
 import com.ispgr5.locationsimulator.presentation.editTimeline.EditTimelineUnsupportedIntensityPreview
+import com.ispgr5.locationsimulator.presentation.homescreen.HelpScreenPreview
 import com.ispgr5.locationsimulator.presentation.homescreen.HomeScreenPreview
 import com.ispgr5.locationsimulator.presentation.homescreen.InfoScreenPreview
 import com.ispgr5.locationsimulator.presentation.run.RunScreenActivePreview
@@ -19,6 +20,8 @@ import com.ispgr5.locationsimulator.presentation.settings.SettingsScreenVibratio
 import com.ispgr5.locationsimulator.presentation.sound.SoundScreenForDeletionPreview
 import com.ispgr5.locationsimulator.presentation.sound.SoundScreenPlayingPreview
 import com.ispgr5.locationsimulator.presentation.sound.SoundScreenStoppedPreview
+import com.ispgr5.locationsimulator.presentation.trainerScreen.TrainerScreenPreview
+import com.ispgr5.locationsimulator.presentation.userSettings.UserSettingsPreview
 import com.ispgr5.locationsimulator.ui.theme.ThemeState
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -95,6 +98,13 @@ abstract class ScreenshotTests {
     fun infoScreen() {
         screenshot {
             InfoScreenPreview()
+        }
+    }
+
+    @Test
+    fun helpScreen() {
+        screenshot {
+            HelpScreenPreview()
         }
     }
 
@@ -193,6 +203,20 @@ abstract class ScreenshotTests {
     fun soundScreenForDeletion() {
         screenshot {
             SoundScreenForDeletionPreview()
+        }
+    }
+
+    @Test
+    fun trainerScreen() {
+        screenshot {
+            TrainerScreenPreview()
+        }
+    }
+
+    @Test
+    fun userSettings() {
+        screenshot {
+            UserSettingsPreview()
         }
     }
 }
