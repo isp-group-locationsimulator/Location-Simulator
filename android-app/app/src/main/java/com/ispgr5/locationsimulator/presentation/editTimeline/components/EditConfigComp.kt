@@ -486,7 +486,7 @@ fun FloatInputField(
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
         singleLine = true,
         modifier = modifier
-            .width(75.dp)
+            .width(80.dp)
             .height(55.dp),
         keyboardActions = KeyboardActions(
             onDone = {onDone()},
@@ -502,11 +502,13 @@ fun SliderForRangeWithPreciseInputs(
     onValueChange: (ClosedFloatingPointRange<Float>) -> Unit,
     value: ClosedFloatingPointRange<Float>,
     range: ClosedFloatingPointRange<Float>,
+    inputFormat: String = "%.2f"
 ) {
     val focusManager = LocalFocusManager.current
-    var start by remember {mutableStateOf("%.2f".format(value.start))}
-    var end by remember {mutableStateOf("%.2f".format(value.endInclusive))}
+    var start by remember {mutableStateOf(inputFormat.format(value.start))}
+    var end by remember {mutableStateOf(inputFormat.format(value.endInclusive))}
 
+    //TODO: All of this should be implemented in the ViewModel
     fun isValidRange(start:String, end:String, min:Float=range.start, max:Float=range.endInclusive): Boolean {
         val startEngFormat = start.replace(",", ".")
         val endEngFormat = end.replace(",", ".")
@@ -524,7 +526,7 @@ fun SliderForRangeWithPreciseInputs(
     SliderForRange(
         modifier = modifierSlider,
         enabled = enabled,
-        onValueChange = {start = "%.2f".format(it.start); end = "%.2f".format(it.endInclusive); onValueChange(it)},
+        onValueChange = {start = inputFormat.format(it.start); end = inputFormat.format(it.endInclusive); onValueChange(it)},
         value = value,
         range = range, 
     )

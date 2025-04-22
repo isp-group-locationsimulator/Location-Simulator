@@ -1,0 +1,25 @@
+\section{\en{Files outside the main app} \de{Dateien außerhalb von App}}
+\subsection{./projectmanagement}
+\en{This folder  contains the description and images for the release in the Google Play Store.} \de{Enthält die Beschreibung und die Screenshots für den Google Play Store.}
+
+\subsection{./docs}
+\subsubsection{LaTex/DeveloperDocumentation}
+\en{Contains the LaTex files for this documentation.} \de{Enthält die LaTex Dateien für diese Dokumentation.}
+
+\subsubsection{fastlane-screenshots}
+\en{Folder for fastlane to store it's automatically generated screenshots, which can be used in documentation or otherwise. These screenshots are generated in different themes, states, and languages.} \de{Hier speichert Fastlane seine automatisch generierten Screenshots, welche in der Dokumentation oder anderweitig verwendet werden können. Alle Screenshots werden in verschieden Farbschemen, Zuständen und Sprachen generiert.}
+
+\subsection{./android-app}
+\begin{itemize}
+	\item \textbf{Gemfile} \en{Contains the gems needed for fastlane.} \de{Enthält die Gems für Fastlane.}
+	\item \textbf{Gemfile.lock} \en{Locks all the dependency versions.} \de{Speichert die Version für alle nötigen Abhängigkeiten.}
+\end{itemize}
+
+\subsubsection{.run}
+Contains all run configurations for Android Studio.
+\begin{itemize}
+	\item \textbf{Fastlane Screenshots} \en{A run configurations to generate new screenshots using fastlane. Make sure to follow \ref{sec:installFastlane} first.} \de{Eine Konfiguration um mit Fastlane neue Screenshots zu erzeugen. Zuvor ist \ref{sec:installFastlane} zu folgen.}
+\end{itemize}
+
+\subsubsection{fastlane}
+\en{Contains the fastlane files to automatically generate screenshots.} \de{Enthält die Fastlane Dateien, um automatisch Screenshots zu erzeugen.}
