@@ -125,7 +125,7 @@
     <string name="select_role" translatable="true">Select a role</string>
     <string name="help_1">How to start a configuration </string>
     <string name="help_2">How to edit a configuration and add sounds or vibrations </string>
-    <string name="help_3">"How to choose a sound for users "</string>
+    <string name="help_3">How to choose a sound for users</string>
     <string name="help_4">How to share the own configuration </string>
     <string name="ScreenConnection">Connect to Trainer</string>
     <string name="cancel">Cancel</string>
