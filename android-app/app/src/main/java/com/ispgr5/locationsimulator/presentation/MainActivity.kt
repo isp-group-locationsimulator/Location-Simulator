@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
+import android.net.wifi.WifiManager
 import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
@@ -18,7 +19,6 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -27,7 +27,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.compositionLocalOf
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,9 +44,13 @@ import com.ispgr5.locationsimulator.data.storageManager.SoundStorageManager
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 import com.ispgr5.locationsimulator.domain.model.ConfigurationComponentRoomConverter
 import com.ispgr5.locationsimulator.domain.useCase.ConfigurationUseCases
+import com.ispgr5.locationsimulator.network.ClientSingleton
+import com.ispgr5.locationsimulator.network.ServerSingleton
 import com.ispgr5.locationsimulator.presentation.add.AddScreen
 import com.ispgr5.locationsimulator.presentation.delay.DelayScreen
 import com.ispgr5.locationsimulator.presentation.editTimeline.EditTimelineScreen
+import com.ispgr5.locationsimulator.presentation.exportSettings.ExportSettingsScreen
+import com.ispgr5.locationsimulator.presentation.homescreen.HelpScreen
 import com.ispgr5.locationsimulator.presentation.homescreen.HomeScreenScreen
 import com.ispgr5.locationsimulator.presentation.homescreen.InfoScreen
 import com.ispgr5.locationsimulator.presentation.run.RunScreen
@@ -58,7 +61,9 @@ import com.ispgr5.locationsimulator.presentation.settings.SettingsScreen
 import com.ispgr5.locationsimulator.presentation.settings.SettingsState
 import com.ispgr5.locationsimulator.presentation.sound.SoundDialog
 import com.ispgr5.locationsimulator.presentation.sound.SoundScreen
+import com.ispgr5.locationsimulator.presentation.trainerScreen.TrainerScreenScreen
 import com.ispgr5.locationsimulator.presentation.universalComponents.SnackbarContent
+import com.ispgr5.locationsimulator.presentation.userSettings.UserSettingsScreen
 import com.ispgr5.locationsimulator.presentation.util.Screen
 import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
 import com.ispgr5.locationsimulator.ui.theme.ThemeState
@@ -74,6 +79,16 @@ val LocalThemeState = compositionLocalOf {
     ThemeState(themeType = ThemeType.AUTO)
 }
 
+enum class ChosenRole(val value: Int) {
+    STANDALONE(1),
+    REMOTE(2),
+    TRAINER(3);
+
+    companion object {
+        fun valueOf(value: Int?) = ChosenRole.entries.find { it.value == value }
+    }
+}
+
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
@@ -82,6 +97,8 @@ class MainActivity : ComponentActivity() {
     private lateinit var configurationStorageManager: ConfigurationStorageManager
     private var popUpState = mutableStateOf(false)
     private var recordedAudioUri: Uri? = null
+
+    private var keepScreenOnCount = 0
 
     private val snackbarContent: MutableState<SnackbarContent?> = mutableStateOf(null)
 
@@ -95,6 +112,11 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        ClientSingleton.wifiManager = this.applicationContext.getSystemService(WIFI_SERVICE) as WifiManager
+        ServerSingleton.keepScreenOn = keepScreenOn
+        ServerSingleton.doNotKeepScreenOn = doNotKeepScreenOn
+
         soundStorageManager = SoundStorageManager(this@MainActivity)
         MainScope().launch {
             installFilesOnFirstStartup()
@@ -161,7 +183,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-
     /**
      * create Navigation App Host controller, which is responsible for all navigation
      */
@@ -198,11 +219,22 @@ class MainActivity : ComponentActivity() {
             composable(Screen.InfoScreen.route) {
                 InfoScreen(navController = navController)
             }
-            composable(route = Screen.SelectScreen.route) {
+            composable(Screen.HelpScreen.route) {
+                HelpScreen(
+                    navController=navController, appTheme = themeState
+                )
+            }
+            composable(
+                route = Screen.SelectScreen.route,
+                arguments = listOf(navArgument("chosenRole") { type = NavType.IntType },)
+            ) { backStackEntry ->
+                val chosenRole =
+                    ChosenRole.valueOf(backStackEntry.arguments?.getInt("chosenRole")) ?: ChosenRole.STANDALONE
                 SelectScreen(
                     navController = navController,
                     configurationStorageManager = configurationStorageManager,
                     soundStorageManager = soundStorageManager,
+                    chosenRole = chosenRole,
                     snackbarHostState = snackbarHostState,
                     snackbarContent = snackbarContent
                 )
@@ -224,15 +256,24 @@ class MainActivity : ComponentActivity() {
             }
             composable(
                 route = Screen.DelayScreen.route,
-                arguments = listOf(NavigationArguments.configurationId)
-            ) {
+                arguments = listOf(
+                    NavigationArguments.configurationId,
+                    navArgument("chosenRole") { type = NavType.IntType },
+                    navArgument("remoteIpAddress") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val chosenRole =
+                    ChosenRole.valueOf(backStackEntry.arguments?.getInt("chosenRole")) ?: ChosenRole.STANDALONE
                 DelayScreen(
                     navController = navController,
                     startServiceFunction = startService,
                     soundsDirUri = this@MainActivity.filesDir.toString() + "/Sounds/",
+                    chosenRole = chosenRole
                 )
             }
-            composable(Screen.RunScreen.route) {
+            composable(
+                route = Screen.RunScreen.route,
+                arguments = listOf(navArgument("configStr") { type = NavType.StringType })
+            ) {
                 RunScreen(
                     navController = navController,
                     snackbarHostState = snackbarHostState,
@@ -269,6 +310,25 @@ class MainActivity : ComponentActivity() {
                     popUpState.value = false
                 }
             }
+            composable(
+                route = Screen.UserSettingsScreen.route,
+                arguments = listOf(navArgument("userName") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val userName = backStackEntry.arguments?.getString("userName") ?: "Unknown"
+                UserSettingsScreen(navController = navController, userName = userName)
+            }
+
+            composable(Screen.TrainerScreen.route) {
+                TrainerScreenScreen(navController = navController, appTheme = themeState)
+            }
+
+            composable(
+                route = Screen.ExportSettingsScreen.route,
+                arguments = listOf(navArgument("userName") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val userName = backStackEntry.arguments?.getString("userName") ?: "Unknown"
+                ExportSettingsScreen(navController = navController, userName = userName)
+            }
         }
     }
 
@@ -279,7 +339,7 @@ class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalSerializationApi::class)
     val startService: (String, List<ConfigComponent>, Boolean) -> Unit =
         fun(patternName: String, config: List<ConfigComponent>, randomOrderPlayback: Boolean) {
-            window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            keepScreenOn()
             val intent = Intent(this, SimulationService::class.java).apply {
                 action = "START"
                 putExtra(
@@ -304,7 +364,7 @@ class MainActivity : ComponentActivity() {
      * Stops the background service
      */
     private fun stopService() {
-        window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        doNotKeepScreenOn()
         Intent(this, SimulationService::class.java).also {
             it.action = "STOP"
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -312,6 +372,21 @@ class MainActivity : ComponentActivity() {
             } else {
                 startService(it)
             }
+        }
+    }
+
+    private val keepScreenOn: () -> Unit = {
+        keepScreenOnCount++
+        if(keepScreenOnCount == 1) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        }
+    }
+
+    private val doNotKeepScreenOn: () -> Unit = {
+        keepScreenOnCount--
+        if(keepScreenOnCount <= 0) {
+            keepScreenOnCount = 0
+            window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         }
     }
 

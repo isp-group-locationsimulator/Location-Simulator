@@ -74,6 +74,9 @@ import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.core.util.TestTags
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 import com.ispgr5.locationsimulator.domain.model.Configuration
+import com.ispgr5.locationsimulator.network.ClientHandler
+import com.ispgr5.locationsimulator.network.ClientSignal
+import com.ispgr5.locationsimulator.network.Commands
 import com.ispgr5.locationsimulator.presentation.previewData.AppPreview
 import com.ispgr5.locationsimulator.presentation.previewData.PreviewData
 import com.ispgr5.locationsimulator.presentation.previewData.PreviewData.runScreenPreviewInitialRefresh
@@ -115,10 +118,27 @@ fun RunScreen(
         mutableStateOf<SnackbarContent?>(null)
     }
 
+    val onStop: () -> Unit = {
+        ClientHandler.sendToClients(Commands.IS_IDLE)
+        ClientHandler.deviceState.set(ClientHandler.DeviceState())
+        SimulationService.IsPlayingEventBus.postValue(false)
+        viewModel.onEvent(RunEvent.StopClicked(stopServiceFunction))
+        navController.popBackStack()
+    }
+
     RenderSnackbarOnChange(
         snackbarHostState = snackbarHostState,
         snackbarContent = snackbarContentState
     )
+
+    val clientMessage: ClientSignal? by ClientHandler.clientSignal.observeAsState()
+    if(clientMessage is ClientSignal.StopTraining) {
+        ClientHandler.clientSignal.value = null
+        onStop()
+    }
+    if(clientMessage is ClientSignal.StartTraining) {   // ignore message
+        ClientHandler.clientSignal.value = null
+    }
 
     val effectState: EffectTimelineState? by SimulationService.EffectTimelineStateBus.observeAsState()
 
@@ -159,12 +179,9 @@ fun RunScreen(
             currentPauseDuration = currentPauseDuration,
             snackbarHostState = snackbarHostState,
             snackbarContentState = snackbarContentState,
-            initialRefreshInstant = initialRefreshInstant
-        ) {
-            SimulationService.IsPlayingEventBus.postValue(false)
-            viewModel.onEvent(RunEvent.StopClicked(stopServiceFunction))
-            navController.popBackStack()
-        }
+            initialRefreshInstant = initialRefreshInstant,
+            onStop = onStop
+        )
     }
 
 }

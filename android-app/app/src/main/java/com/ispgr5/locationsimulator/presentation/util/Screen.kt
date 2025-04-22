@@ -1,18 +1,37 @@
 package com.ispgr5.locationsimulator.presentation.util
 
+import com.ispgr5.locationsimulator.presentation.ChosenRole
+
 /**Class to get the Route to the Screens*/
 sealed class Screen(val route: String) {
+
+
     data object HomeScreen : Screen("homeScreen")
     data object InfoScreen : Screen("infoScreen")
-    data object SelectScreen : Screen("selectScreen")
+    data object HelpScreen: Screen("helpScreen")
+    data object SelectScreen : Screen("selectScreen?chosenRole={chosenRole}")
+    {
+        fun createRoute(chosenRole: Int = ChosenRole.STANDALONE.value) = "selectScreen?chosenRole=$chosenRole"
+    }
     data object AddScreen : Screen("addScreen")
     data object SettingsScreen : Screen("settingsScreen")
-    data object DelayScreen : Screen("delayScreen?configurationId={configurationId}") {
-        fun createRoute(configurationId: Int) = "delayScreen?configurationId=$configurationId"
+    data object TrainerScreen: Screen("trainerScreen")
+    data object DelayScreen : Screen("delayScreen?configurationId={configurationId},chosenRole={chosenRole},remoteIpAddress={remoteIpAddress}")
+    {
+        fun createRoute(configurationId: Int, chosenRole: Int = 0, remoteIpAddress: String = "255.255.255.255") =
+            "delayScreen?configurationId=$configurationId,chosenRole=$chosenRole,remoteIpAddress=$remoteIpAddress"
+    }
+    data object UserSettingsScreen : Screen("userSettingsScreen?userName={userName},userIpAddress={userIpAddress}")
+    {
+        fun createRoute(userName: String, userIpAddress: String) = "userSettingsScreen?userName=$userName,userIpAddress=$userIpAddress"
+    }
+    data object ExportSettingsScreen : Screen("exportSettingsScreen?userName={userName}")
+    {
+        fun createRoute(userName: String) = "exportSettingsScreen?userName=$userName"
     }
 
-    data object RunScreen : Screen("runScreen?configurationId={configurationId}") {
-        fun createRoute(configurationId: Int) = "runScreen?configurationId=$configurationId"
+    data object RunScreen : Screen("runScreen?configurationId={configurationId},configStr={configStr}") {
+        fun createRoute(configurationId: Int, configStr: String) = "runScreen?configurationId=$configurationId,configStr=$configStr"
     }
 
     data object StopService :

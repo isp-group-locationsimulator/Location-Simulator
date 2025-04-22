@@ -37,6 +37,8 @@
     <string name="confirmDeleteDialogDismissBtn">Cancel</string>
     <string name="confirmDeleteDialogConfirmBtn">Delete</string>
     <string name="ScreenInfo">Info</string>
+    <string name="ScreenHelp">Help</string>
+
     <string name="ScreenRun">Running</string>
     <string name="ScreenSelect">Select configuration</string>
     <string name="ScreenSound">Select Sound</string>
@@ -91,6 +93,7 @@
     <string name="next_effect">Next effect</string>
     <string name="long_press_button_to_stop">Long-press the stop button to exit.</string>
     <string name="about">About</string>
+    <string name="help">Help</string>
     <string name="delete_configuration">Delete configuration</string>
     <string name="maintainer">Maintainer</string>
     <string name="location_simulator_is_maintained_by">LocationSimulator is maintained by:</string>
@@ -108,12 +111,34 @@
     <string name="android_to_old_oreo_required">Your Android version is too old. Vibration amplitude control was added by Google in Android \"O\" (version 8.x and above)</string>
     <string name="default_configuration_name">Default configuration</string>
     <string name="default_configuration_description">This is the default vibration the app ships with, with two vibration events.</string>
+    <string name="input_label">Name</string>
+    <string name="enter_name" translatable="true">Your name</string>
+    <string name="select_role" translatable="true">Select a role</string>
     <string name="add_configuration_component">Add configuration component</string>
     <string name="dynamic_colors">Dynamic colors</string>
     <string name="normal">Normal</string>
     <string name="dynamic">Dynamic</string>
     <string name="the_back_gesture_is_disabled_please_use_the_bottom_above">The back gesture is disabled, please use the button above.</string>
     <string name="new_configuration">New configuration</string>
+    <string name="help_1">How to start a configuration </string>
+    <string name="help_2">How to edit a configuration and add sounds or vibrations </string>
+    <string name="help_3">How to choose a sound for users or share the configuration as trainer </string>
+    <string name="help_4">How to share the own configuration </string>
+    <string name="ScreenConnection">Connect to Trainer</string>
+    <string name="cancel">Cancel</string>
+    <string name="Name">Name</string>
+    <string name="retry">Retry</string>
+    <string name="searching_for_trainer">Searching for trainer</string>
+    <string name="search_failed">Search for trainer failed</string>
+    <string name="trainer_screen_title">Trainer Options</string>
+    <string name="already_connected">Already connected</string>
+    <string name="start">Start</string>
+    <string name="stop">Stop</string>
+    <string name="user_settings">User Settings</string>
+    <string name="user_select_configuration">Select Configuration</string>
+    <string name="error_invalid_name">Name can\'t be empty and can\'t contain whitespace</string>
+
+
     <string name="min">Min</string>
     <string name="max">Max</string>
 </resources>

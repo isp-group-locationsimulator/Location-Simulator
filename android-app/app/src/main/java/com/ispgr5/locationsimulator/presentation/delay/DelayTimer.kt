@@ -37,8 +37,12 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.dropUnlessResumed
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.core.util.TestTags
+import com.ispgr5.locationsimulator.network.ClientHandler
+import com.ispgr5.locationsimulator.network.Commands
+import com.ispgr5.locationsimulator.presentation.ChosenRole
 import com.ispgr5.locationsimulator.presentation.previewData.AppPreview
 import com.ispgr5.locationsimulator.presentation.previewData.PreviewData
 import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
@@ -95,7 +99,9 @@ private class DelayCountdownTimer(
 @Composable
 fun DelayTimer(
     timerState: MutableState<TimerState>,
+    chosenRole: ChosenRole,
     onFinishTimer: (configurationId: Int) -> Unit,
+    onTrainerTimerStart: (Long, Long, Long) -> Unit,
     configurationId: Int
 ) {
 
@@ -183,21 +189,48 @@ fun DelayTimer(
             else -> stringResource(id = R.string.delay_btn_start)
         }
         Button(
-            onClick = {
-                when {
-                    timerState.value.isZero() -> onStartVibration(
-                        configurationId = configurationId,
-                        onFinishTimer = onFinishTimer,
-                        timerState = timerState,
-                        countDownTimer = countDownTimer
-                    )
+            onClick = dropUnlessResumed {
+                if(chosenRole == ChosenRole.TRAINER) {
+                    onTrainerTimerStart(timerState.value.setHours, timerState.value.setMinutes, timerState.value.setSeconds)
+                }
+                else {
+                    when {
+                        timerState.value.isZero() -> onStartVibration(
+                            configurationId = configurationId,
+                            onFinishTimer = onFinishTimer,
+                            timerState = timerState,
+                            countDownTimer = countDownTimer
+                        )
 
-                    timerState.value.isRunning -> timerState.value =
-                        timerState.value.reset(inhibitStart = true)
+                        timerState.value.isRunning -> {
+                            timerState.value =
+                                timerState.value.reset(inhibitStart = true)
+                            ClientHandler.sendToClients(Commands.IS_IDLE)
+                            ClientHandler.deviceState.set(ClientHandler.DeviceState())
+                        }
 
-                    else -> timerState.value = timerState.value.copy(
-                        isRunning = true, inhibitStart = false
-                    )
+                        else -> {
+                            timerState.value = timerState.value.copy(
+                                isRunning = true, inhibitStart = false, remoteConfigStr = null
+                            )
+                            ClientHandler.deviceState.set(
+                                ClientHandler.DeviceState(
+                                    false, Commands.timerStateToString(
+                                        timerState.value.setHours,
+                                        timerState.value.setMinutes,
+                                        timerState.value.setSeconds
+                                    )
+                                )
+                            )
+                            ClientHandler.sendToClients(
+                                Commands.formatTimerState(
+                                    timerState.value.setHours,
+                                    timerState.value.setMinutes,
+                                    timerState.value.setSeconds
+                                )
+                            )
+                        }
+                    }
                 }
             },
             enabled = true,
@@ -311,6 +344,7 @@ fun calculateTimerValue(value: String): Long {
 data class TimerState(
     val isRunning: Boolean = false,
     val inhibitStart: Boolean = false,
+    val remoteConfigStr: String? = null,
     val setHours: Long = 0,
     val setMinutes: Long = 0,
     val setSeconds: Long = 0,
@@ -364,7 +398,9 @@ fun DelayTimerStoppedPreview() {
     LocationSimulatorTheme {
         DelayTimer(
             timerState = timerState,
+            chosenRole = ChosenRole.STANDALONE,
             onFinishTimer = {},
+            onTrainerTimerStart = fun(_: Long, _: Long, _: Long) { },
             configurationId = PreviewData.previewConfigurations.first().id!!
         )
     }
@@ -379,7 +415,9 @@ fun DelayTimerRunningPreview() {
     LocationSimulatorTheme {
         DelayTimer(
             timerState = timerState,
+            chosenRole = ChosenRole.STANDALONE,
             onFinishTimer = {},
+            onTrainerTimerStart = fun(_: Long, _: Long, _: Long) { },
             configurationId = PreviewData.previewConfigurations.first().id!!
         )
     }

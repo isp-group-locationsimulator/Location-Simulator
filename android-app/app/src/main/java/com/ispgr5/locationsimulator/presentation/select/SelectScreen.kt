@@ -33,6 +33,7 @@ import com.ispgr5.locationsimulator.core.util.TestTags
 import com.ispgr5.locationsimulator.data.storageManager.ConfigurationStorageManager
 import com.ispgr5.locationsimulator.data.storageManager.SoundStorageManager
 import com.ispgr5.locationsimulator.domain.model.Configuration
+import com.ispgr5.locationsimulator.presentation.ChosenRole
 import com.ispgr5.locationsimulator.presentation.previewData.PreviewData.selectScreenPreviewState
 import com.ispgr5.locationsimulator.presentation.previewData.PreviewData.selectScreenPreviewStateDelete
 import com.ispgr5.locationsimulator.presentation.previewData.PreviewData.themePreviewState
@@ -57,6 +58,7 @@ fun SelectScreen(
     viewModel: SelectViewModel = hiltViewModel(),
     configurationStorageManager: ConfigurationStorageManager,
     soundStorageManager: SoundStorageManager,
+    chosenRole: ChosenRole,
     snackbarHostState: SnackbarHostState,
     snackbarContent: MutableState<SnackbarContent?>
 ) {
@@ -98,9 +100,7 @@ fun SelectScreen(
         },
         onSelectConfiguration = { configuration ->
             navController.navigate(
-                Screen.DelayScreen.createRoute(
-                    configuration.id!!
-                )
+                Screen.DelayScreen.createRoute(configuration.id!!, chosenRole.value)
             )
         },
         onExportConfiguration = { configuration ->
