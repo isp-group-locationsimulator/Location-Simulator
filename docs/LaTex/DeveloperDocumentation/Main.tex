@@ -8,17 +8,20 @@
 \de{\title{Entwicklerdokumentation für Ortungssimulator}}
 \en{\title{Developer Documentation for Location Simulator}}
 
-\en{\graphicspath{{../../fastlane-screenshots/en-US/images/phoneScreenshots}}}
-\de{\graphicspath{{../../fastlane-screenshots/de-DE/images/phoneScreenshots}}}
+%\en{\graphicspath{{../../fastlane-screenshots/en-US/images/phoneScreenshots}}}
+%\de{\graphicspath{{../../fastlane-screenshots/de-DE/images/phoneScreenshots}}}
 
 \newcommand{\subsubsubsection}[1]{\paragraph{#1}\mbox{{}\\}}
 \setcounter{secnumdepth}{4}
 \setcounter{tocdepth}{4}
 
 %Try to have subsubsections not start right at the end of a page, only used in ProjectStructure
-\newlength{\sectionbuffer}
-\setlength{\sectionbuffer}{0.0\textheight}
-\pretocmd{\subsubsection}{\needspace{\sectionbuffer}}{}{}
+\newlength{\subsectionbuffer}
+\newlength{\subsubsectionbuffer}
+\setlength{\subsectionbuffer}{0.0\textheight}
+\setlength{\subsubsectionbuffer}{0.0\textheight}
+\pretocmd{\subsection}{\needspace{\subsectionbuffer}}{}{}
+\pretocmd{\subsubsection}{\needspace{\subsubsectionbuffer}}{}{}
 
 \begin{document}
 	

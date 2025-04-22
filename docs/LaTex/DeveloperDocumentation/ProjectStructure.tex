@@ -1,26 +1,42 @@
-\setlength{\sectionbuffer}{0.2\textheight}
+\setlength{\subsectionbuffer}{0.3\textheight}
+
+\newcommand{\includefastlane}[1]{\includegraphics[width=0.3\textwidth]{
+		\en{../../fastlane-screenshots/en-US/images/phoneScreenshots/#1}
+		\de{../../fastlane-screenshots/de-DE/images/phoneScreenshots/#1}
+		}}
 
 \section{\en{Project Structure} \de{Projektaufbau}}
 \en{The following section refer to all the packages found in\\ android-app/app/src/main/java/com/ispgr5/locationsimulator.}
 \de{Die folgenden Abschnitte beziehen sich auf die Packages, die in\\ android-app/app/src/main/java/com/ispgr5/locationsimulator gefunden werden können.}
 
 \subsection{core.util}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\textwidth, height=0.4\textheight, keepaspectratio]{img/core.util}
+\end{figure}
 \begin{itemize}
 	\item \textbf{TestTags} \en{Contains all the test tags which can be used to test the app with it's UI. The most common use cases would be to check if a UI element exists, to get it's value or to click on it.} \de{Enthält alle Test Tags die verwendet werden können, um die App über ihre UI zu testen. Typische Verwendungsfalle wären um zu überprüfen, ob ein UI Element existiert, um seinen Wert zu erhalten, oder um auf es zu klicken.}
 \end{itemize}
 
 \subsection{data}
 \en{This package contains a variety of classes for working with the database.} \de{Enthält eine Vielzahl an Klassen, um mit der Datenbank zu arbeiten.}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\textwidth, height=0.4\textheight, keepaspectratio]{img/data}
+\end{figure}
 \subsubsection{repository}
 \begin{itemize}
 	\item \textbf{ConfigurationRepositoryImpl} \en{Implements all the function that can be called to read configurations from the database, or write them to it.}
 	\de{Implementiert alle Funktionen, mit denen Konfigurationen von der Datenbank gelesen oder auf die Datenbank geschrieben werden können.}
 \end{itemize}
+
 \subsubsection{source}
 \begin{itemize}
 	\item \textbf{ConfigurationDao} \en{Data Access Object for the Database where SQL queries are defined.} \de{Data Access Object fü die Datenbank, welches die SQL Queries definiert, um auf die Datenbank zuzugreifen.}
 	\item \textbf{ConfigurationDatabase} \en{Defines the database which stores the configurations.} \de{Definiert die Datenbank, welche die Konfigurationen speichert.}
 \end{itemize}
+
 \subsubsection{storageManager}
 \begin{itemize}
 	\item \textbf{ConfigurationStorageManager} \en{This class is responsible for importing and exporting configurations. It turns sound files into a base64 string, creates a json for the configuration, and compresses them using gzip.} \de{Diese Klassen stellt die Funktionalitäten fü das Importieren und Exportieren von Konfigurationen zur Verfügung. Dabei werden Audio Dateien in Base64 Strings umgewandelt und die Konfiguration in eine JSON Datei verwandelt, welche mit GZIP komprimiert wird.}
@@ -28,11 +44,19 @@
 \end{itemize}
 
 \subsection{di} \label{sec:di}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\textwidth, height=0.4\textheight, keepaspectratio]{img/di}
+\end{figure}
 \begin{itemize}
 	\item \textbf{AppModule} \en{This data injection module loads the database when starting the app and provides it's interface to the view models.} \de{Diese Data Injection Modul lädt die Datenbank und gibt den View Models ein Interface, um mit der Datenbank zu interagieren.}
 \end{itemize}
 
 \subsection{domain}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\textwidth, height=0.4\textheight, keepaspectratio]{img/domain}
+\end{figure}
 \en{Contains a variety of classes to represent a configuration on the database.} \de{Enthält eine Vielzahl an Klassen, um eine Konfiguration auf der Datenbank zu repräsentieren.}
 \subsubsection{model} \label{sec:model}
 \begin{itemize}
@@ -56,7 +80,12 @@
 	\item \textbf{GetFavoriteConfigurations} \en{Manager to get favored configurations from the database.} \de{Manager um die favorisierten Konfiurationen von der Datenbank zu lesen.}
 \end{itemize}
 
+\newpage
 \subsection{network}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\textwidth, height=0.4\textheight, keepaspectratio]{img/network}
+\end{figure}
 \en{Contains the backend classes for the network connection, necessary to enable the remote control function.} \de{Enthält die Backend Klassen für die Netzwerkverbindung, welche nötig ist um die Fernsteuerungsfunktion zu ermöglichen.}
 \begin{itemize}
 	\item \textbf{Client} \en{The client running on the trainer device.} \de{Der Client, welcher auf dem Trainer Gerät läuft.}
@@ -65,16 +94,25 @@
 	\item \textbf{Server} \en{Server running on the hidden devices.} \de{Server, welcher auf den versteckten Geräten läuft.}
 \end{itemize}
 
+\setlength{\subsubsectionbuffer}{0.5\textheight}
 \subsection{presentation}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\textwidth, height=0.4\textheight, keepaspectratio]{img/mainActivity}
+\end{figure}
 \en{Contains the classes for all the different screens in the app.} \de{Enthält alle Klassen für die verschiedenen Ansichten der App.}
 \begin{itemize}
 	\item \textbf{MainActivity} \en{Entry point for the app, handles many essential functions, like navigation, starting/stopping the background task, loading preferences, initial setup of the app on install and some more.} \de{Einstiegspunkt für die App, verantwortlich für viele essentielle Funktionen, wie Navigation, starten/stoppen des Laufens im Hintergrund, laden der Nutzerpräferenzen, einrichten der App nach der Installation, un einige mehr.}
 \end{itemize}
 \subsubsection{add}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\textwidth, height=0.4\textheight, keepaspectratio]{img/add}
+\end{figure}
 \en{Contains the classes for the ''Add Configuration'' screen.} \de{Enthält alle Klassen für die ''Konfiguration erstellen'' Ansicht.}
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.3\textwidth]{add_screen_light}
+	\includefastlane{add_screen_light}
 \end{figure}
 \begin{itemize}
 	\item \textbf{AddEvent} \en{Defines all events which can happen on the add screen.} \de{Definiert alle Events die in der Hinzufügen Ansicht auftreten können.}
@@ -83,10 +121,14 @@
 	\item \textbf{AddViewModel} \en{View Model for the add screen. Reacts to all UI events on this screen.} \de{View Model der Hinzufügen Ansicht. Reagiert auf alle UI Events in dieser Ansicht.}
 \end{itemize}
 \subsubsection{delay} \label{sec:delay}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\textwidth, height=0.4\textheight, keepaspectratio]{img/delay}
+\end{figure}
 \en{Contains all classes for the ''Start Configuration'' screen, where the user can start the configuration and set a delay for the start.} \de{Enthält alle Klassen für die ''Konfiguration starten'' Ansicht, in welcher der Nutzer die Konfiguration starten kann und eine Verzögerung dafür setzten kann.}
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.3\textwidth]{delay_screen_LIGHT}
+	\includefastlane{delay_screen_LIGHT}
 \end{figure}
 \begin{itemize}
 	\item \textbf{DelayEvent} \en{Defines all events which can happen on the delay/start screen.} \de{Definiert alle Events die in der Verzögern/Start Ansicht auftreten können.}
@@ -96,12 +138,16 @@
 	\item \textbf{DelayViewModel} \en{View Model for the delay/start screen. Reacts to all UI events on this screen.} \de{View Model der Verzögern/Start Ansicht. Reagiert auf alle UI Events in dieser Ansicht.}
 \end{itemize}
 \subsubsection{editTimeline} \label{sec:editTimeline}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\textwidth, height=0.4\textheight, keepaspectratio]{img/editTimeline}
+\end{figure}
 \en{Contains all classes for the ''Edit Configuration'' screen.} \de{Enthält alle Klassen für die ''Konfiguration bearbeiten'' Ansicht.}
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.3\textwidth]{edit_timeline_screen_normal_LIGHT}
-	\includegraphics[width=0.3\textwidth]{edit_timeline_screen_no_vibration_control_LIGHT}
-	\includegraphics[width=0.3\textwidth]{edit_timeline_screen_dialog_shown_LIGHT}
+	\includefastlane{edit_timeline_screen_normal_LIGHT}
+	\includefastlane{edit_timeline_screen_no_vibration_control_LIGHT}
+	\includefastlane{edit_timeline_screen_dialog_shown_LIGHT}
 \end{figure}
 \begin{itemize}
 	\item \textbf{EditTimelineEvent} \en{Defines all events which can happen on the edit-configuration screen.} \de{Definiert alle Events die in der Konfiguration bearbeiten Ansicht auftreten können.}
@@ -115,6 +161,12 @@
 	\item \textbf{EditConfigComp} \en{Contains all the composables for the view used to edit an element of a configuration. This means everything below the timeline.} \de{Enthält alle Komponenten, die in dem View verwendet werden, mit dem ein Element einer Konfiguration bearbeitet werden kann. Dies ist alles unter der Zeitachse.}
 	\item \textbf{Timeline} \en{Contains all the composables for the view of the timeline on the edit configuration screen.} \de{Enthält alle Composables für die Zeitachse in der Konfiguration bearbeiten Ansicht.}
 \end{itemize}
+
+\subsubsection{exportSettings}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\textwidth, height=0.4\textheight, keepaspectratio]{img/exportSettings}
+\end{figure}
 \en{Contains the classes for the ''Export'' screen, which allows a trainer to wirelessly save a configuration on a remote device. Currently unfinished and not used.} \de{Enthält alle Klassen für die 'Exportieren'' Ansicht, in welcher der Trainer eine Konfiguration auf einem Remote Gerät speichern kann. Dieses Feature wurde nicht vollständig implementiert und wird aktuell nicht verwendet.}
 \begin{itemize}
 	\item \textbf{ExportSettingsEvent} \en{Defines all events which can happen on the export settings screen.} \de{Definiert alle Events die in der Hinzufügen Ansicht auftreten können.}
@@ -123,12 +175,16 @@
 	\item \textbf{ExportSettingsViewModel} \en{View Model for the export settings screen. Reacts to all UI events on this screen.} \de{View Model der Hinzufügen Ansicht. Reagiert auf alle UI Events in dieser Ansicht.}
 \end{itemize}
 \subsubsection{homescreen}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\textwidth, height=0.4\textheight, keepaspectratio]{img/homescreen}
+\end{figure}
 \en{Contains all classes for the home screen, where the user can go to the configuration choice, see the favored configurations, and change the theme. he can also choose his name and remote-control role here. Also contains the info and help screen.} \de{Enthält alle Klassen für den Startbildschirm, wo der Nutzer zur Konfigurations-Auswahl gehen kann, seine favorisierten Konfigurationen sehen kann, und das Farbschema der App ändern kann. Hier kann er auch seinen Namen und seine Rolle für die Fernsteuerungsfunktion wählen. Enthält außerdem die Hilfe und Info Ansichten.}
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.3\textwidth]{home_screen_LIGHT}
-	\includegraphics[width=0.3\textwidth]{info_screen_LIGHT}
-	\includegraphics[width=0.3\textwidth]{help_screen_LIGHT}
+	\includefastlane{home_screen_LIGHT}
+	\includefastlane{info_screen_LIGHT}
+	\includefastlane{help_screen_LIGHT}
 \end{figure}
 \begin{itemize}
 	\item \textbf{HelpScreen} \en{Help screen, which explains to the user how to perform varous tasks.} \de{Hilfe Ansicht, in welcher der Nutzer lernen kann, wie er verschiedene Aufgaben bewältigen kann.}
@@ -139,17 +195,25 @@
 	\item \textbf{InfoScreen} \en{The info screen, containing acknowledgements to the developers and maintainers, as well as the license and some more.} \de{Die Informationsansicht, welche Anerkennungen der Entwickler, sowie die Lizenz und einige weitere Informationen enthält.}
 \end{itemize}
 \subsubsection{previewData}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\textwidth, height=0.4\textheight, keepaspectratio]{img/previewData}
+\end{figure}
 \en{Contains everything necessary to automatically generate previews.} \de{Enthält alles was benötigt wird, um automatische Vorschauen zu erzeugen.}
 \begin{itemize}
 	\item \textbf{PreviewAnnotations} \en{Defines the different settings for the different preview annotations, which can be used to automatically generate previews with different themes, screens sizes, locales, and font sizes.} \de{Definiert die verschiedenen Preview Annotationen, mit denen automatisch Previews in verschiedenen Farbschemen, Bildschirmgrößen}, Sprachen und Schriftgrößen generiert werden können.
 	\item \textbf{PreviewData} \en{Defines the standard data to be used in previews.} \de{Definiert die Standartdaten, die für Previews verwendet werden soll.}
 \end{itemize}
 \subsubsection{run}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\textwidth, height=0.4\textheight, keepaspectratio]{img/run}
+\end{figure}
 \en{Contains all the classes for the screen that is shown, while the configuration is running. Also contains the actual function for running a configuration.} \de{Enthält alle Klassen für die Ansicht die gezeigt wird, während eine Konfiguration läuft. Enthält außerdem die tatsächliche Klasse, welche eine Konfiguration abspielt.}
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.3\textwidth]{run_screen_active_LIGHT}
-	\includegraphics[width=0.3\textwidth]{run_screen_paused_LIGHT}
+	\includefastlane{run_screen_active_LIGHT}
+	\includefastlane{run_screen_paused_LIGHT}
 \end{figure}
 \begin{itemize}
 	\item \textbf{RunEvent} \en{Defines all events which can happen on the run screen.} \de{Definiert alle Events die in der Laufen Ansicht auftreten können.}
@@ -159,11 +223,15 @@
 	\item \textbf{SoundPlayer} \en{Helper-class for playing sounds.} \de{Hilfsklasse, um Geräusche abzuspielen.}
 \end{itemize}
 \subsubsection{select}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\textwidth, height=0.4\textheight, keepaspectratio]{img/select}
+\end{figure}
 \en{Contains all for the ''Select configuration'' screen, where a user can select a configuration to play, export, edit, copy or delete.} \de{Enthält alle Klassen für die ''Konfiguration auswählen'' Ansicht, in der Nuzer eine Konfiguration abspielen, exportieren, bearbeiten, kopieren oder löschen kann.}
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.3\textwidth]{select_screen_normal_LIGHT}
-	\includegraphics[width=0.3\textwidth]{select_screen_delete_mode_active_LIGHT}
+	\includefastlane{select_screen_normal_LIGHT}
+	\includefastlane{select_screen_delete_mode_active_LIGHT}
 \end{figure}
 \begin{itemize}
 	\item \textbf{SelectEvent} \en{Defines all events which can happen on the select screen.} \de{Definiert alle Events die in der Auswahl Ansicht auftreten können.}
@@ -176,11 +244,15 @@
 	\item \textbf{ConfigurationList} \en{Contains the composables that make up the car for one configuration.} \de{Enthält die Composables, aus der eine Karte für eine Konfiguration besteht.}
 \end{itemize}
 \subsubsection{settings}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\textwidth, height=0.4\textheight, keepaspectratio]{img/settings}
+\end{figure}
 \en{Contains all classes for the ''Default Settings'' screen.} \de{Enthält alle Klassen für die ''Standard Einstellungen'' Ansicht.}
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.3\textwidth]{settings_screen_vibration_LIGHT}
-	\includegraphics[width=0.3\textwidth]{settings_screen_sound_LIGHT}
+	\includefastlane{settings_screen_vibration_LIGHT}
+	\includefastlane{settings_screen_sound_LIGHT}
 \end{figure}
 \begin{itemize}
 	\item \textbf{SettingsEvent} \en{Defines all events which can happen on the default settings screen.} \de{Definiert alle Events die in der Standard Einstellungen Ansicht auftreten können.}
@@ -189,12 +261,16 @@
 	\item \textbf{SettingsViewModel} \en{View Model for the default settings screen. Reacts to all UI events on this screen.} \de{View Model der Standard Einstellungen Ansicht. Reagiert auf alle UI Events in dieser Ansicht.}
 \end{itemize}
 \subsubsection{sound}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\textwidth, height=0.4\textheight, keepaspectratio]{img/sound}
+\end{figure}
 \en{Contains all classes for the ''Select Sound'' screen, where a user can choose what sound to add to a configuration.} \de{Enthält alle Klassen für die ''Sound auswählen'' Ansicht, in der der Nutzer entscheiden kann, welches Geräusch der Konfiguration hinzugefügt wird.}
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.3\textwidth]{sound_screen_playing_LIGHT}
-	\includegraphics[width=0.3\textwidth]{sound_screen_stopped_LIGHT}
-	\includegraphics[width=0.3\textwidth]{sound_screen_for_deletion_LIGHT}
+	\includefastlane{sound_screen_playing_LIGHT}
+	\includefastlane{sound_screen_stopped_LIGHT}
+	\includefastlane{sound_screen_for_deletion_LIGHT}
 \end{figure}
 \begin{itemize}
 	\item \textbf{SingleSound} \en{Composable for a single sound file, with a button to play it and a button to delete it.} \de{Composable um eine einzige Sound Datei anzuzeigen, zusammen mit einem Button zum abspielen, und einem zum löschen.}
@@ -206,10 +282,14 @@
 \end{itemize}
 
 \subsubsection{trainerScreen}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\textwidth, height=0.4\textheight, keepaspectratio]{img/trainerScreen}
+\end{figure}
 \en{Contains the classes for the ''Trainer Options'' screen. This is where the trainer can control all the remote devices.} \de{Enthält alle Klassen für die ''Ausbilderoptionen'' Ansicht. Von hier aus kann der Trainer die Remote Geräte fernsteuern.}
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.3\textwidth]{trainer_screen_light}
+	\includefastlane{trainer_screen_light}
 \end{figure}
 \begin{itemize}
 	\item \textbf{DeviceCard} \en{Card to represent one single device.} \de{Karte, um ein einzelnes Gerät zu repräsentieren.}
@@ -220,6 +300,10 @@
 \end{itemize}
 
 \subsubsection{universalComponents}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\textwidth, height=0.4\textheight, keepaspectratio]{img/universalComponents}
+\end{figure}
 \begin{itemize}
 	\item \textbf{Clickable Link} \en{A clickable link with a default look.} \de{Ein anklickbarer Link mit einem Standard aussehen.}
 	\item \textbf{ConfirmDeleteDialog} \en{Dialog to confirm if you want to delete something.} \de{Dialog um zu bestätigen, dass etwas gelöscht werden soll.}
@@ -228,10 +312,14 @@
 \end{itemize}
 
 \subsubsection{userSettings}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\textwidth, height=0.4\textheight, keepaspectratio]{img/userSettings}
+\end{figure}
 \en{Contains the classes for the ''User Settings'' screen. here, the trainer can adjust the settings for one client.} \de{Enthält alle Klassen für die ''Nutzereinstellungen'' Ansicht. Hier kann der Ausbilder die Einstellungen fü eine Remote Gerät ändern.}
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.3\textwidth]{user_settings_light}
+	\includefastlane{user_settings_light}
 \end{figure}
 \begin{itemize}
 	\item \textbf{UserSettingsEvent} \en{Defines all events which can happen on the user settings screen.} \de{Definiert alle Events die in der Nutzereinstellungen Ansicht auftreten können.}
@@ -241,6 +329,10 @@
 \end{itemize}
 
 \subsubsection{util}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\textwidth, height=0.4\textheight, keepaspectratio]{img/util}
+\end{figure}
 \begin{itemize}
 	\item \textbf{BackPressGestureDisabler} \en{Disables the back gesture on phones with gesture control.} \de{Deaktiviert die Zurück Geste auf Handy mit Gestensteuerung.}
 	\item \textbf{BigDecimal} \en{Allows for Numbers to be converted to BigDecimal, and adds some usefull functions to BigDecimal.} \de{Erlaubt es Numbers zu BigDecimal konvertiert zu werden, und fügt einige nütliche Funktionen zu BigDecimal hinzu.}
@@ -250,6 +342,10 @@
 \end{itemize}
 
 \subsection{ui.theme}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\textwidth, height=0.4\textheight, keepaspectratio]{img/ui.theme.png}
+\end{figure}
 \begin{itemize}
 	\item \textbf{Color} \en{Defines all the colors used in the app.} \de{Definiert alle in der App verwendete Farben.}
 	\item \textbf{Theme} \en{Combines multiple colors into different themes.} \de{Kombiniert mehre Farben zu verschiedenen Farbschemen.}
@@ -257,7 +353,8 @@
 	\item \textbf{Type} \en{Defines the fonts for the app.} \de{Definiert die in der App verwendeten Schriftarten.}
 \end{itemize}
 
-\setlength{\sectionbuffer}{0.0\textheight}
+\setlength{\subsectionbuffer}{0.0\textheight}
+\setlength{\subsubsectionbuffer}{0.0\textheight}
 
 \subsection{\en{Non Kotlin Files} \de{Nicht Kotlin Dateien}}
 
