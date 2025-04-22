@@ -37,6 +37,7 @@
     <string name="confirmDeleteDialogDismissBtn">Abbrechen</string>
     <string name="confirmDeleteDialogConfirmBtn">Löschen</string>
     <string name="ScreenInfo">Info</string>
+    <string name="ScreenHelp">Hilfe</string>
     <string name="ScreenRun">Konfiguration</string>
     <string name="ScreenSelect">Konfiguration auswählen</string>
     <string name="ScreenSound">Sound auswählen</string>
@@ -108,12 +109,32 @@
     <string name="android_to_old_oreo_required">Ihre Android-Version ist zu alt. Die Funktionalität zur Einstellung der Vibrationsstärke wurde durch Google in Android \"O\" eingeführt (Version 8.x und aufwärts).</string>
     <string name="default_configuration_name">Standard-Konfiguration</string>
     <string name="default_configuration_description">Dies ist die Standardkonfiguration der App, mit zwei Vibrations-Events.</string>
+    <string name="input_label">Name</string>
+    <string name="enter_name" translatable="true">Dein Name</string>
+    <string name="select_role" translatable="true">Wähle die Role</string>
     <string name="add_configuration_component">Komponente hinzufügen</string>
     <string name="dynamic_colors">Dynamisches Thema</string>
     <string name="normal">Normal</string>
     <string name="dynamic">Dynamisch</string>
     <string name="the_back_gesture_is_disabled_please_use_the_bottom_above">Die Zurück-Geste ist hier deaktiviert. Bitte verwenden Sie den Zurück-Knopf oben links.</string>
     <string name="new_configuration">Neue Konfiguration</string>
+    <string name="help_1">Wie kann man eine konfiguration starten</string>
+    <string name="help_2">Wie kann man eine Konfiguration bearbeiten und Geräusche und Vibrationen hinfügen </string>
+    <string name="help_3">Wie wählt man als Trainer Geräusche für User oder teilt sie </string>
+    <string name="help_4">Wie kann man die eigene Konfiguration teilen </string>
+    <string name="ScreenConnection">Mit einem Trainer verbinden</string>
+    <string name="cancel">Abbrechen</string>
+    <string name="Name">Name</string>
+    <string name="retry">Erneut versuchen</string>
+    <string name="searching_for_trainer">Trainer wird gesucht</string>
+    <string name="search_failed">Suche nach Trainer fehlgeschlagen</string>
+    <string name="trainer_screen_title">Ausbilderoptionen</string>
+    <string name="already_connected">Bereits verbunden</string>
+    <string name="start">Starten</string>
+    <string name="stop">Stoppen</string>
+    <string name="user_settings">Nutzereinstellungen</string>
+    <string name="user_select_configuration">Konfiguration auswählen</string>
+    <string name="error_invalid_name">Name darf nicht leer sein und darf keine Leerzeichen enthalten</string>
     <string name="min">Min</string>
     <string name="max">Max</string>
 </resources>
