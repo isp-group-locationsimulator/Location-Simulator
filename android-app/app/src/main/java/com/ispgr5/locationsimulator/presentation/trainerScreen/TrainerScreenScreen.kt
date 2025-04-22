@@ -39,7 +39,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -47,8 +46,8 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.network.ClientSingleton
-import com.ispgr5.locationsimulator.network.ServerSingleton
 import com.ispgr5.locationsimulator.presentation.ChosenRole
+import com.ispgr5.locationsimulator.presentation.previewData.AppPreview
 import com.ispgr5.locationsimulator.presentation.previewData.PreviewData
 import com.ispgr5.locationsimulator.presentation.universalComponents.LocationSimulatorTopBar
 import com.ispgr5.locationsimulator.presentation.util.Screen
@@ -173,7 +172,7 @@ fun TrainerScreenContent(
                 .weight(1f)
                 .padding(horizontal = 16.dp)
                 .background(
-                    if (isSystemInDarkTheme()) Color(0xFF80FFD1)
+                    if (isSystemInDarkTheme()) MaterialTheme.colorScheme.surfaceContainerLow
                     else Color.LightGray
                 )
         ) {
@@ -326,7 +325,7 @@ fun TrainerScreenTopBar(onGoBack: () -> Unit) {
 }
 
 
-@Preview(showBackground = true)
+@AppPreview
 @Composable
 fun TrainerScreenPreview() {
     val state = TrainerScreenState()
