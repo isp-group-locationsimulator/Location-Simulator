@@ -56,6 +56,15 @@
 	\item \textbf{GetFavoriteConfigurations} \en{Manager to get favored configurations from the database.} \de{Manager um die favorisierten Konfiurationen von der Datenbank zu lesen.}
 \end{itemize}
 
+\subsection{network}
+\en{Contains the backend classes for the network connection, necessary to enable the remote control function.} \de{Enthält die Backend Klassen für die Netzwerkverbindung, welche nötig ist um die Fernsteuerungsfunktion zu ermöglichen.}
+\begin{itemize}
+	\item \textbf{Client} \en{The client running on the trainer device.} \de{Der Client, welcher auf dem Trainer Gerät läuft.}
+	\item \textbf{ClientHandler} \en{Handles communication with the client for the server.} \de{Kümmert sich für den Server um die Kommunikation mit dem Client.}
+	\item \textbf{NetworkUtils} \en{General use network tools, like the valid commands.} \de{Allgemeine Netzwerk Tools, wie die List an validen Befehlen.}
+	\item \textbf{Server} \en{Server running on the hidden devices.} \de{Server, welcher auf den versteckten Geräten läuft.}
+\end{itemize}
+
 \subsection{presentation}
 \en{Contains the classes for all the different screens in the app.} \de{Enthält alle Klassen für die verschiedenen Ansichten der App.}
 \begin{itemize}
@@ -106,14 +115,27 @@
 	\item \textbf{EditConfigComp} \en{Contains all the composables for the view used to edit an element of a configuration. This means everything below the timeline.} \de{Enthält alle Komponenten, die in dem View verwendet werden, mit dem ein Element einer Konfiguration bearbeitet werden kann. Dies ist alles unter der Zeitachse.}
 	\item \textbf{Timeline} \en{Contains all the composables for the view of the timeline on the edit configuration screen.} \de{Enthält alle Composables für die Zeitachse in der Konfiguration bearbeiten Ansicht.}
 \end{itemize}
+\en{Contains the classes for the ''Export'' screen, which allows a trainer to wirelessly save a configuration on a remote device. Currently unfinished and not used.} \de{Enthält alle Klassen für die 'Exportieren'' Ansicht, in welcher der Trainer eine Konfiguration auf einem Remote Gerät speichern kann. Dieses Feature wurde nicht vollständig implementiert und wird aktuell nicht verwendet.}
+\begin{figure}[H]
+	\centering
+	%TODO \includegraphics[width=0.3\textwidth]{}
+\end{figure}
+\begin{itemize}
+	\item \textbf{ExportSettingsEvent} \en{Defines all events which can happen on the export settings screen.} \de{Definiert alle Events die in der Hinzufügen Ansicht auftreten können.}
+	\item \textbf{ExportSettingsScreen} \en{View for the export settings screen, contains all the composable that make up the export settings screen.} \de{View für die Hinzufügen Ansicht, enthält alle Composable, aus denen diese Ansicht aufgebaut ist.}
+	\item \textbf{ExportSettingsScreenState} \en{Contains the state of the export settings screen.} \de{Speichert den Zustand der Hinzufügen Ansicht.}
+	\item \textbf{ExportSettingsViewModel} \en{View Model for the export settings screen. Reacts to all UI events on this screen.} \de{View Model der Hinzufügen Ansicht. Reagiert auf alle UI Events in dieser Ansicht.}
+\end{itemize}
 \subsubsection{homescreen}
-\en{Contains all classes for the home screen, where the user can go to the configuration choice, see the favored configurations, and change the theme. Also contains the info screen.} \de{Enthält alle Klassen für den Startbildschirm, wo der Nutzer zur Konfigurations Auswahl gehen kann, seine favorisierten Konfigurationen sehen kann, und das Farbschema der App ändern kann.}
+\en{Contains all classes for the home screen, where the user can go to the configuration choice, see the favored configurations, and change the theme. he can also choose his name and remote-control role here. Also contains the info and help screen.} \de{Enthält alle Klassen für den Startbildschirm, wo der Nutzer zur Konfigurations-Auswahl gehen kann, seine favorisierten Konfigurationen sehen kann, und das Farbschema der App ändern kann. Hier kann er auch seinen Namen und seine Rolle für die Fernsteuerungsfunktion wählen. Enthält außerdem die Hilfe und Info Ansichten.}
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.3\textwidth]{home_screen_LIGHT}
 	\includegraphics[width=0.3\textwidth]{info_screen_LIGHT}
+	%TODO Help screen
 \end{figure}
 \begin{itemize}
+	\item \textbf{HelpScreen} \en{Help screen, which explains to the user how to perform varous tasks.} \de{Hilfe Ansicht, in welcher der Nutzer lernen kann, wie er verschiedene Aufgaben bewältigen kann.}
 	\item \textbf{HomeEvent} \en{Defines all events which can happen on the home screen.} \de{Definiert alle Events die in der Home Ansicht auftreten können.}
 	\item \textbf{HomeScreen} \en{View for the home screen, contains all the composable that make up the home screen.} \de{View für die Home Ansicht, enthält alle Composable, aus denen diese Ansicht aufgebaut ist.}
 	\item \textbf{HomeScreenState} \en{Contains the state of the home screen.} \de{Speichert den Zustand der Home Ansicht.}
@@ -186,6 +208,21 @@
 	\item \textbf{SoundScreenState} \en{Contains the state of the sound screen.} \de{Speichert den Zustand der Sound Ansicht.}
 	\item \textbf{SoundViewModel} \en{View Model for the sound screen. Reacts to all UI events on this screen.} \de{View Model der Sound Ansicht. Reagiert auf alle UI Events in dieser Ansicht.}
 \end{itemize}
+
+\subsubsection{trainerScreen}
+\en{Contains the classes for the ''Trainer Options'' screen. This is where the trainer can control all the remote devices.} \de{Enthält alle Klassen für die ''Ausbilderoptionen'' Ansicht. Von hier aus kann der Trainer die Remote Geräte fernsteuern.}
+\begin{figure}[H]
+	\centering
+	%TODO \includegraphics[width=0.3\textwidth]{}
+\end{figure}
+\begin{itemize}
+	\item \textbf{DeviceCard} \en{Card to represent one single device.} \de{Karte, um ein einzelnes Gerät zu repräsentieren.}
+	\item \textbf{TrainerScreenEvent} \en{Defines all events which can happen on the trainer screen screen.} \de{Definiert alle Events die in der Hinzufügen Ansicht auftreten können.}
+	\item \textbf{TrainerScreenScreen} \en{View for the trainer screen screen, contains all the composable that make up the trainer screen screen.} \de{View für die Hinzufügen Ansicht, enthält alle Composable, aus denen diese Ansicht aufgebaut ist.}
+	\item \textbf{TrainerScreenScreenState} \en{Contains the state of the trainer screen screen.} \de{Speichert den Zustand der Hinzufügen Ansicht.}
+	\item \textbf{TrainerScreenViewModel} \en{View Model for the trainer screen screen. Reacts to all UI events on this screen.} \de{View Model der Hinzufügen Ansicht. Reagiert auf alle UI Events in dieser Ansicht.}
+\end{itemize}
+
 \subsubsection{universalComponents}
 \begin{itemize}
 	\item \textbf{Clickable Link} \en{A clickable link with a default look.} \de{Ein anklickbarer Link mit einem Standard aussehen.}
@@ -193,6 +230,20 @@
 	\item \textbf{SnackbarContent} \en{Default snackbar for short notifications.} \de{Standard Snackbar für kurze Benachrichtigungen.}
 	\item \textbf{TobBar} \en{Default top bar displaying a back button, a title and possibly extra actions like delete.} \de{Standard Top Bar die einen Zurück Knopf, einen Titel, und mögliche Sonderaktionen, z.B. Löschen, anzeigt.}
 \end{itemize}
+
+\subsubsection{userSettings}
+\en{Contains the classes for the ''User Settings'' screen. here, the trainer can adjust the settings for one client.} \de{Enthält alle Klassen für die ''Nutzereinstellungen'' Ansicht. Hier kann der Ausbilder die Einstellungen fü eine Remote Gerät ändern.}
+\begin{figure}[H]
+	\centering
+	%TODO \includegraphics[width=0.3\textwidth]{}
+\end{figure}
+\begin{itemize}
+	\item \textbf{UserSettingsEvent} \en{Defines all events which can happen on the user settings screen.} \de{Definiert alle Events die in der Nutzereinstellungen Ansicht auftreten können.}
+	\item \textbf{UserSettingsScreen} \en{View for the user settings screen, contains all the composable that make up the user settings screen.} \de{View für die Nutzereinstellungen Ansicht, enthält alle Composable, aus denen diese Ansicht aufgebaut ist.}
+	\item \textbf{UserSettingsScreenState} \en{Contains the state of the user settings screen.} \de{Speichert den Zustand der Nutzereinstellungen Ansicht.}
+	\item \textbf{UserSettingsViewModel} \en{View Model for the user settings screen. Reacts to all UI events on this screen.} \de{View Model der Nutzereinstellungen Ansicht. Reagiert auf alle UI Events in dieser Ansicht.}
+\end{itemize}
+
 \subsubsection{util}
 \begin{itemize}
 	\item \textbf{BackPressGestureDisabler} \en{Disables the back gesture on phones with gesture control.} \de{Deaktiviert die Zurück Geste auf Handy mit Gestensteuerung.}
