@@ -92,6 +92,7 @@
     <string name="next_effect">Nächster Effekt</string>
     <string name="long_press_button_to_stop">Den Stop-Knopf lange gedrückt halten, um zu beenden.</string>
     <string name="about">Über</string>
+    <string name="help">Hilfe</string>
     <string name="delete_configuration">Konfiguration löschen</string>
     <string name="maintainer">Wartung und Support</string>
     <string name="location_simulator_is_maintained_by">LocationSimulator wird gewartet durch:</string>
@@ -137,4 +138,7 @@
     <string name="error_invalid_name">Name darf nicht leer sein und darf keine Leerzeichen enthalten</string>
     <string name="min">Min</string>
     <string name="max">Max</string>
+    <string name="trainer">Ausbilder</string>
+    <string name="remote">Ferngesteuert</string>
+    <string name="standalone">Einzelgerät</string>
 </resources>

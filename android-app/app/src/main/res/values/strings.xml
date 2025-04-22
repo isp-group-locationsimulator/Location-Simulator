@@ -144,4 +144,7 @@
 
     <string name="min">Min</string>
     <string name="max">Max</string>
+    <string name="trainer">Trainer</string>
+    <string name="remote">Remote</string>
+    <string name="standalone">Standalone</string>
 </resources>

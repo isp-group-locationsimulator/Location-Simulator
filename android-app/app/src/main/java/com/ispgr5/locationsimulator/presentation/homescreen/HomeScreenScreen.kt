@@ -576,7 +576,13 @@ private fun RoleSelectionField(selectedRole: MutableState<String>) {
                 .padding(16.dp)
                 .height(20.dp)
         ) {
-            Text(text = selectedRole.value)
+            val boxText = when(selectedRole.value) {
+                "Trainer" -> stringResource(id = R.string.trainer)
+                "Remote" -> stringResource(id = R.string.remote)
+                else -> stringResource(id = R.string.standalone)
+            }
+
+            Text(text = boxText)
             DropdownMenu(
                 expanded = expanded,
                 onDismissRequest = { expanded = false },
@@ -585,21 +591,21 @@ private fun RoleSelectionField(selectedRole: MutableState<String>) {
                     .background(colorScheme.surfaceContainerHigh)
             ) {
                 DropdownMenuItem(
-                    text = { Text("Trainer") },
+                    text = { Text(stringResource(id = R.string.trainer)) },
                     onClick = {
                         selectedRole.value = "Trainer"
                         expanded = false
                     }
                 )
                 DropdownMenuItem(
-                    text = { Text("Remote") },
+                    text = { Text(stringResource(id = R.string.remote)) },
                     onClick = {
                         selectedRole.value = "Remote"
                         expanded = false
                     }
                 )
                 DropdownMenuItem(
-                    text = { Text("Standalone") },
+                    text = { Text(stringResource(id = R.string.standalone)) },
                     onClick = {
                         selectedRole.value = "Standalone"
                         expanded = false
