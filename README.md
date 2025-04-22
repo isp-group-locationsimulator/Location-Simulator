@@ -10,7 +10,8 @@ The app was developed as a student project at the University of Luebeck, Germany
 
 ## Changelog
 
-- Version 1.1.1: initial public release
+- Version 1.1.1:    initial public release
+- Version 1.2:      Added remote control function, help screen and precise inputs. Addionally added developer documentation.
 
 ## License
 Copyright 2023 Location Simulator team

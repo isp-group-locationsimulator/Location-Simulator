@@ -29,6 +29,7 @@ Eine App zum Training von USAR-Einsatzkräften
 <b>Location Simulator</b> is an app for the training of Urban Search and Rescue (USAR) personnel in the operation of acoustic equipment for locating persons in collapsed structures. 
 
 Personnel is trained in the operation of this equipment by placing an Android smartphone into a rubble structure. The phone will periodically vibrate using the vibration motor and/or generate audible signals from audio recording (e.g. calling out for help, or moaning), so that the personnel being trained can precisely locate the phone within the structure. This app can thus replace existing training aids such as automatic "knocking devices" or cell phones numbers being dialled by the trainers.
+This app also supports a remote control function, where the trainer can controll the hidded devices via WiFi to cause one or multiple signals.
 
 The app <b>Location Simulator</b> was developed as a student project at the University of Luebeck, Germany, in collaboration with volunteers in the German Federal Agency for Technical Relief. The continued development of the app was handed over to one of these volunteers. The German Federal Agency for Technical Relief was not otherwise involved in and is not otherwise affiliated with the development of the application.
 
@@ -39,6 +40,7 @@ The source code of the application is available on GitHub and licensed under the
 <b>Ortungssimulator<b> ist eine App zum Training von Einsatzkräften im Bereich von <i>Urban Search and Rescue<i> (USAR) im Umgang mit akustischer Ortungstechnik, um verschüttete Personen zu lokalisieren.
 
 Die Einsatzkräfte werden in der Verwendung mit der Ausstattung geschult, indem ein Android-Smartphone in einem Trümmerkegel platziert wird. Das Smartphone wird periodisch vibrieren und/oder hörbare Signale (z.B. Rufe nach Hilfe oder Stöhnen) abgegben. So können die Einsatzkräfte die Lage des Handys genau lokalisieren. Somit kann die App bereits existierende Trainingsmittel wie automatische "Klopfer" oder ad-hoc-Lösungen wie kontinuierliche Anrufe an ein verstecktes Smartphone effektiv ersetzen und ergänzen.
+Die App unterstützt zudem eine Fernsteuerungsfunktion, mit welcher ein Ausbilder die versteckten Geräte über WiFi kontrollieren kann um automatisch einzelne oder mehrere Signale auszulösen.
 
 Die App <b>Ortungssimulator</b> wurde als studentisches Projekt an der Universitätz zu Lübeck in Zusammenarbeit mit ehrenamtlichen Einsatzkräften in der Bundesanstalt Technisches Hilfswerk entwickelt. Nach Abschluss des studentischen Projekts wurde die App zur Weiterentwicklung und -pflege an die beteiligten Einsatzkräfte übergeben. Die Bundesanstalt Technisches Hilfswerk ist darüber hinaus nicht in die Entwicklung der App eingebunden und mit der App nicht affiliiert.
 
@@ -51,7 +53,7 @@ Der Quellcode der App ist auf GitHub verfügbar und mittels Apache-2 lizensiert:
 
 |en-US|de-DE|
 |-|-|
-|![](./images/phone/en-US/01-startscreen.png)|![](./images/phone/de-DE/01-startscreen.png)|
+|![](./images/phone/en-US/01-startscreen.png)|![](./images/phone/de-DE/01-home-screen.png)|
 
 ### 02 Create configuration
 
@@ -88,3 +90,15 @@ Der Quellcode der App ist auf GitHub verfügbar und mittels Apache-2 lizensiert:
 |en-US|de-DE|
 |-|-|
 |![](./images/phone/en-US/07-start-configuration.png)|![](./images/phone/de-DE/07-start-configuration.png)|
+
+### 08 Remote control trainer
+
+|en-US|de-DE|
+|-|-|
+|![](./images/phone/en-US/08-trainer-screen.png)|![](./images/phone/de-DE/08-trainer-screen.png)|
+
+### 09 Remote control settings
+
+|en-US|de-DE|
+|-|-|
+|![](./images/phone/en-US/09-user-settings.png)|![](./images/phone/de-DE/09-user-settings.png)|
