@@ -1,6 +1,5 @@
 package com.ispgr5.locationsimulator.presentation.editTimeline.components
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -276,7 +275,7 @@ private fun PauseEditor(
     )
 
     SliderForRangeWithPreciseInputs(
-        modifierSlider = Modifier.testTag(TestTags.EDIT_SLIDER_PAUSE),
+        modifier = Modifier.testTag(TestTags.EDIT_SLIDER_PAUSE),
         onValueChange = {
             editTimelineEventHandlers?.onPauseValueChanged?.invoke(it)
         },
@@ -342,7 +341,7 @@ private fun VibrationParameters(
     }
     if (hasAmplitudeControl) {
         SliderForRangeWithPreciseInputs(
-            modifierSlider = Modifier.testTag(TestTags.EDIT_VIB_SLIDER_STRENGTH),
+            modifier = Modifier.testTag(TestTags.EDIT_VIB_SLIDER_STRENGTH),
             value = RangeConverter.eightBitIntToPercentageFloat(
                 configComponent.minStrength
             )..RangeConverter.eightBitIntToPercentageFloat(
@@ -365,7 +364,7 @@ private fun VibrationParameters(
     )
 
     SliderForRangeWithPreciseInputs(
-        modifierSlider = Modifier.testTag(TestTags.EDIT_VIB_SLIDER_DURATION),
+        modifier = Modifier.testTag(TestTags.EDIT_VIB_SLIDER_DURATION),
         modifierTextInput = Modifier.testTag(TestTags.EDIT_VIB_FIELD_DURATION),
         onValueChange = {
             editTimelineEventHandlers?.onVibDurationChanged?.invoke(it)
@@ -496,7 +495,7 @@ fun FloatInputField(
 
 @Composable
 fun SliderForRangeWithPreciseInputs(
-    modifierSlider: Modifier = Modifier,
+    modifier: Modifier = Modifier,
     modifierTextInput: Modifier = Modifier,
     enabled: Boolean = true,
     onValueChange: (ClosedFloatingPointRange<Float>) -> Unit,
@@ -518,13 +517,13 @@ fun SliderForRangeWithPreciseInputs(
             } else {
                 false
             }
-        }catch (_: Exception) {
+        } catch (_: Exception) {
             false
         }
     }
 
     SliderForRange(
-        modifier = modifierSlider,
+        modifier = modifier,
         enabled = enabled,
         onValueChange = {start = inputFormat.format(it.start); end = inputFormat.format(it.endInclusive); onValueChange(it)},
         value = value,

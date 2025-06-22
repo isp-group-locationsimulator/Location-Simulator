@@ -5,7 +5,7 @@ import com.ispgr5.locationsimulator.presentation.ChosenRole
 /**Class to get the Route to the Screens*/
 sealed class Screen(val route: String) {
 
-
+    data object OnboardingScreen : Screen("onboardingScreen")
     data object HomeScreen : Screen("homeScreen")
     data object InfoScreen : Screen("infoScreen")
     data object HelpScreen: Screen("helpScreen")
@@ -25,6 +25,7 @@ sealed class Screen(val route: String) {
     {
         fun createRoute(userName: String, userIpAddress: String) = "userSettingsScreen?userName=$userName,userIpAddress=$userIpAddress"
     }
+    @Suppress("unused")
     data object ExportSettingsScreen : Screen("exportSettingsScreen?userName={userName}")
     {
         fun createRoute(userName: String) = "exportSettingsScreen?userName=$userName"

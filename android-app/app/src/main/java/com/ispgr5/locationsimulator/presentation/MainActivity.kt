@@ -15,6 +15,7 @@ import android.webkit.MimeTypeMap
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContract
+import androidx.annotation.StringRes
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme.colorScheme
@@ -39,6 +40,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.ispgr5.locationsimulator.R
+import com.ispgr5.locationsimulator.data.preferences.PREF_NAME
+import com.ispgr5.locationsimulator.data.preferences.PreferencesKeys
 import com.ispgr5.locationsimulator.data.storageManager.ConfigurationStorageManager
 import com.ispgr5.locationsimulator.data.storageManager.SoundStorageManager
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
@@ -74,15 +77,18 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.ExperimentalSerializationApi
 import java.io.FileOutputStream
 import javax.inject.Inject
+import androidx.core.content.edit
+import com.ispgr5.locationsimulator.presentation.onboarding.OnboardingScreen
+import androidx.core.net.toUri
 
 val LocalThemeState = compositionLocalOf {
     ThemeState(themeType = ThemeType.AUTO)
 }
 
-enum class ChosenRole(val value: Int) {
-    STANDALONE(1),
-    REMOTE(2),
-    TRAINER(3);
+enum class ChosenRole(val value: Int, @StringRes val label: Int) {
+    STANDALONE(1, R.string.standalone),
+    REMOTE(2, R.string.remote),
+    TRAINER(3, R.string.trainer);
 
     companion object {
         fun valueOf(value: Int?) = ChosenRole.entries.find { it.value == value }
@@ -113,7 +119,8 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        ClientSingleton.wifiManager = this.applicationContext.getSystemService(WIFI_SERVICE) as WifiManager
+        ClientSingleton.wifiManager =
+            this.applicationContext.getSystemService(WIFI_SERVICE) as WifiManager
         ServerSingleton.keepScreenOn = keepScreenOn
         ServerSingleton.doNotKeepScreenOn = doNotKeepScreenOn
 
@@ -128,13 +135,19 @@ class MainActivity : ComponentActivity() {
             snackbarContent = snackbarContent,
             configurationUseCases = configurationUseCases
         )
-        val storedThemeType =
-            getSharedPreferences("prefs", MODE_PRIVATE).getString("themeType", ThemeType.LIGHT.name)
-                ?.let {
-                    ThemeType.valueOf(it)
-                } ?: ThemeType.LIGHT
+        val sharedPreferences = getSharedPreferences(PREF_NAME, MODE_PRIVATE)
+        val storedThemeType = sharedPreferences.getString(
+            PreferencesKeys.THEME_TYPE.name,
+            ThemeType.LIGHT.name
+        )
+            ?.let {
+                ThemeType.valueOf(it)
+            } ?: ThemeType.LIGHT
         val storedDynamicColors =
-            getSharedPreferences("prefs", MODE_PRIVATE).getBoolean("dynamicColors", false)
+            sharedPreferences.getBoolean(PreferencesKeys.DYNAMIC_COLORS.name, false)
+
+        val onboardingComplete =
+            sharedPreferences.getBoolean(PreferencesKeys.ONBOARDING_COMPLETED.name, true)
 
         val themeState = mutableStateOf(
             ThemeState(themeType = storedThemeType, useDynamicColor = storedDynamicColors)
@@ -156,6 +169,7 @@ class MainActivity : ComponentActivity() {
                         NavigationAppHost(
                             navController = navController,
                             themeState = themeState,
+                            onboardingComplete = onboardingComplete,
                             snackbarContent = snackbarContent,
                             powerManager = powerManager
                         )
@@ -191,6 +205,7 @@ class MainActivity : ComponentActivity() {
     fun NavigationAppHost(
         navController: NavHostController,
         themeState: MutableState<ThemeState>,
+        onboardingComplete: Boolean,
         snackbarContent: MutableState<SnackbarContent?>,
         powerManager: PowerManager,
     ) {
@@ -198,16 +213,31 @@ class MainActivity : ComponentActivity() {
         val snackbarHostState = remember {
             SnackbarHostState()
         }
-        NavHost(navController = navController, startDestination = Screen.HomeScreen.route) {
+        val checkBatteryOptimizationStatus = {
+            when {
+                Build.VERSION.SDK_INT < Build.VERSION_CODES.M -> true
+                else -> powerManager.isIgnoringBatteryOptimizations(context.packageName)
+            }
+        }
+        NavHost(
+            navController = navController, startDestination = when (onboardingComplete) {
+                true -> Screen.HomeScreen.route
+                else -> Screen.OnboardingScreen.route
+            }
+        ) {
+            composable(Screen.OnboardingScreen.route) {
+                OnboardingScreen(
+                    themeState = themeState,
+                    activity = this@MainActivity,
+                    navController = navController,
+                    checkBatteryOptimizationStatus = checkBatteryOptimizationStatus,
+                    batteryOptDisableFunction = { disableBatteryOptimization(powerManager) },
+                )
+            }
             composable(Screen.HomeScreen.route) {
                 HomeScreenScreen(
                     navController = navController,
-                    checkBatteryOptimizationStatus = {
-                        when {
-                            Build.VERSION.SDK_INT < Build.VERSION_CODES.M -> true
-                            else -> powerManager.isIgnoringBatteryOptimizations(context.packageName)
-                        }
-                    },
+                    checkBatteryOptimizationStatus = checkBatteryOptimizationStatus,
                     batteryOptDisableFunction = { disableBatteryOptimization(powerManager) },
                     soundStorageManager = soundStorageManager,
                     activity = this@MainActivity,
@@ -221,15 +251,16 @@ class MainActivity : ComponentActivity() {
             }
             composable(Screen.HelpScreen.route) {
                 HelpScreen(
-                    navController=navController, appTheme = themeState
+                    navController = navController, appTheme = themeState
                 )
             }
             composable(
                 route = Screen.SelectScreen.route,
-                arguments = listOf(navArgument("chosenRole") { type = NavType.IntType },)
+                arguments = listOf(navArgument("chosenRole") { type = NavType.IntType })
             ) { backStackEntry ->
                 val chosenRole =
-                    ChosenRole.valueOf(backStackEntry.arguments?.getInt("chosenRole")) ?: ChosenRole.STANDALONE
+                    ChosenRole.valueOf(backStackEntry.arguments?.getInt("chosenRole"))
+                        ?: ChosenRole.STANDALONE
                 SelectScreen(
                     navController = navController,
                     configurationStorageManager = configurationStorageManager,
@@ -262,7 +293,8 @@ class MainActivity : ComponentActivity() {
                     navArgument("remoteIpAddress") { type = NavType.StringType })
             ) { backStackEntry ->
                 val chosenRole =
-                    ChosenRole.valueOf(backStackEntry.arguments?.getInt("chosenRole")) ?: ChosenRole.STANDALONE
+                    ChosenRole.valueOf(backStackEntry.arguments?.getInt("chosenRole"))
+                        ?: ChosenRole.STANDALONE
                 DelayScreen(
                     navController = navController,
                     startServiceFunction = startService,
@@ -377,14 +409,14 @@ class MainActivity : ComponentActivity() {
 
     private val keepScreenOn: () -> Unit = {
         keepScreenOnCount++
-        if(keepScreenOnCount == 1) {
+        if (keepScreenOnCount == 1) {
             window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         }
     }
 
     private val doNotKeepScreenOn: () -> Unit = {
         keepScreenOnCount--
-        if(keepScreenOnCount <= 0) {
+        if (keepScreenOnCount <= 0) {
             keepScreenOnCount = 0
             window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         }
@@ -396,7 +428,7 @@ class MainActivity : ComponentActivity() {
         if (powerManager.isIgnoringBatteryOptimizations(packageName)) return
         val intent = Intent()
         intent.action = android.provider.Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
-        intent.data = Uri.parse("package:$packageName")
+        intent.data = "package:$packageName".toUri()
         startActivity(intent)
     }
 
@@ -442,8 +474,8 @@ class MainActivity : ComponentActivity() {
      * This function installs the audio files that come with the app.
      */
     private suspend fun installFilesOnFirstStartup() {
-        val preferences: SharedPreferences = getSharedPreferences("prefs", MODE_PRIVATE)
-        val firstStart: Boolean = preferences.getBoolean("firstStart", true)
+        val preferences: SharedPreferences = getSharedPreferences(PREF_NAME, MODE_PRIVATE)
+        val firstStart: Boolean = preferences.getBoolean(PreferencesKeys.FIRST_START.name, true)
         if (!firstStart) return
         assets.list("sounds")?.forEach { soundName ->
             val extension = MimeTypeMap.getFileExtensionFromUrl(soundName)
@@ -459,9 +491,9 @@ class MainActivity : ComponentActivity() {
             context = this,
             defaultSettings = getDefaultValues()
         )
-        val editor: SharedPreferences.Editor = preferences.edit()
-        editor.putBoolean("firstStart", false)
-        editor.apply()
+        preferences.edit {
+            putBoolean(PreferencesKeys.FIRST_START.name, false)
+        }
     }
 
     /**
@@ -470,22 +502,22 @@ class MainActivity : ComponentActivity() {
      */
     private val saveDefaultValues: (state: State<SettingsState>) -> Unit =
         fun(state: State<SettingsState>) {
-            val preferences: SharedPreferences = getSharedPreferences("prefs", MODE_PRIVATE)
-            val editor: SharedPreferences.Editor = preferences.edit()
-            editor.putInt(PreferencesKeys.MIN_PAUSE_SOUND.name, state.value.minPauseSound)
-            editor.putInt(PreferencesKeys.MAX_PAUSE_SOUND.name, state.value.maxPauseSound)
-            editor.putFloat(PreferencesKeys.MIN_VOL_SOUND.name, state.value.minVolumeSound)
-            editor.putFloat(PreferencesKeys.MAX_VOL_SOUND.name, state.value.maxVolumeSound)
-            editor.putInt(PreferencesKeys.MIN_PAUSE_VIB.name, state.value.minPauseVibration)
-            editor.putInt(PreferencesKeys.MAX_PAUSE_VIB.name, state.value.maxPauseVibration)
-            editor.putInt(PreferencesKeys.MIN_STRENGTH_VIB.name, state.value.minStrengthVibration)
-            editor.putInt(PreferencesKeys.MAX_STRENGTH_VIB.name, state.value.maxStrengthVibration)
-            editor.putInt(PreferencesKeys.MIN_DURATION_VIB.name, state.value.minDurationVibration)
-            editor.putInt(PreferencesKeys.MAX_DURATION_VIB.name, state.value.maxDurationVibration)
-            editor.putString(
-                PreferencesKeys.DEFAULT_NAME_VIB.name, state.value.defaultNameVibration
-            )
-            editor.apply()
+            val preferences: SharedPreferences = getSharedPreferences(PREF_NAME, MODE_PRIVATE)
+            preferences.edit {
+                putInt(PreferencesKeys.MIN_PAUSE_SOUND.name, state.value.minPauseSound)
+                putInt(PreferencesKeys.MAX_PAUSE_SOUND.name, state.value.maxPauseSound)
+                putFloat(PreferencesKeys.MIN_VOL_SOUND.name, state.value.minVolumeSound)
+                putFloat(PreferencesKeys.MAX_VOL_SOUND.name, state.value.maxVolumeSound)
+                putInt(PreferencesKeys.MIN_PAUSE_VIB.name, state.value.minPauseVibration)
+                putInt(PreferencesKeys.MAX_PAUSE_VIB.name, state.value.maxPauseVibration)
+                putInt(PreferencesKeys.MIN_STRENGTH_VIB.name, state.value.minStrengthVibration)
+                putInt(PreferencesKeys.MAX_STRENGTH_VIB.name, state.value.maxStrengthVibration)
+                putInt(PreferencesKeys.MIN_DURATION_VIB.name, state.value.minDurationVibration)
+                putInt(PreferencesKeys.MAX_DURATION_VIB.name, state.value.maxDurationVibration)
+                putString(
+                    PreferencesKeys.DEFAULT_NAME_VIB.name, state.value.defaultNameVibration
+                )
+            }
         }
 
     /**
@@ -493,7 +525,7 @@ class MainActivity : ComponentActivity() {
      * (in Main Activity because it needs the context)
      */
     private val getDefaultValues: () -> SettingsState = fun(): SettingsState {
-        val preferences: SharedPreferences = getSharedPreferences("prefs", MODE_PRIVATE)
+        val preferences: SharedPreferences = getSharedPreferences(PREF_NAME, MODE_PRIVATE)
         val startDefaultName = "Vibration"
         return SettingsState(
             minPauseSound = preferences.getInt(PreferencesKeys.MIN_PAUSE_SOUND.name, 0),
@@ -520,9 +552,6 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-enum class PreferencesKeys {
-    MIN_PAUSE_SOUND, MAX_PAUSE_SOUND, MIN_VOL_SOUND, MAX_VOL_SOUND, MIN_PAUSE_VIB, MAX_PAUSE_VIB, MIN_STRENGTH_VIB, MAX_STRENGTH_VIB, MIN_DURATION_VIB, MAX_DURATION_VIB, DEFAULT_NAME_VIB,
-}
 
 object NavigationArguments {
     val configurationId = navArgument(

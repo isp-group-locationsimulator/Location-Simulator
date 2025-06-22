@@ -141,4 +141,9 @@
     <string name="trainer">Ausbilder</string>
     <string name="remote">Ferngesteuert</string>
     <string name="standalone">Einzelgerät</string>
+    <string name="welcome_to">Willkommen im</string>
+    <string name="battery_optimization">Akku-Optimierung</string>
+    <string name="locationsimulator_is_already_exempt_from_battery_optimizations">Ortungssimulator ist bereits von der Akku-Optimierung ausgenommen.</string>
+    <string name="vibration_test">Vibrationstest</string>
+    <string name="vibration_test_text">Manche Geräte benötigen eine minimale Laufzeit und Stärke, damit die Vibration fühlbar ist. Bitte wähle die absolute Minimalzeit und Stärke der Vibration, damit Du die Vibrationen immer fühlen kannst.</string>
 </resources>

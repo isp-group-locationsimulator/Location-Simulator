@@ -147,4 +147,9 @@
     <string name="trainer">Trainer</string>
     <string name="remote">Remote</string>
     <string name="standalone">Standalone</string>
+    <string name="welcome_to">Welcome to</string>
+    <string name="battery_optimization">Battery Optimization</string>
+    <string name="locationsimulator_is_already_exempt_from_battery_optimizations">LocationSimulator is already exempt from battery optimizations</string>
+    <string name="vibration_test">Vibration Test</string>
+    <string name="vibration_test_text">Some phones require a minimum run-time and strength in order for you to feel the vibration. Please select the absolute minimum time and strength, such that you will always feel the vibrations.</string>
 </resources>

@@ -8,6 +8,8 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.test.platform.app.InstrumentationRegistry
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.core.util.TestTags
+import com.ispgr5.locationsimulator.data.preferences.PREF_NAME
+import com.ispgr5.locationsimulator.data.preferences.PreferencesKeys
 import com.ispgr5.locationsimulator.di.AppModule
 import com.ispgr5.locationsimulator.presentation.MainActivity
 import com.ispgr5.locationsimulator.ui.theme.ThemeState
@@ -50,10 +52,10 @@ class CreateAndPlayConfigurationTest(val locale: Locale, val themeState: ThemeSt
 
         // Update SharedPreferences for theme
         val context = InstrumentationRegistry.getInstrumentation().targetContext
-        val prefs = context.getSharedPreferences("prefs", MODE_PRIVATE)
+        val prefs = context.getSharedPreferences(PREF_NAME, MODE_PRIVATE)
         prefs.edit()
-            .putString("themeType", themeState.themeType.name)
-            .putBoolean("dynamicColors", themeState.useDynamicColor)
+            .putString(PreferencesKeys.THEME_TYPE.name, themeState.themeType.name)
+            .putBoolean(PreferencesKeys.DYNAMIC_COLORS.name, themeState.useDynamicColor)
             .apply()
 
         // Recreate activity to apply theme changes
@@ -66,6 +68,7 @@ class CreateAndPlayConfigurationTest(val locale: Locale, val themeState: ThemeSt
         val activity = composeRule.activity
         val config = Configuration(activity.resources.configuration)
         config.setLocale(locale)
+        @Suppress("DEPRECATION")
         activity.resources.updateConfiguration(config, activity.resources.displayMetrics)
 
         Locale.setDefault(locale)

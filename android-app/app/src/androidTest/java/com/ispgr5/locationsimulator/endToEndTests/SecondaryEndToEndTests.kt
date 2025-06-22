@@ -1,32 +1,42 @@
 package com.ispgr5.locationsimulator.endToEndTests
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.Color
 import androidx.compose.ui.graphics.asAndroidBitmap
-import androidx.compose.ui.test.*
+import androidx.compose.ui.test.assertTextEquals
+import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onAllNodesWithTag
+import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onParent
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTextInput
+import androidx.compose.ui.test.performTextReplacement
+import androidx.core.content.edit
 import androidx.test.filters.SdkSuppress
 import androidx.test.platform.app.InstrumentationRegistry
+import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.core.util.TestTags
+import com.ispgr5.locationsimulator.data.preferences.PREF_NAME
+import com.ispgr5.locationsimulator.data.preferences.PreferencesKeys
 import com.ispgr5.locationsimulator.di.AppModule
 import com.ispgr5.locationsimulator.presentation.MainActivity
+import com.ispgr5.locationsimulator.ui.theme.ThemeState
+import com.ispgr5.locationsimulator.ui.theme.ThemeType
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.UninstallModules
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import com.ispgr5.locationsimulator.R
-import com.ispgr5.locationsimulator.ui.theme.ThemeState
-import org.junit.After
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import java.util.Locale
-import com.ispgr5.locationsimulator.ui.theme.ThemeType
 
 
 @HiltAndroidTest
@@ -52,11 +62,11 @@ class SecondaryEndToEndTests(val locale: Locale, val themeState: ThemeState) {
 
         // Update SharedPreferences for theme
         val context = InstrumentationRegistry.getInstrumentation().targetContext
-        val prefs = context.getSharedPreferences("prefs", MODE_PRIVATE)
-        prefs.edit()
-            .putString("themeType", themeState.themeType.name)
-            .putBoolean("dynamicColors", themeState.useDynamicColor)
-            .apply()
+        val prefs = context.getSharedPreferences(PREF_NAME, MODE_PRIVATE)
+        prefs.edit {
+            putString(PreferencesKeys.THEME_TYPE.name, themeState.themeType.name)
+            putBoolean(PreferencesKeys.DYNAMIC_COLORS.name, themeState.useDynamicColor)
+        }
 
         // Recreate activity to apply theme changes
         composeRule.activity.runOnUiThread {
@@ -68,6 +78,7 @@ class SecondaryEndToEndTests(val locale: Locale, val themeState: ThemeState) {
         val activity = composeRule.activity
         val config = Configuration(activity.resources.configuration)
         config.setLocale(locale)
+        @Suppress("DEPRECATION")
         activity.resources.updateConfiguration(config, activity.resources.displayMetrics)
 
         Locale.setDefault(locale)
@@ -161,16 +172,19 @@ class SecondaryEndToEndTests(val locale: Locale, val themeState: ThemeState) {
          * Sound, Vibration1, Vibration3, Vibration2**/
 
         composeRule.onAllNodesWithTag(TestTags.EDIT_CONFIG_ITEM)[0].performClick()
-        composeRule.onNodeWithTag(TestTags.EDIT_ITEM_NAME_TEXTINPUT).assertTextEquals(context.getString(R.string.editTimeline_name), "Sound")
+        composeRule.onNodeWithTag(TestTags.EDIT_ITEM_NAME_TEXTINPUT)
+            .assertTextEquals(context.getString(R.string.editTimeline_name), "Sound")
         composeRule.onAllNodesWithTag(TestTags.EDIT_CONFIG_ITEM)[1].performClick()
-        composeRule.onNodeWithTag(TestTags.EDIT_ITEM_NAME_TEXTINPUT).assertTextEquals(context.getString(R.string.editTimeline_name), "Vibration1")
+        composeRule.onNodeWithTag(TestTags.EDIT_ITEM_NAME_TEXTINPUT)
+            .assertTextEquals(context.getString(R.string.editTimeline_name), "Vibration1")
         composeRule.onAllNodesWithTag(TestTags.EDIT_CONFIG_ITEM)[2].performClick()
 
         // composeRule.onNodeWithTag(TestTags.EDIT_NAME_TEXTINPUT).assertTextEquals("Vibration3")
 
         composeRule.onAllNodesWithTag(TestTags.EDIT_CONFIG_ITEM)[3].performClick()
 
-        composeRule.onNodeWithTag(TestTags.EDIT_ITEM_NAME_TEXTINPUT).assertTextEquals(context.getString(R.string.editTimeline_name), "Vibration2")
+        composeRule.onNodeWithTag(TestTags.EDIT_ITEM_NAME_TEXTINPUT)
+            .assertTextEquals(context.getString(R.string.editTimeline_name), "Vibration2")
 
     }
 
@@ -187,7 +201,8 @@ class SecondaryEndToEndTests(val locale: Locale, val themeState: ThemeState) {
 
         /**Es wird überprüft, dass nun im Sytem der Darkmode gesetzt ist.**/
         //check if dark theme is setted in prefs
-        var isDarkTheme = composeRule.activity.getSharedPreferences("prefs", Context.MODE_PRIVATE).getString("themeType", "") == "DARK"
+        val isDarkTheme = composeRule.activity.getSharedPreferences(PREF_NAME, MODE_PRIVATE)
+            .getString(PreferencesKeys.THEME_TYPE.name, "") == "DARK"
         assert(isDarkTheme)
         //check if screen is dark
         /**Es wird überprüft, dass der Bildschirm dunkel ist.**/
@@ -218,7 +233,8 @@ class SecondaryEndToEndTests(val locale: Locale, val themeState: ThemeState) {
         /**Es wird überprüft, dass nun im System der Lightmdoe gesetzt ist.**/
         //check if light theme is setted in prefs.
         val isLightTheme =
-            (composeRule.activity.getSharedPreferences("prefs", Context.MODE_PRIVATE).getString("themeType", "") == "LIGHT")
+            (composeRule.activity.getSharedPreferences(PREF_NAME, MODE_PRIVATE)
+                .getString(PreferencesKeys.THEME_TYPE.name, "") == "LIGHT")
         assert(isLightTheme)
         //check if screen is light
 
@@ -243,7 +259,8 @@ class SecondaryEndToEndTests(val locale: Locale, val themeState: ThemeState) {
 
         /**Es wird überprüft, dass nun im Sytem der Darkmode gesetzt ist.**/
         //check if dark theme is setted in prefs
-        var isDarkTheme = composeRule.activity.getSharedPreferences("prefs", Context.MODE_PRIVATE).getString("themeType", "") == "DARK"
+        val isDarkTheme = composeRule.activity.getSharedPreferences(PREF_NAME, MODE_PRIVATE)
+            .getString(PreferencesKeys.THEME_TYPE.name, "") == "DARK"
         assert(isDarkTheme)
 
         /**Wechsel in den Select Screen.**/
@@ -258,7 +275,9 @@ class SecondaryEndToEndTests(val locale: Locale, val themeState: ThemeState) {
 
         /**Es wird überprüft, dass nun im System der Lightmdoe gesetzt ist.**/
         //check if light theme is setted in prefs.
-        val isLightTheme = composeRule.activity.getSharedPreferences("prefs", Context.MODE_PRIVATE).getString("themeType", "") == "LIGHT"
+        val isLightTheme =
+            composeRule.activity.getSharedPreferences(PREF_NAME, MODE_PRIVATE)
+                .getString(PreferencesKeys.THEME_TYPE.name, "") == "LIGHT"
         assert(isLightTheme)
         composeRule.onNodeWithTag(TestTags.HOME_LIGHTMODE).assertExists()
     }

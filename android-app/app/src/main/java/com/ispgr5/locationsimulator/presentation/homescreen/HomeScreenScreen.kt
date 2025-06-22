@@ -1,6 +1,6 @@
 package com.ispgr5.locationsimulator.presentation.homescreen
 
-import android.os.Build
+import android.content.Context
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -27,9 +26,11 @@ import androidx.compose.material.icons.filled.Error
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme.colorScheme
@@ -38,7 +39,6 @@ import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -51,7 +51,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -66,6 +65,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.edit
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.gigamole.composescrollbars.Scrollbars
@@ -76,6 +76,8 @@ import com.gigamole.composescrollbars.scrolltype.ScrollbarsScrollType
 import com.ispgr5.locationsimulator.BuildConfig
 import com.ispgr5.locationsimulator.R
 import com.ispgr5.locationsimulator.core.util.TestTags
+import com.ispgr5.locationsimulator.data.preferences.PREF_NAME
+import com.ispgr5.locationsimulator.data.preferences.PreferencesKeys
 import com.ispgr5.locationsimulator.data.storageManager.SoundStorageManager
 import com.ispgr5.locationsimulator.domain.model.Configuration
 import com.ispgr5.locationsimulator.network.ServerSingleton
@@ -84,14 +86,13 @@ import com.ispgr5.locationsimulator.presentation.ChosenRole
 import com.ispgr5.locationsimulator.presentation.MainActivity
 import com.ispgr5.locationsimulator.presentation.previewData.AppPreview
 import com.ispgr5.locationsimulator.presentation.previewData.PreviewData
-import com.ispgr5.locationsimulator.presentation.universalComponents.LocationSimulatorTopBar
 import com.ispgr5.locationsimulator.presentation.universalComponents.SnackbarContent
 import com.ispgr5.locationsimulator.presentation.util.AppSnackbarHost
 import com.ispgr5.locationsimulator.presentation.util.RenderSnackbarOnChange
 import com.ispgr5.locationsimulator.presentation.util.Screen
+import com.ispgr5.locationsimulator.presentation.util.ThemeToggle
 import com.ispgr5.locationsimulator.ui.theme.LocationSimulatorTheme
 import com.ispgr5.locationsimulator.ui.theme.ThemeState
-import com.ispgr5.locationsimulator.ui.theme.ThemeType
 import kotlinx.coroutines.delay
 
 /**
@@ -101,7 +102,6 @@ import kotlinx.coroutines.delay
 @ExperimentalAnimationApi
 @Composable
 fun HomeScreenScreen(
-
     navController: NavController,
     viewModel: HomeScreenViewModel = hiltViewModel(),
     checkBatteryOptimizationStatus: () -> Boolean,
@@ -115,10 +115,24 @@ fun HomeScreenScreen(
     viewModel.updateConfigurationWithErrorsState(soundStorageManager = soundStorageManager)
     val state = viewModel.state.value
     val context = LocalContext.current
-    val selectedRole = remember { mutableStateOf("Standalone") }
-    val name = remember { mutableStateOf("") }
+    val selectedRole = remember { mutableStateOf(ChosenRole.STANDALONE) }
+    val preferences = remember {
+        context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+    }
+    val name = remember {
+        mutableStateOf(
+            preferences.getString(PreferencesKeys.CLIENT_NAME.name, "")!!
+        )
+    }
     val isNameInvalid = remember { mutableStateOf(false) }
     RenderSnackbarOnChange(snackbarHostState = snackbarHostState, snackbarContent = snackbarContent)
+
+    LaunchedEffect(name.value) {
+        val prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+        prefs.edit {
+            putString(PreferencesKeys.CLIENT_NAME.name, name.value)
+        }
+    }
 
     HomeScreenScaffold(
         homeScreenState = state,
@@ -131,28 +145,28 @@ fun HomeScreenScreen(
             navController.navigate(Screen.InfoScreen.route)
         },
         onHelpClick = {
-
             navController.navigate(Screen.HelpScreen.route)
         },
         onSelectProfile = {
             viewModel.onEvent(HomeScreenEvent.SelectConfiguration)
             when (selectedRole.value) {
-                "Trainer" -> {
+                ChosenRole.TRAINER -> {
                     navController.navigate(Screen.TrainerScreen.route)
                 }
-                "Standalone" -> {
+
+                ChosenRole.STANDALONE -> {
                     ServerSingleton.remoteName = null
                     navController.navigate(Screen.SelectScreen.createRoute(chosenRole = ChosenRole.STANDALONE.value))
                 }
+
                 else -> {
                     isNameInvalid.value = !validateRemoteName(name.value)
-                    if(isNameInvalid.value) {
+                    if (isNameInvalid.value) {
                         snackbarContent.value = SnackbarContent(
                             text = context.getString(R.string.error_invalid_name),
                             snackbarDuration = SnackbarDuration.Short
                         )
-                    }
-                    else {
+                    } else {
                         ServerSingleton.remoteName = name.value
                         navController.navigate(Screen.SelectScreen.createRoute(chosenRole = ChosenRole.REMOTE.value))
                     }
@@ -163,7 +177,10 @@ fun HomeScreenScreen(
             when {
                 state.configurationsWithErrors.find { conf -> conf.id == configuration.id } == null -> {
                     navController.navigate(
-                        Screen.DelayScreen.createRoute(configuration.id!!, ChosenRole.STANDALONE.value)
+                        Screen.DelayScreen.createRoute(
+                            configuration.id!!,
+                            ChosenRole.STANDALONE.value
+                        )
                     )
                 }
 
@@ -221,11 +238,11 @@ fun HomeScreenScaffold(
     homeScreenState: HomeScreenState,
     appTheme: MutableState<ThemeState>,
     snackbarHostState: SnackbarHostState,
-    selectedRole: MutableState<String>,
+    selectedRole: MutableState<ChosenRole>,
     name: MutableState<String>,
     isNameInvalid: MutableState<Boolean>,
     onInfoClick: () -> Unit,
-    onHelpClick:()->Unit,
+    onHelpClick: () -> Unit,
     onSelectProfile: () -> Unit,
     onSelectFavourite: (Configuration) -> Unit,
     onSelectTheme: (ThemeState) -> Unit,
@@ -234,7 +251,7 @@ fun HomeScreenScaffold(
 ) {
     Scaffold(
         topBar = {
-            AppTopBar(onInfoClick,onHelpClick)
+            AppTopBar(onInfoClick, onHelpClick)
         },
         snackbarHost = {
             AppSnackbarHost(snackbarHostState)
@@ -261,7 +278,7 @@ fun HomeScreenContent(
     appPadding: PaddingValues,
     homeScreenState: HomeScreenState,
     appTheme: MutableState<ThemeState>,
-    selectedRole: MutableState<String>,
+    selectedRole: MutableState<ChosenRole>,
     name: MutableState<String>,
     isNameInvalid: MutableState<Boolean>,
     onSelectProfile: () -> Unit,
@@ -445,32 +462,6 @@ private fun BatteryOptimizationHint(
     }
 }
 
-@Composable
-fun ThemeToggle(
-    selectedTheme: ThemeState, onSetTheme: (ThemeState) -> Unit
-) {
-    Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(
-            text = stringResource(id = R.string.homescreen_app_theme),
-            fontSize = 20.sp,
-            fontWeight = FontWeight.SemiBold,
-            color = colorScheme.onBackground
-        )
-        MultiStateToggle(stateKeyLabelMap = ThemeType.entries.associateWith { theme -> theme.labelStringRes },
-            selectedOption = selectedTheme.themeType,
-            onSelectionChange = { newTheme ->
-                onSetTheme(selectedTheme.copy(themeType = newTheme))
-            })
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            DynamicColorSchemeToggle(
-                useDynamicColors = selectedTheme.useDynamicColor,
-                onSelectionChange = { useDynamicColor ->
-                    onSetTheme(selectedTheme.copy(useDynamicColor = useDynamicColor))
-                }
-            )
-        }
-    }
-}
 
 @Composable
 fun DynamicColorSchemeToggle(
@@ -552,7 +543,7 @@ private fun NameInputField(name: MutableState<String>, isNameInvalid: MutableSta
 }
 
 @Composable
-private fun RoleSelectionField(selectedRole: MutableState<String>) {
+private fun RoleSelectionField(selectedRole: MutableState<ChosenRole>) {
     var expanded by remember { mutableStateOf(false) }
 
     Column(
@@ -572,17 +563,15 @@ private fun RoleSelectionField(selectedRole: MutableState<String>) {
             modifier = Modifier
                 .fillMaxWidth(0.8f)
                 .clickable { expanded = !expanded }
-                .border(width = 1.dp, color = colorScheme.surfaceContainerHigh, shape = RoundedCornerShape(4.dp))
+                .border(
+                    width = 1.dp,
+                    color = colorScheme.surfaceContainerHigh,
+                    shape = RoundedCornerShape(4.dp)
+                )
                 .padding(16.dp)
                 .height(20.dp)
         ) {
-            val boxText = when(selectedRole.value) {
-                "Trainer" -> stringResource(id = R.string.trainer)
-                "Remote" -> stringResource(id = R.string.remote)
-                else -> stringResource(id = R.string.standalone)
-            }
-
-            Text(text = boxText)
+            Text(text = stringResource(selectedRole.value.label))
             DropdownMenu(
                 expanded = expanded,
                 onDismissRequest = { expanded = false },
@@ -593,21 +582,21 @@ private fun RoleSelectionField(selectedRole: MutableState<String>) {
                 DropdownMenuItem(
                     text = { Text(stringResource(id = R.string.trainer)) },
                     onClick = {
-                        selectedRole.value = "Trainer"
+                        selectedRole.value = ChosenRole.TRAINER
                         expanded = false
                     }
                 )
                 DropdownMenuItem(
                     text = { Text(stringResource(id = R.string.remote)) },
                     onClick = {
-                        selectedRole.value = "Remote"
+                        selectedRole.value = ChosenRole.REMOTE
                         expanded = false
                     }
                 )
                 DropdownMenuItem(
                     text = { Text(stringResource(id = R.string.standalone)) },
                     onClick = {
-                        selectedRole.value = "Standalone"
+                        selectedRole.value = ChosenRole.STANDALONE
                         expanded = false
                     }
                 )
@@ -617,29 +606,27 @@ private fun RoleSelectionField(selectedRole: MutableState<String>) {
 }
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun AppTopBar(onInfoClick: () -> Unit, onHelpClick: () -> Unit) {
-    LocationSimulatorTopBar(
-        onBackClick = null,
-        title = buildAnnotatedString {
-            val appName = stringResource(R.string.app_name)
-            val appVersion = stringResource(R.string.app_version, BuildConfig.VERSION_NAME)
-            withStyle(ParagraphStyle(textAlign = TextAlign.Center, lineHeight = 20.sp)) {
-                withStyle(SpanStyle(fontSize = 18.sp, fontWeight = FontWeight.Bold)) {
-                    appendLine(appName)
+    CenterAlignedTopAppBar(
+        title = {
+            Text(
+                buildAnnotatedString {
+                    val appName = stringResource(R.string.app_name)
+                    val appVersion = stringResource(R.string.app_version, BuildConfig.VERSION_NAME)
+                    withStyle(ParagraphStyle(textAlign = TextAlign.Center, lineHeight = 20.sp)) {
+                        withStyle(SpanStyle(fontSize = 18.sp, fontWeight = FontWeight.Bold)) {
+                            appendLine(appName)
+                        }
+                        withStyle(SpanStyle(fontStyle = FontStyle.Italic, fontSize = 14.sp)) {
+                            append(appVersion)
+                        }
+                    }
                 }
-                withStyle(SpanStyle(fontStyle = FontStyle.Italic, fontSize = 14.sp)) {
-                    append(appVersion)
-                }
-            }
+            )
         },
-        backPossible = false
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Absolute.Left
-        )
-        {
+        navigationIcon = {
             IconButton(onClick = onInfoClick, modifier = Modifier.padding(5.dp)) {
                 Icon(
                     painter = painterResource(id = R.drawable.baseline_info_24),
@@ -648,71 +635,17 @@ private fun AppTopBar(onInfoClick: () -> Unit, onHelpClick: () -> Unit) {
                     )
                 )
             }
-            Spacer(modifier = Modifier.weight(1f))
-            IconButton(onClick = onHelpClick, modifier = Modifier.padding(5.dp) ) {
+        },
+        actions = {
+            IconButton(onClick = onHelpClick, modifier = Modifier.padding(5.dp)) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_baseline_help_24),
                     contentDescription = stringResource(R.string.help),
                 )
             }
         }
-    }
+    )
 }
-
-
-
-
-@Composable
-fun <K> MultiStateToggle(
-    stateKeyLabelMap: Map<K, Int>, selectedOption: K, onSelectionChange: (K) -> Unit
-) {
-    Surface(
-        shape = RoundedCornerShape(24.dp),
-        shadowElevation = 4.dp,
-        modifier = Modifier.wrapContentSize(),
-        color = colorScheme.surfaceContainer
-    ) {
-        Row(
-            modifier = Modifier
-                .clip(shape = RoundedCornerShape(24.dp))
-                .background(colorScheme.surfaceContainer)
-        ) {
-            stateKeyLabelMap.entries.forEach { (key, labelStringRes) ->
-                Text(text = stringResource(id = labelStringRes),
-                    color = when (key == selectedOption) {
-                        true -> colorScheme.onPrimary
-                        else -> colorScheme.onSurface
-                    },
-                    modifier = Modifier
-                        .clip(shape = RoundedCornerShape(24.dp))
-                        .clickable {
-                            onSelectionChange(key)
-                        }
-                        .background(
-                            when (key) {
-                                selectedOption -> {
-                                    colorScheme.primary
-                                }
-
-                                else -> {
-                                    colorScheme.surfaceContainer
-                                }
-                            }
-                        )
-                        .padding(
-                            vertical = 8.dp,
-                            horizontal = 16.dp,
-                        ).conditional(labelStringRes == R.string.dark) {
-                            testTag(TestTags.HOME_DARKMODE)
-                        }.conditional(labelStringRes == R.string.light) {
-                            testTag(TestTags.HOME_LIGHTMODE)
-                        }
-                )
-            }
-        }
-    }
-}
-
 
 @Composable
 @AppPreview
@@ -733,11 +666,11 @@ fun HomeScreenPreview() {
         mutableStateOf(PreviewData.themePreviewState)
     }
 
-    val selectedRole = remember { mutableStateOf("Standalone") }
+    val selectedRole = remember { mutableStateOf(ChosenRole.STANDALONE) }
     val name = remember { mutableStateOf("") }
     val isNameInvalid = remember { mutableStateOf(false) }
 
-        LocationSimulatorTheme {
+    LocationSimulatorTheme {
         HomeScreenScaffold(
             homeScreenState = state,
             appTheme = themeState,
@@ -756,7 +689,7 @@ fun HomeScreenPreview() {
     }
 }
 
-fun Modifier.conditional(condition : Boolean, modifier : Modifier.() -> Modifier) : Modifier {
+fun Modifier.conditional(condition: Boolean, modifier: Modifier.() -> Modifier): Modifier {
     return if (condition) {
         then(modifier(Modifier))
     } else {

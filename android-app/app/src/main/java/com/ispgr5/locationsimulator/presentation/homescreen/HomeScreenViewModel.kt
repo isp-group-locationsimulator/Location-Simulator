@@ -1,11 +1,13 @@
 package com.ispgr5.locationsimulator.presentation.homescreen
 
 import android.content.Context
-import android.content.SharedPreferences
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.core.content.edit
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ispgr5.locationsimulator.data.preferences.PREF_NAME
+import com.ispgr5.locationsimulator.data.preferences.PreferencesKeys
 import com.ispgr5.locationsimulator.data.storageManager.SoundStorageManager
 import com.ispgr5.locationsimulator.domain.model.ConfigComponent
 import com.ispgr5.locationsimulator.domain.model.Configuration
@@ -63,12 +65,14 @@ class HomeScreenViewModel @Inject constructor(
             }
 
             is HomeScreenEvent.ChangedAppTheme -> {
-                val editor: SharedPreferences.Editor =
-                    event.activity.getSharedPreferences("prefs", Context.MODE_PRIVATE)
-                        .edit()
-                editor.putString("themeType", event.themeState.themeType.name)
-                editor.putBoolean("dynamicColors", event.themeState.useDynamicColor)
-                editor.apply()
+                event.activity.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+                    .edit {
+                        putString(PreferencesKeys.THEME_TYPE.name, event.themeState.themeType.name)
+                        putBoolean(
+                            PreferencesKeys.DYNAMIC_COLORS.name,
+                            event.themeState.useDynamicColor
+                        )
+                    }
             }
         }
     }
